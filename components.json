@@ -9,7 +9,7 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@react-monorepo/shared/components",
-    "utils": "@react-monorepo/shared/shared/utils"
+    "components": "shared/src/components",
+    "utils": "shared/src/lib/utils"
   }
 }

@@ -18,6 +18,7 @@ And hours of tinkering around.
 2. Run the command for the component, e.g.: `npx shadcn-ui@latest add button`
 3. It should create a local copy in `shared/src/components/`
 4. Ensure that all the imports are done properly. Reference the `button.tsx` in case there's anything wrong, as that file works properly.
+5. Add the export into `shared/src/index.ts` e.g. `export * from './components/ui/button';` or else you can't import it
 
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>

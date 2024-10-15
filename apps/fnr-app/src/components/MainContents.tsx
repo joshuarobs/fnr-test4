@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@react-monorepo/shared';
+import { ContentsTable } from './contents-table/ContentsTable';
 
 const MainContents: React.FC = () => {
   return (
@@ -7,6 +8,7 @@ const MainContents: React.FC = () => {
       <h2 className="text-xl font-semibold mb-4">Main Contents</h2>
       <Button variant={'outline'}>Shared button</Button>
       <Button variant={'default'}>New button</Button>
+      <ContentsTable />
     </main>
   );
 };
