@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "nx serve": "npx nx serve fnr-app",
-    "nx graph": "npx nx show project fnr-app"
+    "nx graph": "npx nx show project fnr-app",
+    "nx reset": "npx nx reset"
   },
   "private": true,
   "dependencies": {
