@@ -12,20 +12,13 @@ import {
 } from '@react-monorepo/shared';
 
 import { placeholderContentsData } from './placeholderContentsData';
+import { ModelSerialCell } from './ModelSerialCell';
 
 const ContentsTable = function () {
   const totalAmount = placeholderContentsData.reduce(
     (sum, invoice) => sum + invoice.amount,
     0
   );
-
-  const modelSerialNumberStyle = {
-    fontFamily: 'Consolas, monospace',
-    backgroundColor: '#e0e0e0',
-    borderRadius: '4px',
-    padding: '8px 6px',
-    fontSize: '0.9em',
-  };
 
   return (
     <div>
@@ -51,11 +44,11 @@ const ContentsTable = function () {
               <TableCell>{invoice.category}</TableCell>
               <TableCell>
                 {invoice.modelSerialNumber ? (
-                  <span style={modelSerialNumberStyle}>
-                    {invoice.modelSerialNumber}
-                  </span>
+                  <ModelSerialCell
+                    modelSerialNumber={invoice.modelSerialNumber}
+                  />
                 ) : (
-                  '-'
+                  <></>
                 )}
               </TableCell>
               <TableCell>{invoice.date}</TableCell>
