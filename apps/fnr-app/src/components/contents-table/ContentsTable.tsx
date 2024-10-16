@@ -19,13 +19,24 @@ const ContentsTable = function () {
     0
   );
 
+  const modelSerialNumberStyle = {
+    fontFamily: 'Consolas, monospace',
+    backgroundColor: '#e0e0e0',
+    borderRadius: '4px',
+    padding: '8px 6px',
+    fontSize: '0.9em',
+  };
+
   return (
     <div>
       <Table>
         <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
+            <TableHead className="w-[50px]">ID</TableHead>
+            <TableHead>Item</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Model/Serial Number</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Due Date</TableHead>
             <TableHead>Status</TableHead>
@@ -35,8 +46,17 @@ const ContentsTable = function () {
         <TableBody>
           {placeholderContentsData.map((invoice) => (
             <TableRow key={invoice.id}>
-              <TableCell className="font-medium">
-                {invoice.invoiceNumber}
+              <TableCell>{invoice.id}</TableCell>
+              <TableCell>{invoice.item}</TableCell>
+              <TableCell>{invoice.category}</TableCell>
+              <TableCell>
+                {invoice.modelSerialNumber ? (
+                  <span style={modelSerialNumberStyle}>
+                    {invoice.modelSerialNumber}
+                  </span>
+                ) : (
+                  '-'
+                )}
               </TableCell>
               <TableCell>{invoice.date}</TableCell>
               <TableCell>{invoice.dueDate}</TableCell>
@@ -49,7 +69,7 @@ const ContentsTable = function () {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={4}>Total</TableCell>
+            <TableCell colSpan={7}>Total</TableCell>
             <TableCell className="text-right">
               ${totalAmount.toFixed(2)}
             </TableCell>
