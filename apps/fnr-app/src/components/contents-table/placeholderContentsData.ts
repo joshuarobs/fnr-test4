@@ -5,7 +5,7 @@ export interface Invoice {
   date: string;
   dueDate: string;
   amount: number;
-  status: 'Paid' | 'Pending' | 'Overdue';
+  status: 'RS' | 'NR' | 'VPOL';
   item: string;
 }
 
@@ -17,7 +17,7 @@ export const placeholderContentsData: Invoice[] = [
     date: '2023-05-01',
     dueDate: '2023-05-15',
     amount: 1500.0,
-    status: 'Paid',
+    status: 'RS',
     item: 'Laptop',
   },
   {
@@ -26,7 +26,7 @@ export const placeholderContentsData: Invoice[] = [
     date: '2023-05-05',
     dueDate: '2023-05-19',
     amount: 2300.5,
-    status: 'Pending',
+    status: 'NR',
     item: 'Office Desk',
   },
   {
@@ -36,7 +36,7 @@ export const placeholderContentsData: Invoice[] = [
     date: '2023-04-15',
     dueDate: '2023-04-29',
     amount: 1800.75,
-    status: 'Overdue',
+    status: 'VPOL',
     item: 'Antivirus License',
   },
   {
@@ -46,7 +46,7 @@ export const placeholderContentsData: Invoice[] = [
     date: '2023-06-01',
     dueDate: '2023-06-15',
     amount: 1200.0,
-    status: 'Pending',
+    status: 'RS',
     item: 'Smartphone',
   },
   {
@@ -55,7 +55,7 @@ export const placeholderContentsData: Invoice[] = [
     date: '2023-06-10',
     dueDate: '2023-06-24',
     amount: 150.25,
-    status: 'Paid',
+    status: 'NR',
     item: 'Groceries',
   },
 ];

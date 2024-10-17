@@ -13,6 +13,7 @@ import {
 
 import { placeholderContentsData } from './placeholderContentsData';
 import { ModelSerialCell } from './ModelSerialCell';
+import { ItemStatusBadge } from './ItemStatusBadge';
 
 const ContentsTable = function () {
   const totalAmount = placeholderContentsData.reduce(
@@ -30,9 +31,9 @@ const ContentsTable = function () {
             <TableHead>Item</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Model/Serial Number</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Due Date</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead className="text-right">Amount</TableHead>
           </TableRow>
         </TableHeader>
@@ -51,9 +52,11 @@ const ContentsTable = function () {
                   <></>
                 )}
               </TableCell>
+              <TableCell>
+                <ItemStatusBadge status={invoice.status} />
+              </TableCell>
               <TableCell>{invoice.date}</TableCell>
               <TableCell>{invoice.dueDate}</TableCell>
-              <TableCell>{invoice.status}</TableCell>
               <TableCell className="text-right">
                 ${invoice.amount.toFixed(2)}
               </TableCell>
