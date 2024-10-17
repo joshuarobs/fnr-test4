@@ -1,7 +1,7 @@
 import React from 'react';
-import Header from './app-shell/Header';
-import Sidebar from './app-shell/Sidebar';
-import MainContents from './MainContents';
+import { Header } from './app-shell/Header';
+import { Sidebar } from './app-shell/Sidebar';
+import { MainContents } from './MainContents';
 
 export function App() {
   return (
