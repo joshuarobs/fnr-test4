@@ -56,7 +56,7 @@ type ItemStatusBadgeProps = {
 export const ItemStatusBadge = ({ status }: ItemStatusBadgeProps) => {
   const statusDetails: StatusDetails = getStatusDetails(status);
   return (
-    <TooltipProvider delayDuration={TooltipSettings.DelayDuration}>
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
           {' '}

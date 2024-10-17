@@ -5,12 +5,17 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  TooltipSettings,
 } from '@react-monorepo/shared';
 
-export const BrowseLinkButton = () => {
+interface BrowseLinkButtonProps {
+  tooltipText: string;
+}
+
+export const BrowseLinkButton = ({
+  tooltipText = '',
+}: BrowseLinkButtonProps) => {
   return (
-    <TooltipProvider delayDuration={TooltipSettings.DelayDuration}>
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -23,7 +28,7 @@ export const BrowseLinkButton = () => {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Search model/serial number in Google</p>
+          <p>{tooltipText}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

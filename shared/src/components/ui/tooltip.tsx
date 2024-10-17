@@ -4,6 +4,9 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { cn } from '../../lib/utils';
 
 const TooltipProvider = TooltipPrimitive.Provider;
+TooltipProvider.defaultProps = {
+  delayDuration: 650,
+};
 
 const Tooltip = TooltipPrimitive.Root;
 

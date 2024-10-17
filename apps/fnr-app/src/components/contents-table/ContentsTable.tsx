@@ -48,14 +48,14 @@ const ContentsTable = function () {
             >
               <TableCell>{item.id}</TableCell>
               <TableCell className="min-w-[320px]">
-                <div className="flex justify-between items-center mr-1">
+                <div className="flex justify-between items-center mr-2">
                   <span>{item.item}</span>
-                  <BrowseLinkButton />
+                  <BrowseLinkButton tooltipText="Search for item in Google in a new tab" />
                 </div>
               </TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>
-                <div className="flex justify-between items-center space-x-2 mr-1">
+                <div className="flex justify-between items-center space-x-2 mr-2">
                   {item.modelSerialNumber ? (
                     <ModelSerialCell
                       modelSerialNumber={item.modelSerialNumber}
@@ -63,7 +63,7 @@ const ContentsTable = function () {
                   ) : (
                     <span>-</span>
                   )}
-                  <BrowseLinkButton />
+                  <BrowseLinkButton tooltipText="Search for model/serial number in Google in a new tab" />
                 </div>
               </TableCell>
               <TableCell>
