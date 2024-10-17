@@ -1,4 +1,4 @@
-export interface Invoice {
+export interface Item {
   id: string;
   category: string;
   modelSerialNumber?: string;
@@ -9,7 +9,7 @@ export interface Invoice {
   item: string;
 }
 
-export const placeholderContentsData: Invoice[] = [
+export const placeholderContentsData: Item[] = [
   {
     id: '1',
     category: 'Electronics',

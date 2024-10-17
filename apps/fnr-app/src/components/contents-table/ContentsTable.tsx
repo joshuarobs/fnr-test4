@@ -14,10 +14,11 @@ import {
 import { placeholderContentsData } from './placeholderContentsData';
 import { ModelSerialCell } from './ModelSerialCell';
 import { ItemStatusBadge } from './ItemStatusBadge';
+import { BrowseLinkButton } from './BrowseLinkButton';
 
 const ContentsTable = function () {
   const totalAmount = placeholderContentsData.reduce(
-    (sum, invoice) => sum + invoice.amount,
+    (sum, item) => sum + item.amount,
     0
   );
 
@@ -28,7 +29,7 @@ const ContentsTable = function () {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">ID</TableHead>
-            <TableHead>Item</TableHead>
+            <TableHead className="min-w-[320px]">Item</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Model/Serial Number</TableHead>
             <TableHead>Status</TableHead>
@@ -38,27 +39,40 @@ const ContentsTable = function () {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {placeholderContentsData.map((invoice) => (
-            <TableRow key={invoice.id}>
-              <TableCell>{invoice.id}</TableCell>
-              <TableCell>{invoice.item}</TableCell>
-              <TableCell>{invoice.category}</TableCell>
+          {placeholderContentsData.map((item, index) => (
+            <TableRow
+              key={item.id}
+              className={`${
+                index % 2 === 0 ? 'bg-gray-100' : ''
+              } min-h-[53px]!`}
+            >
+              <TableCell>{item.id}</TableCell>
+              <TableCell className="min-w-[320px]">
+                <div className="flex justify-between items-center mr-1">
+                  <span>{item.item}</span>
+                  <BrowseLinkButton />
+                </div>
+              </TableCell>
+              <TableCell>{item.category}</TableCell>
               <TableCell>
-                {invoice.modelSerialNumber ? (
-                  <ModelSerialCell
-                    modelSerialNumber={invoice.modelSerialNumber}
-                  />
-                ) : (
-                  <></>
-                )}
+                <div className="flex justify-between items-center space-x-2 mr-1">
+                  {item.modelSerialNumber ? (
+                    <ModelSerialCell
+                      modelSerialNumber={item.modelSerialNumber}
+                    />
+                  ) : (
+                    <span>-</span>
+                  )}
+                  <BrowseLinkButton />
+                </div>
               </TableCell>
               <TableCell>
-                <ItemStatusBadge status={invoice.status} />
+                <ItemStatusBadge status={item.status} />
               </TableCell>
-              <TableCell>{invoice.date}</TableCell>
-              <TableCell>{invoice.dueDate}</TableCell>
+              <TableCell>{item.date}</TableCell>
+              <TableCell>{item.dueDate}</TableCell>
               <TableCell className="text-right">
-                ${invoice.amount.toFixed(2)}
+                ${item.amount.toFixed(2)}
               </TableCell>
             </TableRow>
           ))}
