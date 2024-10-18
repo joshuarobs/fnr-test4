@@ -16,6 +16,8 @@ import { ModelSerialCell } from './ModelSerialCell';
 import { ItemStatusBadge } from './ItemStatusBadge';
 import { BrowseLinkButton } from './BrowseLinkButton';
 
+import { ContentsTableSortableHeader } from './ContentsTableSortableHeader';
+
 const ContentsTable = function () {
   const totalAmount = placeholderContentsData.reduce(
     (sum, item) => sum + item.amount,
@@ -29,7 +31,10 @@ const ContentsTable = function () {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">ID</TableHead>
-            <TableHead className="min-w-[320px]">Item</TableHead>
+            <TableHead className="min-w-[320px]">
+              {/* <ContentsTableSortableHeader column={null} title={'Item'} /> */}
+              Item
+            </TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Model/Serial Number</TableHead>
             <TableHead>Status</TableHead>
