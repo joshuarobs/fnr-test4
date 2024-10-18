@@ -11,11 +11,35 @@ export const columns: ColumnDef<Item>[] = [
     header: 'Group',
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
+    accessorKey: 'name',
+    header: 'Name',
   },
   {
-    accessorKey: 'amount',
-    header: 'Amount',
+    accessorKey: 'category',
+    header: 'Category',
+  },
+  {
+    accessorKey: 'modelSerialNumber',
+    header: 'Model/Serial number',
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+  },
+  {
+    accessorKey: 'oisquote',
+    header: "Insured's quote",
+  },
+  {
+    accessorKey: 'ourquote',
+    header: 'Our quote',
+  },
+  {
+    accessorKey: 'difference',
+    header: 'Difference',
+  },
+  {
+    accessorKey: 'actions',
+    header: 'Actions',
   },
 ];

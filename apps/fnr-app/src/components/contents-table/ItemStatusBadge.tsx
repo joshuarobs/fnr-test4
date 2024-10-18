@@ -1,4 +1,4 @@
-import { Item } from './placeholderContentsData';
+import { Item } from './item';
 import {
   Tooltip,
   TooltipContent,

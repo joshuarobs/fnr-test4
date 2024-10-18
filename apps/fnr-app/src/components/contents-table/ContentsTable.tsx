@@ -1,4 +1,9 @@
-import React from 'react';
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -18,7 +23,12 @@ import { BrowseLinkButton } from './BrowseLinkButton';
 
 import { ContentsTableSortableHeader } from './ContentsTableSortableHeader';
 
-const ContentsTable = function () {
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+}
+
+const ContentsTable = () => {
   const totalAmount = placeholderContentsData.reduce(
     (sum, item) => sum + item.amount,
     0
@@ -33,7 +43,7 @@ const ContentsTable = function () {
             <TableHead className="w-[50px]">ID</TableHead>
             <TableHead className="min-w-[320px]">
               {/* <ContentsTableSortableHeader column={null} title={'Item'} /> */}
-              Item
+              Name
             </TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Model/Serial Number</TableHead>
@@ -54,7 +64,7 @@ const ContentsTable = function () {
               <TableCell>{item.id}</TableCell>
               <TableCell className="min-w-[320px]">
                 <div className="flex justify-between items-center mr-2">
-                  <span>{item.item}</span>
+                  <span>{item.name}</span>
                   <BrowseLinkButton tooltipText="Search for item in Google in a new tab" />
                 </div>
               </TableCell>
