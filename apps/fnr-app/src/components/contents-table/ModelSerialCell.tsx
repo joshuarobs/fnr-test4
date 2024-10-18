@@ -63,7 +63,7 @@ export const ModelSerialCell: React.FC<ModelSerialCellProps> = ({
       <Tooltip open={isTooltipVisible}>
         <TooltipTrigger asChild>
           <div
-            className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center justify-between"
+            className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center justify-between select-none"
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
