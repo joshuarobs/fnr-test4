@@ -5,11 +5,16 @@ export type Item = {
   category: string;
   modelSerialNumber?: string;
   status: 'RS' | 'NR' | 'VPOL';
-  oisquote: number;
+  oisquote: number | null;
   ourquote: number;
-  difference: number;
 
   date: string;
   dueDate: string;
   amount: number;
+};
+
+// Helper function to calculate difference
+export const calculateDifference = (item: Item): number | null => {
+  if (item.oisquote === null) return null;
+  return item.oisquote - item.ourquote;
 };

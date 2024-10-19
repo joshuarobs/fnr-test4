@@ -1,8 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Item } from './item';
+import { Item, calculateDifference } from './item';
 import { ModelSerialCell } from './ModelSerialCell';
 import { BrowseLinkButton } from './BrowseLinkButton';
 import { ItemStatusBadge } from './ItemStatusBadge';
+import { InsuredsQuoteCell } from './InsuredsQuoteCell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +67,10 @@ export const columns: ColumnDef<Item>[] = [
   {
     accessorKey: 'oisquote',
     header: "Insured's quote",
+    cell: ({ row }) => {
+      const oisQuote = row.getValue('oisquote') as number;
+      return <InsuredsQuoteCell oisQuote={oisQuote} />;
+    },
   },
   {
     accessorKey: 'ourquote',
@@ -74,10 +79,21 @@ export const columns: ColumnDef<Item>[] = [
   {
     accessorKey: 'difference',
     header: 'Difference',
+    cell: ({ row }) => {
+      const item = row.original;
+      const oisQuote = item.oisquote;
+      const ourQuote = item.ourquote;
+
+      if (oisQuote === ourQuote) {
+        return 'Same';
+      }
+
+      const difference = calculateDifference(item);
+      return difference !== null ? `$${difference.toFixed(2)}` : 'N/A';
+    },
   },
   {
     id: 'actions',
-    // header: 'Actions',
     cell: ({ row }) => {
       const payment = row.original;
 

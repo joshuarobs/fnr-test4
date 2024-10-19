@@ -11,9 +11,8 @@ export const placeholderContentsData: Item[] = [
     amount: 1500.0,
     status: 'RS',
     group: '',
-    oisquote: 0,
-    ourquote: 0,
-    difference: 0,
+    oisquote: 2000, // Overinflated
+    ourquote: 1500,
   },
   {
     id: '2',
@@ -24,9 +23,8 @@ export const placeholderContentsData: Item[] = [
     amount: 2300.5,
     status: 'NR',
     group: '',
-    oisquote: 0,
-    ourquote: 0,
-    difference: 0,
+    oisquote: 2000, // Under-inflated
+    ourquote: 2300,
   },
   {
     id: '3',
@@ -38,9 +36,8 @@ export const placeholderContentsData: Item[] = [
     amount: 1800.75,
     status: 'VPOL',
     group: '',
-    oisquote: 0,
-    ourquote: 0,
-    difference: 0,
+    oisquote: null, // Missing
+    ourquote: 1800,
   },
   {
     id: '4',
@@ -52,9 +49,8 @@ export const placeholderContentsData: Item[] = [
     amount: 1200.0,
     status: 'RS',
     group: '',
-    oisquote: 0,
-    ourquote: 0,
-    difference: 0,
+    oisquote: 1600, // Overinflated
+    ourquote: 1200,
   },
   {
     id: '5',
@@ -65,8 +61,19 @@ export const placeholderContentsData: Item[] = [
     amount: 150.25,
     status: 'NR',
     group: '',
-    oisquote: 0,
-    ourquote: 0,
-    difference: 0,
+    oisquote: 155, // Fair
+    ourquote: 150,
+  },
+  {
+    id: '6',
+    name: 'Area Rug',
+    category: 'Home Decor',
+    date: '2023-06-15',
+    dueDate: '2023-06-29',
+    amount: 500.0,
+    status: 'NR',
+    group: '',
+    oisquote: 500, // Same as ourquote
+    ourquote: 500,
   },
 ];
