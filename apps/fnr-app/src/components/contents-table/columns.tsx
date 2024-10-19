@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Item } from './item';
 import { ModelSerialCell } from './ModelSerialCell';
 import { BrowseLinkButton } from './BrowseLinkButton';
+import { ItemStatusBadge } from './ItemStatusBadge';
 
 export const columns: ColumnDef<Item>[] = [
   {
@@ -44,6 +45,10 @@ export const columns: ColumnDef<Item>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as Item['status'];
+      return <ItemStatusBadge status={status} />;
+    },
   },
   {
     accessorKey: 'oisquote',
