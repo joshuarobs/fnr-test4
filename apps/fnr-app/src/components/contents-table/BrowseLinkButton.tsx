@@ -9,11 +9,21 @@ import {
 
 interface BrowseLinkButtonProps {
   tooltipText: string;
+  searchText: string;
 }
 
 export const BrowseLinkButton = ({
   tooltipText = '',
+  searchText,
 }: BrowseLinkButtonProps) => {
+  const handleClick = () => {
+    const encodedSearchText = encodeURIComponent(searchText);
+    window.open(
+      `https://www.google.com/search?q=${encodedSearchText}`,
+      '_blank'
+    );
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -23,6 +33,7 @@ export const BrowseLinkButton = ({
             size="icon"
             className="rounded-full"
             aria-label="Search item in new tab"
+            onClick={handleClick}
           >
             <ExternalLinkIcon className="h-4 w-4" />
           </Button>

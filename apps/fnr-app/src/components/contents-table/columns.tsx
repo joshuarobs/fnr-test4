@@ -22,7 +22,10 @@ export const columns: ColumnDef<Item>[] = [
         <div className="flex items-center w-full">
           <span className="flex-grow text-left truncate">{name}</span>
           <div className="flex justify-center mx-4">
-            <BrowseLinkButton tooltipText="Search for item in Google in a new tab" />
+            <BrowseLinkButton
+              tooltipText="Search for item in Google in a new tab"
+              searchText={name}
+            />
           </div>
         </div>
       ) : null;
