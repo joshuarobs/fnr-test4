@@ -3,6 +3,16 @@ import { Item } from './item';
 import { ModelSerialCell } from './ModelSerialCell';
 import { BrowseLinkButton } from './BrowseLinkButton';
 import { ItemStatusBadge } from './ItemStatusBadge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@react-monorepo/shared';
+import { Button } from '@react-monorepo/shared';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 
 export const columns: ColumnDef<Item>[] = [
   {
@@ -66,7 +76,32 @@ export const columns: ColumnDef<Item>[] = [
     header: 'Difference',
   },
   {
-    accessorKey: 'actions',
-    header: 'Actions',
+    id: 'actions',
+    // header: 'Actions',
+    cell: ({ row }) => {
+      const payment = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(payment.id)}
+            >
+              Copy payment ID
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem>View payment details</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
