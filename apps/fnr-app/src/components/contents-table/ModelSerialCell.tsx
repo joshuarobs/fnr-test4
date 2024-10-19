@@ -6,14 +6,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@react-monorepo/shared';
+import { BrowseLinkButton } from './BrowseLinkButton';
 
 interface ModelSerialCellProps {
   modelSerialNumber: string;
 }
 
-export const ModelSerialCell: React.FC<ModelSerialCellProps> = ({
+export const ModelSerialCell = ({
   modelSerialNumber,
-}) => {
+}: ModelSerialCellProps) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -59,27 +60,36 @@ export const ModelSerialCell: React.FC<ModelSerialCellProps> = ({
   }, []);
 
   return (
-    <TooltipProvider>
-      <Tooltip open={isTooltipVisible}>
-        <TooltipTrigger asChild>
-          <div
-            className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center justify-between select-none"
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <span className="text-sm text-gray-900">{modelSerialNumber}</span>
-            {isCopied ? (
-              <CheckIcon className="w-4 h-4 text-green-600 ml-3 stroke-4 scale-125 transform" />
-            ) : (
-              <CopyIcon className="w-4 h-4 text-gray-500 ml-3" />
-            )}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{isCopied ? 'Copied!' : 'Copy to clipboard'}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <div className="flex items-center justify-between w-full">
+      <div className="flex-grow">
+        <TooltipProvider>
+          <Tooltip open={isTooltipVisible}>
+            <TooltipTrigger asChild>
+              <div
+                className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center justify-between select-none"
+                onClick={handleClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <span className="text-sm text-gray-900">
+                  {modelSerialNumber}
+                </span>
+                {isCopied ? (
+                  <CheckIcon className="w-4 h-4 text-green-600 ml-3 stroke-4 scale-125 transform" />
+                ) : (
+                  <CopyIcon className="w-4 h-4 text-gray-500 ml-3" />
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isCopied ? 'Copied!' : 'Copy to clipboard'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="ml-2 flex-shrink-0">
+        <BrowseLinkButton tooltipText="Search for item in Google in a new tab" />
+      </div>
+    </div>
   );
 };
