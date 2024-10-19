@@ -7,7 +7,7 @@ export type Item = {
   status: 'RS' | 'NR' | 'VPOL';
   oisquote: number | null;
   ourquote: number;
-
+  receiptPhotoUrl?: string; // New field for storing the receipt photo URL
   date: string;
   dueDate: string;
   amount: number;

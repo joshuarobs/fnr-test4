@@ -13,6 +13,7 @@ export const placeholderContentsData: Item[] = [
     group: '',
     oisquote: 2000, // Overinflated
     ourquote: 1500,
+    receiptPhotoUrl: 'https://example.com/receipts/laptop.jpg',
   },
   {
     id: '2',
@@ -38,6 +39,7 @@ export const placeholderContentsData: Item[] = [
     group: '',
     oisquote: null, // Missing
     ourquote: 1800,
+    receiptPhotoUrl: 'https://example.com/receipts/antivirus.jpg',
   },
   {
     id: '4',
@@ -51,6 +53,7 @@ export const placeholderContentsData: Item[] = [
     group: '',
     oisquote: 1600, // Overinflated
     ourquote: 1200,
+    receiptPhotoUrl: 'https://example.com/receipts/smartphone.jpg',
   },
   {
     id: '5',

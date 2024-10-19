@@ -16,13 +16,6 @@ import {
   TableRow,
 } from '@react-monorepo/shared';
 
-import { placeholderContentsData } from './placeholderContentsData';
-import { ModelSerialCell } from './ModelSerialCell';
-import { ItemStatusBadge } from './ItemStatusBadge';
-import { BrowseLinkButton } from './BrowseLinkButton';
-
-import { ContentsTableSortableHeader } from './ContentsTableSortableHeader';
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];

@@ -69,7 +69,13 @@ export const columns: ColumnDef<Item>[] = [
     header: "Insured's quote",
     cell: ({ row }) => {
       const oisQuote = row.getValue('oisquote') as number;
-      return <InsuredsQuoteCell oisQuote={oisQuote} />;
+      const receiptPhotoUrl = row.original.receiptPhotoUrl;
+      return (
+        <InsuredsQuoteCell
+          oisQuote={oisQuote}
+          receiptPhotoUrl={receiptPhotoUrl}
+        />
+      );
     },
   },
   {
