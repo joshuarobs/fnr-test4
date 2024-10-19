@@ -14,21 +14,22 @@ import {
 } from '@react-monorepo/shared';
 import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { ITEM_KEYS } from './itemKeys';
 
 export const columns: ColumnDef<Item>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: ITEM_KEYS.ID,
     header: 'ID',
   },
   {
-    accessorKey: 'group',
+    accessorKey: ITEM_KEYS.GROUP,
     header: 'Group',
   },
   {
-    accessorKey: 'name',
+    accessorKey: ITEM_KEYS.NAME,
     header: 'Name',
     cell: ({ row }) => {
-      const name = row.getValue('name') as string;
+      const name = row.getValue(ITEM_KEYS.NAME) as string;
       return name ? (
         <div className="flex items-center w-full">
           <span className="flex-grow text-left truncate">{name}</span>
@@ -43,33 +44,33 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
-    accessorKey: 'category',
+    accessorKey: ITEM_KEYS.CATEGORY,
     header: 'Category',
   },
   {
-    accessorKey: 'modelSerialNumber',
+    accessorKey: ITEM_KEYS.MODEL_SERIAL_NUMBER,
     header: 'Model/Serial number',
     cell: ({ row }) => {
-      const modelSerialNumber = row.getValue('modelSerialNumber');
+      const modelSerialNumber = row.getValue(ITEM_KEYS.MODEL_SERIAL_NUMBER);
       return modelSerialNumber ? (
         <ModelSerialCell modelSerialNumber={modelSerialNumber as string} />
       ) : null;
     },
   },
   {
-    accessorKey: 'status',
+    accessorKey: ITEM_KEYS.STATUS,
     header: 'Status',
     cell: ({ row }) => {
-      const status = row.getValue('status') as Item['status'];
+      const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
       return <ItemStatusBadge status={status} />;
     },
   },
   {
-    accessorKey: 'oisquote',
+    accessorKey: ITEM_KEYS.OIS_QUOTE,
     header: "Insured's quote",
     cell: ({ row }) => {
-      const oisQuote = row.getValue('oisquote') as number;
-      const receiptPhotoUrl = row.original.receiptPhotoUrl;
+      const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
+      const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL];
       return (
         <InsuredsQuoteCell
           oisQuote={oisQuote}
@@ -79,7 +80,7 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
-    accessorKey: 'ourquote',
+    accessorKey: ITEM_KEYS.OUR_QUOTE,
     header: 'Our quote',
   },
   {
@@ -87,8 +88,8 @@ export const columns: ColumnDef<Item>[] = [
     header: 'Difference',
     cell: ({ row }) => {
       const item = row.original;
-      const oisQuote = item.oisquote;
-      const ourQuote = item.ourquote;
+      const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
+      const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
 
       if (oisQuote === ourQuote) {
         return 'Same';
@@ -114,7 +115,9 @@ export const columns: ColumnDef<Item>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() =>
+                navigator.clipboard.writeText(payment[ITEM_KEYS.ID])
+              }
             >
               Copy payment ID
             </DropdownMenuItem>

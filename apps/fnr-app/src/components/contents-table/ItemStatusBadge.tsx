@@ -1,10 +1,10 @@
 import { Item } from './item';
+import { ITEM_KEYS } from './itemKeys';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  TooltipSettings,
 } from '@react-monorepo/shared';
 
 // Define the common interface for status details
@@ -16,7 +16,9 @@ export interface StatusDetails {
 }
 
 // Define the function to get status details
-export const getStatusDetails = (status: Item['status']): StatusDetails => {
+export const getStatusDetails = (
+  status: Item[typeof ITEM_KEYS.STATUS]
+): StatusDetails => {
   switch (status) {
     case 'RS':
       return {
@@ -50,7 +52,7 @@ export const getStatusDetails = (status: Item['status']): StatusDetails => {
 };
 
 type ItemStatusBadgeProps = {
-  status: Item['status'];
+  status: Item[typeof ITEM_KEYS.STATUS];
 };
 
 export const ItemStatusBadge = ({ status }: ItemStatusBadgeProps) => {
