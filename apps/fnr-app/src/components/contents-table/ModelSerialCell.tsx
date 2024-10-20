@@ -87,7 +87,7 @@ export const ModelSerialCell = ({
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="ml-2 flex-shrink-0">
+      <div className="ml-2 mr-2 flex-shrink-0">
         <BrowseLinkButton
           tooltipText="Search for item in Google in a new tab"
           searchText={modelSerialNumber}
