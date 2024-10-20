@@ -61,6 +61,9 @@ export const columns: ColumnDef<Item>[] = [
   {
     accessorKey: ITEM_KEYS.STATUS,
     header: 'Status',
+    meta: {
+      headerClassName: 'min-w-[80px]', // min-width, taking
+    },
     cell: ({ row }) => {
       const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
       return <ItemStatusBadge status={status} />;
@@ -71,10 +74,12 @@ export const columns: ColumnDef<Item>[] = [
     header: "Insured's quote ($)",
     cell: ({ row }) => {
       const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
+      const ourQuote = row.original[ITEM_KEYS.OUR_QUOTE] as number;
       const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL];
       return (
         <InsuredsQuoteCell
           oisQuote={oisQuote}
+          ourQuote={ourQuote}
           receiptPhotoUrl={receiptPhotoUrl}
         />
       );

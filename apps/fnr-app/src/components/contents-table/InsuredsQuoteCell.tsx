@@ -1,19 +1,21 @@
 import React from 'react';
-import { GreenTickIcon } from './GreenTickIcon';
 import { ReceiptIcon } from './ReceiptIcon';
+import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 
 interface InsuredsQuoteCellProps {
   oisQuote: number | null;
+  ourQuote: number | null;
   receiptPhotoUrl?: string;
 }
 
 export const InsuredsQuoteCell = ({
   oisQuote,
+  ourQuote,
   receiptPhotoUrl,
 }: InsuredsQuoteCellProps) => (
   <div className="flex items-center justify-between w-full">
     {receiptPhotoUrl && receiptPhotoUrl !== '' ? (
-      <div>
+      <div className="mr-6">
         <ReceiptIcon />
       </div>
     ) : (
@@ -21,7 +23,9 @@ export const InsuredsQuoteCell = ({
     )}
     <div className="flex items-center">
       {oisQuote !== null ? `${oisQuote}` : ''}
-      <GreenTickIcon />
+      {oisQuote !== null && ourQuote !== null && (
+        <QuoteDifferenceIcon oisquote={oisQuote} ourquote={ourQuote} />
+      )}
     </div>
   </div>
 );
