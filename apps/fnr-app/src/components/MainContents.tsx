@@ -95,22 +95,6 @@ export const MainContents = () => {
         <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
       </div>
 
-      <div className="mb-4">
-        <Input
-          type="number"
-          placeholder="Item ID to update"
-          value={updateItemId !== null ? updateItemId.toString() : ''}
-          onChange={(e) => setUpdateItemId(parseInt(e.target.value, 10))}
-        />
-        <Input
-          type="text"
-          placeholder="New item name"
-          value={updateItemName}
-          onChange={(e) => setUpdateItemName(e.target.value)}
-        />
-        <Button onClick={handleUpdateItem}>Update Item</Button>
-      </div>
-
       <ContentsTable
         data={tableData}
         addItem={addItem}
