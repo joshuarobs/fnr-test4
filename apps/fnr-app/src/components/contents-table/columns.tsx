@@ -4,6 +4,7 @@ import { ModelSerialCell } from './ModelSerialCell';
 import { BrowseLinkButton } from './BrowseLinkButton';
 import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './InsuredsQuoteCell';
+import { OurQuoteCell } from './OurQuoteCell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,7 +68,7 @@ export const columns: ColumnDef<Item>[] = [
   },
   {
     accessorKey: ITEM_KEYS.OIS_QUOTE,
-    header: "Insured's quote",
+    header: "Insured's quote ($)",
     cell: ({ row }) => {
       const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
       const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL];
@@ -81,11 +82,14 @@ export const columns: ColumnDef<Item>[] = [
   },
   {
     accessorKey: ITEM_KEYS.OUR_QUOTE,
-    header: 'Our quote',
+    header: 'Our quote ($)',
+    cell: ({ row }) => {
+      return <OurQuoteCell item={row.original} />;
+    },
   },
   {
     accessorKey: 'difference',
-    header: 'Difference',
+    header: 'Difference ($)',
     cell: ({ row }) => {
       const item = row.original;
       const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
@@ -96,7 +100,7 @@ export const columns: ColumnDef<Item>[] = [
       }
 
       const difference = calculateDifference(item);
-      return difference !== null ? `$${difference.toFixed(2)}` : 'N/A';
+      return difference !== null ? `${difference.toFixed(2)}` : 'N/A';
     },
   },
   {

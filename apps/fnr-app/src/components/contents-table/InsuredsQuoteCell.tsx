@@ -3,7 +3,7 @@ import { GreenTickIcon } from './GreenTickIcon';
 import { ReceiptIcon } from './ReceiptIcon';
 
 interface InsuredsQuoteCellProps {
-  oisQuote: number;
+  oisQuote: number | null;
   receiptPhotoUrl?: string;
 }
 
@@ -13,7 +13,7 @@ export const InsuredsQuoteCell = ({
 }: InsuredsQuoteCellProps) => (
   <div className="flex items-center justify-between w-full">
     <div className="flex items-center">
-      {oisQuote}
+      {oisQuote !== null ? `${oisQuote}` : ''}
       <GreenTickIcon />
     </div>
     {receiptPhotoUrl && receiptPhotoUrl !== '' && (
