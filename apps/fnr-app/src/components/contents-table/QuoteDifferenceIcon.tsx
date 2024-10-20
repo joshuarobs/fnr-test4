@@ -1,4 +1,5 @@
 import { GreenTickIcon } from './GreenTickIcon';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { TriangleUpIcon, TriangleDownIcon } from '@radix-ui/react-icons';
 
 interface QuoteDifferenceIconProps {
@@ -12,20 +13,35 @@ export const QuoteDifferenceIcon = ({
 }: QuoteDifferenceIconProps) => {
   const diff = oisquote - ourquote;
 
+  // Define color variables
+  const redColor = 'text-red-500';
+  const greenColor = 'text-green-600';
+
+  const iconStyle = {
+    display: 'inline-flex',
+    verticalAlign: 'middle',
+    position: 'relative' as const,
+  };
+
   if (diff === 0) {
     return <GreenTickIcon />;
   } else if (diff > 0) {
     return (
       <div className="flex items-center">
-        <TriangleUpIcon className="text-red-700 mr-1" />
-        <span className="text-red-500 font-semibold">(${diff.toFixed(2)})</span>
+        <CaretUpOutlined className={`${redColor} mr-1`} style={iconStyle} />
+        <span className={`${redColor} font-semibold`}>
+          (${diff.toFixed(2)})
+        </span>
       </div>
     );
   } else {
     return (
       <div className="flex items-center">
-        <TriangleDownIcon className="text-green-600 mr-1" />
-        <span className="text-green-600 font-semibold">
+        <CaretDownOutlined
+          className={`${greenColor} mr-1`}
+          style={{ ...iconStyle, top: '2px' }}
+        />
+        <span className={`${greenColor} font-semibold`}>
           (${Math.abs(diff).toFixed(2)})
         </span>
       </div>

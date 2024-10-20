@@ -17,6 +17,11 @@ import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 
+// Component for right-aligned header
+const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
+  <div className="text-right">{children}</div>
+);
+
 export const columns: ColumnDef<Item>[] = [
   {
     accessorKey: ITEM_KEYS.ID,
@@ -62,7 +67,7 @@ export const columns: ColumnDef<Item>[] = [
     accessorKey: ITEM_KEYS.STATUS,
     header: 'Status',
     meta: {
-      headerClassName: 'min-w-[80px]', // min-width, taking
+      headerClassName: 'min-w-[96px]', // min-width, taking
     },
     cell: ({ row }) => {
       const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
@@ -71,7 +76,7 @@ export const columns: ColumnDef<Item>[] = [
   },
   {
     accessorKey: ITEM_KEYS.OIS_QUOTE,
-    header: "Insured's quote ($)",
+    header: () => <RightAlignedHeader>Insured's quote ($)</RightAlignedHeader>,
     cell: ({ row }) => {
       const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
       const ourQuote = row.original[ITEM_KEYS.OUR_QUOTE] as number;
@@ -87,14 +92,14 @@ export const columns: ColumnDef<Item>[] = [
   },
   {
     accessorKey: ITEM_KEYS.OUR_QUOTE,
-    header: 'Our quote ($)',
+    header: () => <RightAlignedHeader>Our quote ($)</RightAlignedHeader>,
     cell: ({ row }) => {
       return <OurQuoteCell item={row.original} />;
     },
   },
   {
     accessorKey: 'difference',
-    header: 'Difference ($)',
+    header: () => <RightAlignedHeader>Difference ($)</RightAlignedHeader>,
     cell: ({ row }) => {
       const item = row.original;
       const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
