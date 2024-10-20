@@ -81,17 +81,17 @@ export const MainContents = () => {
     <main className="p-4">
       <h2 className="text-xl font-semibold mb-4">Main Contents</h2>
 
-      <div className="mb-4">
+      <div className="flex items-center mb-4">
         <Input
           type="text"
           placeholder="New item name"
           value={newItemName}
           onChange={(e) => setNewItemName(e.target.value)}
+          className="w-[200px] mr-2"
         />
-        <Button onClick={handleAddItem}>Add Item</Button>
-      </div>
-
-      <div className="mb-4">
+        <Button onClick={handleAddItem} className="mr-2">
+          Add Item
+        </Button>
         <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
       </div>
 

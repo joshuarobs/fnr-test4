@@ -3,6 +3,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -15,6 +16,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Button,
 } from '@react-monorepo/shared';
 
 import { Item } from './item';
@@ -39,6 +41,7 @@ const ContentsTable = <TData extends Item, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const totalAmount = data.reduce((sum, item) => sum + (item.amount || 0), 0);
@@ -46,7 +49,6 @@ const ContentsTable = <TData extends Item, TValue>({
   return (
     <div>
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -90,13 +92,25 @@ const ContentsTable = <TData extends Item, TValue>({
             </TableRow>
           )}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={columns.length - 1}>Total</TableCell>
-            <TableCell>${totalAmount.toFixed(2)}</TableCell>
-          </TableRow>
-        </TableFooter>
       </Table>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };
