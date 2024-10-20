@@ -73,7 +73,6 @@ const ContentsTable = <TData, TValue>({
               </TableRow>
             ))
           ) : (
-            // TODO: EMPTY STATE
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
@@ -83,10 +82,8 @@ const ContentsTable = <TData, TValue>({
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={7}>Total</TableCell>
-            <TableCell className="text-right">
-              ${totalAmount.toFixed(2)}
-            </TableCell>
+            <TableCell colSpan={columns.length - 1}>Total</TableCell>
+            <TableCell>${totalAmount.toFixed(2)}</TableCell>
           </TableRow>
         </TableFooter>
       </Table>

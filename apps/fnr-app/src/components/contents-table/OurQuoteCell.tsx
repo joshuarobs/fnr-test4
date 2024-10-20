@@ -10,5 +10,5 @@ export const OurQuoteCell = ({ item }: OurQuoteCellProps) => {
     maximumFractionDigits: 2,
   }).format(item.ourquote);
 
-  return <div>{formattedQuote}</div>;
+  return <div className="text-right">{formattedQuote}</div>;
 };

@@ -96,11 +96,15 @@ export const columns: ColumnDef<Item>[] = [
       const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
 
       if (oisQuote === ourQuote) {
-        return 'Same';
+        return <div className="text-right">Same</div>;
       }
 
       const difference = calculateDifference(item);
-      return difference !== null ? `${difference.toFixed(2)}` : 'N/A';
+      return difference !== null ? (
+        <div className="text-right">{difference.toFixed(2)}</div>
+      ) : (
+        <div className="text-right">N/A</div>
+      );
     },
   },
   {
