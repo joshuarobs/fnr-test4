@@ -79,8 +79,6 @@ export const MainContents = () => {
 
   return (
     <main className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Main Contents</h2>
-
       <div className="flex items-center mb-4">
         <Input
           type="text"
