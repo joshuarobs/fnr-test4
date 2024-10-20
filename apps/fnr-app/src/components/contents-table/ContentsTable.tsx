@@ -18,9 +18,9 @@ import {
 } from '@react-monorepo/shared';
 
 import { Item } from './item';
+import { createColumns } from './columns';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
   data: TData[];
   addItem: (newItem: Item) => void;
   removeItem: (itemId: number) => void;
@@ -28,12 +28,13 @@ interface DataTableProps<TData, TValue> {
 }
 
 const ContentsTable = <TData extends Item, TValue>({
-  columns,
   data,
   addItem,
   removeItem,
   updateItem,
 }: DataTableProps<TData, TValue>) => {
+  const columns = React.useMemo(() => createColumns(updateItem), [updateItem]);
+
   const table = useReactTable({
     data,
     columns,

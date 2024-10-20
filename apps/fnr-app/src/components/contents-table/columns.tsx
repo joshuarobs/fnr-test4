@@ -5,6 +5,7 @@ import { BrowseLinkButton } from './BrowseLinkButton';
 import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './InsuredsQuoteCell';
 import { OurQuoteCell } from './OurQuoteCell';
+import { ItemNameCell } from './ItemNameCell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,18 +38,7 @@ export const createColumns = (
     accessorKey: ITEM_KEYS.NAME,
     header: 'Name',
     cell: ({ row }) => {
-      const name = row.getValue(ITEM_KEYS.NAME) as string;
-      return name ? (
-        <div className="flex items-center w-full">
-          <span className="flex-grow text-left truncate">{name}</span>
-          <div className="flex justify-center mx-4">
-            <BrowseLinkButton
-              tooltipText="Search for item in Google in a new tab"
-              searchText={name}
-            />
-          </div>
-        </div>
-      ) : null;
+      return <ItemNameCell item={row.original} updateItem={updateItem} />;
     },
   },
   {

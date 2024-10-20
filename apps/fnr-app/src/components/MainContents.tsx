@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Button, Input } from '@react-monorepo/shared';
 import { ContentsTable } from './contents-table/ContentsTable';
-import { createColumns } from './contents-table/columns';
 import { placeholderContentsData } from './contents-table/placeholderContentsData';
 import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
@@ -25,8 +24,6 @@ export const MainContents = () => {
       tableData.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
   };
-
-  const columns = useMemo(() => createColumns(updateItem), []);
 
   const getHighestId = () => {
     return tableData.reduce((maxId, item) => Math.max(maxId, item.id), 0);
@@ -115,7 +112,6 @@ export const MainContents = () => {
       </div>
 
       <ContentsTable
-        columns={columns}
         data={tableData}
         addItem={addItem}
         removeItem={removeItem}
