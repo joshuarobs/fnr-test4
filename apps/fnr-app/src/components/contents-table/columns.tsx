@@ -92,6 +92,9 @@ export const columns: ColumnDef<Item>[] = [
   },
   {
     accessorKey: ITEM_KEYS.OUR_QUOTE,
+    meta: {
+      headerClassName: 'min-w-[112px]', // min-width, taking
+    },
     header: () => <RightAlignedHeader>Our quote ($)</RightAlignedHeader>,
     cell: ({ row }) => {
       return <OurQuoteCell item={row.original} />;
