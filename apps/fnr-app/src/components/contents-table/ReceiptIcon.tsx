@@ -15,11 +15,10 @@ export const ReceiptIcon = () => {
         <TooltipTrigger asChild>
           <Button
             variant="outline"
-            size="sm"
-            className="p-1.5 rounded-full bg-blue-400 hover:bg-blue-500"
+            className="w-8 h-8 p-1 rounded-full bg-blue-400 hover:bg-blue-500 flex items-center justify-center"
             aria-label="View receipt"
           >
-            <Receipt className="w-5 h-5 text-white" />
+            <Receipt className="w-4 h-4 text-white" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>

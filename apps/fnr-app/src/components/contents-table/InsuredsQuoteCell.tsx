@@ -15,7 +15,7 @@ export const InsuredsQuoteCell = ({
 }: InsuredsQuoteCellProps) => (
   <div className="flex items-center justify-between w-full">
     {receiptPhotoUrl && receiptPhotoUrl !== '' ? (
-      <div className="mr-6">
+      <div className="mr-4">
         <ReceiptIcon />
       </div>
     ) : (
