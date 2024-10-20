@@ -22,7 +22,9 @@ const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
   <div className="text-right">{children}</div>
 );
 
-export const columns: ColumnDef<Item>[] = [
+export const createColumns = (
+  updateItem: (item: Item) => void
+): ColumnDef<Item>[] => [
   {
     accessorKey: ITEM_KEYS.ID,
     header: 'ID',
@@ -97,7 +99,7 @@ export const columns: ColumnDef<Item>[] = [
     },
     header: () => <RightAlignedHeader>Our quote ($)</RightAlignedHeader>,
     cell: ({ row }) => {
-      return <OurQuoteCell item={row.original} />;
+      return <OurQuoteCell item={row.original} updateItem={updateItem} />;
     },
   },
   {
@@ -137,7 +139,7 @@ export const columns: ColumnDef<Item>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() =>
-                navigator.clipboard.writeText(payment[ITEM_KEYS.ID])
+                navigator.clipboard.writeText(payment[ITEM_KEYS.ID].toString())
               }
             >
               Copy payment ID

@@ -2,7 +2,7 @@ import { Item } from './item';
 
 export const placeholderContentsData: Item[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Laptop',
     category: 'Electronics',
     modelSerialNumber: 'LT-2023-XPS15',
@@ -16,7 +16,7 @@ export const placeholderContentsData: Item[] = [
     receiptPhotoUrl: 'https://example.com/receipts/laptop.jpg',
   },
   {
-    id: '2',
+    id: 2,
     name: 'Office Desk',
     category: 'Furniture',
     date: '2023-05-05',
@@ -28,7 +28,7 @@ export const placeholderContentsData: Item[] = [
     ourquote: 2300,
   },
   {
-    id: '3',
+    id: 3,
     name: 'Antivirus License',
     category: 'Software',
     modelSerialNumber: 'AV-2023-PRO',
@@ -42,7 +42,7 @@ export const placeholderContentsData: Item[] = [
     receiptPhotoUrl: 'https://example.com/receipts/antivirus.jpg',
   },
   {
-    id: '4',
+    id: 4,
     name: 'Smartphone',
     category: 'Electronics',
     modelSerialNumber: 'SM-G-S23-ULTRA',
@@ -56,7 +56,7 @@ export const placeholderContentsData: Item[] = [
     receiptPhotoUrl: 'https://example.com/receipts/smartphone.jpg',
   },
   {
-    id: '5',
+    id: 5,
     name: 'Groceries',
     category: 'Food',
     date: '2023-06-10',
@@ -68,7 +68,7 @@ export const placeholderContentsData: Item[] = [
     ourquote: 150,
   },
   {
-    id: '6',
+    id: 6,
     name: 'Area Rug',
     category: 'Home Decor',
     date: '2023-06-15',

@@ -4,9 +4,10 @@ import { Input } from '@react-monorepo/shared';
 
 interface OurQuoteCellProps {
   item: Item;
+  updateItem: (updatedItem: Item) => void;
 }
 
-export const OurQuoteCell = ({ item }: OurQuoteCellProps) => {
+export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(item.ourquote.toString());
 
@@ -30,10 +31,11 @@ export const OurQuoteCell = ({ item }: OurQuoteCellProps) => {
 
   const handleBlur = useCallback(() => {
     setIsEditing(false);
-    // Here you would typically update the item's ourquote value
-    // For now, we'll just update the local state
-    item.ourquote = parseFloat(value) || item.ourquote;
-  }, [value, item]);
+    const newQuote = parseFloat(value);
+    if (!isNaN(newQuote) && newQuote !== item.ourquote) {
+      updateItem({ ...item, ourquote: newQuote });
+    }
+  }, [value, item, updateItem]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {

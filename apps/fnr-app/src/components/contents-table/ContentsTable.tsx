@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -16,14 +17,22 @@ import {
   TableRow,
 } from '@react-monorepo/shared';
 
+import { Item } from './item';
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  addItem: (newItem: Item) => void;
+  removeItem: (itemId: number) => void;
+  updateItem: (updatedItem: Item) => void;
 }
 
-const ContentsTable = <TData, TValue>({
+const ContentsTable = <TData extends Item, TValue>({
   columns,
   data,
+  addItem,
+  removeItem,
+  updateItem,
 }: DataTableProps<TData, TValue>) => {
   const table = useReactTable({
     data,
@@ -31,10 +40,7 @@ const ContentsTable = <TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const totalAmount = (data as any[]).reduce(
-    (sum, item) => sum + (item.amount || 0),
-    0
-  );
+  const totalAmount = data.reduce((sum, item) => sum + (item.amount || 0), 0);
 
   return (
     <div>
