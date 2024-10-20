@@ -3,6 +3,7 @@ import { Button, Input } from '@react-monorepo/shared';
 import { ContentsTable } from './contents-table/ContentsTable';
 import { createColumns } from './contents-table/columns';
 import { placeholderContentsData } from './contents-table/placeholderContentsData';
+import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
 
 export const MainContents = () => {
@@ -27,23 +28,38 @@ export const MainContents = () => {
 
   const columns = useMemo(() => createColumns(updateItem), []);
 
+  const getHighestId = () => {
+    return tableData.reduce((maxId, item) => Math.max(maxId, item.id), 0);
+  };
+
+  const getRandomStatus = (): 'RS' | 'NR' | 'VPOL' => {
+    const rand = Math.random();
+    if (rand < 0.6) return 'NR';
+    if (rand < 0.8) return 'RS';
+    return 'VPOL';
+  };
+
   const handleAddItem = () => {
-    if (newItemName) {
-      const newItem: Item = {
-        id: Date.now(),
-        group: 'New Group',
-        name: newItemName,
-        category: 'New Category',
-        status: 'RS',
-        oisquote: null,
-        ourquote: 0,
-        date: new Date().toISOString().split('T')[0],
-        dueDate: new Date().toISOString().split('T')[0],
-        amount: 0,
-      };
-      addItem(newItem);
-      setNewItemName('');
-    }
+    let randomItem =
+      randomItemsData[Math.floor(Math.random() * randomItemsData.length)];
+    let itemName = newItemName || randomItem.name;
+
+    const newItem: Item = {
+      id: getHighestId() + 1,
+      group: randomItem.group,
+      name: itemName,
+      category: randomItem.category,
+      status: getRandomStatus(),
+      oisquote: randomItem.oisquote || null,
+      ourquote: randomItem.ourquote || 0,
+      date: new Date().toISOString().split('T')[0],
+      dueDate: new Date().toISOString().split('T')[0],
+      amount: randomItem.amount || 0,
+      modelSerialNumber: randomItem.modelSerialNumber || '',
+      receiptPhotoUrl: randomItem.receiptPhotoUrl || '',
+    };
+    addItem(newItem);
+    setNewItemName('');
   };
 
   const handleRemoveLastItem = () => {
