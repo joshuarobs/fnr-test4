@@ -1,7 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Item, calculateDifference } from './item';
 import { ModelSerialCell } from './ModelSerialCell';
-import { BrowseLinkButton } from './BrowseLinkButton';
 import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './InsuredsQuoteCell';
 import { OurQuoteCell } from './OurQuoteCell';
@@ -17,6 +16,7 @@ import {
 import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
+import { ArrowUpDown } from 'lucide-react';
 
 // Component for right-aligned header
 const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
@@ -36,7 +36,17 @@ export const createColumns = (
   },
   {
     accessorKey: ITEM_KEYS.NAME,
-    header: 'Name',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       return <ItemNameCell item={row.original} updateItem={updateItem} />;
     },

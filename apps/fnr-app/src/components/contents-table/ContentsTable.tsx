@@ -1,9 +1,11 @@
 import React from 'react';
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -38,11 +40,18 @@ const ContentsTable = <TData extends Item, TValue>({
 }: DataTableProps<TData, TValue>) => {
   const columns = React.useMemo(() => createColumns(updateItem), [updateItem]);
 
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   });
 
   const totalAmount = data.reduce((sum, item) => sum + (item.amount || 0), 0);
