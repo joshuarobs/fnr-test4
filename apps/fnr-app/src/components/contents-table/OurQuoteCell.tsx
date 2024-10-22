@@ -69,7 +69,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   return (
     <div
       className={`text-right relative p-2 rounded ${
-        isHovering ? 'bg-black bg-opacity-15' : ''
+        isHovering ? 'bg-black bg-opacity-10' : ''
       }`}
       onDoubleClick={handleDoubleClick}
       onMouseEnter={() => setIsHovering(true)}

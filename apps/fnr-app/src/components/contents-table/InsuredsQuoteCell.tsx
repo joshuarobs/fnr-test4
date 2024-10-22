@@ -19,7 +19,7 @@ export const InsuredsQuoteCell = ({
       <div></div> // Empty div to maintain layout when there's no receipt icon
     )}
     <div className="flex items-center">
-      {oisQuote !== null ? <span>${oisQuote}</span> : ''}
+      {oisQuote !== null ? <span>{oisQuote}</span> : ''}
     </div>
   </div>
 );
