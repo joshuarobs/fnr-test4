@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Input } from '@react-monorepo/shared';
-import { ContentsTableWithToolbar } from './contents-table/ContentsTableWithToolbar';
+import { ContentsTableWithToolbar } from './contents-table/ContentsTable';
 import { placeholderContentsData } from './contents-table/placeholderContentsData';
 import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
