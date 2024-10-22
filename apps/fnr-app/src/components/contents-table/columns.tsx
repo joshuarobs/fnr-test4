@@ -16,11 +16,40 @@ import {
 import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+
+// Standardized margin class for cell content
+const CELL_CONTENT_MARGIN = 'ml-4';
 
 // Component for right-aligned header
 const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
   <div className="text-right">{children}</div>
+);
+
+// Reusable sorting header component
+const SortableHeader = ({ column, title }: { column: any; title: string }) => (
+  <Button
+    variant="ghost"
+    onClick={() => {
+      const currentState = column.getIsSorted();
+      if (currentState === false) {
+        column.toggleSorting(false);
+      } else if (currentState === 'asc') {
+        column.toggleSorting(true);
+      } else {
+        column.clearSorting();
+      }
+    }}
+  >
+    {title}
+    {column.getIsSorted() === 'asc' ? (
+      <ArrowUp className="ml-2 h-4 w-4" />
+    ) : column.getIsSorted() === 'desc' ? (
+      <ArrowDown className="ml-2 h-4 w-4" />
+    ) : (
+      <ArrowUpDown className="ml-2 h-4 w-4" />
+    )}
+  </Button>
 );
 
 export const createColumns = (
@@ -28,7 +57,12 @@ export const createColumns = (
 ): ColumnDef<Item>[] => [
   {
     accessorKey: ITEM_KEYS.ID,
-    header: 'ID',
+    header: ({ column }) => <SortableHeader column={column} title="ID" />,
+    cell: ({ row }) => {
+      return (
+        <div className={CELL_CONTENT_MARGIN}>{row.getValue(ITEM_KEYS.ID)}</div>
+      );
+    },
   },
   {
     accessorKey: ITEM_KEYS.GROUP,
@@ -36,19 +70,13 @@ export const createColumns = (
   },
   {
     accessorKey: ITEM_KEYS.NAME,
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => <SortableHeader column={column} title="Name" />,
     cell: ({ row }) => {
-      return <ItemNameCell item={row.original} updateItem={updateItem} />;
+      return (
+        <div className={CELL_CONTENT_MARGIN}>
+          <ItemNameCell item={row.original} updateItem={updateItem} />
+        </div>
+      );
     },
   },
   {
