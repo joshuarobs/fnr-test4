@@ -40,15 +40,18 @@ const SortableHeader = ({ column, title }: { column: any; title: string }) => (
         column.clearSorting();
       }
     }}
+    className="w-full justify-start"
   >
-    {title}
-    {column.getIsSorted() === 'asc' ? (
-      <ArrowUp className="ml-2 h-4 w-4" />
-    ) : column.getIsSorted() === 'desc' ? (
-      <ArrowDown className="ml-2 h-4 w-4" />
-    ) : (
-      <ArrowUpDown className="ml-2 h-4 w-4" />
-    )}
+    <div className="flex items-center">
+      {title}
+      {column.getIsSorted() === 'asc' ? (
+        <ArrowUp className="ml-2 h-4 w-4" />
+      ) : column.getIsSorted() === 'desc' ? (
+        <ArrowDown className="ml-2 h-4 w-4" />
+      ) : (
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      )}
+    </div>
   </Button>
 );
 
