@@ -5,6 +5,7 @@ import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './InsuredsQuoteCell';
 import { OurQuoteCell } from './OurQuoteCell';
 import { ItemNameCell } from './ItemNameCell';
+import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { GreenTickIcon } from './GreenTickIcon';
 
 // Standardized margin class for cell content
 const CELL_CONTENT_MARGIN = 'ml-4';
@@ -126,12 +128,10 @@ export const createColumns = (
     header: () => <RightAlignedHeader>Insured's quote ($)</RightAlignedHeader>,
     cell: ({ row }) => {
       const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
-      const ourQuote = row.original[ITEM_KEYS.OUR_QUOTE] as number;
       const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL];
       return (
         <InsuredsQuoteCell
           oisQuote={oisQuote}
-          ourQuote={ourQuote}
           receiptPhotoUrl={receiptPhotoUrl}
         />
       );
@@ -142,18 +142,27 @@ export const createColumns = (
     header: () => <RightAlignedHeader>Difference ($)</RightAlignedHeader>,
     cell: ({ row }) => {
       const item = row.original;
-      const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
-      const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
+      const oisQuote = item[ITEM_KEYS.OIS_QUOTE] as number | null;
+      const ourQuote = item[ITEM_KEYS.OUR_QUOTE] as number | null;
+
+      if (oisQuote === null || ourQuote === null) {
+        return <div className="text-right">N/A</div>;
+      }
 
       if (oisQuote === ourQuote) {
-        return <div className="text-right">Same</div>;
+        return (
+          <div className="text-right">
+            Same
+            <GreenTickIcon />
+          </div>
+        );
       }
 
       const difference = calculateDifference(item);
-      return difference !== null ? (
-        <div className="text-right">{difference.toFixed(2)}</div>
-      ) : (
-        <div className="text-right">N/A</div>
+      return (
+        <div className="flex items-center justify-end">
+          <QuoteDifferenceIcon oisquote={oisQuote} ourquote={ourQuote} />
+        </div>
       );
     },
   },
