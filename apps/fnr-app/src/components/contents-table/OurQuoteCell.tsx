@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Item } from './item';
 import { Input } from '@react-monorepo/shared';
+import { PencilIcon } from 'lucide-react';
 
 interface OurQuoteCellProps {
   item: Item;
@@ -9,6 +10,7 @@ interface OurQuoteCellProps {
 
 export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [value, setValue] = useState(item.ourquote.toString());
 
   const formatQuote = (quote: number) => {
@@ -20,6 +22,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
 
   const handleDoubleClick = useCallback(() => {
     setIsEditing(true);
+    setIsHovering(false); // Cancel hover state when editing starts
   }, []);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +67,19 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   }
 
   return (
-    <div className="text-right" onDoubleClick={handleDoubleClick}>
+    <div
+      className={`text-right relative p-2 rounded ${
+        isHovering ? 'bg-black bg-opacity-15' : ''
+      }`}
+      onDoubleClick={handleDoubleClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      {isHovering && (
+        <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
+          <PencilIcon size={16} className="text-gray-500" />
+        </span>
+      )}
       {formatQuote(item.ourquote)}
     </div>
   );
