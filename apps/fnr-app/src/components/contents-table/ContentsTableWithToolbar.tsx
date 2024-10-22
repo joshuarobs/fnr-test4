@@ -5,7 +5,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from '@tanstack/react-table';
-import { ContentsTableToolbar } from './ContentsTableToolbar';
+import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
 import { ContentsTable } from './ContentsTable';
 import { Item } from './item';
 import { createColumns } from './columns';

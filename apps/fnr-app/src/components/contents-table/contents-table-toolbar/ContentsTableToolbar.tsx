@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input, Button } from '@react-monorepo/shared';
 import { Table } from '@tanstack/react-table';
+import { DataColumnToggleButton } from './DataColumnToggleButton';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -34,7 +35,7 @@ export const ContentsTableToolbar = <TData,>({
         value={filterValue}
         onChange={handleFilterChange}
       />
-      <Button onClick={toggleColumnVisibility}>Toggle Columns</Button>
+      <DataColumnToggleButton table={table} />
     </div>
   );
 };
