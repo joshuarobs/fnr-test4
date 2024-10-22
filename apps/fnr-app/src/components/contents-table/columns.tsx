@@ -81,10 +81,20 @@ export const createColumns = (
         </div>
       );
     },
+    meta: {
+      headerClassName: 'min-w-[240px]',
+    },
   },
   {
     accessorKey: ITEM_KEYS.CATEGORY,
-    header: 'Category',
+    header: ({ column }) => <SortableHeader column={column} title="Category" />,
+    cell: ({ row }) => {
+      return (
+        <div className={CELL_CONTENT_MARGIN}>
+          {row.getValue(ITEM_KEYS.CATEGORY)}
+        </div>
+      );
+    },
   },
   {
     accessorKey: ITEM_KEYS.MODEL_SERIAL_NUMBER,
@@ -98,13 +108,17 @@ export const createColumns = (
   },
   {
     accessorKey: ITEM_KEYS.STATUS,
-    header: 'Status',
+    header: ({ column }) => <SortableHeader column={column} title="Status" />,
     meta: {
       headerClassName: 'min-w-[96px]', // min-width, taking
     },
     cell: ({ row }) => {
       const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
-      return <ItemStatusBadge status={status} />;
+      return (
+        <div className={CELL_CONTENT_MARGIN}>
+          <ItemStatusBadge status={status} />
+        </div>
+      );
     },
   },
   {
