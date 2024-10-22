@@ -1,28 +1,16 @@
 import React from 'react';
-import {
-  ColumnDef,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { ColumnDef, flexRender, Table } from '@tanstack/react-table';
 
 import {
-  Table,
+  Table as UITable,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-  Button,
 } from '@react-monorepo/shared';
 
 import { Item } from './item';
-import { createColumns } from './columns';
 import { DataTablePagination } from './DataTablePagination';
 
 interface DataTableProps<TData, TValue> {
@@ -30,6 +18,7 @@ interface DataTableProps<TData, TValue> {
   addItem: (newItem: Item) => void;
   removeItem: (itemId: number) => void;
   updateItem: (updatedItem: Item) => void;
+  table: Table<TData>;
 }
 
 const ContentsTable = <TData extends Item, TValue>({
@@ -37,28 +26,11 @@ const ContentsTable = <TData extends Item, TValue>({
   addItem,
   removeItem,
   updateItem,
+  table,
 }: DataTableProps<TData, TValue>) => {
-  const columns = React.useMemo(() => createColumns(updateItem), [updateItem]);
-
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting,
-    },
-  });
-
-  const totalAmount = data.reduce((sum, item) => sum + (item.amount || 0), 0);
-
   return (
     <div>
-      <Table>
+      <UITable>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -96,13 +68,16 @@ const ContentsTable = <TData extends Item, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={table.getAllColumns().length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </UITable>
       <DataTablePagination table={table} />
     </div>
   );

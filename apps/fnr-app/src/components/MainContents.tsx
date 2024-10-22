@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Input } from '@react-monorepo/shared';
-import { ContentsTable } from './contents-table/ContentsTable';
+import { ContentsTableWithToolbar } from './contents-table/ContentsTableWithToolbar';
 import { placeholderContentsData } from './contents-table/placeholderContentsData';
 import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
@@ -93,7 +93,7 @@ export const MainContents = () => {
         <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
       </div>
 
-      <ContentsTable
+      <ContentsTableWithToolbar
         data={tableData}
         addItem={addItem}
         removeItem={removeItem}

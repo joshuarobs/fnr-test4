@@ -5,8 +5,6 @@ import {
   CaretSortIcon,
   EyeNoneIcon,
 } from '@radix-ui/react-icons';
-
-import { ColumnDef } from '@tanstack/react-table';
 import { cn } from '../../../../../shared/src/lib/utils';
 import { Button } from '@react-monorepo/shared';
 import {
