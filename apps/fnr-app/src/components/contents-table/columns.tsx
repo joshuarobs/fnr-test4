@@ -20,6 +20,18 @@ import { ITEM_KEYS } from './itemKeys';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { GreenTickIcon } from './GreenTickIcon';
 
+// New constant for short readable column names
+export const ShortReadibleColumnNames = {
+  [ITEM_KEYS.ID]: 'ID',
+  [ITEM_KEYS.GROUP]: 'Group',
+  [ITEM_KEYS.NAME]: 'Name',
+  [ITEM_KEYS.STATUS]: 'Status',
+  [ITEM_KEYS.CATEGORY]: 'Category',
+  [ITEM_KEYS.MODEL_SERIAL_NUMBER]: 'Model/Serial',
+  [ITEM_KEYS.OIS_QUOTE]: "Insured's Quote",
+  [ITEM_KEYS.OUR_QUOTE]: 'Our quote',
+};
+
 // Standardized margin class for cell content
 const CELL_CONTENT_MARGIN = 'ml-4';
 

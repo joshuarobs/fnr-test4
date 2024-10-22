@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { MixerHorizontalIcon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
@@ -11,6 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@react-monorepo/shared';
+import { ShortReadibleColumnNames } from '../columns';
 
 interface DataColumnToggleButtonProps<TData> {
   table: Table<TData>;
@@ -37,6 +39,9 @@ export function DataColumnToggleButton<TData>({
               typeof column.accessorFn !== 'undefined' && column.getCanHide()
           )
           .map((column) => {
+            const columnId = column.id as keyof typeof ShortReadibleColumnNames;
+            const displayName = ShortReadibleColumnNames[columnId] || column.id;
+
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
@@ -44,7 +49,7 @@ export function DataColumnToggleButton<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {displayName}
               </DropdownMenuCheckboxItem>
             );
           })}
