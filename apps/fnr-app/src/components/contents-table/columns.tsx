@@ -86,6 +86,21 @@ export const createColumns = (
     },
   },
   {
+    accessorKey: ITEM_KEYS.STATUS,
+    header: ({ column }) => <SortableHeader column={column} title="Status" />,
+    meta: {
+      headerClassName: 'min-w-[96px]', // min-width, taking
+    },
+    cell: ({ row }) => {
+      const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
+      return (
+        <div className={CELL_CONTENT_MARGIN}>
+          <ItemStatusBadge status={status} />
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: ITEM_KEYS.CATEGORY,
     header: ({ column }) => <SortableHeader column={column} title="Category" />,
     cell: ({ row }) => {
@@ -107,21 +122,6 @@ export const createColumns = (
     },
   },
   {
-    accessorKey: ITEM_KEYS.STATUS,
-    header: ({ column }) => <SortableHeader column={column} title="Status" />,
-    meta: {
-      headerClassName: 'min-w-[96px]', // min-width, taking
-    },
-    cell: ({ row }) => {
-      const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
-      return (
-        <div className={CELL_CONTENT_MARGIN}>
-          <ItemStatusBadge status={status} />
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: ITEM_KEYS.OIS_QUOTE,
     header: () => <RightAlignedHeader>Insured's quote ($)</RightAlignedHeader>,
     cell: ({ row }) => {
@@ -135,16 +135,6 @@ export const createColumns = (
           receiptPhotoUrl={receiptPhotoUrl}
         />
       );
-    },
-  },
-  {
-    accessorKey: ITEM_KEYS.OUR_QUOTE,
-    meta: {
-      headerClassName: 'min-w-[112px]', // min-width, taking
-    },
-    header: () => <RightAlignedHeader>Our quote ($)</RightAlignedHeader>,
-    cell: ({ row }) => {
-      return <OurQuoteCell item={row.original} updateItem={updateItem} />;
     },
   },
   {
@@ -165,6 +155,16 @@ export const createColumns = (
       ) : (
         <div className="text-right">N/A</div>
       );
+    },
+  },
+  {
+    accessorKey: ITEM_KEYS.OUR_QUOTE,
+    meta: {
+      headerClassName: 'min-w-[112px]', // min-width, taking
+    },
+    header: () => <RightAlignedHeader>Our quote ($)</RightAlignedHeader>,
+    cell: ({ row }) => {
+      return <OurQuoteCell item={row.original} updateItem={updateItem} />;
     },
   },
   {

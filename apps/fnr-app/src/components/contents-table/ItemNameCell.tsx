@@ -58,7 +58,7 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
       >
         {item.name}
       </div>
-      <div className="flex-shrink-0 ml-4 mr-2">
+      <div className="flex-shrink-0 ml-4">
         <BrowseLinkButton
           tooltipText="Search for item in Google in a new tab"
           searchText={item.name}
