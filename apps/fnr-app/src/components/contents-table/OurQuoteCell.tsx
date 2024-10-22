@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Item } from './item';
 import { Input } from '@react-monorepo/shared';
 import { PencilIcon } from 'lucide-react';
+import { OurQuoteLinkIcon } from './OurQuoteLinkIcon';
 
 interface OurQuoteCellProps {
   item: Item;
@@ -67,20 +68,25 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   }
 
   return (
-    <div
-      className={`text-right relative p-2 rounded ${
-        isHovering ? 'bg-black bg-opacity-10' : ''
-      }`}
-      onDoubleClick={handleDoubleClick}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
-      {isHovering && (
-        <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
-          <PencilIcon size={16} className="text-gray-500" />
-        </span>
-      )}
-      {formatQuote(item.ourquote)}
+    <div className="flex items-center justify-end w-full">
+      <div
+        className={`flex items-center mr-2 p-2 rounded ${
+          isHovering ? 'bg-black bg-opacity-10' : ''
+        }`}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        onDoubleClick={handleDoubleClick}
+      >
+        <div className="w-4 mr-1">
+          {isHovering ? (
+            <PencilIcon size={16} className="text-gray-500" />
+          ) : (
+            <div className="w-4 h-4" /> // Empty div to maintain space
+          )}
+        </div>
+        <div>{formatQuote(item.ourquote)}</div>
+      </div>
+      <OurQuoteLinkIcon />
     </div>
   );
 };
