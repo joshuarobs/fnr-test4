@@ -23,8 +23,11 @@ export function DataColumnToggleButton<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="ml-auto hidden h-8 lg:flex">
-          <MixerHorizontalIcon className="mr-2 h-4 w-4" />
+        <Button
+          variant="outline"
+          className="ml-auto hidden h-8 lg:flex select-none"
+        >
+          <MixerHorizontalIcon className="mr-2 h-4 w-4 select-none" />
           View
         </Button>
       </DropdownMenuTrigger>
