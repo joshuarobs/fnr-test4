@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from '@react-monorepo/shared';
 import { BrowseLinkButton } from './BrowseLinkButton';
+import truncate from 'cli-truncate';
 
 interface ModelSerialCellProps {
   modelSerialNumber: string;
@@ -59,6 +60,25 @@ export const ModelSerialCell = ({
     };
   }, []);
 
+  // Function to truncate model serial number if needed
+  const getDisplayedModelSerial = (serial: string) => {
+    const MIN_START_CHARS = 5; // minimum characters to show at start
+    const MIN_END_CHARS = 3; // minimum characters to show at end
+    const ELLIPSIS = '...';
+    const MIN_TOTAL_LENGTH = MIN_START_CHARS + MIN_END_CHARS + ELLIPSIS.length;
+
+    // If the serial is shorter than or equal to the minimum total length,
+    // show the entire serial without truncation
+    if (serial.length <= MIN_TOTAL_LENGTH) {
+      return serial;
+    }
+
+    // Otherwise, truncate with ellipsis in the middle
+    return `${serial.slice(0, MIN_START_CHARS)}${ELLIPSIS}${serial.slice(
+      -MIN_END_CHARS
+    )}`;
+  };
+
   return (
     <div className="flex items-center justify-between w-full">
       <div className="flex-grow">
@@ -72,7 +92,7 @@ export const ModelSerialCell = ({
                 onMouseLeave={handleMouseLeave}
               >
                 <span className="text-sm text-gray-900">
-                  {modelSerialNumber}
+                  {getDisplayedModelSerial(modelSerialNumber)}
                 </span>
                 {isCopied ? (
                   <CheckIcon className="w-4 h-4 text-green-600 ml-3 stroke-4 scale-125 transform" />
