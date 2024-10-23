@@ -29,7 +29,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   table,
 }: ContentaDataTableProps<TData, TValue>) => {
   return (
-    <div>
+    <div className="max-w-[1000px] w-full mx-auto">
       <UITable>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
