@@ -11,13 +11,9 @@ export const InsuredsQuoteCell = ({
   receiptPhotoUrl,
 }: InsuredsQuoteCellProps) => (
   <div className="flex items-center justify-between w-full">
-    {receiptPhotoUrl && receiptPhotoUrl !== '' ? (
-      <div className="mr-4">
-        <ReceiptIcon />
-      </div>
-    ) : (
-      <div></div> // Empty div to maintain layout when there's no receipt icon
-    )}
+    <div className="mr-4">
+      <ReceiptIcon receiptLink={receiptPhotoUrl} />
+    </div>
     <div className="flex items-center">
       {oisQuote !== null ? <span>{oisQuote}</span> : ''}
     </div>
