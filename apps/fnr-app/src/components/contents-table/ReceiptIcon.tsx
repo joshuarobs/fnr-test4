@@ -20,27 +20,72 @@ interface ReceiptIconProps {
 
 export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [prevSelectedFile, setPrevSelectedFile] = useState<File | null>(null);
+  const [websiteUrl, setWebsiteUrl] = useState<string>('');
+  const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const calculateChanges = () => {
+    const fileChanged =
+      selectedFile !== null && selectedFile !== prevSelectedFile;
+    const urlChanged = websiteUrl !== prevWebsiteUrl && websiteUrl !== '';
+    return fileChanged || urlChanged;
+  };
+
+  const handlePopoverOpenChange = (open: boolean) => {
+    if (!open) {
+      if (websiteUrl === '' && !selectedFile) {
+        setHasChanges(false);
+        setPrevWebsiteUrl('');
+        setPrevSelectedFile(null);
+      } else {
+        setHasChanges(calculateChanges());
+      }
+    }
+    setIsOpen(open);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const file = e.target.files?.[0];
     if (file) {
+      setPrevSelectedFile(selectedFile);
       setSelectedFile(file);
     }
+  };
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPrevWebsiteUrl(websiteUrl);
+    setWebsiteUrl(e.target.value);
+  };
+
+  const handleCancel = () => {
+    if (websiteUrl === '' && !selectedFile) {
+      setHasChanges(false);
+      setPrevWebsiteUrl('');
+      setPrevSelectedFile(null);
+    } else {
+      setHasChanges(calculateChanges());
+    }
+    setIsOpen(false);
   };
 
   const buttonContent = () => (
     <Button
       variant="outline"
       className={`w-8 h-8 p-1 rounded-full flex items-center justify-center cursor-pointer ${
-        receiptLink || selectedFile
+        receiptLink || selectedFile || websiteUrl
           ? 'bg-blue-400 hover:bg-blue-500'
           : 'bg-white hover:bg-white'
-      }`}
-      aria-label={receiptLink || selectedFile ? 'View receipt' : 'Add receipt'}
+      } ${hasChanges ? 'shadow-[0_0_10px_rgba(249,115,22,1.0)]' : ''}`}
+      aria-label={
+        receiptLink || selectedFile || websiteUrl
+          ? 'View receipt'
+          : 'Add receipt'
+      }
     >
-      {receiptLink || selectedFile ? (
+      {receiptLink || selectedFile || websiteUrl ? (
         <Receipt className="w-4 h-4 text-white" />
       ) : (
         <Plus className="w-5 h-5 text-gray-500" />
@@ -49,14 +94,16 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
   );
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={handlePopoverOpenChange}>
       <PopoverTrigger>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>{buttonContent()}</TooltipTrigger>
             <TooltipContent>
               <p>
-                {receiptLink || selectedFile ? 'View receipt' : 'Add receipt'}
+                {receiptLink || selectedFile || websiteUrl
+                  ? 'View receipt'
+                  : 'Add receipt'}
               </p>
             </TooltipContent>
           </Tooltip>
@@ -100,9 +147,14 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
             <div className="grid grid-cols-3 items-center gap-4">
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
-                <Label htmlFor="maxWidth">Website</Label>
+                <Label htmlFor="website-url">Website</Label>
               </div>
-              <Input id="maxWidth" defaultValue="" className="col-span-2 h-8" />
+              <Input
+                id="website-url"
+                value={websiteUrl}
+                onChange={handleUrlChange}
+                className="col-span-2 h-8"
+              />
             </div>
           </div>
           <Separator />
@@ -111,7 +163,7 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
               variant="outline"
               size="sm"
               className="px-3"
-              onClick={() => setIsOpen(false)}
+              onClick={handleCancel}
             >
               Cancel
             </Button>
