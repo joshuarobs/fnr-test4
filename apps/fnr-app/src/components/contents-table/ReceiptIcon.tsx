@@ -6,6 +6,9 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@react-monorepo/shared';
 
 interface ReceiptIconProps {
@@ -32,13 +35,18 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
   );
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{buttonContent()}</TooltipTrigger>
-        <TooltipContent>
-          <p>{receiptLink ? 'View receipt' : 'Add receipt'}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Popover>
+      <PopoverTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>{buttonContent()}</TooltipTrigger>
+            <TooltipContent>
+              <p>{receiptLink ? 'View receipt' : 'Add receipt'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </PopoverTrigger>
+      <PopoverContent>Place content for the popover here.</PopoverContent>
+    </Popover>
   );
 };
