@@ -9,5 +9,11 @@ declare module '@tanstack/react-table' {
   interface ColumnMeta {
     headerClassName?: string;
     cellClassName?: string;
+    // Freezable column functionality
+    // https://github.com/GlebKodrik/table/blob/master/src/components/Table/tanstack.d.ts
+    isGroup?: boolean;
+    isHaveMenu?: boolean;
+    collapseVisible?: string[];
+    dataType?: 'number' | 'text';
   }
 }
