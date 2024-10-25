@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ColumnDef, flexRender, Table } from '@tanstack/react-table';
 
 import {
@@ -13,6 +13,7 @@ import {
 import { Item } from './item';
 import { DataTablePagination } from './DataTablePagination';
 import styles from './ContentsDataTable.module.css';
+import { ITEM_KEYS } from './itemKeys';
 
 interface ContentaDataTableProps<TData, TValue> {
   data: TData[];
@@ -21,6 +22,9 @@ interface ContentaDataTableProps<TData, TValue> {
   updateItem: (updatedItem: Item) => void;
   table: Table<TData>;
 }
+
+// Type for valid column IDs based on Item type
+type ItemColumnId = keyof Item;
 
 export const ContentsDataTable = <TData extends Item, TValue>({
   data,
@@ -31,6 +35,13 @@ export const ContentsDataTable = <TData extends Item, TValue>({
 }: ContentaDataTableProps<TData, TValue>) => {
   const mainTableRef = useRef<HTMLDivElement>(null);
   const frozenTableRef = useRef<HTMLDivElement>(null);
+
+  // State for frozen column keys using ITEM_KEYS values
+  const [frozenColumnKeys] = useState<ItemColumnId[]>([
+    ITEM_KEYS.ID,
+    ITEM_KEYS.GROUP,
+    ITEM_KEYS.NAME,
+  ] as ItemColumnId[]);
 
   // Sync scroll positions between frozen and main tables
   useEffect(() => {
@@ -49,8 +60,13 @@ export const ContentsDataTable = <TData extends Item, TValue>({
     return () => mainTable.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const frozenColumns = table.getAllColumns().slice(0, 3);
-  const regularColumns = table.getAllColumns().slice(3);
+  const allColumns = table.getAllColumns();
+  const frozenColumns = allColumns.filter((col) =>
+    frozenColumnKeys.includes(col.id as ItemColumnId)
+  );
+  const regularColumns = allColumns.filter(
+    (col) => !frozenColumnKeys.includes(col.id as ItemColumnId)
+  );
 
   return (
     <div className="max-w-[1000px] w-full mx-auto">
@@ -61,19 +77,25 @@ export const ContentsDataTable = <TData extends Item, TValue>({
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.slice(0, 3).map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className={`${styles.frozenHeaderCell} ${header.column.columnDef.meta?.headerClassName}`}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
+                  {headerGroup.headers
+                    .filter((header) =>
+                      frozenColumnKeys.includes(
+                        header.column.id as ItemColumnId
+                      )
+                    )
+                    .map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className={`${styles.frozenHeaderCell} ${header.column.columnDef.meta?.headerClassName}`}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
                 </TableRow>
               ))}
             </TableHeader>
@@ -88,7 +110,11 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                     >
                       {row
                         .getVisibleCells()
-                        .slice(0, 3)
+                        .filter((cell) =>
+                          frozenColumnKeys.includes(
+                            cell.column.id as ItemColumnId
+                          )
+                        )
                         .map((cell) => (
                           <TableCell
                             key={cell.id}
