@@ -2,14 +2,14 @@ import React from 'react';
 import { Input } from '@react-monorepo/shared';
 import { Table } from '@tanstack/react-table';
 import { DataColumnToggleButton } from './DataColumnToggleButton';
+import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
+import { Item } from '../item';
 
-interface ContentsTableToolbarProps<TData> {
-  table: Table<TData>;
+interface ContentsTableToolbarProps {
+  table: Table<Item>;
 }
 
-export const ContentsTableToolbar = <TData,>({
-  table,
-}: ContentsTableToolbarProps<TData>) => {
+export const ContentsTableToolbar = ({ table }: ContentsTableToolbarProps) => {
   const globalFilter = table.getState().globalFilter;
 
   return (
@@ -21,7 +21,10 @@ export const ContentsTableToolbar = <TData,>({
         value={globalFilter ?? ''}
         onChange={(event) => table.setGlobalFilter(event.target.value)}
       />
-      <DataColumnToggleButton table={table} />
+      <div className="flex items-center">
+        <FreezeColumnToggleButton table={table} />
+        <DataColumnToggleButton table={table} />
+      </div>
     </div>
   );
 };
