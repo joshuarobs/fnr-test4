@@ -10,7 +10,7 @@ export const placeholderContentsData: Item[] = [
     dueDate: '2023-05-15',
     amount: 1500.0,
     status: 'RS',
-    group: '',
+    group: 'Home Office',
     oisquote: 2000, // Overinflated
     ourquote: 1500,
     receiptPhotoUrl: 'https://example.com/receipts/laptop.jpg',
@@ -23,7 +23,7 @@ export const placeholderContentsData: Item[] = [
     dueDate: '2023-05-19',
     amount: 2300.5,
     status: 'NR',
-    group: '',
+    group: 'Home Office',
     oisquote: 2000, // Under-inflated
     ourquote: 2300,
   },
@@ -75,7 +75,7 @@ export const placeholderContentsData: Item[] = [
     dueDate: '2023-06-29',
     amount: 500.0,
     status: 'NR',
-    group: '',
+    group: 'Loungeroom',
     oisquote: 500, // Same as ourquote
     ourquote: 500,
   },
@@ -88,7 +88,7 @@ export const placeholderContentsData: Item[] = [
     dueDate: '2023-07-15',
     amount: 250.0,
     status: 'RS',
-    group: '',
+    group: 'Kitchen',
     oisquote: 300, // Overinflated
     ourquote: 250,
     receiptPhotoUrl: 'https://example.com/receipts/coffeemaker.jpg',
@@ -128,7 +128,7 @@ export const placeholderContentsData: Item[] = [
     dueDate: '2023-07-29',
     amount: 180.5,
     status: 'NR',
-    group: '',
+    group: 'Bedroom 1',
     oisquote: 180, // Fair
     ourquote: 180,
   },
