@@ -35,6 +35,7 @@ export const ShortReadibleColumnNames = {
   [ITEM_KEYS.MODEL_SERIAL_NUMBER]: 'Model/Serial',
   [ITEM_KEYS.OIS_QUOTE]: "Insured's Quote",
   [ITEM_KEYS.OUR_QUOTE]: 'Our quote',
+  [ITEM_KEYS.ACTIONS]: '',
 };
 
 // Standardized margin class for cell content
@@ -224,7 +225,8 @@ export const createColumns = (
     },
   },
   {
-    id: 'actions',
+    accessorKey: ITEM_KEYS.ACTIONS,
+    header: () => <div />,
     cell: ({ row }) => {
       const payment = row.original;
 

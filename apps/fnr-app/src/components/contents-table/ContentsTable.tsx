@@ -6,6 +6,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   FilterFn,
+  ColumnDef,
 } from '@tanstack/react-table';
 import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
 import { ContentsDataTable } from './ContentsDataTable';
@@ -34,6 +35,11 @@ export const ContentsTableWithToolbar: React.FC<
   const columns = React.useMemo(() => createColumns(updateItem), [updateItem]);
   const [globalFilter, setGlobalFilter] = React.useState('');
 
+  // Initialize column order with all column IDs
+  const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
+    columns.map((col) => col.id || '').filter(Boolean)
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -45,7 +51,9 @@ export const ContentsTableWithToolbar: React.FC<
     globalFilterFn: fuzzyFilter,
     state: {
       globalFilter,
+      columnOrder,
     },
+    onColumnOrderChange: setColumnOrder,
   });
 
   return (

@@ -11,4 +11,5 @@ export const ITEM_KEYS = {
   DATE: 'date',
   DUE_DATE: 'dueDate',
   AMOUNT: 'amount',
+  ACTIONS: 'actions',
 } as const;
