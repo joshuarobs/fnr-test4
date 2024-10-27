@@ -1,6 +1,6 @@
 import { Button, ScrollArea, Separator } from '@react-monorepo/shared';
 import { placeholderLatestActivities } from './placeholderLatestActivities';
-import { LatestActivityCard } from './LatestActivityCard';
+import { LatestActivityEntry } from './LatestActivityEntry';
 
 export const LatestActivitiesContainer = () => {
   return (
@@ -15,7 +15,7 @@ export const LatestActivitiesContainer = () => {
       <ScrollArea className="flex-grow">
         <div>
           {placeholderLatestActivities.map((activity) => (
-            <LatestActivityCard key={activity.id} activity={activity} />
+            <LatestActivityEntry key={activity.id} activity={activity} />
           ))}
         </div>
       </ScrollArea>
