@@ -4,6 +4,7 @@ import { ContentsTableWithToolbar } from './contents-table/ContentsTable';
 import { placeholderContentsData } from './contents-table/placeholderContentsData';
 import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
+import { TestAddDeleteStuff } from './contents-table/TestAddDeleteStuff';
 
 export const MainContents = () => {
   const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
@@ -79,20 +80,12 @@ export const MainContents = () => {
 
   return (
     <main className="flex-1 min-w-0 p-4">
-      <div className="flex items-center mb-2">
-        <Input
-          type="text"
-          placeholder="New item name"
-          value={newItemName}
-          onChange={(e) => setNewItemName(e.target.value)}
-          className="w-[200px] mr-2"
-        />
-        <Button onClick={handleAddItem} className="mr-2">
-          Add Item
-        </Button>
-        <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
-      </div>
-
+      <TestAddDeleteStuff
+        newItemName={newItemName}
+        setNewItemName={setNewItemName}
+        handleAddItem={handleAddItem}
+        handleRemoveLastItem={handleRemoveLastItem}
+      />
       <ContentsTableWithToolbar
         data={tableData}
         addItem={addItem}
