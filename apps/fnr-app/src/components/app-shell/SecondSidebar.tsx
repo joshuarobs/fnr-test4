@@ -43,10 +43,6 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
           {/* Activity */}
           {/* ======================================== */}
           <LatestActivitiesContainer />
-          <div className="space-y-0">
-            <SidebarTab icon={<PersonIcon />} label="Assigned Users" />
-            <SidebarTab icon={<BellIcon />} label="Notifications" />
-          </div>
           <SidebarSeparator />
           {/* ======================================== */}
           {/* Stats */}
