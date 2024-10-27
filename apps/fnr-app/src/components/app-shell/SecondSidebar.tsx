@@ -2,6 +2,7 @@ import React from 'react';
 import { cn } from '../../../../../shared/src/lib/utils';
 import { SidebarTab } from './SidebarTab';
 import { Separator } from '@react-monorepo/shared';
+import { LatestActivitiesContainer } from '../second-sidebar/LatestActivitiesContainer';
 
 import {
   InfoCircledIcon,
@@ -41,9 +42,7 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
           {/* ======================================== */}
           {/* Activity */}
           {/* ======================================== */}
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Activity
-          </h2>
+          <LatestActivitiesContainer />
           <div className="space-y-0">
             <SidebarTab icon={<PersonIcon />} label="Assigned Users" />
             <SidebarTab icon={<BellIcon />} label="Notifications" />
