@@ -1,10 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Item, calculateDifference } from './item';
-import { ModelSerialCell } from './ModelSerialCell';
+import { ModelSerialCell } from './cells/ModelSerialCell';
 import { ItemStatusBadge } from './ItemStatusBadge';
-import { InsuredsQuoteCell } from './InsuredsQuoteCell';
-import { OurQuoteCell } from './OurQuoteCell';
-import { ItemNameCell } from './ItemNameCell';
+import { InsuredsQuoteCell } from './cells/InsuredsQuoteCell';
+import { OurQuoteCell } from './cells/OurQuoteCell';
+import { ItemNameCell } from './cells/ItemNameCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import {
   DropdownMenu,
