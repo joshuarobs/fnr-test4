@@ -60,6 +60,14 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
   const truncatedName = cliTruncate(item.name, 25, { position: 'end' });
   const shouldShowTooltip = item.name.length > 25;
 
+  // Ensures long text stays on a single line with ellipsis instead of wrapping to two lines
+  // This is applied directly to the element to avoid CSS module conflicts
+  const textStyle = {
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  };
+
   return (
     <div className="flex items-center justify-between w-full">
       {shouldShowTooltip ? (
@@ -69,6 +77,7 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
               <div
                 onDoubleClick={handleDoubleClick}
                 className="cursor-pointer flex-grow"
+                style={textStyle}
               >
                 {truncatedName}
               </div>
@@ -82,6 +91,7 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
         <div
           onDoubleClick={handleDoubleClick}
           className="cursor-pointer flex-grow"
+          style={textStyle}
         >
           {truncatedName}
         </div>
