@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Input } from '@react-monorepo/shared';
 import { Item } from './item';
 import { BrowseLinkButton } from './BrowseLinkButton';
+import cliTruncate from 'cli-truncate';
 
 interface ItemNameCellProps {
   item: Item;
@@ -50,13 +51,16 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
     );
   }
 
+  const truncatedName = cliTruncate(item.name, 25, { position: 'end' });
+
   return (
     <div className="flex items-center justify-between w-full">
       <div
         onDoubleClick={handleDoubleClick}
-        className="cursor-pointer flex-grow truncate"
+        className="cursor-pointer flex-grow"
+        title={item.name.length > 25 ? item.name : undefined}
       >
-        {item.name}
+        {truncatedName}
       </div>
       <div className="flex-shrink-0 ml-4">
         <BrowseLinkButton
