@@ -1,5 +1,12 @@
 import { FileIcon } from 'lucide-react';
 import { type Activity } from './placeholderLatestActivities';
+import { formatDistance } from 'date-fns';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from '@react-monorepo/shared';
 
 const NAME_TRUNCATION_LENGTH = 20;
 
@@ -26,9 +33,20 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
           <div className="flex-1">
             <p className="text-sm font-medium">{truncatedName}</p>
             <p className="text-sm">{activity.action}</p>
-            <p className="text-xs text-muted-foreground">
-              {activity.timestamp.toLocaleString()}
-            </p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-sm text-muted-foreground">
+                    {formatDistance(activity.timestamp, new Date(), {
+                      addSuffix: true,
+                    })}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {activity.timestamp.toLocaleString()}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </div>
