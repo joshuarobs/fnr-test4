@@ -49,7 +49,7 @@ export const ContentsTableWithToolbar: React.FC<
   });
 
   return (
-    <div>
+    <div className="w-full">
       <ContentsTableToolbar table={table} />
       <ContentsDataTable
         data={data}

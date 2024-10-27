@@ -29,7 +29,7 @@ export const placeholderContentsData: Item[] = [
   },
   {
     id: 3,
-    name: 'Antivirus License Very Long Value',
+    name: 'Antivirus License Very Very Very Very Long Value',
     category: 'Software',
     modelSerialNumber: 'AV-2023-PRO',
     date: '2023-04-15',

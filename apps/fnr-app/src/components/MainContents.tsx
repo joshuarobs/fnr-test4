@@ -78,7 +78,7 @@ export const MainContents = () => {
   };
 
   return (
-    <main className="p-4">
+    <main className="flex-1 min-w-0 p-4">
       <div className="flex items-center mb-4">
         <Input
           type="text"

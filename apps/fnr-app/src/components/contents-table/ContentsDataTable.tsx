@@ -69,7 +69,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   );
 
   return (
-    <div className="max-w-[1000px] w-full mx-auto">
+    <div className="w-full">
       <div className={styles.tableContainer} ref={mainTableRef}>
         {/* Frozen Columns */}
         <div className={styles.frozenColumnsWrapper} ref={frozenTableRef}>
