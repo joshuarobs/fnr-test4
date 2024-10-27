@@ -5,6 +5,7 @@ import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './cells/InsuredsQuoteCell';
 import { OurQuoteCell } from './cells/OurQuoteCell';
 import { ItemNameCell } from './cells/ItemNameCell';
+import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import {
   DropdownMenu,
@@ -92,31 +93,9 @@ export const createColumns = (
     header: 'Group',
     cell: ({ row }) => {
       const group = row.getValue(ITEM_KEYS.GROUP) as string;
-      const truncatedGroup = cliTruncate(group, 15, { position: 'end' });
-      const shouldShowTooltip = group.length > 15;
-
-      const textStyle = {
-        whiteSpace: 'nowrap' as const,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      };
-
       return (
         <div className={CELL_CONTENT_MARGIN}>
-          {shouldShowTooltip ? (
-            <TooltipProvider>
-              <Tooltip delayDuration={350}>
-                <TooltipTrigger asChild>
-                  <div style={textStyle}>{truncatedGroup}</div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{group}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <div style={textStyle}>{truncatedGroup}</div>
-          )}
+          <GroupCell group={group} />
         </div>
       );
     },
