@@ -80,12 +80,15 @@ export const MainContents = () => {
 
   return (
     <main className="flex-1 min-w-0 p-4">
-      <TestAddDeleteStuff
-        newItemName={newItemName}
-        setNewItemName={setNewItemName}
-        handleAddItem={handleAddItem}
-        handleRemoveLastItem={handleRemoveLastItem}
-      />
+      <div className="flex justify-between items-center">
+        <div>Test</div>
+        <TestAddDeleteStuff
+          newItemName={newItemName}
+          setNewItemName={setNewItemName}
+          handleAddItem={handleAddItem}
+          handleRemoveLastItem={handleRemoveLastItem}
+        />
+      </div>
       <ContentsTableWithToolbar
         data={tableData}
         addItem={addItem}
