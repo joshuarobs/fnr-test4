@@ -5,6 +5,7 @@ import { placeholderContentsData } from './contents-table/placeholderContentsDat
 import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
 import { TestAddDeleteStuff } from './contents-table/TestAddDeleteStuff';
+import { TotalCalculatedPriceText } from './contents-other/TotalCalculatedPriceText';
 
 export const MainContents = () => {
   const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
@@ -81,7 +82,18 @@ export const MainContents = () => {
   return (
     <main className="flex-1 min-w-0 p-4">
       <div className="flex justify-between items-center">
-        <div>Test</div>
+        <div className="flex gap-4">
+          <TotalCalculatedPriceText
+            title="Our Quote"
+            value={1500}
+            difference={200}
+          />
+          <TotalCalculatedPriceText
+            title="Insureds Quote"
+            value={1300}
+            difference={-200}
+          />
+        </div>
         <TestAddDeleteStuff
           newItemName={newItemName}
           setNewItemName={setNewItemName}
