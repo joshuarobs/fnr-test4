@@ -13,12 +13,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from '@react-monorepo/shared';
 import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { GreenTickIcon } from './GreenTickIcon';
+import cliTruncate from 'cli-truncate';
 
 // New constant for short readable column names
 export const ShortReadibleColumnNames = {
@@ -84,6 +89,36 @@ export const createColumns = (
   {
     accessorKey: ITEM_KEYS.GROUP,
     header: 'Group',
+    cell: ({ row }) => {
+      const group = row.getValue(ITEM_KEYS.GROUP) as string;
+      const truncatedGroup = cliTruncate(group, 15, { position: 'end' });
+      const shouldShowTooltip = group.length > 15;
+
+      const textStyle = {
+        whiteSpace: 'nowrap' as const,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+      };
+
+      return (
+        <div className={CELL_CONTENT_MARGIN}>
+          {shouldShowTooltip ? (
+            <TooltipProvider>
+              <Tooltip delayDuration={350}>
+                <TooltipTrigger asChild>
+                  <div style={textStyle}>{truncatedGroup}</div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{group}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <div style={textStyle}>{truncatedGroup}</div>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: ITEM_KEYS.NAME,

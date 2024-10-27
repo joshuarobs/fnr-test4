@@ -50,7 +50,7 @@ export const placeholderContentsData: Item[] = [
     dueDate: '2023-06-15',
     amount: 1200.0,
     status: 'RS',
-    group: '',
+    group: 'Very Very Very Very Long Value',
     oisquote: 1600, // Overinflated
     ourquote: 1200,
     receiptPhotoUrl: 'https://example.com/receipts/smartphone.jpg',
