@@ -79,7 +79,7 @@ export const MainContents = () => {
 
   return (
     <main className="flex-1 min-w-0 p-4">
-      <div className="flex items-center mb-4">
+      <div className="flex items-center mb-2">
         <Input
           type="text"
           placeholder="New item name"
