@@ -20,7 +20,7 @@ export function FreezeColumnToggleButton({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="mr-2">
+        <Button variant="outline" className="mr-2 select-none">
           <LockClosedIcon className="mr-2 h-4 w-4" />
           Freeze Columns
         </Button>
