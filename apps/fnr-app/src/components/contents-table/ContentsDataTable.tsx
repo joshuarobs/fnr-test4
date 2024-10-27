@@ -116,10 +116,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                           )
                         )
                         .map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className={styles.frozenCell}
-                          >
+                          <TableCell key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
