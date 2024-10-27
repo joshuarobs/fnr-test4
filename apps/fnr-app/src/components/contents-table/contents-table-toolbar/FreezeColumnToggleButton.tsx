@@ -1,73 +1,74 @@
 import React from 'react';
 import { Table } from '@tanstack/react-table';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { LockClosedIcon } from '@radix-ui/react-icons';
 import {
   Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@react-monorepo/shared';
-import { LockClosedIcon } from '@radix-ui/react-icons';
 import { ShortReadibleColumnNames } from '../columns';
 import { Item } from '../item';
 
 interface FreezeColumnToggleButtonProps {
   table: Table<Item>;
+  frozenColumnKeys: (keyof Item)[];
+  setFrozenColumnKeys: React.Dispatch<React.SetStateAction<(keyof Item)[]>>;
 }
 
 export function FreezeColumnToggleButton({
   table,
+  frozenColumnKeys,
+  setFrozenColumnKeys,
 }: FreezeColumnToggleButtonProps) {
+  const handleFreezeToggle = (columnId: string, checked: boolean) => {
+    setFrozenColumnKeys((prev) => {
+      if (!checked) {
+        return prev.filter((key) => key !== columnId);
+      }
+      return [...prev, columnId as keyof Item];
+    });
+  };
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="mr-2 select-none">
-          <LockClosedIcon className="mr-2 h-4 w-4" />
-          Freeze Columns
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="h-8 lg:flex select-none">
+          <LockClosedIcon className="mr-2 h-4 w-4 select-none" />
+          Freeze
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="end">
-        <div className="p-2">
-          <div className="text-sm font-medium mb-2">Freeze Columns</div>
-          <div className="space-y-2">
-            {table.getAllColumns().map((column) => {
-              // Skip the actions column
-              if (column.id === 'actions') return null;
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[150px]">
+        <DropdownMenuLabel>Freeze columns</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {table.getAllColumns().map((column) => {
+          // Skip the actions column
+          if (column.id === 'actions') return null;
 
-              const columnName =
-                ShortReadibleColumnNames[
-                  column.id as keyof typeof ShortReadibleColumnNames
-                ] || column.id;
+          const columnName =
+            ShortReadibleColumnNames[
+              column.id as keyof typeof ShortReadibleColumnNames
+            ] || column.id;
 
-              return (
-                <div
-                  key={column.id}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-sm">{columnName}</span>
-                  <div className="space-x-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      title="Freeze to left"
-                    >
-                      L
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      title="Freeze to right"
-                    >
-                      R
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+          const isFrozen = frozenColumnKeys.includes(column.id as keyof Item);
+
+          return (
+            <DropdownMenuCheckboxItem
+              key={column.id}
+              className="capitalize"
+              checked={isFrozen}
+              onCheckedChange={(checked) =>
+                handleFreezeToggle(column.id, checked)
+              }
+            >
+              {columnName}
+            </DropdownMenuCheckboxItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

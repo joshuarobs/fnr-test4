@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ColumnDef, flexRender, Table } from '@tanstack/react-table';
 
 import {
@@ -21,6 +21,7 @@ interface ContentaDataTableProps<TData, TValue> {
   removeItem: (itemId: number) => void;
   updateItem: (updatedItem: Item) => void;
   table: Table<TData>;
+  frozenColumnKeys: (keyof Item)[];
 }
 
 // Type for valid column IDs based on Item type
@@ -32,16 +33,10 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   removeItem,
   updateItem,
   table,
+  frozenColumnKeys,
 }: ContentaDataTableProps<TData, TValue>) => {
   const mainTableRef = useRef<HTMLDivElement>(null);
   const frozenTableRef = useRef<HTMLDivElement>(null);
-
-  // State for frozen column keys using ITEM_KEYS values
-  const [frozenColumnKeys] = useState<ItemColumnId[]>([
-    ITEM_KEYS.ID,
-    ITEM_KEYS.GROUP,
-    ITEM_KEYS.NAME,
-  ] as ItemColumnId[]);
 
   // Sync scroll positions between frozen and main tables
   useEffect(() => {

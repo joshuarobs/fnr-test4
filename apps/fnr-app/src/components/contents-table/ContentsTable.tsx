@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -21,6 +21,9 @@ interface ContentsTableWithToolbarProps {
   updateItem: (updatedItem: Item) => void;
 }
 
+// Type for valid column IDs based on Item type
+type ItemColumnId = keyof Item;
+
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const searchValue = value.toLowerCase();
   const name = String(row.getValue(ITEM_KEYS.NAME) || '').toLowerCase();
@@ -40,6 +43,13 @@ export const ContentsTableWithToolbar: React.FC<
     columns.map((col) => col.id || '').filter(Boolean)
   );
 
+  // State for frozen column keys
+  const [frozenColumnKeys, setFrozenColumnKeys] = useState<ItemColumnId[]>([
+    ITEM_KEYS.ID,
+    ITEM_KEYS.GROUP,
+    ITEM_KEYS.NAME,
+  ] as ItemColumnId[]);
+
   const table = useReactTable({
     data,
     columns,
@@ -58,13 +68,18 @@ export const ContentsTableWithToolbar: React.FC<
 
   return (
     <div className="w-full">
-      <ContentsTableToolbar table={table} />
-      <ContentsDataTable
+      <ContentsTableToolbar<Item>
+        table={table}
+        frozenColumnKeys={frozenColumnKeys}
+        setFrozenColumnKeys={setFrozenColumnKeys}
+      />
+      <ContentsDataTable<Item, unknown>
         data={data}
         addItem={addItem}
         removeItem={removeItem}
         updateItem={updateItem}
         table={table}
+        frozenColumnKeys={frozenColumnKeys}
       />
     </div>
   );

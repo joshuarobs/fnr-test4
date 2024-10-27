@@ -1,30 +1,37 @@
 import React from 'react';
-import { Input } from '@react-monorepo/shared';
 import { Table } from '@tanstack/react-table';
+import { Input } from '@react-monorepo/shared';
 import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
 
-interface ContentsTableToolbarProps {
-  table: Table<Item>;
+interface ContentsTableToolbarProps<TData> {
+  table: Table<TData>;
+  frozenColumnKeys: (keyof Item)[];
+  setFrozenColumnKeys: React.Dispatch<React.SetStateAction<(keyof Item)[]>>;
 }
 
-export const ContentsTableToolbar = ({ table }: ContentsTableToolbarProps) => {
-  const globalFilter = table.getState().globalFilter;
-
+export function ContentsTableToolbar<TData>({
+  table,
+  frozenColumnKeys,
+  setFrozenColumnKeys,
+}: ContentsTableToolbarProps<TData>) {
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex items-center py-4">
       <Input
-        className="max-w-sm"
-        type="text"
-        placeholder="Filter by name or category..."
-        value={globalFilter ?? ''}
+        placeholder="Filter items..."
+        value={(table.getState().globalFilter as string) ?? ''}
         onChange={(event) => table.setGlobalFilter(event.target.value)}
+        className="max-w-sm"
       />
-      <div className="flex items-center">
-        <FreezeColumnToggleButton table={table} />
+      <div className="ml-auto flex items-center space-x-2">
+        <FreezeColumnToggleButton
+          table={table}
+          frozenColumnKeys={frozenColumnKeys}
+          setFrozenColumnKeys={setFrozenColumnKeys}
+        />
         <DataColumnToggleButton table={table} />
       </div>
     </div>
   );
-};
+}
