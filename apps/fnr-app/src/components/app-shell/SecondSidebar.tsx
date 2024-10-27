@@ -43,18 +43,6 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
           {/* Activity */}
           {/* ======================================== */}
           <LatestActivitiesContainer />
-          <SidebarSeparator />
-          {/* ======================================== */}
-          {/* Stats */}
-          {/* ======================================== */}
-          <div className="px-4">
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Last Updated</p>
-              <p className="text-sm text-muted-foreground">2 hours ago</p>
-              <p className="text-sm font-medium mt-4">Status</p>
-              <p className="text-sm text-muted-foreground">In Progress</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

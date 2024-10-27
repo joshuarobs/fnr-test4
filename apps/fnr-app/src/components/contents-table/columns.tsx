@@ -7,6 +7,7 @@ import { OurQuoteCell } from './cells/OurQuoteCell';
 import { ItemNameCell } from './cells/ItemNameCell';
 import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
+import { IdCell } from './cells/IdCell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,9 +84,8 @@ export const createColumns = (
     accessorKey: ITEM_KEYS.ID,
     header: ({ column }) => <SortableHeader column={column} title="ID" />,
     cell: ({ row }) => {
-      return (
-        <div className={CELL_CONTENT_MARGIN}>{row.getValue(ITEM_KEYS.ID)}</div>
-      );
+      const value = row.getValue(ITEM_KEYS.ID) as string;
+      return <IdCell value={value} />;
     },
   },
   {
