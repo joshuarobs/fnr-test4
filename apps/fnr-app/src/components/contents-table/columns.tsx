@@ -90,7 +90,7 @@ export const createColumns = (
   },
   {
     accessorKey: ITEM_KEYS.GROUP,
-    header: 'Group',
+    header: ({ column }) => <SortableHeader column={column} title="Group" />,
     cell: ({ row }) => {
       const group = row.getValue(ITEM_KEYS.GROUP) as string;
       return (

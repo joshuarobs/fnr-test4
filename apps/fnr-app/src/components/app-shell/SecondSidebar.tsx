@@ -23,7 +23,7 @@ const SidebarSeparator = () => {
 
 export const SecondSidebar = ({ className }: SecondSidebarProps) => {
   return (
-    <div className={cn('pb-12 max-w-[224px] border-l', className)}>
+    <div className={cn('pb-12 max-w-[280px]', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           {/* ======================================== */}
