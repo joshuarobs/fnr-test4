@@ -29,9 +29,7 @@ export const QuoteDifferenceIcon = ({
     return (
       <div className="flex items-center">
         <CaretUpOutlined className={`${redColor} mr-1`} style={iconStyle} />
-        <span className={`${redColor} font-semibold`}>
-          (${diff.toFixed(2)})
-        </span>
+        <span className={`${redColor} font-semibold`}>${diff.toFixed(2)}</span>
       </div>
     );
   } else {
@@ -42,7 +40,7 @@ export const QuoteDifferenceIcon = ({
           style={{ ...iconStyle, top: '2px' }}
         />
         <span className={`${greenColor} font-semibold`}>
-          (${Math.abs(diff).toFixed(2)})
+          ${Math.abs(diff).toFixed(2)}
         </span>
       </div>
     );

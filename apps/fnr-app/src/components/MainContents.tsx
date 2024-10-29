@@ -82,17 +82,14 @@ export const MainContents = () => {
   return (
     <main className="flex-1 min-w-0 p-4">
       <div className="flex justify-between items-center">
-        <div className="flex gap-4">
-          <TotalCalculatedPriceText
-            title="Our Quote"
-            value={1500}
-            difference={200}
-          />
+        <div className="flex gap-8">
           <TotalCalculatedPriceText
             title="Insureds Quote"
-            value={1300}
-            difference={-200}
+            value={1700}
+            oisquote={1700}
+            ourquote={1500}
           />
+          <TotalCalculatedPriceText title="Our Quote" value={1500} />
         </div>
         <TestAddDeleteStuff
           newItemName={newItemName}
