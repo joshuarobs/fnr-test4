@@ -50,6 +50,13 @@ export const ContentsTableWithToolbar: React.FC<
     ITEM_KEYS.NAME,
   ] as ItemColumnId[]);
 
+  // State for right frozen column keys
+  const [frozenRightColumnKeys] = useState([
+    ITEM_KEYS.OIS_QUOTE,
+    'difference',
+    ITEM_KEYS.OUR_QUOTE,
+  ]);
+
   const table = useReactTable({
     data,
     columns,
@@ -80,6 +87,7 @@ export const ContentsTableWithToolbar: React.FC<
         updateItem={updateItem}
         table={table}
         frozenColumnKeys={frozenColumnKeys}
+        frozenRightColumnKeys={frozenRightColumnKeys}
       />
     </div>
   );

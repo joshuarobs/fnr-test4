@@ -22,10 +22,8 @@ interface ContentaDataTableProps<TData, TValue> {
   updateItem: (updatedItem: Item) => void;
   table: Table<TData>;
   frozenColumnKeys: (keyof Item)[];
+  frozenRightColumnKeys: string[];
 }
-
-// Type for valid column IDs based on Item type
-type ItemColumnId = keyof Item;
 
 export const ContentsDataTable = <TData extends Item, TValue>({
   data,
@@ -34,20 +32,26 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   updateItem,
   table,
   frozenColumnKeys,
+  frozenRightColumnKeys,
 }: ContentaDataTableProps<TData, TValue>) => {
   const mainTableRef = useRef<HTMLDivElement>(null);
   const frozenTableRef = useRef<HTMLDivElement>(null);
+  const frozenRightTableRef = useRef<HTMLDivElement>(null);
 
   // Sync scroll positions between frozen and main tables
   useEffect(() => {
     const mainTable = mainTableRef.current;
     const frozenTable = frozenTableRef.current;
+    const frozenRightTable = frozenRightTableRef.current;
 
-    if (!mainTable || !frozenTable) return;
+    if (!mainTable || (!frozenTable && !frozenRightTable)) return;
 
     const handleScroll = () => {
       if (frozenTable) {
         frozenTable.scrollTop = mainTable.scrollTop;
+      }
+      if (frozenRightTable) {
+        frozenRightTable.scrollTop = mainTable.scrollTop;
       }
     };
 
@@ -57,16 +61,21 @@ export const ContentsDataTable = <TData extends Item, TValue>({
 
   const allColumns = table.getAllColumns();
   const frozenColumns = allColumns.filter((col) =>
-    frozenColumnKeys.includes(col.id as ItemColumnId)
+    frozenColumnKeys.includes(col.id as keyof Item)
+  );
+  const frozenRightColumns = allColumns.filter((col) =>
+    frozenRightColumnKeys.includes(col.id)
   );
   const regularColumns = allColumns.filter(
-    (col) => !frozenColumnKeys.includes(col.id as ItemColumnId)
+    (col) =>
+      !frozenColumnKeys.includes(col.id as keyof Item) &&
+      !frozenRightColumnKeys.includes(col.id)
   );
 
   return (
     <div className="w-full">
       <div className={styles.tableContainer} ref={mainTableRef}>
-        {/* Frozen Columns */}
+        {/* Left Frozen Columns */}
         <div className={styles.frozenColumnsWrapper} ref={frozenTableRef}>
           <UITable className={styles.frozenTable}>
             <TableHeader>
@@ -74,9 +83,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers
                     .filter((header) =>
-                      frozenColumnKeys.includes(
-                        header.column.id as ItemColumnId
-                      )
+                      frozenColumnKeys.includes(header.column.id as keyof Item)
                     )
                     .map((header) => (
                       <TableHead
@@ -107,8 +114,66 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                         .getVisibleCells()
                         .filter((cell) =>
                           frozenColumnKeys.includes(
-                            cell.column.id as ItemColumnId
+                            cell.column.id as keyof Item
                           )
+                        )
+                        .map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  ))
+                : null}
+            </TableBody>
+          </UITable>
+        </div>
+
+        {/* Right Frozen Columns */}
+        <div
+          className={styles.frozenRightColumnsWrapper}
+          ref={frozenRightTableRef}
+        >
+          <UITable className={styles.frozenTable}>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers
+                    .filter((header) =>
+                      frozenRightColumnKeys.includes(header.column.id)
+                    )
+                    .map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className={`${styles.frozenHeaderCell} ${header.column.columnDef.meta?.headerClassName}`}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length
+                ? table.getRowModel().rows.map((row, index) => (
+                    <TableRow
+                      key={row.id}
+                      className={`${
+                        index % 2 === 0 ? 'bg-gray-100' : ''
+                      } min-h-[53px]!`}
+                    >
+                      {row
+                        .getVisibleCells()
+                        .filter((cell) =>
+                          frozenRightColumnKeys.includes(cell.column.id)
                         )
                         .map((cell) => (
                           <TableCell key={cell.id}>
