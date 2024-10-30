@@ -7,6 +7,7 @@ export const ITEM_KEYS = {
   STATUS: 'status',
   OIS_QUOTE: 'oisquote',
   OUR_QUOTE: 'ourquote',
+  DIFFERENCE: 'difference',
   RECEIPT_PHOTO_URL: 'receiptPhotoUrl',
   DATE: 'date',
   DUE_DATE: 'dueDate',
