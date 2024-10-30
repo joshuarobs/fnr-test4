@@ -1,4 +1,5 @@
 import { Button, Input } from '@react-monorepo/shared';
+import { AddNewItemModal } from './AddNewItemModal';
 
 interface TestAddDeleteStuffProps {
   newItemName: string;
@@ -22,9 +23,7 @@ export const TestAddDeleteStuff = ({
         onChange={(e) => setNewItemName(e.target.value)}
         className="w-[200px] mr-2"
       />
-      <Button onClick={handleAddItem} className="mr-2">
-        Add Item
-      </Button>
+      <AddNewItemModal onConfirm={handleAddItem} />
       <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
     </div>
   );
