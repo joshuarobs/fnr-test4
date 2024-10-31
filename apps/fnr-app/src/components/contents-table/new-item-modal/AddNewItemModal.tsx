@@ -18,7 +18,7 @@ import {
   CommandList,
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '../../../../../shared/src/lib/utils';
+import { cn } from '../../../../../../shared/src/lib/utils';
 
 const labelMinWidthClass = 'min-w-[80px]';
 
@@ -127,6 +127,8 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
                 </Label>
                 <Input
                   id="name"
+                  name="item-name"
+                  autoComplete="off"
                   defaultValue=""
                   placeholder="e.g. Shirt, Table, Shovel, etc..."
                   className="flex-1"

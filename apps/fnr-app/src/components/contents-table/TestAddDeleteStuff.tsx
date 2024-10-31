@@ -1,5 +1,5 @@
 import { Button, Input } from '@react-monorepo/shared';
-import { AddNewItemModal } from './AddNewItemModal';
+import { AddNewItemModal } from './new-item-modal/AddNewItemModal';
 
 interface TestAddDeleteStuffProps {
   newItemName: string;
