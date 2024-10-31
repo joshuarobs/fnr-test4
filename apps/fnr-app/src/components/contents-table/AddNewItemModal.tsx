@@ -7,8 +7,28 @@ import {
   DialogFooter,
   Input,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from '@react-monorepo/shared';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../shared/src/lib/utils';
+
+const labelMinWidthClass = 'min-w-[80px]';
+
+const groups = [
+  { value: 'electronics', label: 'Electronics' },
+  { value: 'furniture', label: 'Furniture' },
+  { value: 'clothing', label: 'Clothing' },
+  { value: 'kitchen', label: 'Kitchen' },
+  { value: 'other', label: 'Other' },
+];
 
 interface AddNewItemModalProps {
   onConfirm: () => void;
@@ -19,6 +39,8 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
   const [activeTab, setActiveTab] = useState<'quick' | 'multi'>('quick');
   const [quickAddInput, setQuickAddInput] = useState('');
   const [multiAddInput, setMultiAddInput] = useState('');
+  const [groupOpen, setGroupOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState('');
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
@@ -100,12 +122,76 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
                 autoFocus
               />
               <div className="flex items-center gap-4">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name" className={labelMinWidthClass}>
+                  Name
+                </Label>
                 <Input
                   id="name"
-                  defaultValue="Pedro Duarte"
+                  defaultValue=""
+                  placeholder="e.g. Shirt, Table, Shovel, etc..."
                   className="flex-1"
                 />
+              </div>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="group" className={labelMinWidthClass}>
+                  Group
+                </Label>
+                <Popover open={groupOpen} onOpenChange={setGroupOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={groupOpen}
+                      className="flex-1 justify-between"
+                    >
+                      {selectedGroup
+                        ? groups.find((group) => group.value === selectedGroup)
+                            ?.label
+                        : 'Select group...'}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[var(--radix-popover-trigger-width)] p-0"
+                    style={{
+                      ['--radix-popover-trigger-width' as any]:
+                        'var(--radix-popover-trigger-width)',
+                    }}
+                  >
+                    <Command>
+                      <CommandInput placeholder="Search group..." />
+                      <CommandList>
+                        <CommandEmpty>No group found.</CommandEmpty>
+                        <CommandGroup>
+                          {groups.map((group) => (
+                            <CommandItem
+                              key={group.value}
+                              value={group.value}
+                              onSelect={(currentValue) => {
+                                setSelectedGroup(
+                                  currentValue === selectedGroup
+                                    ? ''
+                                    : currentValue
+                                );
+                                setGroupOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  selectedGroup === group.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {group.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           ) : (
