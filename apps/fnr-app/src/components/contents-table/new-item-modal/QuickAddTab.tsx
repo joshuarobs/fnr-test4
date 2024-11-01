@@ -17,7 +17,7 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { placeholderContentsData } from '../placeholderContentsData';
 
-const labelMinWidthClass = 'min-w-[80px]';
+const labelMinWidthClass = 'min-w-[80px] text-right';
 
 // Function to get all unique groups from placeholderContentsData
 const getAllGroups = () => {

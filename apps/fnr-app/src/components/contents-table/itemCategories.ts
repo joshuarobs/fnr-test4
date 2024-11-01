@@ -1,0 +1,16 @@
+export enum ItemCategory {
+  Appliances = 'Appliances',
+  Bath = 'Bath',
+  Clothing = 'Clothing',
+  Decor = 'Decor',
+  Documents = 'Documents',
+  Electronics = 'Electronics',
+  Food = 'Food',
+  Furniture = 'Furniture',
+  Garden = 'Garden',
+  Other = 'Other',
+  Recreation = 'Recreation',
+  Storage = 'Storage',
+  Supplies = 'Supplies',
+  Tools = 'Tools',
+}

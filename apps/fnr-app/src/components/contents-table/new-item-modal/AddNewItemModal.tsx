@@ -6,7 +6,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@react-monorepo/shared';
-import { PlusCircledIcon, PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
@@ -118,7 +118,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
           variant="outline"
           className="w-full select-none flex items-center justify-center gap-2"
         >
-          <PlusCircledIcon className="h-4 w-4" />
+          <PlusIcon className="h-4 w-4" />
           Add Item
         </Button>
       </DialogTrigger>
