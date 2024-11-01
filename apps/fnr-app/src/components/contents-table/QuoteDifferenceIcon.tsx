@@ -17,6 +17,10 @@ export const QuoteDifferenceIcon = ({
   ourquote,
 }: QuoteDifferenceIconProps) => {
   const diff = oisquote - ourquote;
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
   // Define color variables
   const redColor = 'text-red-500';
@@ -30,12 +34,12 @@ export const QuoteDifferenceIcon = ({
 
   const tooltipText =
     diff > 0
-      ? `The insured's quote is higher than our quote by $${Math.abs(
-          diff
-        ).toFixed(2)}`
-      : `The insured's quote is lower than our quote by $${Math.abs(
-          diff
-        ).toFixed(2)}`;
+      ? `The insured's quote is higher than our quote by ${formatter.format(
+          Math.abs(diff)
+        )}`
+      : `The insured's quote is lower than our quote by ${formatter.format(
+          Math.abs(diff)
+        )}`;
 
   if (diff === 0) {
     return <GreenTickIcon />;
@@ -50,7 +54,7 @@ export const QuoteDifferenceIcon = ({
                 style={iconStyle}
               />
               <span className={`${redColor} font-semibold`}>
-                ${diff.toFixed(2)}
+                {formatter.format(diff)}
               </span>
             </div>
           </TooltipTrigger>
@@ -71,7 +75,7 @@ export const QuoteDifferenceIcon = ({
                 style={{ ...iconStyle, top: '2px' }}
               />
               <span className={`${greenColor} font-semibold`}>
-                ${Math.abs(diff).toFixed(2)}
+                {formatter.format(Math.abs(diff))}
               </span>
             </div>
           </TooltipTrigger>

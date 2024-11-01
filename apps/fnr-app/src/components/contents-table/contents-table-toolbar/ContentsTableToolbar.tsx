@@ -19,13 +19,13 @@ export function ContentsTableToolbar<TData>({
 }: ContentsTableToolbarProps<TData>) {
   return (
     <div className="flex items-center py-4">
-      <div className="relative">
+      <div className="relative w-[320px]">
         <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
         <Input
           placeholder="Filter items..."
           value={(table.getState().globalFilter as string) ?? ''}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
-          className="max-w-sm pl-8"
+          className="pl-8"
         />
       </div>
       <div className="ml-auto flex items-center space-x-2">

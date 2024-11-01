@@ -12,6 +12,14 @@ export const MainContents = () => {
   const [updateItemId, setUpdateItemId] = useState<number | null>(null);
   const [updateItemName, setUpdateItemName] = useState('');
 
+  const calculateInsuredsTotal = (items: Item[]): number => {
+    return items.reduce((total, item) => total + (item.oisquote || 0), 0);
+  };
+
+  const calculateOurTotal = (items: Item[]): number => {
+    return items.reduce((total, item) => total + item.ourquote, 0);
+  };
+
   const addItem = (newItem: Item) => {
     setTableData([...tableData, newItem]);
   };
@@ -78,17 +86,20 @@ export const MainContents = () => {
     }
   };
 
+  const insuredsTotal = calculateInsuredsTotal(tableData);
+  const ourTotal = calculateOurTotal(tableData);
+
   return (
     <main className="flex-1 min-w-0 p-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-8">
           <TotalCalculatedPriceText
-            title="Insureds Quote"
-            value={1700}
-            oisquote={1700}
-            ourquote={1500}
+            title="Insured's total"
+            value={insuredsTotal}
+            oisquote={insuredsTotal}
+            ourquote={ourTotal}
           />
-          <TotalCalculatedPriceText title="Our Quote" value={1500} />
+          <TotalCalculatedPriceText title="Our total" value={ourTotal} />
         </div>
         <TestAddDeleteStuff
           newItemName={newItemName}
