@@ -1,4 +1,4 @@
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 import {
   Input,
   Label,
@@ -15,27 +15,22 @@ import {
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
+import { placeholderContentsData } from '../placeholderContentsData';
 
 const labelMinWidthClass = 'min-w-[80px]';
 
-const groups = [
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'furniture', label: 'Furniture' },
-  { value: 'clothing', label: 'Clothing' },
-  { value: 'kitchen', label: 'Kitchen' },
-  { value: 'other', label: 'Other' },
-  { value: 'other1', label: '1' },
-  { value: 'other2', label: '2' },
-  { value: 'other3', label: '3' },
-  { value: 'other4', label: '4' },
-  { value: 'other5', label: '5' },
-  { value: 'other6', label: '6' },
-  { value: 'other7', label: '7' },
-  { value: 'other8', label: '8' },
-  { value: 'other9', label: '9' },
-  { value: 'other10', label: '10' },
-  { value: 'other11', label: '11' },
-];
+// Function to get all unique groups from placeholderContentsData
+const getAllGroups = () => {
+  const uniqueGroups = new Set<string>();
+  placeholderContentsData.forEach((item) => {
+    if (item.group) {
+      uniqueGroups.add(item.group);
+    }
+  });
+  return Array.from(uniqueGroups)
+    .sort()
+    .map((group) => ({ value: group.toLowerCase(), label: group }));
+};
 
 interface QuickAddTabProps {
   quickAddInput: string;
@@ -56,6 +51,14 @@ export function QuickAddTab({
   setGroupOpen,
   handleQuickAdd,
 }: QuickAddTabProps) {
+  const [groups, setGroups] = useState<Array<{ value: string; label: string }>>(
+    []
+  );
+
+  useEffect(() => {
+    setGroups(getAllGroups());
+  }, []);
+
   return (
     <div className="space-y-2">
       <Input
@@ -82,7 +85,7 @@ export function QuickAddTab({
         <Label htmlFor="group" className={labelMinWidthClass}>
           Group
         </Label>
-        <Popover open={groupOpen} onOpenChange={setGroupOpen}>
+        <Popover open={groupOpen} onOpenChange={setGroupOpen} modal={true}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
