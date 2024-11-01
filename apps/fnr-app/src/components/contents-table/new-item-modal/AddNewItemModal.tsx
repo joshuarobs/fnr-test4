@@ -21,6 +21,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
   const [multiAddInput, setMultiAddInput] = useState('');
   const [groupOpen, setGroupOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
+  const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
@@ -56,10 +57,16 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
     [multiAddInput, onConfirm]
   );
 
+  // Update addItemHasMinReqs whenever quickAddInput changes
+  const handleQuickAddInputChange = (value: string) => {
+    setQuickAddInput(value);
+    setAddItemHasMinReqs(value.trim() !== '');
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full select-none">
           + Add Item
         </Button>
       </DialogTrigger>
@@ -95,7 +102,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
           {activeTab === 'quick' ? (
             <QuickAddTab
               quickAddInput={quickAddInput}
-              setQuickAddInput={setQuickAddInput}
+              setQuickAddInput={handleQuickAddInputChange}
               selectedGroup={selectedGroup}
               setSelectedGroup={setSelectedGroup}
               groupOpen={groupOpen}
@@ -111,7 +118,13 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
           )}
         </div>
         <DialogFooter>
-          <Button type="submit">Add Item</Button>
+          <Button
+            type="submit"
+            disabled={activeTab === 'quick' && !addItemHasMinReqs}
+            className="select-none"
+          >
+            Add Item
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

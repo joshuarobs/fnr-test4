@@ -24,6 +24,17 @@ const groups = [
   { value: 'clothing', label: 'Clothing' },
   { value: 'kitchen', label: 'Kitchen' },
   { value: 'other', label: 'Other' },
+  { value: 'other1', label: '1' },
+  { value: 'other2', label: '2' },
+  { value: 'other3', label: '3' },
+  { value: 'other4', label: '4' },
+  { value: 'other5', label: '5' },
+  { value: 'other6', label: '6' },
+  { value: 'other7', label: '7' },
+  { value: 'other8', label: '8' },
+  { value: 'other9', label: '9' },
+  { value: 'other10', label: '10' },
+  { value: 'other11', label: '11' },
 ];
 
 interface QuickAddTabProps {
