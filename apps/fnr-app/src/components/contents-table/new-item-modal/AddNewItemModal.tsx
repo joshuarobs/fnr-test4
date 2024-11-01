@@ -6,7 +6,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@react-monorepo/shared';
-import { PlusCircledIcon } from '@radix-ui/react-icons';
+import { PlusCircledIcon, PlusIcon } from '@radix-ui/react-icons';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
@@ -15,14 +15,33 @@ interface AddNewItemModalProps {
   onConfirm: () => void;
 }
 
+enum TabType {
+  Quick = 'quick',
+  Multi = 'multi',
+}
+
+const TABS = [
+  {
+    id: TabType.Quick,
+    label: 'Add',
+  },
+  {
+    id: TabType.Multi,
+    label: 'Multi Add',
+  },
+] as const;
+
 export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'quick' | 'multi'>('quick');
+  const [activeTab, setActiveTab] = useState<TabType>(TabType.Quick);
   const [quickAddInput, setQuickAddInput] = useState('');
   const [multiAddInput, setMultiAddInput] = useState('');
   const [groupOpen, setGroupOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
   const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
+  const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
+  const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
+  const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
@@ -58,10 +77,38 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
     [multiAddInput, onConfirm]
   );
 
-  // Update addItemHasMinReqs whenever quickAddInput changes
+  // Update addItemHasMinReqs and quickAddHasChanges whenever quickAddInput changes
   const handleQuickAddInputChange = (value: string) => {
     setQuickAddInput(value);
     setAddItemHasMinReqs(value.trim() !== '');
+    setQuickAddHasChanges(value.trim() !== '' || selectedGroup !== '');
+  };
+
+  // Update multiAddHasMinReqs and multiAddHasChanges whenever multiAddInput changes
+  const handleMultiAddInputChange = (value: string) => {
+    setMultiAddInput(value);
+    setMultiAddHasMinReqs(value.trim() !== '');
+    setMultiAddHasChanges(value.trim() !== '');
+  };
+
+  // Update quickAddHasChanges when group changes
+  const handleGroupChange = (value: string) => {
+    setSelectedGroup(value);
+    setQuickAddHasChanges(quickAddInput.trim() !== '' || value !== '');
+  };
+
+  const handleClearFields = () => {
+    if (activeTab === TabType.Quick) {
+      setQuickAddInput('');
+      setSelectedGroup('');
+      setAddItemHasMinReqs(false);
+      setQuickAddHasChanges(false);
+    }
+    if (activeTab === TabType.Multi) {
+      setMultiAddInput('');
+      setMultiAddHasMinReqs(false);
+      setMultiAddHasChanges(false);
+    }
   };
 
   return (
@@ -77,39 +124,30 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <div className="flex space-x-1 border-b">
-          <button
-            className={cn(
-              'px-4 py-2 text-sm font-medium transition-colors',
-              'focus:outline-none',
-              activeTab === 'quick'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-primary'
-            )}
-            onClick={() => setActiveTab('quick')}
-          >
-            Add
-          </button>
-          <button
-            className={cn(
-              'px-4 py-2 text-sm font-medium transition-colors',
-              'focus:outline-none',
-              activeTab === 'multi'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-primary'
-            )}
-            onClick={() => setActiveTab('multi')}
-          >
-            Multi Add
-          </button>
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              className={cn(
+                'px-4 py-2 text-sm font-medium transition-colors',
+                'focus:outline-none',
+                activeTab === tab.id
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-muted-foreground hover:text-primary'
+              )}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         <div className="pt-4">
-          {activeTab === 'quick' ? (
+          {activeTab === TabType.Quick ? (
             <QuickAddTab
               quickAddInput={quickAddInput}
               setQuickAddInput={handleQuickAddInputChange}
               selectedGroup={selectedGroup}
-              setSelectedGroup={setSelectedGroup}
+              setSelectedGroup={handleGroupChange}
               groupOpen={groupOpen}
               setGroupOpen={setGroupOpen}
               handleQuickAdd={handleQuickAdd}
@@ -117,23 +155,46 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
           ) : (
             <MultiAddTab
               multiAddInput={multiAddInput}
-              setMultiAddInput={setMultiAddInput}
+              setMultiAddInput={handleMultiAddInputChange}
               handleMultiAdd={handleMultiAdd}
             />
           )}
         </div>
         <DialogFooter>
-          <div className="flex justify-end gap-4">
-            <Button variant="ghost" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
+          <div className="w-full flex items-center">
             <Button
-              type="submit"
-              disabled={activeTab === 'quick' && !addItemHasMinReqs}
-              className="select-none"
+              type="button"
+              variant="ghost"
+              onClick={handleClearFields}
+              disabled={
+                activeTab === TabType.Quick
+                  ? !quickAddHasChanges
+                  : !multiAddHasChanges
+              }
+              className="text-red-500 select-none mr-auto"
             >
-              Add Item
+              Clear fields
             </Button>
+            <div className="flex gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setIsOpen(false)}
+                className="select-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  (activeTab === TabType.Quick && !addItemHasMinReqs) ||
+                  (activeTab === TabType.Multi && !multiAddHasMinReqs)
+                }
+                className="select-none flex items-center gap-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                {activeTab === TabType.Multi ? 'Add Items' : 'Add Item'}
+              </Button>
+            </div>
           </div>
         </DialogFooter>
       </DialogContent>
