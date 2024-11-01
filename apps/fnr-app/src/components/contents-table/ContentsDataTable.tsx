@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { ColumnDef, flexRender, Table } from '@tanstack/react-table';
-
+import { flexRender, Table } from '@tanstack/react-table';
 import {
   Table as UITable,
   TableBody,
@@ -9,27 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from '@react-monorepo/shared';
-
 import { Item } from './item';
 import { DataTablePagination } from './DataTablePagination';
 import styles from './ContentsDataTable.module.css';
-import { ITEM_KEYS } from './itemKeys';
 
 interface ContentaDataTableProps<TData, TValue> {
-  data: TData[];
-  addItem: (newItem: Item) => void;
-  removeItem: (itemId: number) => void;
-  updateItem: (updatedItem: Item) => void;
   table: Table<TData>;
   frozenColumnKeys: (keyof Item)[];
   frozenRightColumnKeys: string[];
 }
 
 export const ContentsDataTable = <TData extends Item, TValue>({
-  data,
-  addItem,
-  removeItem,
-  updateItem,
   table,
   frozenColumnKeys,
   frozenRightColumnKeys,
@@ -60,17 +49,6 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   }, []);
 
   const allColumns = table.getAllColumns();
-  const frozenColumns = allColumns.filter((col) =>
-    frozenColumnKeys.includes(col.id as keyof Item)
-  );
-  const frozenRightColumns = allColumns.filter((col) =>
-    frozenRightColumnKeys.includes(col.id)
-  );
-  const regularColumns = allColumns.filter(
-    (col) =>
-      !frozenColumnKeys.includes(col.id as keyof Item) &&
-      !frozenRightColumnKeys.includes(col.id)
-  );
 
   return (
     <div className="w-full">

@@ -15,17 +15,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
 } from '@react-monorepo/shared';
 import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { GreenTickIcon } from './GreenTickIcon';
-import cliTruncate from 'cli-truncate';
 
 // New constant for short readable column names
 export const ShortReadibleColumnNames = {
@@ -90,18 +85,6 @@ export const createColumns = (
       },
     },
     {
-      accessorKey: ITEM_KEYS.GROUP,
-      header: ({ column }) => <SortableHeader column={column} title="Group" />,
-      cell: ({ row }) => {
-        const group = row.getValue(ITEM_KEYS.GROUP) as string;
-        return (
-          <div className={CELL_CONTENT_MARGIN}>
-            <GroupCell group={group} />
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: ITEM_KEYS.NAME,
       header: ({ column }) => <SortableHeader column={column} title="Name" />,
       cell: ({ row }) => {
@@ -126,6 +109,18 @@ export const createColumns = (
         return (
           <div className={CELL_CONTENT_MARGIN}>
             <ItemStatusBadge status={status} />
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: ITEM_KEYS.GROUP,
+      header: ({ column }) => <SortableHeader column={column} title="Group" />,
+      cell: ({ row }) => {
+        const group = row.getValue(ITEM_KEYS.GROUP) as string;
+        return (
+          <div className={CELL_CONTENT_MARGIN}>
+            <GroupCell group={group} />
           </div>
         );
       },

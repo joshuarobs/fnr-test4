@@ -1,6 +1,5 @@
 import { GreenTickIcon } from './GreenTickIcon';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { TriangleUpIcon, TriangleDownIcon } from '@radix-ui/react-icons';
 import {
   Tooltip,
   TooltipContent,
