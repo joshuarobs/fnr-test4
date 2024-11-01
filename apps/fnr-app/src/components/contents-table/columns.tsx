@@ -36,7 +36,7 @@ export const ShortReadibleColumnNames = {
 };
 
 // Standardized margin class for cell content
-const CELL_CONTENT_MARGIN = 'ml-4';
+const CELL_CONTENT_MARGIN = 'ml-2';
 
 // Component for right-aligned header
 const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
@@ -57,7 +57,6 @@ const SortableHeader = ({ column, title }: { column: any; title: string }) => (
         column.clearSorting();
       }
     }}
-    className="w-full justify-start"
   >
     <div className="flex items-center">
       {title}
@@ -102,7 +101,7 @@ export const createColumns = (
       accessorKey: ITEM_KEYS.STATUS,
       header: ({ column }) => <SortableHeader column={column} title="Status" />,
       meta: {
-        headerClassName: 'min-w-[96px]', // min-width, taking
+        headerClassName: 'min-w-[96px]',
       },
       cell: ({ row }) => {
         const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
@@ -140,7 +139,9 @@ export const createColumns = (
     },
     {
       accessorKey: ITEM_KEYS.MODEL_SERIAL_NUMBER,
-      header: 'Model/Serial number',
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Model/Serial number" />
+      ),
       cell: ({ row }) => {
         const modelSerialNumber = row.getValue(ITEM_KEYS.MODEL_SERIAL_NUMBER);
         return modelSerialNumber ? (
@@ -150,8 +151,13 @@ export const createColumns = (
     },
     {
       accessorKey: ITEM_KEYS.OIS_QUOTE,
-      header: () => (
-        <RightAlignedHeader>Insured's quote ($)</RightAlignedHeader>
+      meta: {
+        headerClassName: 'min-w-[100px]',
+      },
+      header: ({ column }) => (
+        <RightAlignedHeader>
+          <SortableHeader column={column} title="Insured's quote ($)" />
+        </RightAlignedHeader>
       ),
       cell: ({ row }) => {
         const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
@@ -163,10 +169,24 @@ export const createColumns = (
           />
         );
       },
+      sortingFn: (rowA, rowB, columnId) => {
+        const a = rowA.getValue(columnId) as number | null;
+        const b = rowB.getValue(columnId) as number | null;
+        if (a === null) return 1;
+        if (b === null) return -1;
+        return a - b;
+      },
     },
     {
       accessorKey: 'difference',
-      header: () => <RightAlignedHeader>Difference ($)</RightAlignedHeader>,
+      meta: {
+        headerClassName: 'min-w-[90px]',
+      },
+      header: ({ column }) => (
+        <RightAlignedHeader>
+          <SortableHeader column={column} title="Diff. ($)" />
+        </RightAlignedHeader>
+      ),
       cell: ({ row }) => {
         const item = row.original;
         const oisQuote = item[ITEM_KEYS.OIS_QUOTE] as number | null;
@@ -192,15 +212,39 @@ export const createColumns = (
           </div>
         );
       },
+      sortingFn: (rowA, rowB) => {
+        const getDiff = (row: any) => {
+          const oisQuote = row.original[ITEM_KEYS.OIS_QUOTE] as number | null;
+          const ourQuote = row.original[ITEM_KEYS.OUR_QUOTE] as number | null;
+          if (oisQuote === null || ourQuote === null) return null;
+          return calculateDifference(row.original);
+        };
+        const a = getDiff(rowA);
+        const b = getDiff(rowB);
+        if (a === null) return 1;
+        if (b === null) return -1;
+        return a - b;
+      },
     },
     {
       accessorKey: ITEM_KEYS.OUR_QUOTE,
       meta: {
-        headerClassName: 'min-w-[112px]', // min-width, taking
+        headerClassName: 'min-w-[90px]',
       },
-      header: () => <RightAlignedHeader>Our quote ($)</RightAlignedHeader>,
+      header: ({ column }) => (
+        <RightAlignedHeader>
+          <SortableHeader column={column} title="Our quote ($)" />
+        </RightAlignedHeader>
+      ),
       cell: ({ row }) => {
         return <OurQuoteCell item={row.original} updateItem={updateItem} />;
+      },
+      sortingFn: (rowA, rowB, columnId) => {
+        const a = rowA.getValue(columnId) as number | null;
+        const b = rowB.getValue(columnId) as number | null;
+        if (a === null) return 1;
+        if (b === null) return -1;
+        return a - b;
       },
     },
     {
