@@ -6,6 +6,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@react-monorepo/shared';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
@@ -66,8 +67,12 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full select-none">
-          + Add Item
+        <Button
+          variant="outline"
+          className="w-full select-none flex items-center justify-center gap-2"
+        >
+          <PlusCircledIcon className="h-4 w-4" />
+          Add Item
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
@@ -118,13 +123,18 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
           )}
         </div>
         <DialogFooter>
-          <Button
-            type="submit"
-            disabled={activeTab === 'quick' && !addItemHasMinReqs}
-            className="select-none"
-          >
-            Add Item
-          </Button>
+          <div className="flex justify-end gap-4">
+            <Button variant="ghost" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={activeTab === 'quick' && !addItemHasMinReqs}
+              className="select-none"
+            >
+              Add Item
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

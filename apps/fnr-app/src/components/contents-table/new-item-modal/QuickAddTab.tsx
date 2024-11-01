@@ -61,13 +61,6 @@ export function QuickAddTab({
 
   return (
     <div className="space-y-2">
-      <Input
-        placeholder="Enter item name and press Enter"
-        value={quickAddInput}
-        onChange={(e) => setQuickAddInput(e.target.value)}
-        onKeyDown={handleQuickAdd}
-        autoFocus
-      />
       <div className="flex items-center gap-4">
         <Label htmlFor="name" className={labelMinWidthClass}>
           Name
@@ -79,6 +72,10 @@ export function QuickAddTab({
           defaultValue=""
           placeholder="e.g. Shirt, Table, Shovel, etc..."
           className="flex-1"
+          value={quickAddInput}
+          onChange={(e) => setQuickAddInput(e.target.value)}
+          onKeyDown={handleQuickAdd}
+          autoFocus
         />
       </div>
       <div className="flex items-center gap-4">

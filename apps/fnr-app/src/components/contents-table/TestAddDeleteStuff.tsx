@@ -16,13 +16,6 @@ export const TestAddDeleteStuff = ({
 }: TestAddDeleteStuffProps) => {
   return (
     <div className="flex items-center mb-2">
-      <Input
-        type="text"
-        placeholder="New item name"
-        value={newItemName}
-        onChange={(e) => setNewItemName(e.target.value)}
-        className="w-[200px] mr-2"
-      />
       <AddNewItemModal onConfirm={handleAddItem} />
       <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
     </div>
