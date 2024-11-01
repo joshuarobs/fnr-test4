@@ -115,7 +115,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="outline"
+          variant="default"
           className="w-full select-none flex items-center justify-center gap-2"
         >
           <PlusIcon className="h-4 w-4" />

@@ -17,7 +17,7 @@ export const TestAddDeleteStuff = ({
   return (
     <div className="flex items-center mb-2">
       <AddNewItemModal onConfirm={handleAddItem} />
-      <Button onClick={handleRemoveLastItem}>Remove Last Item</Button>
+      {/* <Button onClick={handleRemoveLastItem}>Remove Last Item</Button> */}
     </div>
   );
 };
