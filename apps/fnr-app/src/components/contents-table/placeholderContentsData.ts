@@ -1,10 +1,11 @@
 import { Item } from './item';
+import { ItemCategory } from './itemCategories';
 
 export const placeholderContentsData: Item[] = [
   {
     id: 1,
     name: 'Laptop',
-    category: 'Electronics',
+    category: ItemCategory.Electronics,
     modelSerialNumber: 'LT-2023-XPS15',
     date: '2023-05-01',
     dueDate: '2023-05-15',
@@ -18,7 +19,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 2,
     name: 'Office Desk',
-    category: 'Furniture',
+    category: ItemCategory.Furniture,
     date: '2023-05-05',
     dueDate: '2023-05-19',
     amount: 2300.5,
@@ -30,7 +31,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 3,
     name: 'Antivirus License Very Very Very Very Long Value',
-    category: 'Software',
+    category: ItemCategory.Digital,
     modelSerialNumber: 'AV-2023-PRO',
     date: '2023-04-15',
     dueDate: '2023-04-29',
@@ -44,7 +45,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 4,
     name: 'Smartphone',
-    category: 'Electronics',
+    category: ItemCategory.Electronics,
     modelSerialNumber: 'SM-G-S23-ULTRA',
     date: '2023-06-01',
     dueDate: '2023-06-15',
@@ -58,7 +59,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 5,
     name: 'Groceries',
-    category: 'Food',
+    category: ItemCategory.Food,
     date: '2023-06-10',
     dueDate: '2023-06-24',
     amount: 150.25,
@@ -70,7 +71,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 6,
     name: 'Area Rug',
-    category: 'Home Decor',
+    category: ItemCategory.Decor,
     date: '2023-06-15',
     dueDate: '2023-06-29',
     amount: 500.0,
@@ -82,7 +83,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 7,
     name: 'Coffee Maker',
-    category: 'Appliances',
+    category: ItemCategory.Appliances,
     modelSerialNumber: 'CM-2023-DELUXE',
     date: '2023-07-01',
     dueDate: '2023-07-15',
@@ -96,7 +97,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 8,
     name: 'Office Chair',
-    category: 'Furniture',
+    category: ItemCategory.Furniture,
     modelSerialNumber: 'OC-2023-ERGO',
     date: '2023-07-05',
     dueDate: '2023-07-19',
@@ -109,7 +110,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 9,
     name: 'Printer',
-    category: 'Electronics',
+    category: ItemCategory.Electronics,
     modelSerialNumber: 'PR-2023-LASER',
     date: '2023-07-10',
     dueDate: '2023-07-24',
@@ -123,7 +124,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 10,
     name: 'Bookshelf',
-    category: 'Furniture',
+    category: ItemCategory.Furniture,
     date: '2023-07-15',
     dueDate: '2023-07-29',
     amount: 180.5,
@@ -135,7 +136,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 11,
     name: 'Microwave',
-    category: 'Appliances',
+    category: ItemCategory.Appliances,
     modelSerialNumber: 'MW-2023-SMART',
     date: '2023-07-20',
     dueDate: '2023-08-03',
@@ -149,7 +150,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 12,
     name: 'Dining Table',
-    category: 'Furniture',
+    category: ItemCategory.Furniture,
     date: '2023-07-25',
     dueDate: '2023-08-08',
     amount: 800.0,
@@ -161,7 +162,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 13,
     name: 'Vacuum Cleaner',
-    category: 'Appliances',
+    category: ItemCategory.Appliances,
     modelSerialNumber: 'VC-2023-ROBOT',
     date: '2023-08-01',
     dueDate: '2023-08-15',
@@ -175,7 +176,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 14,
     name: 'Television',
-    category: 'Electronics',
+    category: ItemCategory.Electronics,
     modelSerialNumber: 'TV-2023-4K',
     date: '2023-08-05',
     dueDate: '2023-08-19',
@@ -189,7 +190,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 15,
     name: 'Blender',
-    category: 'Appliances',
+    category: ItemCategory.Appliances,
     modelSerialNumber: 'BL-2023-PRO',
     date: '2023-08-10',
     dueDate: '2023-08-24',
@@ -202,7 +203,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 16,
     name: 'Curtains',
-    category: 'Home Decor',
+    category: ItemCategory.Decor,
     date: '2023-08-15',
     dueDate: '2023-08-29',
     amount: 150.0,

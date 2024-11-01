@@ -1,8 +1,10 @@
+import { ItemCategory } from './itemCategories';
+
 export type Item = {
   id: number;
   group: string;
   name: string;
-  category: string;
+  category: ItemCategory;
   modelSerialNumber?: string;
   status: 'RS' | 'NR' | 'VPOL';
   oisquote: number | null;
