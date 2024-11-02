@@ -8,6 +8,8 @@ import {
   FilterFn,
   ColumnDef,
   FilterFns,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from '@tanstack/react-table';
 import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
 import { ContentsDataTable } from './ContentsDataTable';
@@ -86,6 +88,8 @@ export const ContentsTableWithToolbar: React.FC<
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: fuzzyFilter,
     filterFns: {

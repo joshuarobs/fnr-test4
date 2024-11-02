@@ -54,7 +54,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
               <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
                 variant="secondary"
-                className="rounded-sm px-1 font-normal lg:hidden"
+                className="rounded-full px-2 py-0.5 text-xs font-normal lg:hidden"
               >
                 {selectedValues.size}
               </Badge>
@@ -62,7 +62,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                 {selectedValues.size > 2 ? (
                   <Badge
                     variant="secondary"
-                    className="rounded-sm px-1 font-normal"
+                    className="rounded-full px-2 py-0.5 text-xs font-normal"
                   >
                     {selectedValues.size} selected
                   </Badge>
@@ -76,7 +76,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                         ) : (
                           <Badge
                             variant="secondary"
-                            className="rounded-sm px-1 font-normal"
+                            className="rounded-full px-2 py-0.5 text-xs font-normal"
                           >
                             {option.label}
                           </Badge>
@@ -97,6 +97,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
             <CommandGroup>
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value);
+                const count = facets?.get(option.value) ?? 0;
                 return (
                   <CommandItem
                     key={option.value}
@@ -125,15 +126,16 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
-                    {renderOption ? (
-                      renderOption(option)
-                    ) : (
-                      <span>{option.label}</span>
-                    )}
-                    {facets?.get(option.value) && (
-                      <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                        {facets.get(option.value)}
-                      </span>
+                    <span className="flex-1">
+                      {renderOption ? renderOption(option) : option.label}
+                    </span>
+                    {count > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"
+                      >
+                        {count}
+                      </Badge>
                     )}
                   </CommandItem>
                 );
