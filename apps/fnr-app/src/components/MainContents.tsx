@@ -5,6 +5,7 @@ import { randomItemsData } from './contents-table/randomItemsData';
 import { Item } from './contents-table/item';
 import { TestAddDeleteStuff } from './contents-table/TestAddDeleteStuff';
 import { TotalCalculatedPriceText } from './contents-other/TotalCalculatedPriceText';
+import { TotalProgressBar } from './contents-other/TotalProgressBar';
 
 export const MainContents = () => {
   const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
@@ -18,6 +19,17 @@ export const MainContents = () => {
 
   const calculateOurTotal = (items: Item[]): number => {
     return items.reduce((total, item) => total + item.ourquote, 0);
+  };
+
+  const calculateProgress = (
+    items: Item[]
+  ): { value: number; maxValue: number } => {
+    const totalItems = items.length;
+    const itemsWithOurQuote = items.filter((item) => item.ourquote > 0).length;
+    return {
+      value: itemsWithOurQuote,
+      maxValue: totalItems,
+    };
   };
 
   const addItem = (newItem: Item) => {
@@ -88,6 +100,7 @@ export const MainContents = () => {
 
   const insuredsTotal = calculateInsuredsTotal(tableData);
   const ourTotal = calculateOurTotal(tableData);
+  const progress = calculateProgress(tableData);
 
   return (
     <main className="flex-1 min-w-0 p-4">
@@ -100,6 +113,10 @@ export const MainContents = () => {
             ourquote={ourTotal}
           />
           <TotalCalculatedPriceText title="Our total" value={ourTotal} />
+          <TotalProgressBar
+            value={progress.value}
+            maxValue={progress.maxValue}
+          />
         </div>
         <TestAddDeleteStuff
           newItemName={newItemName}
