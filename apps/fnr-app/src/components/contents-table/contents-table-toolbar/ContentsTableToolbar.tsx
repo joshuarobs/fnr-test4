@@ -1,7 +1,13 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
-import { InputClearable } from '@react-monorepo/shared';
+import { InputClearable, Button } from '@react-monorepo/shared';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@react-monorepo/shared';
 import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
@@ -27,11 +33,15 @@ const categoryOptions = Object.values(ItemCategory).map((category) => ({
   value: category,
 }));
 
-export function ContentsTableToolbar<TData>({
+export function ContentsTableToolbar<TData extends Item>({
   table,
   frozenColumnKeys,
   setFrozenColumnKeys,
 }: ContentsTableToolbarProps<TData>) {
+  const hasActiveFilters = table
+    .getAllColumns()
+    .some((column) => column.getFilterValue() != null);
+
   return (
     <div className="flex items-center py-4">
       <div className="relative w-[320px]">
@@ -64,6 +74,31 @@ export function ContentsTableToolbar<TData>({
             title="Category"
             options={categoryOptions}
           />
+        )}
+        {hasActiveFilters && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 text-sm underline"
+                  onClick={() => {
+                    table.getAllColumns().forEach((column) => {
+                      if (column.getCanFilter()) {
+                        column.setFilterValue(undefined);
+                      }
+                    });
+                  }}
+                >
+                  Clear all
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent align="center" side="top" sideOffset={5}>
+                <p>Clears all filters</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
       <div className="ml-auto flex items-center space-x-2">
