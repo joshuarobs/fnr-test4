@@ -17,8 +17,8 @@ interface ContentsTableToolbarProps<TData> {
 }
 
 const statusOptions = [
-  { label: 'Replacement Same', value: ItemStatus.RS },
   { label: 'Not Repairable', value: ItemStatus.NR },
+  { label: 'Replacement Same', value: ItemStatus.RS },
   { label: 'VPOL', value: ItemStatus.VPOL },
 ];
 
