@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
-import { Input } from '@react-monorepo/shared';
+import { InputClearable } from '@react-monorepo/shared';
 import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
@@ -36,10 +36,11 @@ export function ContentsTableToolbar<TData>({
     <div className="flex items-center py-4">
       <div className="relative w-[320px]">
         <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-        <Input
+        <InputClearable
           placeholder="Filter items..."
           value={(table.getState().globalFilter as string) ?? ''}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
+          onClear={() => table.setGlobalFilter('')}
           className="pl-8"
         />
       </div>
