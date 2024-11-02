@@ -5,7 +5,7 @@ import { Input } from '@react-monorepo/shared';
 import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
-import { DataTableFacetedFilter } from './DataTableFacetedFilter';
+import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
 import { ItemCategory } from '../itemCategories';
 
 interface ContentsTableToolbarProps<TData> {
@@ -43,14 +43,14 @@ export function ContentsTableToolbar<TData>({
       </div>
       <div className="ml-4 flex items-center space-x-2">
         {table.getColumn('status') && (
-          <DataTableFacetedFilter
+          <DataTableFacetedFilterButton
             column={table.getColumn('status')}
             title="Status"
             options={statusOptions}
           />
         )}
         {table.getColumn('category') && (
-          <DataTableFacetedFilter
+          <DataTableFacetedFilterButton
             column={table.getColumn('category')}
             title="Category"
             options={categoryOptions}

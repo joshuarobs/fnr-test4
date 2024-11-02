@@ -18,7 +18,7 @@ import {
   Separator,
 } from '@react-monorepo/shared';
 
-interface DataTableFacetedFilterProps<TData, TValue> {
+interface DataTableFacetedFilterButtonProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
   options: {
@@ -28,11 +28,11 @@ interface DataTableFacetedFilterProps<TData, TValue> {
   }[];
 }
 
-export function DataTableFacetedFilter<TData, TValue>({
+export function DataTableFacetedFilterButton<TData, TValue>({
   column,
   title,
   options,
-}: DataTableFacetedFilterProps<TData, TValue>) {
+}: DataTableFacetedFilterButtonProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
 
