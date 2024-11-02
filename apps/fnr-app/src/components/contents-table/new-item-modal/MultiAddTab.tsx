@@ -14,7 +14,7 @@ export function MultiAddTab({
       </p>
       <textarea
         className="w-full min-h-[200px] p-2 rounded-md border border-input bg-transparent text-sm"
-        placeholder="Enter multiple items, one per line"
+        placeholder=""
         value={multiAddInput}
         onChange={(e) => setMultiAddInput(e.target.value)}
         autoFocus

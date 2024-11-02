@@ -7,6 +7,7 @@ import {
   DialogFooter,
 } from '@react-monorepo/shared';
 import { PlusIcon } from '@radix-ui/react-icons';
+import { File, Files } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
@@ -25,11 +26,13 @@ enum TabType {
 const TABS = [
   {
     id: TabType.Single,
-    label: 'Single',
+    label: 'Single item',
+    icon: File,
   },
   {
     id: TabType.Multi,
-    label: 'Multi Add',
+    label: 'Multi add',
+    icon: Files,
   },
 ] as const;
 
@@ -145,21 +148,25 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       <DialogContent className="sm:max-w-[500px]">
         <h4 className="font-medium leading-none">Add a new Item</h4>
         <div className="flex space-x-1 border-b">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              className={cn(
-                'px-4 py-2 text-sm font-medium transition-colors',
-                'focus:outline-none',
-                activeTab === tab.id
-                  ? 'border-b-2 border-primary text-primary'
-                  : 'text-muted-foreground hover:text-primary'
-              )}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                className={cn(
+                  'px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2',
+                  'focus:outline-none',
+                  activeTab === tab.id
+                    ? 'border-b-2 border-primary text-primary'
+                    : 'text-muted-foreground hover:text-primary'
+                )}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         <div className="pt-4">
