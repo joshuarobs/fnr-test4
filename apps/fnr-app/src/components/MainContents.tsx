@@ -37,13 +37,23 @@ export const MainContents = () => {
     return tableData.reduce((maxId, item) => Math.max(maxId, item.id), 0);
   };
 
-  const addItem = (newItem: Item) => {
-    // Ensure new item has a unique ID
-    const itemWithNewId = {
-      ...newItem,
-      id: getHighestId() + 1,
-    };
-    setTableData([...tableData, itemWithNewId]);
+  const addItem = (newItem: Item | Item[]) => {
+    if (Array.isArray(newItem)) {
+      // Handle array of items
+      const nextId = getHighestId() + 1;
+      const itemsWithNewIds = newItem.map((item, index) => ({
+        ...item,
+        id: nextId + index,
+      }));
+      setTableData([...tableData, ...itemsWithNewIds]);
+    } else {
+      // Handle single item
+      const itemWithNewId = {
+        ...newItem,
+        id: getHighestId() + 1,
+      };
+      setTableData([...tableData, itemWithNewId]);
+    }
   };
 
   const removeItem = (itemId: number) => {

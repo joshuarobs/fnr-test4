@@ -15,7 +15,7 @@ import { Item } from '../item';
 import { ItemCategory } from '../itemCategories';
 
 interface AddNewItemModalProps {
-  addItem: (item: Item) => void;
+  addItem: (item: Item | Item[]) => void;
 }
 
 enum TabType {
@@ -80,13 +80,11 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     const items = multiAddInput
       .split('\n')
       .map((item) => item.trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      .map((itemName) => createNewItem(itemName, selectedGroup));
 
     if (items.length > 0) {
-      items.forEach((itemName) => {
-        const newItem = createNewItem(itemName, selectedGroup);
-        addItem(newItem);
-      });
+      addItem(items);
       setMultiAddInput('');
       setIsOpen(false);
     }

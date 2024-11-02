@@ -6,7 +6,7 @@ interface TestAddDeleteStuffProps {
   setNewItemName: (updatedItem: string) => void;
   handleAddItem: () => void;
   handleRemoveLastItem: () => void;
-  addItem: (item: Item) => void;
+  addItem: (item: Item | Item[]) => void;
 }
 
 export const TestAddDeleteStuff = ({
