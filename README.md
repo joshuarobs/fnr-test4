@@ -8,6 +8,10 @@ Thanks to the help from this tutorial here: https://medium.com/readytowork-org/m
 
 And hours of tinkering around.
 
+### Suggestions for improvements
+- A suggestion button that shows what still needs to be done on this claim, e.g.
+this field needs to be filled out, this item needs a quote, this item needs to be verified etc.
+
 ---
 
 ## Instructions
