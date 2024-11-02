@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { Item, calculateDifference } from './item';
 import { ModelSerialCell } from './cells/ModelSerialCell';
 import { ItemStatusBadge } from './ItemStatusBadge';
@@ -83,6 +83,8 @@ export const createColumns = (
           </div>
         );
       },
+      enableColumnFilter: true,
+      filterFn: 'faceted' as const,
     },
     {
       accessorKey: ITEM_KEYS.GROUP,
@@ -95,6 +97,8 @@ export const createColumns = (
           </div>
         );
       },
+      enableColumnFilter: true,
+      filterFn: 'faceted' as const,
     },
     {
       accessorKey: ITEM_KEYS.CATEGORY,
@@ -108,6 +112,8 @@ export const createColumns = (
           </div>
         );
       },
+      enableColumnFilter: true,
+      filterFn: 'faceted' as const,
     },
     {
       accessorKey: ITEM_KEYS.MODEL_SERIAL_NUMBER,

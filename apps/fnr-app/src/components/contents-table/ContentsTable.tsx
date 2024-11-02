@@ -7,6 +7,7 @@ import {
   getSortedRowModel,
   FilterFn,
   ColumnDef,
+  FilterFns,
 } from '@tanstack/react-table';
 import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
 import { ContentsDataTable } from './ContentsDataTable';
@@ -31,6 +32,27 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
   return name.includes(searchValue) || category.includes(searchValue);
 };
+
+// OR filter function for faceted filters
+const facetedFilter: FilterFn<Item> = (
+  row,
+  columnId,
+  filterValues: string[]
+) => {
+  if (!filterValues?.length) return true;
+  const value = row.getValue(columnId);
+  return filterValues.some(
+    (filterValue) => String(value).toLowerCase() === filterValue.toLowerCase()
+  );
+};
+
+// Extend FilterFns to include our custom filters
+declare module '@tanstack/table-core' {
+  interface FilterFns {
+    fuzzy: FilterFn<any>;
+    faceted: FilterFn<any>;
+  }
+}
 
 export const ContentsTableWithToolbar: React.FC<
   ContentsTableWithToolbarProps
@@ -66,6 +88,10 @@ export const ContentsTableWithToolbar: React.FC<
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: fuzzyFilter,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+      faceted: facetedFilter,
+    },
     state: {
       globalFilter,
       columnOrder,
@@ -81,10 +107,6 @@ export const ContentsTableWithToolbar: React.FC<
         setFrozenColumnKeys={setFrozenColumnKeys}
       />
       <ContentsDataTable<Item, unknown>
-        data={data}
-        addItem={addItem}
-        removeItem={removeItem}
-        updateItem={updateItem}
         table={table}
         frozenColumnKeys={frozenColumnKeys}
         frozenRightColumnKeys={frozenRightColumnKeys}
