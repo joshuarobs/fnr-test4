@@ -72,7 +72,6 @@ export const MainContents = () => {
       ourquote: randomItem.ourquote || 0,
       date: new Date().toISOString().split('T')[0],
       dueDate: new Date().toISOString().split('T')[0],
-      amount: randomItem.amount || 0,
       modelSerialNumber: randomItem.modelSerialNumber || '',
       receiptPhotoUrl: randomItem.receiptPhotoUrl || '',
     };

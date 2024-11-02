@@ -12,7 +12,6 @@ export type Item = {
   receiptPhotoUrl?: string; // New field for storing the receipt photo URL
   date: string;
   dueDate: string;
-  amount: number;
 };
 
 // Helper function to calculate difference

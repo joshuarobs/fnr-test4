@@ -9,7 +9,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'LT-2023-XPS15',
     date: '2023-05-01',
     dueDate: '2023-05-15',
-    amount: 1500.0,
     status: 'RS',
     group: 'Home Office',
     oisquote: 2000, // Overinflated
@@ -22,7 +21,6 @@ export const placeholderContentsData: Item[] = [
     category: ItemCategory.Furniture,
     date: '2023-05-05',
     dueDate: '2023-05-19',
-    amount: 2300.5,
     status: 'NR',
     group: 'Home Office',
     oisquote: 2000, // Under-inflated
@@ -35,7 +33,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'AV-2023-PRO',
     date: '2023-04-15',
     dueDate: '2023-04-29',
-    amount: 1800.75,
     status: 'VPOL',
     group: '',
     oisquote: null, // Missing
@@ -49,7 +46,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'SM-G-S23-ULTRA',
     date: '2023-06-01',
     dueDate: '2023-06-15',
-    amount: 1200.0,
     status: 'RS',
     group: 'Very Very Very Very Long Value',
     oisquote: 1600, // Overinflated
@@ -62,7 +58,6 @@ export const placeholderContentsData: Item[] = [
     category: ItemCategory.Food,
     date: '2023-06-10',
     dueDate: '2023-06-24',
-    amount: 150.25,
     status: 'NR',
     group: '',
     oisquote: 155, // Fair
@@ -74,7 +69,6 @@ export const placeholderContentsData: Item[] = [
     category: ItemCategory.Decor,
     date: '2023-06-15',
     dueDate: '2023-06-29',
-    amount: 500.0,
     status: 'NR',
     group: 'Loungeroom',
     oisquote: 500, // Same as ourquote
@@ -87,10 +81,9 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'CM-2023-DELUXE',
     date: '2023-07-01',
     dueDate: '2023-07-15',
-    amount: 250.0,
     status: 'RS',
     group: 'Kitchen',
-    oisquote: 300, // Overinflated
+    oisquote: 300.75, // Overinflated
     ourquote: 250,
     receiptPhotoUrl: 'https://example.com/receipts/coffeemaker.jpg',
   },
@@ -101,7 +94,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'OC-2023-ERGO',
     date: '2023-07-05',
     dueDate: '2023-07-19',
-    amount: 450.75,
     status: 'NR',
     group: '',
     oisquote: 400, // Under-inflated
@@ -114,7 +106,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'PR-2023-LASER',
     date: '2023-07-10',
     dueDate: '2023-07-24',
-    amount: 350.0,
     status: 'VPOL',
     group: '',
     oisquote: null, // Missing
@@ -127,7 +118,6 @@ export const placeholderContentsData: Item[] = [
     category: ItemCategory.Furniture,
     date: '2023-07-15',
     dueDate: '2023-07-29',
-    amount: 180.5,
     status: 'NR',
     group: 'Bedroom 1',
     oisquote: 180, // Fair
@@ -140,7 +130,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'MW-2023-SMART',
     date: '2023-07-20',
     dueDate: '2023-08-03',
-    amount: 200.0,
     status: 'RS',
     group: '',
     oisquote: 250, // Overinflated
@@ -153,7 +142,6 @@ export const placeholderContentsData: Item[] = [
     category: ItemCategory.Furniture,
     date: '2023-07-25',
     dueDate: '2023-08-08',
-    amount: 800.0,
     status: 'NR',
     group: '',
     oisquote: 750, // Under-inflated
@@ -166,7 +154,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'VC-2023-ROBOT',
     date: '2023-08-01',
     dueDate: '2023-08-15',
-    amount: 400.0,
     status: 'VPOL',
     group: '',
     oisquote: null, // Missing
@@ -180,7 +167,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'TV-2023-4K',
     date: '2023-08-05',
     dueDate: '2023-08-19',
-    amount: 1000.0,
     status: 'RS',
     group: '',
     oisquote: 1200, // Overinflated
@@ -194,7 +180,6 @@ export const placeholderContentsData: Item[] = [
     modelSerialNumber: 'BL-2023-PRO',
     date: '2023-08-10',
     dueDate: '2023-08-24',
-    amount: 120.0,
     status: 'NR',
     group: '',
     oisquote: 120, // Fair
@@ -206,7 +191,6 @@ export const placeholderContentsData: Item[] = [
     category: ItemCategory.Decor,
     date: '2023-08-15',
     dueDate: '2023-08-29',
-    amount: 150.0,
     status: 'NR',
     group: '',
     oisquote: 150, // Same as ourquote
