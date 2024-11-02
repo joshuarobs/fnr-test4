@@ -27,7 +27,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           {/* Main tabs */}
-          <div className="space-y-1">
+          <div>
             <SidebarTab icon={<HomeIcon />} label="Homepage" />
             <SidebarTab icon={<StarIcon />} label="Assigned" />
           </div>
@@ -37,7 +37,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Assigned
           </h2>
-          <div className="space-y-1">
+          <div>
             <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
             <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
             <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
@@ -48,7 +48,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Previous
           </h2>
-          <div className="space-y-1">
+          <div>
             <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
             <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
             <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
@@ -56,7 +56,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
 
           <SidebarSeparator />
           {/* Other tabs */}
-          <div className="space-y-1">
+          <div>
             <SidebarTab icon={<GearIcon />} label="Settings" />
             <SidebarTab icon={<MagicWandIcon />} label="Send feedback" />
           </div>
