@@ -15,6 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  ScrollArea,
   Separator,
 } from '@react-monorepo/shared';
 
@@ -48,7 +49,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircledIcon className="mr-2 h-4 w-4" />
-          <span className="text-sm">{title}</span>
+          <span className="text-sm select-none">{title}</span>
           {selectedValues?.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
@@ -94,53 +95,55 @@ export function DataTableFacetedFilterButton<TData, TValue>({
           <CommandInput placeholder={title} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup>
-              {options.map((option) => {
-                const isSelected = selectedValues.has(option.value);
-                const count = facets?.get(option.value) ?? 0;
-                return (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => {
-                      if (isSelected) {
-                        selectedValues.delete(option.value);
-                      } else {
-                        selectedValues.add(option.value);
-                      }
-                      const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
-                      );
-                    }}
-                  >
-                    <div
-                      className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible'
-                      )}
+            <ScrollArea className="max-h-[200px]">
+              <CommandGroup>
+                {options.map((option) => {
+                  const isSelected = selectedValues.has(option.value);
+                  const count = facets?.get(option.value) ?? 0;
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      onSelect={() => {
+                        if (isSelected) {
+                          selectedValues.delete(option.value);
+                        } else {
+                          selectedValues.add(option.value);
+                        }
+                        const filterValues = Array.from(selectedValues);
+                        column?.setFilterValue(
+                          filterValues.length ? filterValues : undefined
+                        );
+                      }}
                     >
-                      <CheckIcon className={cn('h-4 w-4')} />
-                    </div>
-                    {option.icon && (
-                      <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span className="flex-1">
-                      {renderOption ? renderOption(option) : option.label}
-                    </span>
-                    {count > 0 && (
-                      <Badge
-                        variant="secondary"
-                        className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"
+                      <div
+                        className={cn(
+                          'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                          isSelected
+                            ? 'bg-primary text-primary-foreground'
+                            : 'opacity-50 [&_svg]:invisible'
+                        )}
                       >
-                        {count}
-                      </Badge>
-                    )}
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
+                        <CheckIcon className={cn('h-4 w-4')} />
+                      </div>
+                      {option.icon && (
+                        <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                      )}
+                      <span className="flex-1">
+                        {renderOption ? renderOption(option) : option.label}
+                      </span>
+                      {count > 0 && (
+                        <Badge
+                          variant="secondary"
+                          className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"
+                        >
+                          {count}
+                        </Badge>
+                      )}
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </ScrollArea>
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />
