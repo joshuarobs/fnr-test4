@@ -12,6 +12,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  InputClearable,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -46,6 +47,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
 }: DataTableFacetedFilterButtonProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const [filterValue, setFilterValue] = React.useState('');
 
   return (
     <Popover>
@@ -95,7 +97,15 @@ export function DataTableFacetedFilterButton<TData, TValue>({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
-          <CommandInput placeholder={`Filter ${title?.toLowerCase()}...`} />
+          <div className="px-2 py-2">
+            <InputClearable
+              placeholder={`Filter ${title?.toLowerCase()}...`}
+              value={filterValue}
+              onChange={(e) => setFilterValue(e.target.value)}
+              onClear={() => setFilterValue('')}
+              className="h-8"
+            />
+          </div>
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
@@ -106,7 +116,13 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                 {options
                   .filter((option) => {
                     const count = facets?.get(option.value) ?? 0;
-                    return !HIDE_EMPTY_FILTERS || count > 0;
+                    return (
+                      (!HIDE_EMPTY_FILTERS || count > 0) &&
+                      (!filterValue ||
+                        option.label
+                          .toLowerCase()
+                          .includes(filterValue.toLowerCase()))
+                    );
                   })
                   .map((option) => {
                     const isSelected = selectedValues.has(option.value);

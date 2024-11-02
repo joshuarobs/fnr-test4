@@ -12,6 +12,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  InputClearable,
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
@@ -65,7 +66,7 @@ export function QuickAddTab({
         <Label htmlFor="name" className={labelMinWidthClass}>
           Name
         </Label>
-        <Input
+        <InputClearable
           id="name"
           name="item-name"
           autoComplete="off"
@@ -75,6 +76,7 @@ export function QuickAddTab({
           value={quickAddInput}
           onChange={(e) => setQuickAddInput(e.target.value)}
           onKeyDown={handleQuickAdd}
+          onClear={() => setQuickAddInput('')}
           autoFocus
         />
       </div>
