@@ -10,20 +10,22 @@ import { PlusIcon } from '@radix-ui/react-icons';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
+import { Item } from '../item';
+import { ItemCategory } from '../itemCategories';
 
 interface AddNewItemModalProps {
-  onConfirm: () => void;
+  addItem: (item: Item) => void;
 }
 
 enum TabType {
-  Quick = 'quick',
+  Single = 'single',
   Multi = 'multi',
 }
 
 const TABS = [
   {
-    id: TabType.Quick,
-    label: 'Add',
+    id: TabType.Single,
+    label: 'Single',
   },
   {
     id: TabType.Multi,
@@ -31,9 +33,9 @@ const TABS = [
   },
 ] as const;
 
-export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
+export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>(TabType.Quick);
+  const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
   const [quickAddInput, setQuickAddInput] = useState('');
   const [multiAddInput, setMultiAddInput] = useState('');
   const [groupOpen, setGroupOpen] = useState(false);
@@ -43,39 +45,57 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
   const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
   const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
 
+  const createNewItem = (name: string, group: string = ''): Item => {
+    return {
+      id: Date.now(), // This will be overridden by MainContents' addItem function
+      name: name.trim(),
+      group: group,
+      category: ItemCategory.Other,
+      status: 'NR',
+      oisquote: null,
+      ourquote: 0,
+      date: new Date().toISOString().split('T')[0],
+      dueDate: new Date().toISOString().split('T')[0],
+    };
+  };
+
   const handleQuickAdd = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
+    (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
       if (e.key === 'Enter' && quickAddInput.trim()) {
-        onConfirm();
+        const newItem = createNewItem(quickAddInput, selectedGroup);
+        addItem(newItem);
         setQuickAddInput('');
         setIsOpen(false);
       } else if (e.key === 'Escape') {
         setIsOpen(false);
       }
     },
-    [quickAddInput, onConfirm]
+    [quickAddInput, selectedGroup, addItem]
   );
 
-  const handleMultiAdd = useCallback(
-    (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.shiftKey && e.key === 'Enter') {
-        e.preventDefault();
-        const items = multiAddInput
-          .split('\n')
-          .map((item) => item.trim())
-          .filter(Boolean);
+  const handleMultiAdd = () => {
+    const items = multiAddInput
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
 
-        if (items.length > 0) {
-          onConfirm();
-          setMultiAddInput('');
-          setIsOpen(false);
-        }
-      } else if (e.key === 'Escape') {
-        setIsOpen(false);
-      }
-    },
-    [multiAddInput, onConfirm]
-  );
+    if (items.length > 0) {
+      items.forEach((itemName) => {
+        const newItem = createNewItem(itemName, selectedGroup);
+        addItem(newItem);
+      });
+      setMultiAddInput('');
+      setIsOpen(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (activeTab === TabType.Single) {
+      handleQuickAdd({ key: 'Enter' });
+    } else {
+      handleMultiAdd();
+    }
+  };
 
   // Update addItemHasMinReqs and quickAddHasChanges whenever quickAddInput changes
   const handleQuickAddInputChange = (value: string) => {
@@ -98,7 +118,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
   };
 
   const handleClearFields = () => {
-    if (activeTab === TabType.Quick) {
+    if (activeTab === TabType.Single) {
       setQuickAddInput('');
       setSelectedGroup('');
       setAddItemHasMinReqs(false);
@@ -123,6 +143,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
+        <h4 className="font-medium leading-none">Add a new Item</h4>
         <div className="flex space-x-1 border-b">
           {TABS.map((tab) => (
             <button
@@ -142,7 +163,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
         </div>
 
         <div className="pt-4">
-          {activeTab === TabType.Quick ? (
+          {activeTab === TabType.Single ? (
             <QuickAddTab
               quickAddInput={quickAddInput}
               setQuickAddInput={handleQuickAddInputChange}
@@ -156,7 +177,6 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
             <MultiAddTab
               multiAddInput={multiAddInput}
               setMultiAddInput={handleMultiAddInputChange}
-              handleMultiAdd={handleMultiAdd}
             />
           )}
         </div>
@@ -167,7 +187,7 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
               variant="ghost"
               onClick={handleClearFields}
               disabled={
-                activeTab === TabType.Quick
+                activeTab === TabType.Single
                   ? !quickAddHasChanges
                   : !multiAddHasChanges
               }
@@ -185,8 +205,9 @@ export function AddNewItemModal({ onConfirm }: AddNewItemModalProps) {
               </Button>
               <Button
                 type="submit"
+                onClick={handleSubmit}
                 disabled={
-                  (activeTab === TabType.Quick && !addItemHasMinReqs) ||
+                  (activeTab === TabType.Single && !addItemHasMinReqs) ||
                   (activeTab === TabType.Multi && !multiAddHasMinReqs)
                 }
                 className="select-none flex items-center gap-2"

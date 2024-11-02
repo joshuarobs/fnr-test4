@@ -6,6 +6,7 @@ import { Item } from './contents-table/item';
 import { TestAddDeleteStuff } from './contents-table/TestAddDeleteStuff';
 import { TotalCalculatedPriceText } from './contents-other/TotalCalculatedPriceText';
 import { TotalProgressBar } from './contents-other/TotalProgressBar';
+import { ItemCategory } from './contents-table/itemCategories';
 
 export const MainContents = () => {
   const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
@@ -32,8 +33,17 @@ export const MainContents = () => {
     };
   };
 
+  const getHighestId = () => {
+    return tableData.reduce((maxId, item) => Math.max(maxId, item.id), 0);
+  };
+
   const addItem = (newItem: Item) => {
-    setTableData([...tableData, newItem]);
+    // Ensure new item has a unique ID
+    const itemWithNewId = {
+      ...newItem,
+      id: getHighestId() + 1,
+    };
+    setTableData([...tableData, itemWithNewId]);
   };
 
   const removeItem = (itemId: number) => {
@@ -46,10 +56,6 @@ export const MainContents = () => {
     );
   };
 
-  const getHighestId = () => {
-    return tableData.reduce((maxId, item) => Math.max(maxId, item.id), 0);
-  };
-
   const getRandomStatus = (): 'RS' | 'NR' | 'VPOL' => {
     const rand = Math.random();
     if (rand < 0.6) return 'NR';
@@ -57,12 +63,12 @@ export const MainContents = () => {
     return 'VPOL';
   };
 
-  const handleAddItem = () => {
+  const createRandomItem = (customName?: string) => {
     let randomItem =
       randomItemsData[Math.floor(Math.random() * randomItemsData.length)];
-    let itemName = newItemName || randomItem.name;
+    let itemName = customName || randomItem.name;
 
-    const newItem: Item = {
+    return {
       id: getHighestId() + 1,
       group: randomItem.group,
       name: itemName,
@@ -75,6 +81,10 @@ export const MainContents = () => {
       modelSerialNumber: randomItem.modelSerialNumber || '',
       receiptPhotoUrl: randomItem.receiptPhotoUrl || '',
     };
+  };
+
+  const handleAddItem = () => {
+    const newItem = createRandomItem(newItemName);
     addItem(newItem);
     setNewItemName('');
   };
@@ -122,6 +132,7 @@ export const MainContents = () => {
           setNewItemName={setNewItemName}
           handleAddItem={handleAddItem}
           handleRemoveLastItem={handleRemoveLastItem}
+          addItem={addItem}
         />
       </div>
       <ContentsTableWithToolbar
