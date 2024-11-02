@@ -8,7 +8,7 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   return (
-    <header className="bg-gray-800 text-white p-4 flex items-center">
+    <header className="bg-gray-800 text-white h-[56px] flex items-center px-4">
       <Button
         variant="ghost"
         size="icon"
@@ -17,7 +17,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       >
         <HamburgerMenuIcon className="h-5 w-5" />
       </Button>
-      <h1 className="text-2xl font-bold">My App</h1>
+      <h1 className="text-l font-bold">My App</h1>
     </header>
   );
 };

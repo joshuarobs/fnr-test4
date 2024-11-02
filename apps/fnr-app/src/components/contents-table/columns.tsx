@@ -19,8 +19,8 @@ import {
 import { Button } from '@react-monorepo/shared';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { GreenTickIcon } from './GreenTickIcon';
+import { SortableHeader } from './SortableHeader';
 
 // New constant for short readable column names
 export const ShortReadibleColumnNames = {
@@ -41,34 +41,6 @@ const CELL_CONTENT_MARGIN = 'ml-2';
 // Component for right-aligned header
 const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
   <div className="text-right">{children}</div>
-);
-
-// Reusable sorting header component
-const SortableHeader = ({ column, title }: { column: any; title: string }) => (
-  <Button
-    variant="ghost"
-    onClick={() => {
-      const currentState = column.getIsSorted();
-      if (currentState === false) {
-        column.toggleSorting(false);
-      } else if (currentState === 'asc') {
-        column.toggleSorting(true);
-      } else {
-        column.clearSorting();
-      }
-    }}
-  >
-    <div className="flex items-center">
-      {title}
-      {column.getIsSorted() === 'asc' ? (
-        <ArrowUp className="ml-2 h-4 w-4" />
-      ) : column.getIsSorted() === 'desc' ? (
-        <ArrowDown className="ml-2 h-4 w-4" />
-      ) : (
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      )}
-    </div>
-  </Button>
 );
 
 export const createColumns = (
@@ -156,7 +128,7 @@ export const createColumns = (
       },
       header: ({ column }) => (
         <RightAlignedHeader>
-          <SortableHeader column={column} title="Insured's quote ($)" />
+          <SortableHeader column={column} title="Insured's" line2="quote ($)" />
         </RightAlignedHeader>
       ),
       cell: ({ row }) => {
