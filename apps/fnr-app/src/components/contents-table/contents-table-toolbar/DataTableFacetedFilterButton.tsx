@@ -26,12 +26,19 @@ interface DataTableFacetedFilterButtonProps<TData, TValue> {
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
+  renderOption?: (option: { label: string; value: string }) => React.ReactNode;
+  renderSelected?: (option: {
+    label: string;
+    value: string;
+  }) => React.ReactNode;
 }
 
 export function DataTableFacetedFilterButton<TData, TValue>({
   column,
   title,
   options,
+  renderOption,
+  renderSelected,
 }: DataTableFacetedFilterButtonProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
@@ -63,13 +70,18 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                   options
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
-                      <Badge
-                        variant="secondary"
-                        key={option.value}
-                        className="rounded-sm px-1 font-normal"
-                      >
-                        {option.label}
-                      </Badge>
+                      <div key={option.value}>
+                        {renderSelected ? (
+                          renderSelected(option)
+                        ) : (
+                          <Badge
+                            variant="secondary"
+                            className="rounded-sm px-1 font-normal"
+                          >
+                            {option.label}
+                          </Badge>
+                        )}
+                      </div>
                     ))
                 )}
               </div>
@@ -113,7 +125,11 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
-                    <span>{option.label}</span>
+                    {renderOption ? (
+                      renderOption(option)
+                    ) : (
+                      <span>{option.label}</span>
+                    )}
                     {facets?.get(option.value) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
                         {facets.get(option.value)}

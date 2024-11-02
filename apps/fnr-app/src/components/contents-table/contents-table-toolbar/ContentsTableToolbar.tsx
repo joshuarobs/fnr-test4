@@ -7,6 +7,7 @@ import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
 import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
 import { ItemCategory } from '../itemCategories';
+import { ItemStatusBadge } from '../ItemStatusBadge';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -47,6 +48,12 @@ export function ContentsTableToolbar<TData>({
             column={table.getColumn('status')}
             title="Status"
             options={statusOptions}
+            renderOption={(option) => (
+              <ItemStatusBadge status={option.value as Item['status']} />
+            )}
+            renderSelected={(option) => (
+              <ItemStatusBadge status={option.value as Item['status']} />
+            )}
           />
         )}
         {table.getColumn('category') && (
