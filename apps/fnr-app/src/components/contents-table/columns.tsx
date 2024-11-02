@@ -5,6 +5,7 @@ import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './cells/InsuredsQuoteCell';
 import { OurQuoteCell } from './cells/OurQuoteCell';
 import { ItemNameCell } from './cells/ItemNameCell';
+import { CategoryCell } from './cells/CategoryCell';
 import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import { IdCell } from './cells/IdCell';
@@ -109,10 +110,14 @@ export const createColumns = (
       header: ({ column }) => (
         <SortableHeader column={column} title="Category" />
       ),
-      cell: ({ row }) => {
+      cell: ({ row, table }) => {
         return (
           <div className={CELL_CONTENT_MARGIN}>
-            {row.getValue(ITEM_KEYS.CATEGORY)}
+            <CategoryCell
+              item={row.original}
+              updateItem={updateItem}
+              filterText={table.getState().globalFilter}
+            />
           </div>
         );
       },
