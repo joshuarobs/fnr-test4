@@ -5,12 +5,25 @@ import { Input } from '@react-monorepo/shared';
 import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
+import { DataTableFacetedFilter } from './DataTableFacetedFilter';
+import { ItemCategory } from '../itemCategories';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
   frozenColumnKeys: (keyof Item)[];
   setFrozenColumnKeys: React.Dispatch<React.SetStateAction<(keyof Item)[]>>;
 }
+
+const statusOptions = [
+  { label: 'Replacement Same', value: 'RS' },
+  { label: 'Not Repairable', value: 'NR' },
+  { label: 'VPOL', value: 'VPOL' },
+];
+
+const categoryOptions = Object.values(ItemCategory).map((category) => ({
+  label: category,
+  value: category,
+}));
 
 export function ContentsTableToolbar<TData>({
   table,
@@ -27,6 +40,22 @@ export function ContentsTableToolbar<TData>({
           onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="pl-8"
         />
+      </div>
+      <div className="ml-4 flex items-center space-x-2">
+        {table.getColumn('status') && (
+          <DataTableFacetedFilter
+            column={table.getColumn('status')}
+            title="Status"
+            options={statusOptions}
+          />
+        )}
+        {table.getColumn('category') && (
+          <DataTableFacetedFilter
+            column={table.getColumn('category')}
+            title="Category"
+            options={categoryOptions}
+          />
+        )}
       </div>
       <div className="ml-auto flex items-center space-x-2">
         <FreezeColumnToggleButton
