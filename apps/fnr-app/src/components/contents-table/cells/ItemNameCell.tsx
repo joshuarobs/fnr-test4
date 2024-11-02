@@ -9,13 +9,19 @@ import {
 import { Item } from '../item';
 import { BrowseLinkButton } from '../BrowseLinkButton';
 import cliTruncate from 'cli-truncate';
+import { highlightText } from '../utils/highlightText';
 
 interface ItemNameCellProps {
   item: Item;
   updateItem: (updatedItem: Item) => void;
+  filterText?: string;
 }
 
-export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
+export const ItemNameCell = ({
+  item,
+  updateItem,
+  filterText = '',
+}: ItemNameCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(item.name);
 
@@ -61,11 +67,14 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
   const shouldShowTooltip = item.name.length > 25;
 
   // Ensures long text stays on a single line with ellipsis instead of wrapping to two lines
-  // This is applied directly to the element to avoid CSS module conflicts
   const textStyle = {
     whiteSpace: 'nowrap' as const,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+  };
+
+  const renderContent = (text: string) => {
+    return filterText ? highlightText(text, filterText) : text;
   };
 
   return (
@@ -79,11 +88,11 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
                 className="cursor-pointer flex-grow"
                 style={textStyle}
               >
-                {truncatedName}
+                {renderContent(truncatedName)}
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{item.name}</p>
+              <p>{renderContent(item.name)}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -93,7 +102,7 @@ export const ItemNameCell = ({ item, updateItem }: ItemNameCellProps) => {
           className="cursor-pointer flex-grow"
           style={textStyle}
         >
-          {truncatedName}
+          {renderContent(truncatedName)}
         </div>
       )}
       <div className="flex-shrink-0 ml-4">

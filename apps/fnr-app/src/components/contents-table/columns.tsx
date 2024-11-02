@@ -58,10 +58,14 @@ export const createColumns = (
     {
       accessorKey: ITEM_KEYS.NAME,
       header: ({ column }) => <SortableHeader column={column} title="Name" />,
-      cell: ({ row }) => {
+      cell: ({ row, table }) => {
         return (
           <div className={CELL_CONTENT_MARGIN}>
-            <ItemNameCell item={row.original} updateItem={updateItem} />
+            <ItemNameCell
+              item={row.original}
+              updateItem={updateItem}
+              filterText={table.getState().globalFilter}
+            />
           </div>
         );
       },
