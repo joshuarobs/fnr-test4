@@ -95,8 +95,11 @@ export function DataTableFacetedFilterButton<TData, TValue>({
           <CommandInput placeholder={title} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <ScrollArea className="max-h-[200px]">
-              <CommandGroup>
+            <CommandGroup>
+              <ScrollArea
+                className="overflow-y-auto"
+                style={{ maxHeight: '200px' }}
+              >
                 {options.map((option) => {
                   const isSelected = selectedValues.has(option.value);
                   const count = facets?.get(option.value) ?? 0;
@@ -142,8 +145,8 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                     </CommandItem>
                   );
                 })}
-              </CommandGroup>
-            </ScrollArea>
+              </ScrollArea>
+            </CommandGroup>
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />
