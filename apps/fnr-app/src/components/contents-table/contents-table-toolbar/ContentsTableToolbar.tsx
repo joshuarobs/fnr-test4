@@ -8,6 +8,7 @@ import { Item } from '../item';
 import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
 import { ItemCategory } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
+import { ItemStatus } from '../ItemStatus';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -16,9 +17,9 @@ interface ContentsTableToolbarProps<TData> {
 }
 
 const statusOptions = [
-  { label: 'Replacement Same', value: 'RS' },
-  { label: 'Not Repairable', value: 'NR' },
-  { label: 'VPOL', value: 'VPOL' },
+  { label: 'Replacement Same', value: ItemStatus.RS },
+  { label: 'Not Repairable', value: ItemStatus.NR },
+  { label: 'VPOL', value: ItemStatus.VPOL },
 ];
 
 const categoryOptions = Object.values(ItemCategory).map((category) => ({

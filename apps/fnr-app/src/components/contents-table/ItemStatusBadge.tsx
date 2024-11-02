@@ -1,5 +1,6 @@
 import { Item } from './item';
 import { ITEM_KEYS } from './itemKeys';
+import { ItemStatus } from './ItemStatus';
 import {
   Tooltip,
   TooltipContent,
@@ -20,21 +21,21 @@ export const getStatusDetails = (
   status: Item[typeof ITEM_KEYS.STATUS]
 ): StatusDetails => {
   switch (status) {
-    case 'RS':
+    case ItemStatus.RS:
       return {
         bgClass: 'bg-red-200',
         textClass: 'text-red-800',
         text: 'RS',
         tooltip: 'Restorable',
       };
-    case 'NR':
+    case ItemStatus.NR:
       return {
         bgClass: 'bg-green-200',
         textClass: 'text-green-800',
         text: 'N/R',
         tooltip: 'Non-Restorable',
       };
-    case 'VPOL':
+    case ItemStatus.VPOL:
       return {
         bgClass: 'bg-purple-200',
         textClass: 'text-purple-800',
