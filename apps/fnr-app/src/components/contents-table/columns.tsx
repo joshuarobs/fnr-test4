@@ -239,6 +239,19 @@ export const createColumns = (
       cell: ({ row }) => {
         return <OurQuoteCell item={row.original} updateItem={updateItem} />;
       },
+      enableColumnFilter: true,
+      filterFn: (row, id, value: string[]) => {
+        const cellValue = row.getValue(id) as number | null;
+        return value.some((filterValue) => {
+          if (filterValue === 'has-value') {
+            return cellValue !== null && cellValue !== undefined;
+          }
+          if (filterValue === 'empty') {
+            return cellValue === null || cellValue === undefined;
+          }
+          return false;
+        });
+      },
       sortingFn: (rowA, rowB, columnId) => {
         const a = rowA.getValue(columnId) as number | null;
         const b = rowB.getValue(columnId) as number | null;
