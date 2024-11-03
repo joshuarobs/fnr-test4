@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   Select,
   SelectContent,
@@ -9,6 +9,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  InputClearable,
+  ScrollArea,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
 import { ItemCategory } from '../itemCategories';
@@ -27,42 +29,75 @@ export const CategoryCell = ({
   filterText = '',
 }: CategoryCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState<ItemCategory>(item.category);
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategory>(
+    item.category
+  );
+  const [searchText, setSearchText] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDoubleClick = useCallback(() => {
     setIsEditing(true);
   }, []);
 
-  const handleChange = useCallback(
-    (newValue: ItemCategory) => {
-      setValue(newValue);
+  const handleCategorySelect = useCallback(
+    (newCategory: ItemCategory) => {
+      setSelectedCategory(newCategory);
       setIsEditing(false);
-      if (newValue !== item.category) {
-        updateItem({ ...item, category: newValue });
+      if (newCategory !== item.category) {
+        updateItem({ ...item, category: newCategory });
       }
     },
     [item, updateItem]
   );
 
+  const handleInputKeyDown = useCallback((e: React.KeyboardEvent) => {
+    e.stopPropagation();
+  }, []);
+
+  const filteredCategories = Object.values(ItemCategory).filter((category) =>
+    category.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   if (isEditing) {
     return (
-      <Select
-        value={value}
-        onValueChange={handleChange}
-        defaultOpen
-        onOpenChange={(open) => !open && setIsEditing(false)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select category" />
-        </SelectTrigger>
-        <SelectContent>
-          {Object.values(ItemCategory).map((category) => (
-            <SelectItem key={category} value={category}>
-              {category}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="relative">
+        <Select
+          value={selectedCategory}
+          onValueChange={handleCategorySelect}
+          defaultOpen
+          onOpenChange={(open) => {
+            if (!open) {
+              setIsEditing(false);
+              setSearchText('');
+            }
+          }}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            <div className="p-1">
+              <InputClearable
+                ref={inputRef}
+                placeholder="Filter categories..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                onClear={() => setSearchText('')}
+                className="h-8"
+                autoFocus
+                onKeyDown={handleInputKeyDown}
+              />
+            </div>
+            <ScrollArea className="h-[200px]">
+              {filteredCategories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+      </div>
     );
   }
 
