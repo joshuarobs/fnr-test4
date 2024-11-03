@@ -10,9 +10,11 @@ import {
   PopoverContent,
   PopoverTrigger,
   Input,
+  InputClearable,
   Label,
   Separator,
 } from '@react-monorepo/shared';
+import styles from './ReceiptIcon.module.css';
 
 interface ReceiptIconProps {
   receiptLink?: string;
@@ -109,7 +111,10 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
           </Tooltip>
         </TooltipProvider>
       </PopoverTrigger>
-      <PopoverContent className="w-96">
+      <PopoverContent
+        className="w-96"
+        style={{ '--label-width': '100px' } as React.CSSProperties}
+      >
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Insured's quote proof</h4>
@@ -119,14 +124,14 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
             </p>
           </div>
           <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <div className="flex items-center gap-2">
+            <div className={styles.inputRow}>
+              <div className={styles.labelContainer}>
                 <Image className="w-4 h-4" />
                 <Label htmlFor="receipt-file">Photo</Label>
               </div>
               <Input
                 id="receipt-file"
-                className="col-span-2 h-8 cursor-pointer"
+                className="h-8 cursor-pointer"
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
@@ -144,16 +149,16 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
               </p>
               <Separator className="flex-1" />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <div className="flex items-center gap-2">
+            <div className={styles.inputRow}>
+              <div className={styles.labelContainer}>
                 <Globe className="w-4 h-4" />
                 <Label htmlFor="website-url">Website</Label>
               </div>
-              <Input
+              <InputClearable
                 id="website-url"
                 value={websiteUrl}
                 onChange={handleUrlChange}
-                className="col-span-2 h-8"
+                className="h-8"
                 placeholder="e.g. www.amazon.com"
               />
             </div>
