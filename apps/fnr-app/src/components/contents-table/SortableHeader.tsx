@@ -33,9 +33,13 @@ export const SortableHeader = ({
     );
 
   return (
-    <Button variant="ghost" onClick={handleSort}>
+    <Button
+      variant="ghost"
+      onClick={handleSort}
+      className="w-full justify-start"
+    >
       <div className="flex items-center">
-        <div className="leading-tight text-right">
+        <div className="leading-tight">
           <div>{title}</div>
           {line2 && <div>{line2}</div>}
         </div>
