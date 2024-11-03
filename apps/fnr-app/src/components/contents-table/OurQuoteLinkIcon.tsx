@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, Image, Globe } from 'lucide-react';
+import { Link, Globe } from 'lucide-react';
 import {
   Button,
   Tooltip,
@@ -9,9 +9,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Input,
   Label,
   Separator,
+  InputClearable,
 } from '@react-monorepo/shared';
 
 interface OurQuoteLinkIconProps {
@@ -19,52 +19,40 @@ interface OurQuoteLinkIconProps {
 }
 
 export const OurQuoteLinkIcon = ({ quoteLink }: OurQuoteLinkIconProps) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [prevSelectedFile, setPrevSelectedFile] = useState<File | null>(null);
-  const [websiteUrl, setWebsiteUrl] = useState<string>('');
-  const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>('');
+  const [websiteUrl, setWebsiteUrl] = useState<string>(quoteLink || '');
+  const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>(quoteLink || '');
   const [isOpen, setIsOpen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   const calculateChanges = () => {
-    const fileChanged =
-      selectedFile !== null && selectedFile !== prevSelectedFile;
-    const urlChanged = websiteUrl !== prevWebsiteUrl && websiteUrl !== '';
-    return fileChanged || urlChanged;
+    return websiteUrl !== prevWebsiteUrl && websiteUrl !== '';
   };
 
   const handlePopoverOpenChange = (open: boolean) => {
-    if (!open) {
-      if (websiteUrl === '' && !selectedFile) {
-        setHasChanges(false);
-        setPrevWebsiteUrl('');
-        setPrevSelectedFile(null);
-      } else {
-        setHasChanges(calculateChanges());
-      }
+    if (websiteUrl === '') {
+      setHasChanges(false);
+      setPrevWebsiteUrl('');
+    } else {
+      setHasChanges(calculateChanges());
     }
     setIsOpen(open);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const file = e.target.files?.[0];
-    if (file) {
-      setPrevSelectedFile(selectedFile);
-      setSelectedFile(file);
-    }
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newUrl = e.target.value;
+    setWebsiteUrl(newUrl);
+    setHasChanges(newUrl !== prevWebsiteUrl && newUrl !== '');
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrevWebsiteUrl(websiteUrl);
-    setWebsiteUrl(e.target.value);
+  const handleClear = () => {
+    setWebsiteUrl('');
+    setHasChanges(false);
   };
 
   const handleCancel = () => {
-    if (websiteUrl === '' && !selectedFile) {
+    if (websiteUrl === '') {
       setHasChanges(false);
       setPrevWebsiteUrl('');
-      setPrevSelectedFile(null);
     } else {
       setHasChanges(calculateChanges());
     }
@@ -105,16 +93,18 @@ export const OurQuoteLinkIcon = ({ quoteLink }: OurQuoteLinkIconProps) => {
             </p>
           </div>
           <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
+            <div className="grid grid-cols-[auto_1fr] items-center gap-4">
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
                 <Label htmlFor="website-url">Website</Label>
               </div>
-              <Input
+              <InputClearable
                 id="website-url"
                 value={websiteUrl}
                 onChange={handleUrlChange}
-                className="col-span-2 h-8"
+                onClear={handleClear}
+                className="h-8 w-full"
+                placeholder="e.g. www.amazon.com"
               />
             </div>
           </div>
@@ -128,7 +118,7 @@ export const OurQuoteLinkIcon = ({ quoteLink }: OurQuoteLinkIconProps) => {
             >
               Cancel
             </Button>
-            <Button size="sm" className="px-3">
+            <Button size="sm" className="px-3" disabled={!hasChanges}>
               Save
             </Button>
           </div>
