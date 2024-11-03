@@ -66,6 +66,7 @@ export function ContentsTableToolbar<TData extends Item>({
             column={table.getColumn(ITEM_KEYS.STATUS)}
             title="Status"
             options={statusOptions}
+            disableFilterInput
             renderOption={(option) => (
               <ItemStatusBadge status={option.value as Item['status']} />
             )}
@@ -87,6 +88,7 @@ export function ContentsTableToolbar<TData extends Item>({
             title="Insured's Quote"
             options={insuredQuoteOptions}
             alwaysShowOptions={true}
+            disableFilterInput
           />
         )}
         {table.getColumn(ITEM_KEYS.OUR_QUOTE) && (
@@ -95,6 +97,7 @@ export function ContentsTableToolbar<TData extends Item>({
             title="Our Quote"
             options={insuredQuoteOptions}
             alwaysShowOptions={true}
+            disableFilterInput
           />
         )}
         {hasActiveFilters && (
