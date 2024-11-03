@@ -12,9 +12,13 @@ interface OurQuoteCellProps {
 export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [value, setValue] = useState(item.ourquote.toString());
+  const [value, setValue] = useState(item.ourquote?.toString() ?? '');
 
-  const formatQuote = (quote: number) => {
+  const formatQuote = (quote: number | null) => {
+    // Return a div with the empty character, to prevent the double clicking to
+    // highlight a number in another cell. Its better to highlight the same cell as its
+    // the lesser of the evils.
+    if (quote === null) return <div>{'ㅤ'}</div>;
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -35,9 +39,13 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
 
   const handleBlur = useCallback(() => {
     setIsEditing(false);
-    const newQuote = parseFloat(value);
-    if (!isNaN(newQuote) && newQuote !== item.ourquote) {
-      updateItem({ ...item, ourquote: newQuote });
+    if (value === '') {
+      updateItem({ ...item, ourquote: null });
+    } else {
+      const newQuote = parseFloat(value);
+      if (!isNaN(newQuote) && newQuote !== item.ourquote) {
+        updateItem({ ...item, ourquote: newQuote });
+      }
     }
   }, [value, item, updateItem]);
 

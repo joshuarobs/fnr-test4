@@ -61,7 +61,7 @@ export const placeholderContentsData: Item[] = [
     status: 'NR',
     group: '',
     oisquote: 155, // Fair
-    ourquote: 150,
+    ourquote: 0,
   },
   {
     id: 6,
@@ -72,7 +72,7 @@ export const placeholderContentsData: Item[] = [
     status: 'NR',
     group: 'Loungeroom',
     oisquote: 500, // Same as ourquote
-    ourquote: 500,
+    ourquote: null,
   },
   {
     id: 7,
@@ -97,7 +97,7 @@ export const placeholderContentsData: Item[] = [
     status: 'NR',
     group: '',
     oisquote: 400, // Under-inflated
-    ourquote: 450,
+    ourquote: null,
   },
   {
     id: 9,
