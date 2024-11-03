@@ -19,14 +19,16 @@ export const MainContents = () => {
   };
 
   const calculateOurTotal = (items: Item[]): number => {
-    return items.reduce((total, item) => total + item.ourquote, 0);
+    return items.reduce((total, item) => total + (item.ourquote || 0), 0);
   };
 
   const calculateProgress = (
     items: Item[]
   ): { value: number; maxValue: number } => {
     const totalItems = items.length;
-    const itemsWithOurQuote = items.filter((item) => item.ourquote > 0).length;
+    const itemsWithOurQuote = items.filter(
+      (item) => (item.ourquote || 0) > 0
+    ).length;
     return {
       value: itemsWithOurQuote,
       maxValue: totalItems,
