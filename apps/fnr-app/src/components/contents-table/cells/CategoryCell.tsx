@@ -13,7 +13,7 @@ import {
   ScrollArea,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
-import { ItemCategory } from '../itemCategories';
+import { ItemCategory, categoryIcons } from '../itemCategories';
 import cliTruncate from 'cli-truncate';
 import { highlightText } from '../utils/highlightText';
 
@@ -89,11 +89,17 @@ export const CategoryCell = ({
               />
             </div>
             <ScrollArea className="h-[200px]">
-              {filteredCategories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
+              {filteredCategories.map((category) => {
+                const Icon = categoryIcons[category as ItemCategory];
+                return (
+                  <SelectItem key={category} value={category}>
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" />
+                      <span>{category}</span>
+                    </div>
+                  </SelectItem>
+                );
+              })}
             </ScrollArea>
           </SelectContent>
         </Select>
@@ -103,6 +109,7 @@ export const CategoryCell = ({
 
   const truncatedCategory = cliTruncate(item.category, 25, { position: 'end' });
   const shouldShowTooltip = item.category.length > 25;
+  const Icon = categoryIcons[item.category];
 
   const textStyle = {
     whiteSpace: 'nowrap' as const,
@@ -111,7 +118,12 @@ export const CategoryCell = ({
   };
 
   const renderContent = (text: string) => {
-    return filterText ? highlightText(text, filterText) : text;
+    return (
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 flex-shrink-0" />
+        <span>{filterText ? highlightText(text, filterText) : text}</span>
+      </div>
+    );
   };
 
   return (
