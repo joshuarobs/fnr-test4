@@ -68,10 +68,16 @@ export function ContentsTableToolbar<TData extends Item>({
             options={statusOptions}
             disableFilterInput
             renderOption={(option) => (
-              <ItemStatusBadge status={option.value as Item['status']} />
+              <ItemStatusBadge
+                status={option.value as Item['status']}
+                showTooltip={false}
+              />
             )}
             renderSelected={(option) => (
-              <ItemStatusBadge status={option.value as Item['status']} />
+              <ItemStatusBadge
+                status={option.value as Item['status']}
+                showTooltip={false}
+              />
             )}
           />
         )}

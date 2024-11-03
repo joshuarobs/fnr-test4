@@ -54,24 +54,30 @@ export const getStatusDetails = (
 
 type ItemStatusBadgeProps = {
   status: Item[typeof ITEM_KEYS.STATUS];
+  showTooltip?: boolean;
 };
 
-export const ItemStatusBadge = ({ status }: ItemStatusBadgeProps) => {
+export const ItemStatusBadge = ({
+  status,
+  showTooltip = true,
+}: ItemStatusBadgeProps) => {
   const statusDetails: StatusDetails = getStatusDetails(status);
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          {' '}
           <span
             className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${statusDetails.bgClass} ${statusDetails.textClass}`}
           >
             {statusDetails.text}
           </span>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>{statusDetails.tooltip}</p>
-        </TooltipContent>
+        {showTooltip && (
+          <TooltipContent>
+            <p>{statusDetails.tooltip}</p>
+          </TooltipContent>
+        )}
       </Tooltip>
     </TooltipProvider>
   );

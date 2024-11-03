@@ -162,7 +162,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                         {option.icon && (
                           <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                         )}
-                        <span className="flex-1 truncate" title={option.label}>
+                        <span className="flex-1 truncate">
                           {renderOption ? renderOption(option) : option.label}
                         </span>
                         {!alwaysShowOptions && count > 0 && (
