@@ -15,6 +15,7 @@ import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
 import { ItemCategory } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { ItemStatus } from '../ItemStatus';
+import { ITEM_KEYS } from '../itemKeys';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -55,9 +56,9 @@ export function ContentsTableToolbar<TData extends Item>({
         />
       </div>
       <div className="ml-4 flex items-center space-x-2">
-        {table.getColumn('status') && (
+        {table.getColumn(ITEM_KEYS.STATUS) && (
           <DataTableFacetedFilterButton
-            column={table.getColumn('status')}
+            column={table.getColumn(ITEM_KEYS.STATUS)}
             title="Status"
             options={statusOptions}
             renderOption={(option) => (
@@ -68,9 +69,9 @@ export function ContentsTableToolbar<TData extends Item>({
             )}
           />
         )}
-        {table.getColumn('category') && (
+        {table.getColumn(ITEM_KEYS.CATEGORY) && (
           <DataTableFacetedFilterButton
-            column={table.getColumn('category')}
+            column={table.getColumn(ITEM_KEYS.CATEGORY)}
             title="Category"
             options={categoryOptions}
           />
