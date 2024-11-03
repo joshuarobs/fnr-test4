@@ -29,45 +29,45 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
   const calculateChanges = () => {
     const fileChanged =
       selectedFile !== null && selectedFile !== prevSelectedFile;
-    const urlChanged = websiteUrl !== prevWebsiteUrl && websiteUrl !== '';
+    const urlChanged = websiteUrl !== prevWebsiteUrl;
     return fileChanged || urlChanged;
   };
 
   const handlePopoverOpenChange = (open: boolean) => {
     if (!open) {
-      if (websiteUrl === '' && !selectedFile) {
-        setHasChanges(false);
-        setPrevWebsiteUrl('');
-        setPrevSelectedFile(null);
-      } else {
-        setHasChanges(calculateChanges());
-      }
+      setIsOpen(false);
+      return;
     }
-    setIsOpen(open);
+    // When opening, set the previous states to the current values
+    setPrevWebsiteUrl(websiteUrl);
+    setPrevSelectedFile(selectedFile);
+    setHasChanges(false);
+    setIsOpen(true);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const file = e.target.files?.[0];
     if (file) {
-      setPrevSelectedFile(selectedFile);
       setSelectedFile(file);
+      setHasChanges(calculateChanges());
     }
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrevWebsiteUrl(websiteUrl);
-    setWebsiteUrl(e.target.value);
+    const newUrl = e.target.value;
+    setWebsiteUrl(newUrl);
+    // We need to calculate changes after state updates, so we use the new values directly
+    const fileChanged =
+      selectedFile !== null && selectedFile !== prevSelectedFile;
+    const urlChanged = newUrl !== prevWebsiteUrl;
+    setHasChanges(fileChanged || urlChanged);
   };
 
   const handleCancel = () => {
-    if (websiteUrl === '' && !selectedFile) {
-      setHasChanges(false);
-      setPrevWebsiteUrl('');
-      setPrevSelectedFile(null);
-    } else {
-      setHasChanges(calculateChanges());
-    }
+    setSelectedFile(prevSelectedFile);
+    setWebsiteUrl(prevWebsiteUrl);
+    setHasChanges(false);
     setIsOpen(false);
   };
 
@@ -154,6 +154,7 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
                 value={websiteUrl}
                 onChange={handleUrlChange}
                 className="col-span-2 h-8"
+                placeholder="e.g. www.amazon.com"
               />
             </div>
           </div>
@@ -167,7 +168,7 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
             >
               Cancel
             </Button>
-            <Button size="sm" className="px-3">
+            <Button size="sm" className="px-3" disabled={!hasChanges}>
               Save
             </Button>
           </div>
