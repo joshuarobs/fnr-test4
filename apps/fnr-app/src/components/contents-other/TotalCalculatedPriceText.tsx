@@ -1,10 +1,18 @@
 import { QuoteDifferenceIcon } from '../contents-table/QuoteDifferenceIcon';
+import { IoWarning } from 'react-icons/io5';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@react-monorepo/shared';
 
 interface TotalCalculatedPriceTextProps {
   title?: string;
   value: number;
   oisquote?: number;
   ourquote?: number;
+  warningString?: string;
 }
 
 export const TotalCalculatedPriceText = ({
@@ -12,6 +20,7 @@ export const TotalCalculatedPriceText = ({
   value,
   oisquote,
   ourquote,
+  warningString = '',
 }: TotalCalculatedPriceTextProps) => {
   const showQuoteDifference =
     oisquote !== undefined &&
@@ -26,7 +35,21 @@ export const TotalCalculatedPriceText = ({
 
   return (
     <div>
-      <small className="text-sm font-medium">{title}</small>
+      <div className="flex items-center gap-1">
+        <small className="text-sm font-medium">{title}</small>
+        {warningString && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <IoWarning className="h-4 w-4 text-orange-500" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{warningString}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold">{formattedValue}</h2>
         {showQuoteDifference && (

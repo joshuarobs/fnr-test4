@@ -130,8 +130,13 @@ export const MainContents = () => {
             value={insuredsTotal}
             oisquote={insuredsTotal}
             ourquote={ourTotal}
+            warningString="Insured has not provided quotes for all items yet."
           />
-          <TotalCalculatedPriceText title="Our total" value={ourTotal} />
+          <TotalCalculatedPriceText
+            title="Our total"
+            value={ourTotal}
+            warningString="We don't have quotes for all items yet."
+          />
           <TotalProgressBar
             value={progress.value}
             maxValue={progress.maxValue}
