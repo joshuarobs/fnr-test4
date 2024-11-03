@@ -50,7 +50,7 @@ export function ContentsTableToolbar<TData extends Item>({
 
   return (
     <div className="flex items-center py-4">
-      <div className="relative w-[320px]">
+      <div className="relative w-[320px] flex-none">
         <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
         <InputClearable
           placeholder="Filter items..."
@@ -60,53 +60,57 @@ export function ContentsTableToolbar<TData extends Item>({
           className="pl-8"
         />
       </div>
-      <div className="ml-4 flex items-center space-x-2">
-        {table.getColumn(ITEM_KEYS.STATUS) && (
-          <DataTableFacetedFilterButton
-            column={table.getColumn(ITEM_KEYS.STATUS)}
-            title="Status"
-            options={statusOptions}
-            disableFilterInput
-            renderOption={(option) => (
-              <ItemStatusBadge
-                status={option.value as Item['status']}
-                showTooltip={false}
-              />
-            )}
-            renderSelected={(option) => (
-              <ItemStatusBadge
-                status={option.value as Item['status']}
-                showTooltip={false}
-              />
-            )}
-          />
-        )}
-        {table.getColumn(ITEM_KEYS.CATEGORY) && (
-          <DataTableFacetedFilterButton
-            column={table.getColumn(ITEM_KEYS.CATEGORY)}
-            title="Category"
-            options={categoryOptions}
-          />
-        )}
-        {table.getColumn(ITEM_KEYS.OIS_QUOTE) && (
-          <DataTableFacetedFilterButton
-            column={table.getColumn(ITEM_KEYS.OIS_QUOTE)}
-            title="Insured's Quote"
-            options={insuredQuoteOptions}
-            alwaysShowOptions={true}
-            disableFilterInput
-          />
-        )}
-        {table.getColumn(ITEM_KEYS.OUR_QUOTE) && (
-          <DataTableFacetedFilterButton
-            column={table.getColumn(ITEM_KEYS.OUR_QUOTE)}
-            title="Our Quote"
-            options={insuredQuoteOptions}
-            alwaysShowOptions={true}
-            disableFilterInput
-          />
-        )}
-        {hasActiveFilters && (
+      <div className="ml-4 flex-1 overflow-x-auto">
+        <div className="flex items-center space-x-2 min-w-max">
+          {table.getColumn(ITEM_KEYS.STATUS) && (
+            <DataTableFacetedFilterButton
+              column={table.getColumn(ITEM_KEYS.STATUS)}
+              title="Status"
+              options={statusOptions}
+              disableFilterInput
+              renderOption={(option) => (
+                <ItemStatusBadge
+                  status={option.value as Item['status']}
+                  showTooltip={false}
+                />
+              )}
+              renderSelected={(option) => (
+                <ItemStatusBadge
+                  status={option.value as Item['status']}
+                  showTooltip={false}
+                />
+              )}
+            />
+          )}
+          {table.getColumn(ITEM_KEYS.CATEGORY) && (
+            <DataTableFacetedFilterButton
+              column={table.getColumn(ITEM_KEYS.CATEGORY)}
+              title="Category"
+              options={categoryOptions}
+            />
+          )}
+          {table.getColumn(ITEM_KEYS.OIS_QUOTE) && (
+            <DataTableFacetedFilterButton
+              column={table.getColumn(ITEM_KEYS.OIS_QUOTE)}
+              title="Insured's Quote"
+              options={insuredQuoteOptions}
+              alwaysShowOptions={true}
+              disableFilterInput
+            />
+          )}
+          {table.getColumn(ITEM_KEYS.OUR_QUOTE) && (
+            <DataTableFacetedFilterButton
+              column={table.getColumn(ITEM_KEYS.OUR_QUOTE)}
+              title="Our Quote"
+              options={insuredQuoteOptions}
+              alwaysShowOptions={true}
+              disableFilterInput
+            />
+          )}
+        </div>
+      </div>
+      {hasActiveFilters && (
+        <div className="ml-4 flex-none">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -130,9 +134,9 @@ export function ContentsTableToolbar<TData extends Item>({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        )}
-      </div>
-      <div className="ml-auto flex items-center space-x-2">
+        </div>
+      )}
+      <div className="ml-4 flex-none flex items-center space-x-2">
         <FreezeColumnToggleButton
           table={table}
           frozenColumnKeys={frozenColumnKeys}
