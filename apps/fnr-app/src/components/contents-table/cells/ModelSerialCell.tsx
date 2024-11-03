@@ -80,32 +80,30 @@ export const ModelSerialCell = ({
 
   return (
     <div className="flex items-center gap-2 min-w-0">
-      <div className="flex-1 min-w-0">
-        <TooltipProvider>
-          <Tooltip open={isTooltipVisible}>
-            <TooltipTrigger asChild>
-              <div
-                className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center gap-3 select-none whitespace-nowrap overflow-hidden"
-                onClick={handleClick}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <span className="text-sm text-gray-900 truncate">
-                  {getDisplayedModelSerial(modelSerialNumber)}
-                </span>
-                {isCopied ? (
-                  <CheckIcon className="w-4 h-4 text-green-600 stroke-4 scale-125 transform flex-shrink-0" />
-                ) : (
-                  <CopyIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                )}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{isCopied ? 'Copied!' : 'Copy to clipboard'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+      <TooltipProvider>
+        <Tooltip open={isTooltipVisible}>
+          <TooltipTrigger asChild>
+            <div
+              className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center gap-3 select-none whitespace-nowrap overflow-hidden"
+              onClick={handleClick}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <span className="text-sm text-gray-900 truncate">
+                {getDisplayedModelSerial(modelSerialNumber)}
+              </span>
+              {isCopied ? (
+                <CheckIcon className="w-4 h-4 text-green-600 stroke-4 scale-125 transform flex-shrink-0" />
+              ) : (
+                <CopyIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
+              )}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{isCopied ? 'Copied!' : 'Copy to clipboard'}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <div className="flex-shrink-0">
         <BrowseLinkButton
           tooltipText="Search for item in Google in a new tab"
