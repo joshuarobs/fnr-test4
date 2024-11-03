@@ -94,7 +94,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
         </div>
         <div>{formatQuote(item.ourquote)}</div>
       </div>
-      <OurQuoteLinkIcon />
+      <OurQuoteLinkIcon quoteLink={item.ourquoteLink} />
     </div>
   );
 };

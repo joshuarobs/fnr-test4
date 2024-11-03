@@ -10,6 +10,7 @@ export type Item = {
   oisquote: number | null;
   ourquote: number | null;
   receiptPhotoUrl?: string; // New field for storing the receipt photo URL
+  ourquoteLink?: string; // New field for storing our quote link/photo URL
   date: string;
   dueDate: string;
 };
