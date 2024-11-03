@@ -33,6 +33,7 @@ interface DataTableFacetedFilterButtonProps<TData, TValue> {
     label: string;
     value: string;
   }) => React.ReactNode;
+  alwaysShowOptions?: boolean; // New prop to control whether to always show options
 }
 
 // Controls whether to show/hide empty filters that if selected will show no results
@@ -44,6 +45,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
   options,
   renderOption,
   renderSelected,
+  alwaysShowOptions = false, // Default to false for backward compatibility
 }: DataTableFacetedFilterButtonProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
@@ -117,7 +119,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                   .filter((option) => {
                     const count = facets?.get(option.value) ?? 0;
                     return (
-                      (!HIDE_EMPTY_FILTERS || count > 0) &&
+                      (alwaysShowOptions || !HIDE_EMPTY_FILTERS || count > 0) &&
                       (!filterValue ||
                         option.label
                           .toLowerCase()
@@ -159,7 +161,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                         <span className="flex-1">
                           {renderOption ? renderOption(option) : option.label}
                         </span>
-                        {count > 0 && (
+                        {!alwaysShowOptions && count > 0 && (
                           <Badge
                             variant="secondary"
                             className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"

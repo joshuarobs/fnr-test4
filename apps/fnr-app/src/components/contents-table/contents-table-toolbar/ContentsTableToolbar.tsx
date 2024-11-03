@@ -34,6 +34,11 @@ const categoryOptions = Object.values(ItemCategory).map((category) => ({
   value: category,
 }));
 
+const insuredQuoteOptions = [
+  { label: 'Has value', value: 'has-value' },
+  { label: 'Empty', value: 'empty' },
+];
+
 export function ContentsTableToolbar<TData extends Item>({
   table,
   frozenColumnKeys,
@@ -74,6 +79,14 @@ export function ContentsTableToolbar<TData extends Item>({
             column={table.getColumn(ITEM_KEYS.CATEGORY)}
             title="Category"
             options={categoryOptions}
+          />
+        )}
+        {table.getColumn(ITEM_KEYS.OIS_QUOTE) && (
+          <DataTableFacetedFilterButton
+            column={table.getColumn(ITEM_KEYS.OIS_QUOTE)}
+            title="Insured's Quote"
+            options={insuredQuoteOptions}
+            alwaysShowOptions={true}
           />
         )}
         {hasActiveFilters && (
