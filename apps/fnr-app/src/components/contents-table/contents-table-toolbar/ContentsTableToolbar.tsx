@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
-import { InputClearable, Button, colors } from '@react-monorepo/shared';
+import { InputClearable, Button, colors, Badge } from '@react-monorepo/shared';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import {
   Tooltip,
@@ -65,6 +65,34 @@ const renderDifferenceOption = (option: { label: string; value: string }) => {
     );
   }
   return option.label;
+};
+
+const renderSelectedDifference = (option: { label: string; value: string }) => {
+  if (option.value === 'higher') {
+    return (
+      <Badge
+        className={`bg-red-100 text-red-700 border-red-200 hover:bg-red-100`}
+      >
+        <div className="flex items-center gap-1">
+          <CaretUpOutlined />
+          Higher
+        </div>
+      </Badge>
+    );
+  }
+  if (option.value === 'lower') {
+    return (
+      <Badge
+        className={`bg-green-100 text-green-700 border-green-200 hover:bg-green-100`}
+      >
+        <div className="flex items-center gap-1">
+          <CaretDownOutlined />
+          Lower
+        </div>
+      </Badge>
+    );
+  }
+  return <Badge variant="secondary">{option.label}</Badge>;
 };
 
 export function ContentsTableToolbar<TData extends Item>({
@@ -134,7 +162,7 @@ export function ContentsTableToolbar<TData extends Item>({
               alwaysShowOptions={true}
               disableFilterInput
               renderOption={renderDifferenceOption}
-              renderSelected={renderDifferenceOption}
+              renderSelected={renderSelectedDifference}
             />
           )}
           {table.getColumn(ITEM_KEYS.OUR_QUOTE) && (
