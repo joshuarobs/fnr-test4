@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
-import { InputClearable, Button } from '@react-monorepo/shared';
+import { InputClearable, Button, colors } from '@react-monorepo/shared';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import {
   Tooltip,
@@ -41,27 +41,31 @@ const insuredQuoteOptions = [
 ];
 
 const differenceOptions = [
-  {
-    label: (
-      <div className="flex items-center gap-2">
-        <CaretUpOutlined />
-        Higher
-      </div>
-    ),
-    value: 'higher',
-  },
-  {
-    label: (
-      <div className="flex items-center gap-2">
-        <CaretDownOutlined />
-        Lower
-      </div>
-    ),
-    value: 'lower',
-  },
+  { label: 'Higher', value: 'higher' },
+  { label: 'Lower', value: 'lower' },
   { label: 'Same', value: 'same' },
   { label: 'N/A', value: 'na' },
 ];
+
+const renderDifferenceOption = (option: { label: string; value: string }) => {
+  if (option.value === 'higher') {
+    return (
+      <div className={`flex items-center gap-2 ${colors.status.error}`}>
+        <CaretUpOutlined className={colors.status.error} />
+        Higher
+      </div>
+    );
+  }
+  if (option.value === 'lower') {
+    return (
+      <div className={`flex items-center gap-2 ${colors.status.success}`}>
+        <CaretDownOutlined className={colors.status.success} />
+        Lower
+      </div>
+    );
+  }
+  return option.label;
+};
 
 export function ContentsTableToolbar<TData extends Item>({
   table,
@@ -88,7 +92,7 @@ export function ContentsTableToolbar<TData extends Item>({
         <div className="flex items-center space-x-2 min-w-max">
           {table.getColumn(ITEM_KEYS.STATUS) && (
             <DataTableFacetedFilterButton
-              column={table.getColumn(ITEM_KEYS.STATUS)}
+              column={table.getColumn(ITEM_KEYS.STATUS) as any}
               title="Status"
               options={statusOptions}
               disableFilterInput
@@ -108,14 +112,14 @@ export function ContentsTableToolbar<TData extends Item>({
           )}
           {table.getColumn(ITEM_KEYS.CATEGORY) && (
             <DataTableFacetedFilterButton
-              column={table.getColumn(ITEM_KEYS.CATEGORY)}
+              column={table.getColumn(ITEM_KEYS.CATEGORY) as any}
               title="Category"
               options={categoryOptions}
             />
           )}
           {table.getColumn(ITEM_KEYS.OIS_QUOTE) && (
             <DataTableFacetedFilterButton
-              column={table.getColumn(ITEM_KEYS.OIS_QUOTE)}
+              column={table.getColumn(ITEM_KEYS.OIS_QUOTE) as any}
               title="Insured's Quote"
               options={insuredQuoteOptions}
               alwaysShowOptions={true}
@@ -124,16 +128,18 @@ export function ContentsTableToolbar<TData extends Item>({
           )}
           {table.getColumn(ITEM_KEYS.DIFFERENCE) && (
             <DataTableFacetedFilterButton
-              column={table.getColumn(ITEM_KEYS.DIFFERENCE)}
+              column={table.getColumn(ITEM_KEYS.DIFFERENCE) as any}
               title="Difference"
               options={differenceOptions}
               alwaysShowOptions={true}
               disableFilterInput
+              renderOption={renderDifferenceOption}
+              renderSelected={renderDifferenceOption}
             />
           )}
           {table.getColumn(ITEM_KEYS.OUR_QUOTE) && (
             <DataTableFacetedFilterButton
-              column={table.getColumn(ITEM_KEYS.OUR_QUOTE)}
+              column={table.getColumn(ITEM_KEYS.OUR_QUOTE) as any}
               title="Our Quote"
               options={insuredQuoteOptions}
               alwaysShowOptions={true}
@@ -171,7 +177,7 @@ export function ContentsTableToolbar<TData extends Item>({
       )}
       <div className="ml-4 flex-none flex items-center space-x-2">
         <FreezeColumnToggleButton
-          table={table}
+          table={table as unknown as Table<Item>}
           frozenColumnKeys={frozenColumnKeys}
           setFrozenColumnKeys={setFrozenColumnKeys}
         />
