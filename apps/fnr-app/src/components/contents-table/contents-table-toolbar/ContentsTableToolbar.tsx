@@ -39,6 +39,13 @@ const insuredQuoteOptions = [
   { label: 'Has value', value: 'has-value' },
 ];
 
+const differenceOptions = [
+  { label: 'Higher than', value: 'higher' },
+  { label: 'Lower than', value: 'lower' },
+  { label: 'Same', value: 'same' },
+  { label: 'N/A', value: 'na' },
+];
+
 export function ContentsTableToolbar<TData extends Item>({
   table,
   frozenColumnKeys,
@@ -94,6 +101,15 @@ export function ContentsTableToolbar<TData extends Item>({
               column={table.getColumn(ITEM_KEYS.OIS_QUOTE)}
               title="Insured's Quote"
               options={insuredQuoteOptions}
+              alwaysShowOptions={true}
+              disableFilterInput
+            />
+          )}
+          {table.getColumn(ITEM_KEYS.DIFFERENCE) && (
+            <DataTableFacetedFilterButton
+              column={table.getColumn(ITEM_KEYS.DIFFERENCE)}
+              title="Difference"
+              options={differenceOptions}
               alwaysShowOptions={true}
               disableFilterInput
             />

@@ -178,7 +178,7 @@ export const createColumns = (
       },
     },
     {
-      accessorKey: 'difference',
+      accessorKey: ITEM_KEYS.DIFFERENCE,
       meta: {
         headerClassName: 'min-w-[90px]',
       },
@@ -211,6 +211,34 @@ export const createColumns = (
             <QuoteDifferenceIcon oisquote={oisQuote} ourquote={ourQuote} />
           </div>
         );
+      },
+      enableColumnFilter: true,
+      filterFn: (row, id, value: string[]) => {
+        const item = row.original;
+        const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
+        const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
+
+        return value.some((filterValue) => {
+          if (filterValue === 'na') {
+            return oisQuote === null || ourQuote === null;
+          }
+          if (filterValue === 'same') {
+            return (
+              oisQuote !== null && ourQuote !== null && oisQuote === ourQuote
+            );
+          }
+          if (filterValue === 'higher') {
+            return (
+              oisQuote !== null && ourQuote !== null && oisQuote > ourQuote
+            );
+          }
+          if (filterValue === 'lower') {
+            return (
+              oisQuote !== null && ourQuote !== null && oisQuote < ourQuote
+            );
+          }
+          return false;
+        });
       },
       sortingFn: (rowA, rowB) => {
         const getDiff = (row: any) => {
