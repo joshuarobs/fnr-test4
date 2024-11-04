@@ -2,6 +2,7 @@ import React from 'react';
 import { Search } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
 import { InputClearable, Button } from '@react-monorepo/shared';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import {
   Tooltip,
   TooltipContent,
@@ -40,8 +41,24 @@ const insuredQuoteOptions = [
 ];
 
 const differenceOptions = [
-  { label: 'Higher than', value: 'higher' },
-  { label: 'Lower than', value: 'lower' },
+  {
+    label: (
+      <div className="flex items-center gap-2">
+        <CaretUpOutlined />
+        Higher
+      </div>
+    ),
+    value: 'higher',
+  },
+  {
+    label: (
+      <div className="flex items-center gap-2">
+        <CaretDownOutlined />
+        Lower
+      </div>
+    ),
+    value: 'lower',
+  },
   { label: 'Same', value: 'same' },
   { label: 'N/A', value: 'na' },
 ];
