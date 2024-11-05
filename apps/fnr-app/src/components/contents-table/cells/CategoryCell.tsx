@@ -29,9 +29,9 @@ export const CategoryCell = ({
   filterText = '',
 }: CategoryCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ItemCategory>(
-    item.category
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    ItemCategory | undefined
+  >(item.category);
   const [searchText, setSearchText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -103,6 +103,18 @@ export const CategoryCell = ({
             </ScrollArea>
           </SelectContent>
         </Select>
+      </div>
+    );
+  }
+
+  // Handle undefined category
+  if (!item.category) {
+    return (
+      <div
+        onDoubleClick={handleDoubleClick}
+        className="cursor-pointer flex-grow text-muted-foreground italic"
+      >
+        No category
       </div>
     );
   }

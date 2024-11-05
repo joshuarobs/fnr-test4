@@ -18,7 +18,6 @@ export const placeholderContentsData: Item[] = [
   {
     id: 2,
     name: 'Office Desk',
-    category: ItemCategory.Furniture,
     date: '2023-05-05',
     dueDate: '2023-05-19',
     status: 'NR',
@@ -102,7 +101,6 @@ export const placeholderContentsData: Item[] = [
   {
     id: 9,
     name: 'Printer',
-    category: ItemCategory.Electronics,
     modelSerialNumber: 'PR-2023-LASER',
     date: '2023-07-10',
     dueDate: '2023-07-24',

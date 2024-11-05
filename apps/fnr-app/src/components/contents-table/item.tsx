@@ -4,7 +4,7 @@ export type Item = {
   id: number;
   group: string;
   name: string;
-  category: ItemCategory;
+  category?: ItemCategory;
   modelSerialNumber?: string;
   status: 'RS' | 'NR' | 'VPOL';
   oisquote: number | null;
