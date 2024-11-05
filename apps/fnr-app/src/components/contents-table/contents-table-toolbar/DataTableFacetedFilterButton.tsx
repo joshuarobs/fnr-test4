@@ -31,6 +31,24 @@ interface DataTableFacetedFilterButtonProps<TData, TValue> {
   disableFilterInput?: boolean;
 }
 
+const FilterBadge = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <Badge
+    variant="secondary"
+    className={cn(
+      'rounded-full px-2 py-0.5 text-xs font-medium bg-gray-200',
+      className
+    )}
+  >
+    {children}
+  </Badge>
+);
+
 const HIDE_EMPTY_FILTERS = true;
 
 export function DataTableFacetedFilterButton<TData, TValue>({
@@ -94,12 +112,9 @@ export function DataTableFacetedFilterButton<TData, TValue>({
           {renderOption ? renderOption(option) : option.label}
         </span>
         {!alwaysShowOptions && count > 0 && (
-          <Badge
-            variant="secondary"
-            className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"
-          >
+          <FilterBadge className="ml-auto min-w-[20px] text-center">
             {count}
-          </Badge>
+          </FilterBadge>
         )}
       </CommandItem>
     );
@@ -124,20 +139,12 @@ export function DataTableFacetedFilterButton<TData, TValue>({
           {selectedValues?.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
-              <Badge
-                variant="secondary"
-                className="rounded-full px-2 py-0.5 text-xs font-normal lg:hidden"
-              >
+              <FilterBadge className="lg:hidden">
                 {selectedValues.size}
-              </Badge>
+              </FilterBadge>
               <div className="hidden space-x-1 lg:flex">
                 {selectedValues.size > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-full px-2 py-0.5 text-xs font-normal"
-                  >
-                    {selectedValues.size} selected
-                  </Badge>
+                  <FilterBadge>{selectedValues.size} selected</FilterBadge>
                 ) : (
                   allOptions
                     .filter((option) => selectedValues.has(option.value))
@@ -146,12 +153,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                         {renderSelected ? (
                           renderSelected(option)
                         ) : (
-                          <Badge
-                            variant="secondary"
-                            className="rounded-full px-2 py-0.5 text-xs font-normal"
-                          >
-                            {option.label}
-                          </Badge>
+                          <FilterBadge>{option.label}</FilterBadge>
                         )}
                       </div>
                     ))

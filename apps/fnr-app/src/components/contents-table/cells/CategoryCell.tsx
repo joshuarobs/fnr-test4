@@ -12,6 +12,7 @@ import {
   InputClearable,
   ScrollArea,
   Button,
+  Separator,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
 import {
@@ -103,6 +104,7 @@ export const CategoryCell = ({
                   No category
                 </div>
               </SelectItem>
+              <Separator className="my-2" />
               {filteredCategories.map((category) => {
                 const Icon = categoryIcons[category as ItemCategory];
                 return (
