@@ -19,25 +19,18 @@ import {
   ScrollArea,
   Separator,
 } from '@react-monorepo/shared';
+import { OptionItem, OptionGroups } from './types';
 
 interface DataTableFacetedFilterButtonProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
-  options: {
-    label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }[];
-  renderOption?: (option: { label: string; value: string }) => React.ReactNode;
-  renderSelected?: (option: {
-    label: string;
-    value: string;
-  }) => React.ReactNode;
-  alwaysShowOptions?: boolean; // New prop to control whether to always show options
+  options: OptionGroups;
+  renderOption?: (option: OptionItem) => React.ReactNode;
+  renderSelected?: (option: OptionItem) => React.ReactNode;
+  alwaysShowOptions?: boolean;
   disableFilterInput?: boolean;
 }
 
-// Controls whether to show/hide empty filters that if selected will show no results
 const HIDE_EMPTY_FILTERS = true;
 
 export function DataTableFacetedFilterButton<TData, TValue>({
@@ -46,12 +39,75 @@ export function DataTableFacetedFilterButton<TData, TValue>({
   options,
   renderOption,
   renderSelected,
-  alwaysShowOptions = false, // Default to false for backward compatibility
+  alwaysShowOptions = false,
   disableFilterInput = false,
 }: DataTableFacetedFilterButtonProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
   const [filterValue, setFilterValue] = React.useState('');
+
+  const filterOption = (option: OptionItem) => {
+    const count = facets?.get(option.value) ?? 0;
+    return (
+      (alwaysShowOptions || !HIDE_EMPTY_FILTERS || count > 0) &&
+      (!filterValue ||
+        option.label.toLowerCase().includes(filterValue.toLowerCase()))
+    );
+  };
+
+  const renderOptionItem = (option: OptionItem) => {
+    const isSelected = selectedValues.has(option.value);
+    const count = facets?.get(option.value) ?? 0;
+
+    return (
+      <CommandItem
+        key={option.value}
+        onSelect={() => {
+          if (isSelected) {
+            selectedValues.delete(option.value);
+          } else {
+            selectedValues.add(option.value);
+          }
+          const filterValues = Array.from(selectedValues);
+          column?.setFilterValue(
+            filterValues.length ? filterValues : undefined
+          );
+        }}
+        className="cursor-pointer"
+      >
+        <div
+          className={cn(
+            'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+            isSelected
+              ? 'bg-primary text-primary-foreground'
+              : 'opacity-50 [&_svg]:invisible'
+          )}
+        >
+          <CheckIcon className={cn('h-4 w-4')} />
+        </div>
+        {option.icon && (
+          <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+        )}
+        <span className="flex-1 truncate">
+          {renderOption ? renderOption(option) : option.label}
+        </span>
+        {!alwaysShowOptions && count > 0 && (
+          <Badge
+            variant="secondary"
+            className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"
+          >
+            {count}
+          </Badge>
+        )}
+      </CommandItem>
+    );
+  };
+
+  const allOptions = [
+    ...(options.headerGroup || []),
+    ...options.mainGroup,
+    ...(options.footerGroup || []),
+  ];
 
   return (
     <Popover>
@@ -77,7 +133,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
-                  options
+                  allOptions
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
                       <div key={option.value}>
@@ -114,70 +170,41 @@ export function DataTableFacetedFilterButton<TData, TValue>({
           )}
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup>
-              <ScrollArea
-                className="overflow-y-auto"
-                style={{ maxHeight: '200px' }}
-              >
-                {options
-                  .filter((option) => {
-                    const count = facets?.get(option.value) ?? 0;
-                    return (
-                      (alwaysShowOptions || !HIDE_EMPTY_FILTERS || count > 0) &&
-                      (!filterValue ||
-                        option.label
-                          .toLowerCase()
-                          .includes(filterValue.toLowerCase()))
-                    );
-                  })
-                  .map((option) => {
-                    const isSelected = selectedValues.has(option.value);
-                    const count = facets?.get(option.value) ?? 0;
-                    return (
-                      <CommandItem
-                        key={option.value}
-                        onSelect={() => {
-                          if (isSelected) {
-                            selectedValues.delete(option.value);
-                          } else {
-                            selectedValues.add(option.value);
-                          }
-                          const filterValues = Array.from(selectedValues);
-                          column?.setFilterValue(
-                            filterValues.length ? filterValues : undefined
-                          );
-                        }}
-                        className="cursor-pointer"
-                      >
-                        <div
-                          className={cn(
-                            'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                            isSelected
-                              ? 'bg-primary text-primary-foreground'
-                              : 'opacity-50 [&_svg]:invisible'
-                          )}
-                        >
-                          <CheckIcon className={cn('h-4 w-4')} />
-                        </div>
-                        {option.icon && (
-                          <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                        )}
-                        <span className="flex-1 truncate">
-                          {renderOption ? renderOption(option) : option.label}
-                        </span>
-                        {!alwaysShowOptions && count > 0 && (
-                          <Badge
-                            variant="secondary"
-                            className="ml-auto rounded-full px-2 py-0.5 text-xs min-w-[20px] text-center"
-                          >
-                            {count}
-                          </Badge>
-                        )}
-                      </CommandItem>
-                    );
-                  })}
-              </ScrollArea>
-            </CommandGroup>
+            <ScrollArea
+              className="overflow-y-auto"
+              style={{ maxHeight: '200px' }}
+            >
+              {options.headerGroup &&
+                options.headerGroup.filter(filterOption).length > 0 && (
+                  <CommandGroup>
+                    {options.headerGroup
+                      .filter(filterOption)
+                      .map(renderOptionItem)}
+                    {options.mainGroup.filter(filterOption).length > 0 && (
+                      <CommandSeparator />
+                    )}
+                  </CommandGroup>
+                )}
+
+              {options.mainGroup.filter(filterOption).length > 0 && (
+                <CommandGroup>
+                  {options.mainGroup.filter(filterOption).map(renderOptionItem)}
+                  {options.footerGroup &&
+                    options.footerGroup.filter(filterOption).length > 0 && (
+                      <CommandSeparator />
+                    )}
+                </CommandGroup>
+              )}
+
+              {options.footerGroup &&
+                options.footerGroup.filter(filterOption).length > 0 && (
+                  <CommandGroup>
+                    {options.footerGroup
+                      .filter(filterOption)
+                      .map(renderOptionItem)}
+                  </CommandGroup>
+                )}
+            </ScrollArea>
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />

@@ -17,6 +17,7 @@ import { ItemCategory } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { ItemStatus } from '../ItemStatus';
 import { ITEM_KEYS } from '../itemKeys';
+import { OptionGroups, OptionItem } from './types';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -24,30 +25,39 @@ interface ContentsTableToolbarProps<TData> {
   setFrozenColumnKeys: React.Dispatch<React.SetStateAction<(keyof Item)[]>>;
 }
 
-const statusOptions = [
-  { label: 'Not Repairable', value: ItemStatus.NR },
-  { label: 'Replacement Same', value: ItemStatus.RS },
-  { label: 'VPOL', value: ItemStatus.VPOL },
-];
+const statusOptions: OptionGroups = {
+  mainGroup: [
+    { label: 'Not Repairable', value: ItemStatus.NR },
+    { label: 'Replacement Same', value: ItemStatus.RS },
+    { label: 'VPOL', value: ItemStatus.VPOL },
+  ],
+};
 
-const categoryOptions = Object.values(ItemCategory).map((category) => ({
-  label: category,
-  value: category,
-}));
+const categoryOptions: OptionGroups = {
+  headerGroup: [{ label: 'No category', value: '' }],
+  mainGroup: Object.values(ItemCategory).map((category) => ({
+    label: category,
+    value: category,
+  })),
+};
 
-const insuredQuoteOptions = [
-  { label: 'Empty', value: 'empty' },
-  { label: 'Has value', value: 'has-value' },
-];
+const insuredQuoteOptions: OptionGroups = {
+  mainGroup: [
+    { label: 'Empty', value: 'empty' },
+    { label: 'Has value', value: 'has-value' },
+  ],
+};
 
-const differenceOptions = [
-  { label: 'Higher', value: 'higher' },
-  { label: 'Lower', value: 'lower' },
-  { label: 'Same', value: 'same' },
-  { label: 'N/A', value: 'na' },
-];
+const differenceOptions: OptionGroups = {
+  mainGroup: [
+    { label: 'Higher', value: 'higher' },
+    { label: 'Lower', value: 'lower' },
+    { label: 'Same', value: 'same' },
+    { label: 'N/A', value: 'na' },
+  ],
+};
 
-const renderDifferenceOption = (option: { label: string; value: string }) => {
+const renderDifferenceOption = (option: OptionItem) => {
   if (option.value === 'higher') {
     return (
       <div className={`flex items-center gap-2 ${colors.status.error}`}>
@@ -67,7 +77,7 @@ const renderDifferenceOption = (option: { label: string; value: string }) => {
   return option.label;
 };
 
-const renderSelectedDifference = (option: { label: string; value: string }) => {
+const renderSelectedDifference = (option: OptionItem) => {
   if (option.value === 'higher') {
     return (
       <Badge
