@@ -9,8 +9,7 @@ export const ITEM_KEYS = {
   OUR_QUOTE: 'ourquote',
   DIFFERENCE: 'difference',
   RECEIPT_PHOTO_URL: 'receiptPhotoUrl',
-  DATE: 'date',
-  DUE_DATE: 'dueDate',
+  DATE_CREATED: 'dateCreated',
   AMOUNT: 'amount',
   ACTIONS: 'actions',
 } as const;

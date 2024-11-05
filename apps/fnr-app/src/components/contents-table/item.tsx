@@ -11,8 +11,7 @@ export type Item = {
   ourquote: number | null;
   receiptPhotoUrl: string | null;
   ourquoteLink: string | null;
-  date: string;
-  dueDate: string;
+  dateCreated: Date;
 };
 
 // Helper function to calculate difference
