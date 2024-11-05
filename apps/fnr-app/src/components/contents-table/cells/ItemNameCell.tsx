@@ -34,9 +34,9 @@ const pastelColors = [
 ] as const;
 
 const getPastelColorFromTimestamp = (date: Date): string => {
-  // Use the day of the month to get better color distribution
-  const dayOfMonth = date.getDate();
-  const index = dayOfMonth % pastelColors.length;
+  // Use hours + minutes + seconds as a seed for random color selection
+  const seed = date.getHours() + date.getMinutes() + date.getSeconds();
+  const index = seed % pastelColors.length;
   return pastelColors[index];
 };
 
