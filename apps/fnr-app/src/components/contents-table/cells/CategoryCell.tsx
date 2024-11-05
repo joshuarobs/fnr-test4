@@ -11,9 +11,14 @@ import {
   TooltipTrigger,
   InputClearable,
   ScrollArea,
+  Button,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
-import { ItemCategory, categoryIcons } from '../itemCategories';
+import {
+  ItemCategory,
+  categoryIcons,
+  NO_CATEGORY_VALUE,
+} from '../itemCategories';
 import cliTruncate from 'cli-truncate';
 import { highlightText } from '../utils/highlightText';
 
@@ -40,7 +45,9 @@ export const CategoryCell = ({
   }, []);
 
   const handleCategorySelect = useCallback(
-    (newCategory: ItemCategory) => {
+    (value: string) => {
+      const newCategory =
+        value === NO_CATEGORY_VALUE ? null : (value as ItemCategory);
       setSelectedCategory(newCategory);
       setIsEditing(false);
       if (newCategory !== item.category) {
@@ -62,7 +69,9 @@ export const CategoryCell = ({
     return (
       <div className="relative">
         <Select
-          value={selectedCategory ?? undefined}
+          value={
+            selectedCategory === null ? NO_CATEGORY_VALUE : selectedCategory
+          }
           onValueChange={handleCategorySelect}
           defaultOpen
           onOpenChange={(open) => {
@@ -89,6 +98,11 @@ export const CategoryCell = ({
               />
             </div>
             <ScrollArea className="h-[200px]">
+              <SelectItem value={NO_CATEGORY_VALUE}>
+                <div className="flex items-center gap-2 text-muted-foreground italic">
+                  No category
+                </div>
+              </SelectItem>
               {filteredCategories.map((category) => {
                 const Icon = categoryIcons[category as ItemCategory];
                 return (

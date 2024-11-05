@@ -13,7 +13,7 @@ import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
 import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
-import { ItemCategory } from '../itemCategories';
+import { ItemCategory, NO_CATEGORY_VALUE } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { ItemStatus } from '../ItemStatus';
 import { ITEM_KEYS } from '../itemKeys';
@@ -34,7 +34,7 @@ const statusOptions: OptionGroups = {
 };
 
 const categoryOptions: OptionGroups = {
-  headerGroup: [{ label: 'No category', value: '__none__' }],
+  headerGroup: [{ label: 'No category', value: null }],
   mainGroup: Object.values(ItemCategory).map((category) => ({
     label: category,
     value: category,
@@ -43,7 +43,7 @@ const categoryOptions: OptionGroups = {
 
 const insuredQuoteOptions: OptionGroups = {
   mainGroup: [
-    { label: 'Empty', value: 'empty' },
+    { label: 'Empty', value: null },
     { label: 'Has value', value: 'has-value' },
   ],
 };

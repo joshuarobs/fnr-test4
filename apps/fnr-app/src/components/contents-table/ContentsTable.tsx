@@ -39,13 +39,11 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 const facetedFilter: FilterFn<Item> = (
   row,
   columnId,
-  filterValues: string[]
+  filterValues: Array<string | null>
 ) => {
   if (!filterValues?.length) return true;
   const value = row.getValue(columnId);
-  return filterValues.some(
-    (filterValue) => String(value).toLowerCase() === filterValue.toLowerCase()
-  );
+  return filterValues.some((filterValue) => value === filterValue);
 };
 
 // Extend FilterFns to include our custom filters

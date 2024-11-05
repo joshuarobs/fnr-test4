@@ -123,14 +123,9 @@ export const createColumns = (
         );
       },
       enableColumnFilter: true,
-      filterFn: (row, id, value: string[]) => {
+      filterFn: (row, id, value: Array<string | null>) => {
         const category = row.getValue(id) as ItemCategory | null;
-        return value.some((filterValue) => {
-          if (filterValue === 'empty') {
-            return category === null;
-          }
-          return category === filterValue;
-        });
+        return value.some((filterValue) => category === filterValue);
       },
     },
     {
@@ -172,13 +167,13 @@ export const createColumns = (
         );
       },
       enableColumnFilter: true,
-      filterFn: (row, id, value: string[]) => {
+      filterFn: (row, id, value: Array<string | null>) => {
         const cellValue = row.getValue(id) as number | null;
         return value.some((filterValue) => {
           if (filterValue === 'has-value') {
             return cellValue !== null;
           }
-          if (filterValue === 'empty') {
+          if (filterValue === null) {
             return cellValue === null;
           }
           return false;
@@ -283,13 +278,13 @@ export const createColumns = (
         return <OurQuoteCell item={row.original} updateItem={updateItem} />;
       },
       enableColumnFilter: true,
-      filterFn: (row, id, value: string[]) => {
+      filterFn: (row, id, value: Array<string | null>) => {
         const cellValue = row.getValue(id) as number | null;
         return value.some((filterValue) => {
           if (filterValue === 'has-value') {
             return cellValue !== null;
           }
-          if (filterValue === 'empty') {
+          if (filterValue === null) {
             return cellValue === null;
           }
           return false;

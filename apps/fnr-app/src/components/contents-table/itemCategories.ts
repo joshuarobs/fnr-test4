@@ -31,6 +31,8 @@ import { IconType } from 'react-icons';
 import { IoIosPaper } from 'react-icons/io';
 import { MdSmartToy } from 'react-icons/md';
 
+export const NO_CATEGORY_VALUE = '__none__';
+
 export enum ItemCategory {
   Appliances = 'Appliances',
   Auto = 'Auto',

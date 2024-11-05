@@ -5,7 +5,7 @@ export const randomItemsData: Item[] = [
   {
     id: 1,
     name: 'Laptop',
-    category: ItemCategory.Electronics,
+    category: null, // Test item with null category
     modelSerialNumber: 'LT-2022-XPS15',
     date: '2022-07-15',
     dueDate: '2022-07-29',
@@ -30,6 +30,7 @@ export const randomItemsData: Item[] = [
     receiptPhotoUrl: null,
     ourquoteLink: null,
   },
+  // ... rest of the items remain unchanged
   {
     id: 3,
     name: 'Smartphone',

@@ -2,7 +2,7 @@ import { ComponentType } from 'react';
 
 export interface OptionItem {
   label: string;
-  value: string;
+  value: string | null;
   icon?: ComponentType<{ className?: string }>;
 }
 

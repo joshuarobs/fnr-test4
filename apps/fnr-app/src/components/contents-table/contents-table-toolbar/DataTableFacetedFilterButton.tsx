@@ -43,7 +43,9 @@ export function DataTableFacetedFilterButton<TData, TValue>({
   disableFilterInput = false,
 }: DataTableFacetedFilterButtonProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const selectedValues = new Set(
+    column?.getFilterValue() as Array<string | null>
+  );
   const [filterValue, setFilterValue] = React.useState('');
 
   const filterOption = (option: OptionItem) => {
@@ -61,7 +63,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
 
     return (
       <CommandItem
-        key={option.value}
+        key={option.value?.toString() ?? 'null'}
         onSelect={() => {
           if (isSelected) {
             selectedValues.delete(option.value);
@@ -140,7 +142,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
                   allOptions
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
-                      <div key={option.value}>
+                      <div key={option.value?.toString() ?? 'null'}>
                         {renderSelected ? (
                           renderSelected(option)
                         ) : (
