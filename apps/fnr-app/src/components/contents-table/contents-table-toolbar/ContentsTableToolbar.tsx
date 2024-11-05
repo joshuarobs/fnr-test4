@@ -27,9 +27,9 @@ interface ContentsTableToolbarProps<TData> {
 
 const statusOptions: OptionGroups = {
   mainGroup: [
-    { label: 'Not Repairable', value: ItemStatus.NR },
-    { label: 'Replacement Same', value: ItemStatus.RS },
+    { label: 'Non-Restorable', value: ItemStatus.NR },
     { label: 'VPOL', value: ItemStatus.VPOL },
+    { label: 'Restorable', value: ItemStatus.RS },
   ],
 };
 

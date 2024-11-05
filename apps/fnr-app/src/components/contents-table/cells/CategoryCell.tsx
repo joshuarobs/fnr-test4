@@ -110,7 +110,7 @@ export const CategoryCell = ({
                 return (
                   <SelectItem key={category} value={category}>
                     <div className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-4 w-4 text-gray-600" />
                       <span>{category}</span>
                     </div>
                   </SelectItem>
@@ -148,7 +148,7 @@ export const CategoryCell = ({
   const renderContent = (text: string) => {
     return (
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 flex-shrink-0" />
+        <Icon className="h-4 w-4 flex-shrink-0 text-gray-600" />
         <span>{filterText ? highlightText(text, filterText) : text}</span>
       </div>
     );
