@@ -122,7 +122,15 @@ export const createColumns = (
         );
       },
       enableColumnFilter: true,
-      filterFn: 'faceted' as const,
+      filterFn: (row, id, value: string[]) => {
+        const category = row.getValue(id) as string | undefined;
+        return value.some((filterValue) => {
+          if (filterValue === 'empty') {
+            return category === undefined;
+          }
+          return category === filterValue;
+        });
+      },
     },
     {
       accessorKey: ITEM_KEYS.MODEL_SERIAL_NUMBER,

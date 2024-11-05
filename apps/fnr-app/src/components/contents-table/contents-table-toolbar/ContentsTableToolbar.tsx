@@ -34,7 +34,7 @@ const statusOptions: OptionGroups = {
 };
 
 const categoryOptions: OptionGroups = {
-  headerGroup: [{ label: 'No category', value: '' }],
+  headerGroup: [{ label: 'No category', value: '__none__' }],
   mainGroup: Object.values(ItemCategory).map((category) => ({
     label: category,
     value: category,

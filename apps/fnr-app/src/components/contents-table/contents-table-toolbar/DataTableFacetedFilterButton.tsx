@@ -109,6 +109,10 @@ export function DataTableFacetedFilterButton<TData, TValue>({
     ...(options.footerGroup || []),
   ];
 
+  const filteredHeaderOptions = options.headerGroup?.filter(filterOption) || [];
+  const filteredMainOptions = options.mainGroup.filter(filterOption);
+  const filteredFooterOptions = options.footerGroup?.filter(filterOption) || [];
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -174,36 +178,29 @@ export function DataTableFacetedFilterButton<TData, TValue>({
               className="overflow-y-auto"
               style={{ maxHeight: '200px' }}
             >
-              {options.headerGroup &&
-                options.headerGroup.filter(filterOption).length > 0 && (
+              {filteredHeaderOptions.length > 0 && (
+                <>
                   <CommandGroup>
-                    {options.headerGroup
-                      .filter(filterOption)
-                      .map(renderOptionItem)}
-                    {options.mainGroup.filter(filterOption).length > 0 && (
-                      <CommandSeparator />
-                    )}
+                    {filteredHeaderOptions.map(renderOptionItem)}
                   </CommandGroup>
-                )}
+                  <CommandSeparator />
+                </>
+              )}
 
-              {options.mainGroup.filter(filterOption).length > 0 && (
+              {filteredMainOptions.length > 0 && (
                 <CommandGroup>
-                  {options.mainGroup.filter(filterOption).map(renderOptionItem)}
-                  {options.footerGroup &&
-                    options.footerGroup.filter(filterOption).length > 0 && (
-                      <CommandSeparator />
-                    )}
+                  {filteredMainOptions.map(renderOptionItem)}
                 </CommandGroup>
               )}
 
-              {options.footerGroup &&
-                options.footerGroup.filter(filterOption).length > 0 && (
+              {filteredFooterOptions.length > 0 && (
+                <>
+                  <CommandSeparator />
                   <CommandGroup>
-                    {options.footerGroup
-                      .filter(filterOption)
-                      .map(renderOptionItem)}
+                    {filteredFooterOptions.map(renderOptionItem)}
                   </CommandGroup>
-                )}
+                </>
+              )}
             </ScrollArea>
             {selectedValues.size > 0 && (
               <>
