@@ -92,7 +92,7 @@ export const ItemNameCell = ({
     }
     return (
       <div className="mr-2">
-        <PlaceholderImageGeneric />
+        <PlaceholderImageGeneric itemCategory={item.category || undefined} />
       </div>
     );
   };
