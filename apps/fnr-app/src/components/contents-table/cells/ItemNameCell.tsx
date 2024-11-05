@@ -12,6 +12,34 @@ import cliTruncate from 'cli-truncate';
 import { highlightText } from '../utils/highlightText';
 import { PlaceholderImageGeneric } from '../../placeholder-images/PlaceholderImageGeneric';
 
+// Array of complete Tailwind background color classes
+const pastelColors = [
+  'bg-gray-300',
+  'bg-red-300',
+  'bg-orange-300',
+  'bg-amber-300',
+  'bg-yellow-300',
+  'bg-lime-300',
+  'bg-green-300',
+  'bg-emerald-300',
+  'bg-cyan-300',
+  'bg-sky-300',
+  'bg-blue-300',
+  'bg-indigo-300',
+  'bg-violet-300',
+  'bg-purple-300',
+  'bg-fuchsia-300',
+  'bg-pink-300',
+  'bg-rose-300',
+] as const;
+
+const getPastelColorFromTimestamp = (date: Date): string => {
+  // Use the day of the month to get better color distribution
+  const dayOfMonth = date.getDate();
+  const index = dayOfMonth % pastelColors.length;
+  return pastelColors[index];
+};
+
 interface ItemNameCellProps {
   item: Item;
   updateItem: (updatedItem: Item) => void;
@@ -92,7 +120,10 @@ export const ItemNameCell = ({
     }
     return (
       <div className="mr-2">
-        <PlaceholderImageGeneric itemCategory={item.category || undefined} />
+        <PlaceholderImageGeneric
+          itemCategory={item.category || undefined}
+          color={getPastelColorFromTimestamp(item.dateCreated)}
+        />
       </div>
     );
   };
