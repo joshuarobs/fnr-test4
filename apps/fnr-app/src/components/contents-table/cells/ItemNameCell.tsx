@@ -10,6 +10,7 @@ import { Item } from '../item';
 import { BrowseLinkButton } from '../BrowseLinkButton';
 import cliTruncate from 'cli-truncate';
 import { highlightText } from '../utils/highlightText';
+import { PlaceholderImageGeneric } from '../../placeholder-images/PlaceholderImageGeneric';
 
 interface ItemNameCellProps {
   item: Item;
@@ -77,34 +78,56 @@ export const ItemNameCell = ({
     return filterText ? highlightText(text, filterText) : text;
   };
 
+  const renderImageIcon = () => {
+    if (item.ourquoteLink) {
+      return (
+        <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0 mr-2">
+          <img
+            src={item.ourquoteLink}
+            alt={item.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      );
+    }
+    return (
+      <div className="mr-2">
+        <PlaceholderImageGeneric />
+      </div>
+    );
+  };
+
   return (
     <div className="flex items-center justify-between w-full">
-      {shouldShowTooltip ? (
-        <TooltipProvider>
-          <Tooltip delayDuration={350}>
-            <TooltipTrigger asChild>
-              <div
-                onDoubleClick={handleDoubleClick}
-                className="cursor-pointer flex-grow"
-                style={textStyle}
-              >
-                {renderContent(truncatedName)}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{renderContent(item.name)}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ) : (
-        <div
-          onDoubleClick={handleDoubleClick}
-          className="cursor-pointer flex-grow"
-          style={textStyle}
-        >
-          {renderContent(truncatedName)}
-        </div>
-      )}
+      <div className="flex items-center flex-grow min-w-0">
+        {renderImageIcon()}
+        {shouldShowTooltip ? (
+          <TooltipProvider>
+            <Tooltip delayDuration={350}>
+              <TooltipTrigger asChild>
+                <div
+                  onDoubleClick={handleDoubleClick}
+                  className="cursor-pointer flex-grow min-w-0"
+                  style={textStyle}
+                >
+                  {renderContent(truncatedName)}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{renderContent(item.name)}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <div
+            onDoubleClick={handleDoubleClick}
+            className="cursor-pointer flex-grow min-w-0"
+            style={textStyle}
+          >
+            {renderContent(truncatedName)}
+          </div>
+        )}
+      </div>
       <div className="flex-shrink-0 ml-4">
         <BrowseLinkButton
           tooltipText="Search for item in Google in a new tab"
