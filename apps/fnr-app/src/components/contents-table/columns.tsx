@@ -45,6 +45,16 @@ const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
   <div className="text-right">{children}</div>
 );
 
+// Helper function to determine difference type
+const getDifferenceType = (item: Item): 'higher' | 'lower' | 'same' | 'na' => {
+  const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
+  const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
+
+  if (oisQuote === null || ourQuote === null) return 'na';
+  if (oisQuote === ourQuote) return 'same';
+  return oisQuote > ourQuote ? 'higher' : 'lower';
+};
+
 export const createColumns = (
   updateItem: (item: Item) => void
 ): ColumnDef<Item>[] =>
@@ -263,6 +273,7 @@ export const createColumns = (
         if (b === null) return -1;
         return a - b;
       },
+      accessorFn: (row) => getDifferenceType(row), // Add this line to generate facet values
     },
     {
       accessorKey: ITEM_KEYS.OUR_QUOTE,

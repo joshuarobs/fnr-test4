@@ -62,10 +62,58 @@ const insuredQuoteOptions: OptionGroups = {
 
 const differenceOptions: OptionGroups = {
   mainGroup: [
-    { label: 'Higher', value: 'higher' },
-    { label: 'Lower', value: 'lower' },
-    { label: 'Same', value: 'same' },
-    { label: 'N/A', value: 'na' },
+    {
+      label: 'Higher',
+      value: 'higher',
+      getCount: (facets: Map<string | number | null, number>) => {
+        let count = 0;
+        facets.forEach((value: number, key: string | number | null) => {
+          if (key === 'higher') {
+            count += value;
+          }
+        });
+        return count;
+      },
+    },
+    {
+      label: 'Lower',
+      value: 'lower',
+      getCount: (facets: Map<string | number | null, number>) => {
+        let count = 0;
+        facets.forEach((value: number, key: string | number | null) => {
+          if (key === 'lower') {
+            count += value;
+          }
+        });
+        return count;
+      },
+    },
+    {
+      label: 'Same',
+      value: 'same',
+      getCount: (facets: Map<string | number | null, number>) => {
+        let count = 0;
+        facets.forEach((value: number, key: string | number | null) => {
+          if (key === 'same') {
+            count += value;
+          }
+        });
+        return count;
+      },
+    },
+    {
+      label: 'N/A',
+      value: 'na',
+      getCount: (facets: Map<string | number | null, number>) => {
+        let count = 0;
+        facets.forEach((value: number, key: string | number | null) => {
+          if (key === 'na') {
+            count += value;
+          }
+        });
+        return count;
+      },
+    },
   ],
 };
 
