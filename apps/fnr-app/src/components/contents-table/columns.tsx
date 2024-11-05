@@ -9,6 +9,7 @@ import { CategoryCell } from './cells/CategoryCell';
 import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import { IdCell } from './cells/IdCell';
+import { ItemCategory } from './itemCategories';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -123,10 +124,10 @@ export const createColumns = (
       },
       enableColumnFilter: true,
       filterFn: (row, id, value: string[]) => {
-        const category = row.getValue(id) as string | undefined;
+        const category = row.getValue(id) as ItemCategory | null;
         return value.some((filterValue) => {
           if (filterValue === 'empty') {
-            return category === undefined;
+            return category === null;
           }
           return category === filterValue;
         });
@@ -138,9 +139,13 @@ export const createColumns = (
         <SortableHeader column={column} title="Model/Serial number" />
       ),
       cell: ({ row }) => {
-        const modelSerialNumber = row.getValue(ITEM_KEYS.MODEL_SERIAL_NUMBER);
+        const modelSerialNumber = row.getValue(
+          ITEM_KEYS.MODEL_SERIAL_NUMBER
+        ) as string | null;
         return modelSerialNumber ? (
-          <ModelSerialCell modelSerialNumber={modelSerialNumber as string} />
+          <div className={CELL_CONTENT_MARGIN}>
+            <ModelSerialCell modelSerialNumber={modelSerialNumber} />
+          </div>
         ) : null;
       },
     },
@@ -155,8 +160,10 @@ export const createColumns = (
         </RightAlignedHeader>
       ),
       cell: ({ row }) => {
-        const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number;
-        const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL];
+        const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number | null;
+        const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL] as
+          | string
+          | null;
         return (
           <InsuredsQuoteCell
             oisQuote={oisQuote}
@@ -169,10 +176,10 @@ export const createColumns = (
         const cellValue = row.getValue(id) as number | null;
         return value.some((filterValue) => {
           if (filterValue === 'has-value') {
-            return cellValue !== null && cellValue !== undefined;
+            return cellValue !== null;
           }
           if (filterValue === 'empty') {
-            return cellValue === null || cellValue === undefined;
+            return cellValue === null;
           }
           return false;
         });
@@ -280,10 +287,10 @@ export const createColumns = (
         const cellValue = row.getValue(id) as number | null;
         return value.some((filterValue) => {
           if (filterValue === 'has-value') {
-            return cellValue !== null && cellValue !== undefined;
+            return cellValue !== null;
           }
           if (filterValue === 'empty') {
-            return cellValue === null || cellValue === undefined;
+            return cellValue === null;
           }
           return false;
         });

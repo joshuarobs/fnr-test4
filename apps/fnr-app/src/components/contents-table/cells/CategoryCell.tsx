@@ -29,9 +29,9 @@ export const CategoryCell = ({
   filterText = '',
 }: CategoryCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<
-    ItemCategory | undefined
-  >(item.category);
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(
+    item.category
+  );
   const [searchText, setSearchText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -62,7 +62,7 @@ export const CategoryCell = ({
     return (
       <div className="relative">
         <Select
-          value={selectedCategory}
+          value={selectedCategory ?? undefined}
           onValueChange={handleCategorySelect}
           defaultOpen
           onOpenChange={(open) => {
@@ -107,8 +107,8 @@ export const CategoryCell = ({
     );
   }
 
-  // Handle undefined category
-  if (!item.category) {
+  // Handle null category
+  if (item.category === null) {
     return (
       <div
         onDoubleClick={handleDoubleClick}

@@ -17,7 +17,7 @@ import {
 import styles from './ReceiptIcon.module.css';
 
 interface ReceiptIconProps {
-  receiptLink?: string;
+  receiptLink: string | null;
 }
 
 export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {

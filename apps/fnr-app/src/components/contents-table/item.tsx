@@ -4,13 +4,13 @@ export type Item = {
   id: number;
   group: string;
   name: string;
-  category?: ItemCategory;
-  modelSerialNumber?: string;
+  category: ItemCategory | null;
+  modelSerialNumber: string | null;
   status: 'RS' | 'NR' | 'VPOL';
   oisquote: number | null;
   ourquote: number | null;
-  receiptPhotoUrl?: string; // New field for storing the receipt photo URL
-  ourquoteLink?: string; // New field for storing our quote link/photo URL
+  receiptPhotoUrl: string | null;
+  ourquoteLink: string | null;
   date: string;
   dueDate: string;
 };

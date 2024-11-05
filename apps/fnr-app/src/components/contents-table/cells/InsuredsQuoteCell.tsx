@@ -3,7 +3,7 @@ import { ReceiptIcon } from '../ReceiptIcon';
 
 interface InsuredsQuoteCellProps {
   oisQuote: number | null;
-  receiptPhotoUrl?: string;
+  receiptPhotoUrl: string | null;
 }
 
 export const InsuredsQuoteCell = ({

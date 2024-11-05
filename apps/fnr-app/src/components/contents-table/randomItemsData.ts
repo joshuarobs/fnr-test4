@@ -14,6 +14,7 @@ export const randomItemsData: Item[] = [
     oisquote: 2000,
     ourquote: 1800,
     receiptPhotoUrl: 'https://example.com/receipts/laptop2022.jpg',
+    ourquoteLink: null,
   },
   {
     id: 2,
@@ -26,6 +27,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 450,
     ourquote: 400,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 3,
@@ -39,6 +42,7 @@ export const randomItemsData: Item[] = [
     oisquote: 1100,
     ourquote: 1000,
     receiptPhotoUrl: 'https://example.com/receipts/smartphone2023.jpg',
+    ourquoteLink: null,
   },
   {
     id: 4,
@@ -51,6 +55,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 600,
     ourquote: 600,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 5,
@@ -64,6 +70,7 @@ export const randomItemsData: Item[] = [
     oisquote: 400,
     ourquote: 350,
     receiptPhotoUrl: 'https://example.com/receipts/monitor2022.jpg',
+    ourquoteLink: null,
   },
   {
     id: 6,
@@ -76,6 +83,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 350,
     ourquote: 300,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 7,
@@ -88,6 +97,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 220,
     ourquote: 200,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 8,
@@ -101,6 +112,7 @@ export const randomItemsData: Item[] = [
     oisquote: 160,
     ourquote: 150,
     receiptPhotoUrl: 'https://example.com/receipts/software2023.jpg',
+    ourquoteLink: null,
   },
   {
     id: 9,
@@ -113,6 +125,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 850,
     ourquote: 800,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 10,
@@ -126,6 +140,7 @@ export const randomItemsData: Item[] = [
     oisquote: 100,
     ourquote: 90,
     receiptPhotoUrl: 'https://example.com/receipts/whiteboard2022.jpg',
+    ourquoteLink: null,
   },
   {
     id: 11,
@@ -138,6 +153,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 275,
     ourquote: 250,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 12,
@@ -151,6 +168,7 @@ export const randomItemsData: Item[] = [
     oisquote: 140,
     ourquote: 130,
     receiptPhotoUrl: 'https://example.com/receipts/harddrive2023.jpg',
+    ourquoteLink: null,
   },
   {
     id: 13,
@@ -163,6 +181,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 950,
     ourquote: 900,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 14,
@@ -176,6 +196,7 @@ export const randomItemsData: Item[] = [
     oisquote: 55,
     ourquote: 50,
     receiptPhotoUrl: 'https://example.com/receipts/mouse2022.jpg',
+    ourquoteLink: null,
   },
   {
     id: 15,
@@ -188,6 +209,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 90,
     ourquote: 80,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 16,
@@ -200,6 +223,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 1400,
     ourquote: 1300,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 17,
@@ -213,6 +238,7 @@ export const randomItemsData: Item[] = [
     oisquote: 750,
     ourquote: 700,
     receiptPhotoUrl: 'https://example.com/receipts/tablet2023.jpg',
+    ourquoteLink: null,
   },
   {
     id: 18,
@@ -225,6 +251,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 100,
     ourquote: 90,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 19,
@@ -238,6 +266,7 @@ export const randomItemsData: Item[] = [
     oisquote: 65,
     ourquote: 60,
     receiptPhotoUrl: 'https://example.com/receipts/vpn2022.jpg',
+    ourquoteLink: null,
   },
   {
     id: 20,
@@ -250,6 +279,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 140,
     ourquote: 130,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 21,
@@ -263,6 +294,7 @@ export const randomItemsData: Item[] = [
     oisquote: 45,
     ourquote: 40,
     receiptPhotoUrl: 'https://example.com/receipts/lamp2023.jpg',
+    ourquoteLink: null,
   },
   {
     id: 22,
@@ -275,6 +307,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 110,
     ourquote: 100,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 23,
@@ -287,17 +321,22 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 110,
     ourquote: 100,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 24,
     name: 'Office Plants',
     category: ItemCategory.Supplies,
+    modelSerialNumber: null,
     date: '2021-04-10',
     dueDate: '2021-04-24',
     status: 'NR',
     group: '',
     oisquote: 160,
     ourquote: 150,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 25,
@@ -311,6 +350,7 @@ export const randomItemsData: Item[] = [
     oisquote: 220,
     ourquote: 200,
     receiptPhotoUrl: 'https://example.com/receipts/headphones2023.jpg',
+    ourquoteLink: null,
   },
   {
     id: 26,
@@ -323,6 +363,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 200,
     ourquote: 180,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 27,
@@ -336,6 +378,7 @@ export const randomItemsData: Item[] = [
     oisquote: 35,
     ourquote: 30,
     receiptPhotoUrl: 'https://example.com/receipts/clicker2021.jpg',
+    ourquoteLink: null,
   },
   {
     id: 28,
@@ -348,6 +391,8 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 275,
     ourquote: 250,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
   {
     id: 29,
@@ -361,6 +406,7 @@ export const randomItemsData: Item[] = [
     oisquote: 90,
     ourquote: 80,
     receiptPhotoUrl: 'https://example.com/receipts/webcam2022.jpg',
+    ourquoteLink: null,
   },
   {
     id: 30,
@@ -373,5 +419,7 @@ export const randomItemsData: Item[] = [
     group: '',
     oisquote: 175,
     ourquote: 160,
+    receiptPhotoUrl: null,
+    ourquoteLink: null,
   },
 ];

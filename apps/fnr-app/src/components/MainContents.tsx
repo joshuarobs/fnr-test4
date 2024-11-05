@@ -84,14 +84,15 @@ export const MainContents = () => {
       id: getHighestId() + 1,
       group: randomItem.group,
       name: itemName,
-      category: randomItem.category,
+      category: randomItem.category || null,
       status: getRandomStatus(),
       oisquote: randomItem.oisquote || null,
       ourquote: randomItem.ourquote || 0,
       date: new Date().toISOString().split('T')[0],
       dueDate: new Date().toISOString().split('T')[0],
-      modelSerialNumber: randomItem.modelSerialNumber || '',
-      receiptPhotoUrl: randomItem.receiptPhotoUrl || '',
+      modelSerialNumber: randomItem.modelSerialNumber || null,
+      receiptPhotoUrl: randomItem.receiptPhotoUrl || null,
+      ourquoteLink: null,
     };
   };
 
