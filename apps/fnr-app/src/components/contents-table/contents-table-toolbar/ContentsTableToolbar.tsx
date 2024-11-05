@@ -17,7 +17,7 @@ import { ItemCategory, NO_CATEGORY_VALUE } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { ItemStatus } from '../ItemStatus';
 import { ITEM_KEYS } from '../itemKeys';
-import { OptionGroups, OptionItem } from './types';
+import { OptionGroups, FilterOption } from './types';
 
 interface ContentsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -44,7 +44,19 @@ const categoryOptions: OptionGroups = {
 const insuredQuoteOptions: OptionGroups = {
   mainGroup: [
     { label: 'Empty', value: null },
-    { label: 'Has value', value: 'has-value' },
+    {
+      label: 'Has value',
+      value: 'has-value',
+      getCount: (facets: Map<string | number | null, number>) => {
+        let count = 0;
+        facets.forEach((value: number, key: string | number | null) => {
+          if (key !== null && key !== undefined) {
+            count += value;
+          }
+        });
+        return count;
+      },
+    },
   ],
 };
 
@@ -57,7 +69,7 @@ const differenceOptions: OptionGroups = {
   ],
 };
 
-const renderDifferenceOption = (option: OptionItem) => {
+const renderDifferenceOption = (option: FilterOption) => {
   if (option.value === 'higher') {
     return (
       <div className={`flex items-center gap-2 ${colors.status.error}`}>
@@ -77,7 +89,7 @@ const renderDifferenceOption = (option: OptionItem) => {
   return option.label;
 };
 
-const renderSelectedDifference = (option: OptionItem) => {
+const renderSelectedDifference = (option: FilterOption) => {
   if (option.value === 'higher') {
     return (
       <Badge

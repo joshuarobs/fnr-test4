@@ -1,13 +1,17 @@
-import { ComponentType } from 'react';
+import { ReactNode } from 'react';
 
 export interface OptionItem {
   label: string;
   value: string | null;
-  icon?: ComponentType<{ className?: string }>;
+  icon?: any;
+}
+
+export interface FilterOption extends OptionItem {
+  getCount?: (facets: Map<string | number | null, number>) => number;
 }
 
 export interface OptionGroups {
-  headerGroup?: OptionItem[];
-  mainGroup: OptionItem[];
-  footerGroup?: OptionItem[];
+  headerGroup?: FilterOption[];
+  mainGroup: FilterOption[];
+  footerGroup?: FilterOption[];
 }

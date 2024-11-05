@@ -19,14 +19,14 @@ import {
   ScrollArea,
   Separator,
 } from '@react-monorepo/shared';
-import { OptionItem, OptionGroups } from './types';
+import { FilterOption, OptionGroups } from './types';
 
 interface DataTableFacetedFilterButtonProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
   options: OptionGroups;
-  renderOption?: (option: OptionItem) => React.ReactNode;
-  renderSelected?: (option: OptionItem) => React.ReactNode;
+  renderOption?: (option: FilterOption) => React.ReactNode;
+  renderSelected?: (option: FilterOption) => React.ReactNode;
   alwaysShowOptions?: boolean;
   disableFilterInput?: boolean;
 }
@@ -66,8 +66,15 @@ export function DataTableFacetedFilterButton<TData, TValue>({
   );
   const [filterValue, setFilterValue] = React.useState('');
 
-  const filterOption = (option: OptionItem) => {
-    const count = facets?.get(option.value) ?? 0;
+  const getOptionCount = (option: FilterOption) => {
+    if (option.getCount) {
+      return option.getCount(facets!);
+    }
+    return facets?.get(option.value) ?? 0;
+  };
+
+  const filterOption = (option: FilterOption) => {
+    const count = getOptionCount(option);
     return (
       (alwaysShowOptions || !HIDE_EMPTY_FILTERS || count > 0) &&
       (!filterValue ||
@@ -75,9 +82,9 @@ export function DataTableFacetedFilterButton<TData, TValue>({
     );
   };
 
-  const renderOptionItem = (option: OptionItem) => {
+  const renderOptionItem = (option: FilterOption) => {
     const isSelected = selectedValues.has(option.value);
-    const count = facets?.get(option.value) ?? 0;
+    const count = getOptionCount(option);
 
     return (
       <CommandItem
@@ -111,7 +118,7 @@ export function DataTableFacetedFilterButton<TData, TValue>({
         <span className="flex-1 truncate">
           {renderOption ? renderOption(option) : option.label}
         </span>
-        {!alwaysShowOptions && count > 0 && (
+        {count > 0 && (
           <FilterBadge className="ml-auto min-w-[20px] text-center">
             {count}
           </FilterBadge>
@@ -124,11 +131,15 @@ export function DataTableFacetedFilterButton<TData, TValue>({
     ...(options.headerGroup || []),
     ...options.mainGroup,
     ...(options.footerGroup || []),
-  ];
+  ] as FilterOption[];
 
-  const filteredHeaderOptions = options.headerGroup?.filter(filterOption) || [];
-  const filteredMainOptions = options.mainGroup.filter(filterOption);
-  const filteredFooterOptions = options.footerGroup?.filter(filterOption) || [];
+  const filteredHeaderOptions = (options.headerGroup?.filter(filterOption) ||
+    []) as FilterOption[];
+  const filteredMainOptions = options.mainGroup.filter(
+    filterOption
+  ) as FilterOption[];
+  const filteredFooterOptions = (options.footerGroup?.filter(filterOption) ||
+    []) as FilterOption[];
 
   return (
     <Popover>
