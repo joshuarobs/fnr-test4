@@ -1,6 +1,7 @@
 import { Button, ScrollArea, Separator } from '@react-monorepo/shared';
 import { placeholderLatestActivities } from './placeholderLatestActivities';
 import { LatestActivityEntry } from './LatestActivityEntry';
+import { TestApi } from './TestApi';
 
 export const LatestActivitiesContainer = () => {
   return (
@@ -20,6 +21,9 @@ export const LatestActivitiesContainer = () => {
         </div>
       </ScrollArea>
       <Separator className="mt-4" />
+      <div className="mt-4">
+        <TestApi />
+      </div>
     </div>
   );
 };
