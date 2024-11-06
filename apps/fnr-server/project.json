@@ -1,0 +1,54 @@
+{
+  "name": "fnr-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/fnr-server/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/fnr-server",
+        "main": "apps/fnr-server/src/main.ts",
+        "tsConfig": "apps/fnr-server/tsconfig.app.json",
+        "assets": ["apps/fnr-server/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/fnr-server/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "fnr-server:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "fnr-server:build:development"
+        },
+        "production": {
+          "buildTarget": "fnr-server:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/fnr-server/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
