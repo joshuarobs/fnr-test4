@@ -1,33 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+const fetchMessage = async () => {
+  const response = await fetch('http://localhost:3333/api');
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
 
 export const TestApi = () => {
-  const [message, setMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3333/api');
-        const data = await response.json();
-        setMessage(data.message);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['message'],
+    queryFn: fetchMessage,
+  });
 
   if (isLoading) {
     return <div className="p-4">Loading...</div>;
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">{error}</div>;
+    return (
+      <div className="p-4 text-red-500">
+        {error instanceof Error ? error.message : 'An error occurred'}
+      </div>
+    );
   }
 
-  return <div className="p-4 text-sm">{message}</div>;
+  return <div className="p-4 text-sm">{data?.message}</div>;
 };
