@@ -14,6 +14,39 @@ this field needs to be filled out, this item needs a quote, this item needs to b
 
 ---
 
+## Test Credentials
+
+After running the database seed, the following test accounts will be available.
+
+All accounts use the password: `12345`
+
+### Admin Access
+| Email | Role | Name |
+|-------|------|------|
+| `admin@example.com` | ADMIN | Admin User |
+
+### Staff Access
+| Email | Role | Name |
+|-------|------|------|
+| `staff@example.com` | STAFF | Staff |
+| `claims@example.com` | STAFF | Sarah Johnson |
+| `valuations@example.com` | STAFF | Mike Williams |
+
+### Supplier Access
+| Email | Role | Name |
+|-------|------|------|
+| `electronics@supplier.com` | SUPPLIER | Tech Solutions |
+| `appliances@supplier.com` | SUPPLIER | Home Appliances |
+
+### Customer Access
+| Email | Role | Name |
+|-------|------|------|
+| `john@example.com` | INSURED | John Smith |
+| `jane@example.com` | INSURED | Jane Brown |
+
+> **Note**: These credentials are for testing purposes only. In production, you should use secure passwords and remove any test accounts.
+>
+
 ## Instructions
 
 ### Adding new Shadcn elements

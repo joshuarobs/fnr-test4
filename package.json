@@ -9,6 +9,9 @@
     "nx reset": "npx nx reset",
     "nx build server ": "npx nx build fnr-server"
   },
+  "prisma": {
+    "seed": "cd apps/fnr-server && ts-node prisma/seed.ts"
+  },
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
@@ -30,6 +33,7 @@
     "@tanstack/react-table": "^8.20.5",
     "@types/cors": "^2.8.17",
     "axios": "^1.6.0",
+    "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "cli-truncate": "^4.0.0",
     "clsx": "^2.1.1",
