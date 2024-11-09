@@ -10,15 +10,173 @@ datasource db {
   url      = "postgresql://user:12345@localhost:5432/fnr_db"
 }
 
+// Base user model with common fields
+model BaseUser {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String    // Hashed password
+  firstName     String
+  middleName    String?
+  lastName      String
+  phone         String?
+  role          UserRole
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // One-to-one relations to specific user types
+  staff         Staff?
+  insured       Insured?
+  supplier      Supplier?
+  
+  // Common relations
+  handledClaims Claim[]   @relation("ClaimHandler")
+  createdClaims Claim[]   @relation("ClaimCreator")
+  comments      Comment[]
+}
+
+enum UserRole {
+  STAFF
+  ADMIN
+  SUPPLIER
+  INSURED
+}
+
+// Staff-specific fields
+model Staff {
+  id            Int       @id @default(autoincrement())
+  baseUserId    Int       @unique  // One-to-one with BaseUser
+  baseUser      BaseUser  @relation(fields: [baseUserId], references: [id])
+  department    String
+  employeeId    String    @unique
+  position      String
+  permissions   String[]  // Array of permission strings
+}
+
+// Insurance policy holder details
+model Insured {
+  id            Int       @id @default(autoincrement())
+  baseUserId    Int       @unique  // One-to-one with BaseUser
+  baseUser      BaseUser  @relation(fields: [baseUserId], references: [id])
+  address       String
+  claims        Claim[]
+}
+
+// Supplier/vendor information
+model Supplier {
+  id            Int       @id @default(autoincrement())
+  baseUserId    Int       @unique  // One-to-one with BaseUser
+  baseUser      BaseUser  @relation(fields: [baseUserId], references: [id])
+  company       String
+  serviceType   String[]  // Types of services provided
+  areas         String[]  // Service areas
+  ratings       Float?
+  quotes        Quote[]
+}
+
+model Claim {
+  id            Int         @id @default(autoincrement())
+  claimNumber   String      @unique
+  policyNumber  String      // Reference to external policy system
+  insuredId     Int
+  insured       Insured     @relation(fields: [insuredId], references: [id])
+  handlerId     Int
+  handler       BaseUser    @relation("ClaimHandler", fields: [handlerId], references: [id])
+  creatorId     Int
+  creator       BaseUser    @relation("ClaimCreator", fields: [creatorId], references: [id])
+  status        ClaimStatus @default(DRAFT)
+  incidentDate  DateTime
+  description   String
+  items         Item[]
+  comments      Comment[]
+  totalClaimed  Float
+  totalApproved Float?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+enum ClaimStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  PENDING_QUOTES
+  APPROVED
+  SETTLED
+  REJECTED
+}
+
 model Item {
-  id              Int      @id @default(autoincrement())
+  id              Int         @id @default(autoincrement())
+  claimId         Int
+  claim           Claim       @relation(fields: [claimId], references: [id])
   name            String
   category        String?
   group           String?
   modelSerial     String?
+  description     String?
+  purchaseDate    DateTime?
+  age             Int?
+  condition       String?
   insuredsQuote   Float?
+  supplierQuotes  Quote[]     // One-to-many with quotes
   ourQuote        Float?
-  status          String   @default("pending")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  status          ItemStatus  @default(PENDING)
+  evidence        Evidence[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+enum ItemStatus {
+  PENDING
+  AWAITING_EVIDENCE
+  AWAITING_QUOTES
+  APPROVED
+  REJECTED
+}
+
+// Supplier quotes for items
+model Quote {
+  id          Int       @id @default(autoincrement())
+  itemId      Int
+  item        Item      @relation(fields: [itemId], references: [id])
+  supplierId  Int
+  supplier    Supplier  @relation(fields: [supplierId], references: [id])
+  amount      Float
+  notes       String?
+  validUntil  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Evidence (photos, receipts, etc.)
+model Evidence {
+  id          Int           @id @default(autoincrement())
+  itemId      Int
+  item        Item          @relation(fields: [itemId], references: [id])
+  type        EvidenceType
+  url         String
+  filename    String
+  createdAt   DateTime      @default(now())
+}
+
+enum EvidenceType {
+  PHOTO
+  RECEIPT
+  MANUAL
+  WARRANTY
+  OTHER
+}
+
+// Comments/notes on claims
+model Comment {
+  id          Int       @id @default(autoincrement())
+  claimId     Int
+  claim       Claim     @relation(fields: [claimId], references: [id])
+  userId      Int
+  user        BaseUser  @relation(fields: [userId], references: [id])
+  content     String
+  isInternal  Boolean   @default(false)  // Internal notes vs customer-visible
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
