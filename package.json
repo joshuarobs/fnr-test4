@@ -7,10 +7,11 @@
     "nx serve server": "npx nx serve fnr-server",
     "nx graph app": "npx nx show project fnr-app",
     "nx reset": "npx nx reset",
-    "nx build server ": "npx nx build fnr-server"
+    "nx build server ": "npx nx build fnr-server",
+    "prisma:studio": "cd apps/fnr-server && npx prisma studio"
   },
   "prisma": {
-    "seed": "cd apps/fnr-server && ts-node prisma/seed.ts"
+    "seed": "cd apps/fnr-server && ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "private": true,
   "dependencies": {
