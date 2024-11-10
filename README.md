@@ -14,6 +14,34 @@ this field needs to be filled out, this item needs a quote, this item needs to b
 
 ---
 
+## Database Setup and Seeding
+
+### 1. Start the PostgreSQL Database
+```sh
+docker-compose up -d
+```
+
+### 2. Apply Database Migrations
+```sh
+cd apps/fnr-server && npx prisma migrate deploy
+```
+
+### 3. Seed the Database
+
+#### On Windows
+```sh
+cd apps/fnr-server && npx tsx prisma/seed.ts
+```
+
+When prompted to install tsx, type 'y' to proceed. The seed script will create all necessary test accounts and sample data.
+
+#### On macOS/Linux
+```sh
+cd apps/fnr-server && npx prisma db seed
+```
+
+---
+
 ## Test Credentials
 
 After running the database seed, the following test accounts will be available.
