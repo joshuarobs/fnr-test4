@@ -648,26 +648,6 @@ async function main() {
     });
   }
 
-  // Add some quotes
-  const items = await prisma.item.findMany();
-  const supplierRecords = await prisma.supplier.findMany();
-
-  for (const item of items) {
-    await Promise.all(
-      supplierRecords.map((supplier) =>
-        prisma.quote.create({
-          data: {
-            itemId: item.id,
-            supplierId: supplier.id,
-            amount: item.insuredsQuote ? item.insuredsQuote * 0.9 : 0, // 90% of insured's quote or 0 if null
-            notes: 'Based on current market value',
-            validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-          },
-        })
-      )
-    );
-  }
-
   // Add some comments
   const claims = await prisma.claim.findMany();
 

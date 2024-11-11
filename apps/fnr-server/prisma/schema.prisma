@@ -72,7 +72,6 @@ model Supplier {
   serviceType   String[]  // Types of services provided
   areas         String[]  // Service areas
   ratings       Float?
-  quotes        Quote[]
 }
 
 model Claim {
@@ -119,7 +118,6 @@ model Item {
   age               Int?
   condition         String?
   insuredsQuote     Float?
-  supplierQuotes    Quote[]     // One-to-many with quotes
   ourQuote          Float?
   status            ItemStatus  @default(PENDING)
   evidence          Evidence[]
@@ -133,20 +131,6 @@ enum ItemStatus {
   AWAITING_QUOTES
   APPROVED
   REJECTED
-}
-
-// Supplier quotes for items
-model Quote {
-  id          Int       @id @default(autoincrement())
-  itemId      Int
-  item        Item      @relation(fields: [itemId], references: [id])
-  supplierId  Int
-  supplier    Supplier  @relation(fields: [supplierId], references: [id])
-  amount      Float
-  notes       String?
-  validUntil  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 }
 
 // Evidence (photos, receipts, etc.)
