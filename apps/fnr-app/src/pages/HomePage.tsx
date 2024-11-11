@@ -13,6 +13,9 @@ export const HomePage = () => {
       <Button onClick={() => navigate(`/claim/NRA245279610`)}>
         Go to Claim NRA245279610
       </Button>
+      <Button onClick={() => navigate(`/404`)} className="mt-24">
+        Go to 404 page
+      </Button>
     </div>
   );
 };

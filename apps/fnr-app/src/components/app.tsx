@@ -3,12 +3,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
-import { MainContents } from './MainContents';
 import { HomePage } from '../pages/HomePage';
 import { AssignedPage } from '../pages/AssignedPage';
 import { SettingsPage } from '../pages/SettingsPage';
 import { FeedbackPage } from '../pages/FeedbackPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { ClaimPage } from '../pages/ClaimPage';
 
 export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -41,7 +41,7 @@ export function App() {
             <Route path="/assigned" element={<AssignedPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/feedback" element={<FeedbackPage />} />
-            <Route path="/claim/:id" element={<MainContents />} />
+            <Route path="/claim/:id" element={<ClaimPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

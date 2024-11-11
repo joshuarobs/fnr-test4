@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { ContentsTableWithToolbar } from './contents-table/ContentsTable';
-import { placeholderContentsData } from './contents-table/placeholderContentsData';
-import { randomItemsData } from './contents-table/randomItemsData';
-import { Item } from './contents-table/item';
-import { TestAddDeleteStuff } from './contents-table/TestAddDeleteStuff';
-import { TotalCalculatedPriceText } from './contents-other/TotalCalculatedPriceText';
-import { TotalProgressBar } from './contents-other/TotalProgressBar';
-import { SecondSidebar } from './app-shell/SecondSidebar';
+import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
+import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
+import { randomItemsData } from '../components/contents-table/randomItemsData';
+import { Item } from '../components/contents-table/item';
+import { TestAddDeleteStuff } from '../components/contents-table/TestAddDeleteStuff';
+import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalculatedPriceText';
+import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
+import { SecondSidebar } from '../components/app-shell/SecondSidebar';
 
-export const MainContents = () => {
+export const ClaimPage = () => {
   const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
   const [newItemName, setNewItemName] = useState('');
   const [updateItemId, setUpdateItemId] = useState<number | null>(null);
