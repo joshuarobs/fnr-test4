@@ -6,7 +6,7 @@ import { Item } from './contents-table/item';
 import { TestAddDeleteStuff } from './contents-table/TestAddDeleteStuff';
 import { TotalCalculatedPriceText } from './contents-other/TotalCalculatedPriceText';
 import { TotalProgressBar } from './contents-other/TotalProgressBar';
-import { ItemCategory } from './contents-table/itemCategories';
+import { SecondSidebar } from './app-shell/SecondSidebar';
 
 export const MainContents = () => {
   const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
@@ -124,40 +124,43 @@ export const MainContents = () => {
   const progress = calculateProgress(tableData);
 
   return (
-    <main className="flex-1 min-w-0 p-4">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-8">
-          <TotalCalculatedPriceText
-            title="Insured's total"
-            value={insuredsTotal}
-            oisquote={insuredsTotal}
-            ourquote={ourTotal}
-            warningString="Insured has not provided quotes for all items yet."
-          />
-          <TotalCalculatedPriceText
-            title="Our total"
-            value={ourTotal}
-            warningString="We don't have quotes for all items yet."
-          />
-          <TotalProgressBar
-            value={progress.value}
-            maxValue={progress.maxValue}
+    <main className="flex-1 min-w-0 flex">
+      <div className="flex-1 min-w-0 p-4">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-8">
+            <TotalCalculatedPriceText
+              title="Insured's total"
+              value={insuredsTotal}
+              oisquote={insuredsTotal}
+              ourquote={ourTotal}
+              warningString="Insured has not provided quotes for all items yet."
+            />
+            <TotalCalculatedPriceText
+              title="Our total"
+              value={ourTotal}
+              warningString="We don't have quotes for all items yet."
+            />
+            <TotalProgressBar
+              value={progress.value}
+              maxValue={progress.maxValue}
+            />
+          </div>
+          <TestAddDeleteStuff
+            newItemName={newItemName}
+            setNewItemName={setNewItemName}
+            handleAddItem={handleAddItem}
+            handleRemoveLastItem={handleRemoveLastItem}
+            addItem={addItem}
           />
         </div>
-        <TestAddDeleteStuff
-          newItemName={newItemName}
-          setNewItemName={setNewItemName}
-          handleAddItem={handleAddItem}
-          handleRemoveLastItem={handleRemoveLastItem}
+        <ContentsTableWithToolbar
+          data={tableData}
           addItem={addItem}
+          removeItem={removeItem}
+          updateItem={updateItem}
         />
       </div>
-      <ContentsTableWithToolbar
-        data={tableData}
-        addItem={addItem}
-        removeItem={removeItem}
-        updateItem={updateItem}
-      />
+      <SecondSidebar />
     </main>
   );
 };

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
-import { SecondSidebar } from './app-shell/SecondSidebar';
 import { MainContents } from './MainContents';
 
 export function App() {
@@ -31,7 +30,6 @@ export function App() {
       <div className="flex flex-1">
         {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
         <MainContents />
-        <SecondSidebar />
       </div>
     </div>
   );
