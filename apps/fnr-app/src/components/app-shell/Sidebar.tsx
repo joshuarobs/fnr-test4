@@ -29,7 +29,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
           {/* Main tabs */}
           <div>
             <SidebarTab icon={<HomeIcon />} label="Homepage" to="/" />
-            <SidebarTab icon={<StarIcon />} label="Assigned" />
+            <SidebarTab icon={<StarIcon />} label="Assigned" to="/assigned" />
           </div>
 
           <SidebarSeparator />
@@ -81,8 +81,12 @@ export const Sidebar = ({ className }: SidebarProps) => {
           <SidebarSeparator />
           {/* Other tabs */}
           <div>
-            <SidebarTab icon={<GearIcon />} label="Settings" />
-            <SidebarTab icon={<MagicWandIcon />} label="Send feedback" />
+            <SidebarTab icon={<GearIcon />} label="Settings" to="/settings" />
+            <SidebarTab
+              icon={<MagicWandIcon />}
+              label="Send feedback"
+              to="/feedback"
+            />
           </div>
 
           <SidebarSeparator />
