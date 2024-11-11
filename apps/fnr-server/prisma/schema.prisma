@@ -107,24 +107,24 @@ enum ClaimStatus {
 }
 
 model Item {
-  id              Int         @id @default(autoincrement())
-  claimId         Int
-  claim           Claim       @relation(fields: [claimId], references: [id])
-  name            String
-  category        String?
-  group           String?
-  modelSerial     String?
-  description     String?
-  purchaseDate    DateTime?
-  age             Int?
-  condition       String?
-  insuredsQuote   Float?
-  supplierQuotes  Quote[]     // One-to-many with quotes
-  ourQuote        Float?
-  status          ItemStatus  @default(PENDING)
-  evidence        Evidence[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id                Int         @id @default(autoincrement())
+  claimId           Int
+  claim             Claim       @relation(fields: [claimId], references: [id])
+  name              String
+  category          String?
+  group             String?
+  modelSerialNumber String?     // Updated from modelSerial to modelSerialNumber
+  description       String?
+  purchaseDate      DateTime?
+  age               Int?
+  condition         String?
+  insuredsQuote     Float?
+  supplierQuotes    Quote[]     // One-to-many with quotes
+  ourQuote          Float?
+  status            ItemStatus  @default(PENDING)
+  evidence          Evidence[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }
 
 enum ItemStatus {

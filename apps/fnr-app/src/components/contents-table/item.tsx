@@ -5,7 +5,7 @@ export type Item = {
   group: string;
   name: string;
   category: ItemCategory | null;
-  modelSerialNumber: string | null;
+  modelSerialNumber: string | null; // Keep this as modelSerialNumber for now since it's used in many places
   status: 'RS' | 'NR' | 'VPOL';
   oisquote: number | null;
   ourquote: number | null;

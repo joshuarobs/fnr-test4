@@ -47,7 +47,7 @@ export const ClaimPage = () => {
       oisquote: item.insuredQuote,
       ourquote: item.ourQuote || 0,
       dateCreated: new Date(item.createdAt),
-      modelSerialNumber: item.modelSerialNumber,
+      modelSerialNumber: item.modelSerialNumber, // Now matches the database field name
       receiptPhotoUrl: item.receiptPhotoUrl,
       ourquoteLink: item.ourQuoteLink,
     }));

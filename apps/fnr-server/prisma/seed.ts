@@ -173,7 +173,7 @@ async function main() {
         {
           name: 'MacBook Pro',
           category: 'Electronics',
-          modelSerial: 'MP2023ABC',
+          modelSerialNumber: 'MP2023ABC',
           description: 'Water damaged laptop',
           insuredsQuote: 2499.99,
           condition: 'Damaged - water exposure',
@@ -194,7 +194,7 @@ async function main() {
         {
           name: 'iPhone 14',
           category: 'Electronics',
-          modelSerial: 'IP14XYZ',
+          modelSerialNumber: 'IP14XYZ',
           description: 'Water damaged phone',
           insuredsQuote: 999.99,
           condition: 'Damaged - water exposure',
@@ -217,7 +217,7 @@ async function main() {
         {
           name: 'Samsung Refrigerator',
           category: 'Appliances',
-          modelSerial: 'RF123ABC',
+          modelSerialNumber: 'RF123ABC',
           description: 'Fire damaged fridge',
           insuredsQuote: 3499.99,
           condition: 'Damaged - fire exposure',
@@ -241,7 +241,7 @@ async function main() {
         {
           name: 'Laptop',
           category: 'Electronics',
-          modelSerial: 'LT-2023-XPS15',
+          modelSerialNumber: 'LT-2023-XPS15',
           description: 'Home office laptop',
           insuredsQuote: 2000,
           condition: 'Good',
@@ -257,7 +257,7 @@ async function main() {
         {
           name: 'Office Desk',
           category: 'Furniture',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Home office desk',
           insuredsQuote: 2000,
           condition: 'Good',
@@ -267,7 +267,7 @@ async function main() {
         {
           name: 'Antivirus License',
           category: 'Digital',
-          modelSerial: 'AV-2023-PRO',
+          modelSerialNumber: 'AV-2023-PRO',
           description: 'Digital software license',
           insuredsQuote: null,
           condition: 'Good',
@@ -283,7 +283,7 @@ async function main() {
         {
           name: 'Smartphone',
           category: 'Electronics',
-          modelSerial: 'SM-G-S23-ULTRA',
+          modelSerialNumber: 'SM-G-S23-ULTRA',
           description: 'Mobile phone',
           insuredsQuote: 1600,
           condition: 'Good',
@@ -299,7 +299,7 @@ async function main() {
         {
           name: 'Groceries',
           category: 'Food',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Food items',
           insuredsQuote: 155,
           condition: 'N/A',
@@ -309,7 +309,7 @@ async function main() {
         {
           name: 'Area Rug',
           category: 'Decor',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Loungeroom rug',
           insuredsQuote: 500,
           condition: 'Good',
@@ -319,7 +319,7 @@ async function main() {
         {
           name: 'Coffee Maker',
           category: 'Appliances',
-          modelSerial: 'CM-2023-DELUXE',
+          modelSerialNumber: 'CM-2023-DELUXE',
           description: 'Kitchen appliance',
           insuredsQuote: 300.75,
           condition: 'Good',
@@ -335,7 +335,7 @@ async function main() {
         {
           name: 'Office Chair',
           category: 'Furniture',
-          modelSerial: 'OC-2023-ERGO',
+          modelSerialNumber: 'OC-2023-ERGO',
           description: 'Ergonomic office chair',
           insuredsQuote: 400,
           condition: 'Good',
@@ -345,7 +345,7 @@ async function main() {
         {
           name: 'Printer',
           category: 'Electronics',
-          modelSerial: 'PR-2023-LASER',
+          modelSerialNumber: 'PR-2023-LASER',
           description: 'Laser printer',
           insuredsQuote: null,
           condition: 'Good',
@@ -361,7 +361,7 @@ async function main() {
         {
           name: 'Bookshelf',
           category: 'Furniture',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Bedroom bookshelf',
           insuredsQuote: 180,
           condition: 'Good',
@@ -371,7 +371,7 @@ async function main() {
         {
           name: 'Microwave',
           category: 'Appliances',
-          modelSerial: 'MW-2023-SMART',
+          modelSerialNumber: 'MW-2023-SMART',
           description: 'Kitchen microwave',
           insuredsQuote: 250,
           condition: 'Good',
@@ -387,7 +387,7 @@ async function main() {
         {
           name: 'Dining Table',
           category: 'Furniture',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Dining room furniture',
           insuredsQuote: 750,
           condition: 'Good',
@@ -397,7 +397,7 @@ async function main() {
         {
           name: 'Vacuum Cleaner',
           category: 'Appliances',
-          modelSerial: 'VC-2023-ROBOT',
+          modelSerialNumber: 'VC-2023-ROBOT',
           description: 'Robot vacuum',
           insuredsQuote: null,
           condition: 'Good',
@@ -413,7 +413,7 @@ async function main() {
         {
           name: 'Television',
           category: 'Electronics',
-          modelSerial: 'TV-2023-4K',
+          modelSerialNumber: 'TV-2023-4K',
           description: '4K TV',
           insuredsQuote: 1200,
           condition: 'Good',
@@ -429,7 +429,7 @@ async function main() {
         {
           name: 'Blender',
           category: 'Appliances',
-          modelSerial: 'BL-2023-PRO',
+          modelSerialNumber: 'BL-2023-PRO',
           description: 'Kitchen blender',
           insuredsQuote: 120,
           condition: 'Good',
@@ -439,7 +439,7 @@ async function main() {
         {
           name: 'Curtains',
           category: 'Decor',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Window curtains',
           insuredsQuote: 150,
           condition: 'Good',
@@ -449,7 +449,7 @@ async function main() {
         {
           name: 'Car Battery',
           category: 'Auto',
-          modelSerial: 'CB-2023-12V',
+          modelSerialNumber: 'CB-2023-12V',
           description: 'Garage car battery',
           insuredsQuote: 200,
           condition: 'Good',
@@ -459,7 +459,7 @@ async function main() {
         {
           name: 'Bath towel',
           category: 'Bath',
-          modelSerial: '',
+          modelSerialNumber: '',
           description: 'Bathroom towel',
           insuredsQuote: 150,
           condition: 'Good',
@@ -469,7 +469,7 @@ async function main() {
         {
           name: 'Leather Jacket',
           category: 'Clothing',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Wardrobe leather jacket',
           insuredsQuote: 300,
           condition: 'Good',
@@ -479,7 +479,7 @@ async function main() {
         {
           name: 'Insurance Papers',
           category: 'Documents',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Important documents',
           insuredsQuote: null,
           condition: 'Good',
@@ -489,7 +489,7 @@ async function main() {
         {
           name: 'Lawn Mower',
           category: 'Garden',
-          modelSerial: 'LM-2023-ELECTRIC',
+          modelSerialNumber: 'LM-2023-ELECTRIC',
           description: 'Electric lawn mower',
           insuredsQuote: 600,
           condition: 'Good',
@@ -499,7 +499,7 @@ async function main() {
         {
           name: 'Lego Toys',
           category: 'Kids',
-          modelSerial: 'BC-2023-SAFE',
+          modelSerialNumber: 'BC-2023-SAFE',
           description: 'Children toys',
           insuredsQuote: 400,
           condition: 'Good',
@@ -509,7 +509,7 @@ async function main() {
         {
           name: 'Miscellaneous Items Box',
           category: 'Other',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Storage box with misc items',
           insuredsQuote: 200,
           condition: 'Good',
@@ -519,7 +519,7 @@ async function main() {
         {
           name: 'Dog Bed',
           category: 'Pets',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Pet supplies',
           insuredsQuote: 80,
           condition: 'Good',
@@ -529,7 +529,7 @@ async function main() {
         {
           name: 'Tennis Racket',
           category: 'Recreation',
-          modelSerial: 'TR-2023-PRO',
+          modelSerialNumber: 'TR-2023-PRO',
           description: 'Sports equipment',
           insuredsQuote: 250,
           condition: 'Good',
@@ -539,7 +539,7 @@ async function main() {
         {
           name: 'Storage Cabinet',
           category: 'Storage',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Garage storage',
           insuredsQuote: 350,
           condition: 'Good',
@@ -549,7 +549,7 @@ async function main() {
         {
           name: 'Cleaning Supplies Set',
           category: 'Supplies',
-          modelSerial: null,
+          modelSerialNumber: null,
           description: 'Laundry room supplies',
           insuredsQuote: 120,
           condition: 'Good',
@@ -559,7 +559,7 @@ async function main() {
         {
           name: 'Power Drill',
           category: 'Tools',
-          modelSerial: 'PD-2023-18V',
+          modelSerialNumber: 'PD-2023-18V',
           description: 'Workshop power tool',
           insuredsQuote: 180,
           condition: 'Good',
@@ -576,7 +576,7 @@ async function main() {
         {
           name: 'Television',
           category: 'Electronics',
-          modelSerial: 'TV-2023-4K',
+          modelSerialNumber: 'TV-2023-4K',
           description: '4K Television',
           insuredsQuote: 1200,
           condition: 'Good',
@@ -592,7 +592,7 @@ async function main() {
         {
           name: 'Vacuum Cleaner',
           category: 'Appliances',
-          modelSerial: 'VC-2023-ROBOT',
+          modelSerialNumber: 'VC-2023-ROBOT',
           description: 'Robot vacuum cleaner',
           insuredsQuote: null,
           condition: 'Good',
@@ -634,7 +634,7 @@ async function main() {
           create: claim.items.map((item) => ({
             name: item.name,
             category: item.category,
-            modelSerial: item.modelSerial,
+            modelSerialNumber: item.modelSerialNumber,
             description: item.description,
             insuredsQuote: item.insuredsQuote,
             condition: item.condition,
