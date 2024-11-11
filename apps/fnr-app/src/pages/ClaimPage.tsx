@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { randomItemsData } from '../components/contents-table/randomItemsData';
@@ -8,11 +10,48 @@ import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalc
 import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
 import { SecondSidebar } from '../components/app-shell/SecondSidebar';
 
+const fetchClaimData = async (id: string) => {
+  const response = await fetch(`http://localhost:3333/api/claims/${id}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch claim data');
+  }
+  return response.json();
+};
+
 export const ClaimPage = () => {
-  const [tableData, setTableData] = useState<Item[]>(placeholderContentsData);
+  const { id } = useParams<{ id: string }>();
   const [newItemName, setNewItemName] = useState('');
   const [updateItemId, setUpdateItemId] = useState<number | null>(null);
   const [updateItemName, setUpdateItemName] = useState('');
+
+  const {
+    data: claimData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['claim', id],
+    queryFn: () => fetchClaimData(id!),
+    enabled: !!id,
+  });
+
+  // Transform API data to match our Item interface
+  const tableData: Item[] = React.useMemo(() => {
+    if (!claimData?.items) return placeholderContentsData;
+
+    return claimData.items.map((item: any) => ({
+      id: item.id,
+      group: item.group || '',
+      name: item.name,
+      category: item.category,
+      status: item.status || 'NR',
+      oisquote: item.insuredQuote,
+      ourquote: item.ourQuote || 0,
+      dateCreated: new Date(item.createdAt),
+      modelSerialNumber: item.modelSerialNumber,
+      receiptPhotoUrl: item.receiptPhotoUrl,
+      ourquoteLink: item.ourQuoteLink,
+    }));
+  }, [claimData]);
 
   const calculateInsuredsTotal = (items: Item[]): number => {
     return items.reduce((total, item) => total + (item.oisquote || 0), 0);
@@ -68,14 +107,14 @@ export const ClaimPage = () => {
     );
   };
 
-  const getRandomStatus = (): 'RS' | 'NR' | 'VPOL' => {
+  const testGetRandomStatus = (): 'RS' | 'NR' | 'VPOL' => {
     const rand = Math.random();
     if (rand < 0.6) return 'NR';
     if (rand < 0.8) return 'RS';
     return 'VPOL';
   };
 
-  const createRandomItem = (customName?: string) => {
+  const testCreateRandomItem = (customName?: string) => {
     let randomItem =
       randomItemsData[Math.floor(Math.random() * randomItemsData.length)];
     let itemName = customName || randomItem.name;
@@ -85,7 +124,7 @@ export const ClaimPage = () => {
       group: randomItem.group,
       name: itemName,
       category: randomItem.category || null,
-      status: getRandomStatus(),
+      status: testGetRandomStatus(),
       oisquote: randomItem.oisquote || null,
       ourquote: randomItem.ourquote || 0,
       dateCreated: new Date(),
@@ -95,8 +134,8 @@ export const ClaimPage = () => {
     };
   };
 
-  const handleAddItem = () => {
-    const newItem = createRandomItem(newItemName);
+  const testHandleAddItem = () => {
+    const newItem = testCreateRandomItem(newItemName);
     addItem(newItem);
     setNewItemName('');
   };
@@ -118,6 +157,18 @@ export const ClaimPage = () => {
       }
     }
   };
+
+  if (isLoading) {
+    return <div className="flex-1 min-w-0 p-4">Loading claim data...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 min-w-0 p-4 text-red-500">
+        {error instanceof Error ? error.message : 'An error occurred'}
+      </div>
+    );
+  }
 
   const insuredsTotal = calculateInsuredsTotal(tableData);
   const ourTotal = calculateOurTotal(tableData);
@@ -148,7 +199,7 @@ export const ClaimPage = () => {
           <TestAddDeleteStuff
             newItemName={newItemName}
             setNewItemName={setNewItemName}
-            handleAddItem={handleAddItem}
+            handleAddItem={testHandleAddItem}
             handleRemoveLastItem={handleRemoveLastItem}
             addItem={addItem}
           />

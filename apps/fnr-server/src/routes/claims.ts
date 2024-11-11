@@ -25,4 +25,26 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/claims/:claimNumber
+router.get('/:claimNumber', async (req, res) => {
+  try {
+    const { claimNumber } = req.params;
+    const claim = await prisma.claim.findUnique({
+      where: { claimNumber },
+      include: {
+        items: true,
+      },
+    });
+
+    if (!claim) {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+
+    res.json(claim);
+  } catch (error) {
+    console.error('Error fetching claim:', error);
+    res.status(500).json({ error: 'Failed to fetch claim' });
+  }
+});
+
 export default router;
