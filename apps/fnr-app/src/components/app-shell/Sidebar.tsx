@@ -28,7 +28,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
         <div className="px-3 py-2">
           {/* Main tabs */}
           <div>
-            <SidebarTab icon={<HomeIcon />} label="Homepage" />
+            <SidebarTab icon={<HomeIcon />} label="Homepage" to="/" />
             <SidebarTab icon={<StarIcon />} label="Assigned" />
           </div>
 
@@ -38,9 +38,21 @@ export const Sidebar = ({ className }: SidebarProps) => {
             Assigned
           </h2>
           <div>
-            <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
-            <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
-            <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
+            <SidebarTab
+              icon={<FileTextIcon />}
+              label="NRA245279610"
+              to="/claim/NRA245279610"
+            />
+            <SidebarTab
+              icon={<FileTextIcon />}
+              label="NRA245279611"
+              to="/claim/NRA245279611"
+            />
+            <SidebarTab
+              icon={<FileTextIcon />}
+              label="NRA245279612"
+              to="/claim/NRA245279612"
+            />
           </div>
 
           <SidebarSeparator />
@@ -49,9 +61,21 @@ export const Sidebar = ({ className }: SidebarProps) => {
             Previous
           </h2>
           <div>
-            <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
-            <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
-            <SidebarTab icon={<FileTextIcon />} label="NRA245279610" />
+            <SidebarTab
+              icon={<FileTextIcon />}
+              label="NRA245279613"
+              to="/claim/NRA245279613"
+            />
+            <SidebarTab
+              icon={<FileTextIcon />}
+              label="NRA245279614"
+              to="/claim/NRA245279614"
+            />
+            <SidebarTab
+              icon={<FileTextIcon />}
+              label="NRA245279615"
+              to="/claim/NRA245279615"
+            />
           </div>
 
           <SidebarSeparator />

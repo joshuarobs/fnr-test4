@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
 import { MainContents } from './MainContents';
+import { HomePage } from './HomePage';
 
 export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -25,13 +27,19 @@ export function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header onToggleSidebar={handleToggleSidebar} />
-      <div className="flex flex-1">
-        {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
-        <MainContents />
+    <BrowserRouter>
+      <div className="flex flex-col h-screen">
+        <Header onToggleSidebar={handleToggleSidebar} />
+        <div className="flex flex-1">
+          {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/claim/:id" element={<MainContents />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 
