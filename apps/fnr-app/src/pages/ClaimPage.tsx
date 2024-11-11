@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
@@ -20,9 +20,9 @@ const fetchClaimData = async (id: string) => {
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [newItemName, setNewItemName] = useState('');
-  const [updateItemId, setUpdateItemId] = useState<number | null>(null);
-  const [updateItemName, setUpdateItemName] = useState('');
+  const [newItemName, setNewItemName] = React.useState('');
+  const [updateItemId, setUpdateItemId] = React.useState<number | null>(null);
+  const [updateItemName, setUpdateItemName] = React.useState('');
 
   const {
     data: claimData,
@@ -44,17 +44,17 @@ export const ClaimPage = () => {
       name: item.name,
       category: item.category,
       status: item.status || 'NR',
-      oisquote: item.insuredQuote,
+      insuredsQuote: item.insuredsQuote,
       ourquote: item.ourQuote || 0,
       dateCreated: new Date(item.createdAt),
-      modelSerialNumber: item.modelSerialNumber, // Now matches the database field name
+      modelSerialNumber: item.modelSerialNumber,
       receiptPhotoUrl: item.receiptPhotoUrl,
       ourquoteLink: item.ourQuoteLink,
     }));
   }, [claimData]);
 
   const calculateInsuredsTotal = (items: Item[]): number => {
-    return items.reduce((total, item) => total + (item.oisquote || 0), 0);
+    return items.reduce((total, item) => total + (item.insuredsQuote || 0), 0);
   };
 
   const calculateOurTotal = (items: Item[]): number => {
@@ -82,29 +82,41 @@ export const ClaimPage = () => {
     if (Array.isArray(newItem)) {
       // Handle array of items
       const nextId = getHighestId() + 1;
-      const itemsWithNewIds = newItem.map((item, index) => ({
+      const itemsWithNewIds = newItem.map((item: Item, index) => ({
         ...item,
         id: nextId + index,
       }));
-      setTableData([...tableData, ...itemsWithNewIds]);
+      // Update claimData to trigger useMemo
+      if (claimData) {
+        claimData.items = [...claimData.items, ...itemsWithNewIds];
+      }
     } else {
       // Handle single item
       const itemWithNewId = {
         ...newItem,
         id: getHighestId() + 1,
       };
-      setTableData([...tableData, itemWithNewId]);
+      // Update claimData to trigger useMemo
+      if (claimData) {
+        claimData.items = [...claimData.items, itemWithNewId];
+      }
     }
   };
 
   const removeItem = (itemId: number) => {
-    setTableData(tableData.filter((item) => item.id !== itemId));
+    if (claimData) {
+      claimData.items = claimData.items.filter(
+        (item: Item) => item.id !== itemId
+      );
+    }
   };
 
   const updateItem = (updatedItem: Item) => {
-    setTableData(
-      tableData.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    );
+    if (claimData) {
+      claimData.items = claimData.items.map((item: Item) =>
+        item.id === updatedItem.id ? updatedItem : item
+      );
+    }
   };
 
   const testGetRandomStatus = (): 'RS' | 'NR' | 'VPOL' => {
@@ -125,7 +137,7 @@ export const ClaimPage = () => {
       name: itemName,
       category: randomItem.category || null,
       status: testGetRandomStatus(),
-      oisquote: randomItem.oisquote || null,
+      insuredsQuote: randomItem.insuredsQuote || null,
       ourquote: randomItem.ourquote || 0,
       dateCreated: new Date(),
       modelSerialNumber: randomItem.modelSerialNumber || null,
@@ -182,7 +194,7 @@ export const ClaimPage = () => {
             <TotalCalculatedPriceText
               title="Insured's total"
               value={insuredsTotal}
-              oisquote={insuredsTotal}
+              insuredsQuote={insuredsTotal}
               ourquote={ourTotal}
               warningString="Insured has not provided quotes for all items yet."
             />

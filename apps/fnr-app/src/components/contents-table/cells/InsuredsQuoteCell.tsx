@@ -1,13 +1,12 @@
-import React from 'react';
 import { ReceiptIcon } from '../ReceiptIcon';
 
 interface InsuredsQuoteCellProps {
-  oisQuote: number | null;
+  insuredsQuote: number | null;
   receiptPhotoUrl: string | null;
 }
 
 export const InsuredsQuoteCell = ({
-  oisQuote,
+  insuredsQuote,
   receiptPhotoUrl,
 }: InsuredsQuoteCellProps) => (
   <div className="flex items-center justify-between w-full">
@@ -15,7 +14,7 @@ export const InsuredsQuoteCell = ({
       <ReceiptIcon receiptLink={receiptPhotoUrl} />
     </div>
     <div className="flex items-center">
-      {oisQuote !== null ? <span>{oisQuote}</span> : ''}
+      {insuredsQuote !== null ? <span>{insuredsQuote}</span> : ''}
     </div>
   </div>
 );

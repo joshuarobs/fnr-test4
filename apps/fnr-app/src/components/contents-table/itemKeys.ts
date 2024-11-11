@@ -5,7 +5,7 @@ export const ITEM_KEYS = {
   CATEGORY: 'category',
   MODEL_SERIAL_NUMBER: 'modelSerialNumber',
   STATUS: 'status',
-  OIS_QUOTE: 'oisquote',
+  OIS_QUOTE: 'insuredsQuote',
   OUR_QUOTE: 'ourquote',
   DIFFERENCE: 'difference',
   RECEIPT_PHOTO_URL: 'receiptPhotoUrl',

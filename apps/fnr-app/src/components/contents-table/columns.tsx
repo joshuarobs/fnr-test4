@@ -47,12 +47,12 @@ const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
 
 // Helper function to determine difference type
 const getDifferenceType = (item: Item): 'higher' | 'lower' | 'same' | 'na' => {
-  const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
+  const insuredsQuote = item[ITEM_KEYS.OIS_QUOTE];
   const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
 
-  if (oisQuote === null || ourQuote === null) return 'na';
-  if (oisQuote === ourQuote) return 'same';
-  return oisQuote > ourQuote ? 'higher' : 'lower';
+  if (insuredsQuote === null || ourQuote === null) return 'na';
+  if (insuredsQuote === ourQuote) return 'same';
+  return insuredsQuote > ourQuote ? 'higher' : 'lower';
 };
 
 export const createColumns = (
@@ -165,13 +165,15 @@ export const createColumns = (
         </RightAlignedHeader>
       ),
       cell: ({ row }) => {
-        const oisQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as number | null;
+        const insuredsQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as
+          | number
+          | null;
         const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL] as
           | string
           | null;
         return (
           <InsuredsQuoteCell
-            oisQuote={oisQuote}
+            insuredsQuote={insuredsQuote}
             receiptPhotoUrl={receiptPhotoUrl}
           />
         );
@@ -209,14 +211,14 @@ export const createColumns = (
       ),
       cell: ({ row }) => {
         const item = row.original;
-        const oisQuote = item[ITEM_KEYS.OIS_QUOTE] as number | null;
+        const insuredsQuote = item[ITEM_KEYS.OIS_QUOTE] as number | null;
         const ourQuote = item[ITEM_KEYS.OUR_QUOTE] as number | null;
 
-        if (oisQuote === null || ourQuote === null) {
+        if (insuredsQuote === null || ourQuote === null) {
           return <div className="text-right">N/A</div>;
         }
 
-        if (oisQuote === ourQuote) {
+        if (insuredsQuote === ourQuote) {
           return (
             <div className="text-right">
               Same
@@ -228,33 +230,42 @@ export const createColumns = (
         const difference = calculateDifference(item);
         return (
           <div className="flex items-center justify-end">
-            <QuoteDifferenceIcon oisquote={oisQuote} ourquote={ourQuote} />
+            <QuoteDifferenceIcon
+              insuredsQuote={insuredsQuote}
+              ourquote={ourQuote}
+            />
           </div>
         );
       },
       enableColumnFilter: true,
       filterFn: (row, id, value: string[]) => {
         const item = row.original;
-        const oisQuote = item[ITEM_KEYS.OIS_QUOTE];
+        const insuredsQuote = item[ITEM_KEYS.OIS_QUOTE];
         const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
 
         return value.some((filterValue) => {
           if (filterValue === 'na') {
-            return oisQuote === null || ourQuote === null;
+            return insuredsQuote === null || ourQuote === null;
           }
           if (filterValue === 'same') {
             return (
-              oisQuote !== null && ourQuote !== null && oisQuote === ourQuote
+              insuredsQuote !== null &&
+              ourQuote !== null &&
+              insuredsQuote === ourQuote
             );
           }
           if (filterValue === 'higher') {
             return (
-              oisQuote !== null && ourQuote !== null && oisQuote > ourQuote
+              insuredsQuote !== null &&
+              ourQuote !== null &&
+              insuredsQuote > ourQuote
             );
           }
           if (filterValue === 'lower') {
             return (
-              oisQuote !== null && ourQuote !== null && oisQuote < ourQuote
+              insuredsQuote !== null &&
+              ourQuote !== null &&
+              insuredsQuote < ourQuote
             );
           }
           return false;
@@ -262,9 +273,11 @@ export const createColumns = (
       },
       sortingFn: (rowA, rowB) => {
         const getDiff = (row: any) => {
-          const oisQuote = row.original[ITEM_KEYS.OIS_QUOTE] as number | null;
+          const insuredsQuote = row.original[ITEM_KEYS.OIS_QUOTE] as
+            | number
+            | null;
           const ourQuote = row.original[ITEM_KEYS.OUR_QUOTE] as number | null;
-          if (oisQuote === null || ourQuote === null) return null;
+          if (insuredsQuote === null || ourQuote === null) return null;
           return calculateDifference(row.original);
         };
         const a = getDiff(rowA);

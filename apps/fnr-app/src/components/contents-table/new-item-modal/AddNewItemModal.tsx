@@ -55,9 +55,9 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       group: group,
       category: ItemCategory.Other,
       status: 'NR',
-      oisquote: null,
+      insuredsQuote: null,
       ourquote: 0,
-      date: new Date().toISOString().split('T')[0],
+      dateCreated: new Date().toISOString().split('T')[0],
       dueDate: new Date().toISOString().split('T')[0],
     };
   };

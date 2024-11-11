@@ -10,7 +10,7 @@ import {
 interface TotalCalculatedPriceTextProps {
   title?: string;
   value: number;
-  oisquote?: number;
+  insuredsQuote?: number;
   ourquote?: number;
   warningString?: string;
 }
@@ -18,14 +18,14 @@ interface TotalCalculatedPriceTextProps {
 export const TotalCalculatedPriceText = ({
   title = 'Total',
   value,
-  oisquote,
+  insuredsQuote,
   ourquote,
   warningString = '',
 }: TotalCalculatedPriceTextProps) => {
   const showQuoteDifference =
-    oisquote !== undefined &&
+    insuredsQuote !== undefined &&
     ourquote !== undefined &&
-    oisquote > 1 &&
+    insuredsQuote > 1 &&
     ourquote > 1;
 
   const formattedValue = new Intl.NumberFormat('en-US', {
@@ -53,7 +53,10 @@ export const TotalCalculatedPriceText = ({
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold">{formattedValue}</h2>
         {showQuoteDifference && (
-          <QuoteDifferenceIcon oisquote={oisquote} ourquote={ourquote} />
+          <QuoteDifferenceIcon
+            insuredsQuote={insuredsQuote}
+            ourquote={ourquote}
+          />
         )}
       </div>
     </div>

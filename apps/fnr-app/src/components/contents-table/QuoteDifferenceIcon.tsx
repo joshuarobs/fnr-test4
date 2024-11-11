@@ -9,15 +9,15 @@ import {
 } from '@react-monorepo/shared';
 
 interface QuoteDifferenceIconProps {
-  oisquote: number;
+  insuredsQuote: number;
   ourquote: number;
 }
 
 export const QuoteDifferenceIcon = ({
-  oisquote,
+  insuredsQuote,
   ourquote,
 }: QuoteDifferenceIconProps) => {
-  const diff = oisquote - ourquote;
+  const diff = insuredsQuote - ourquote;
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
