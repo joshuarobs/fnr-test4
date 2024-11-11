@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
+// Proxy target for development - matches server config
+const DEV_API_URL = 'http://localhost:3333';
+
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/fnr-app',
@@ -12,7 +15,7 @@ export default defineConfig({
     host: 'localhost',
     proxy: {
       '/api': {
-        target: 'http://localhost:3333',
+        target: DEV_API_URL,
         changeOrigin: true,
         secure: false,
       },
@@ -23,10 +26,6 @@ export default defineConfig({
     host: 'localhost',
   },
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
   build: {
     outDir: '../../dist/apps/fnr-app',
     emptyOutDir: true,

@@ -9,6 +9,7 @@ import cors from 'cors';
 import itemsRouter from './routes/items';
 import claimsRouter from './routes/claims';
 import { requestLogger } from './middleware/logger';
+import { SERVER_CONFIG, getServerBaseUrl } from './config';
 
 const app = express();
 
@@ -47,9 +48,8 @@ app.get('/api', (req, res) => {
 app.use('/api/items', itemsRouter);
 app.use('/api/claims', claimsRouter);
 
-const port = process.env.PORT || 3333;
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
+const server = app.listen(SERVER_CONFIG.port, () => {
+  console.log(`Listening at ${getServerBaseUrl()}/api`);
   console.log('Server is ready to accept requests');
 });
 
