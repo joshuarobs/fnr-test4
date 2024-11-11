@@ -20,13 +20,14 @@ export const SidebarTab = ({
     <div className="mr-2 h-4 w-4 flex items-center justify-center">{icon}</div>
   );
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (to) {
       navigate(to);
     }
   };
 
-  return (
+  const button = (
     <Button
       variant={variant}
       className="w-full justify-start"
@@ -35,5 +36,13 @@ export const SidebarTab = ({
       {wrappedIcon}
       {label}
     </Button>
+  );
+
+  if (!to) return button;
+
+  return (
+    <a href={to} onClick={handleClick} className="block">
+      {button}
+    </a>
   );
 };
