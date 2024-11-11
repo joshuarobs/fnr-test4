@@ -2,6 +2,7 @@ import React from 'react';
 import { cn } from '../../../../../shared/src/lib/utils';
 import { SidebarTab } from './SidebarTab';
 import { Separator } from '@react-monorepo/shared';
+import { ROUTES, getClaimRoute } from '../../routes';
 
 import {
   HomeIcon,
@@ -28,8 +29,12 @@ export const Sidebar = ({ className }: SidebarProps) => {
         <div className="px-3 py-2">
           {/* Main tabs */}
           <div>
-            <SidebarTab icon={<HomeIcon />} label="Homepage" to="/" />
-            <SidebarTab icon={<StarIcon />} label="Assigned" to="/assigned" />
+            <SidebarTab icon={<HomeIcon />} label="Homepage" to={ROUTES.HOME} />
+            <SidebarTab
+              icon={<StarIcon />}
+              label="Assigned"
+              to={ROUTES.ASSIGNED}
+            />
           </div>
 
           <SidebarSeparator />
@@ -41,17 +46,17 @@ export const Sidebar = ({ className }: SidebarProps) => {
             <SidebarTab
               icon={<FileTextIcon />}
               label="NRA245279610"
-              to="/claim/NRA245279610"
+              to={getClaimRoute('NRA245279610')}
             />
             <SidebarTab
               icon={<FileTextIcon />}
               label="NRA245279611"
-              to="/claim/NRA245279611"
+              to={getClaimRoute('NRA245279611')}
             />
             <SidebarTab
               icon={<FileTextIcon />}
               label="NRA245279612"
-              to="/claim/NRA245279612"
+              to={getClaimRoute('NRA245279612')}
             />
           </div>
 
@@ -64,28 +69,32 @@ export const Sidebar = ({ className }: SidebarProps) => {
             <SidebarTab
               icon={<FileTextIcon />}
               label="NRA245279613"
-              to="/claim/NRA245279613"
+              to={getClaimRoute('NRA245279613')}
             />
             <SidebarTab
               icon={<FileTextIcon />}
               label="NRA245279614"
-              to="/claim/NRA245279614"
+              to={getClaimRoute('NRA245279614')}
             />
             <SidebarTab
               icon={<FileTextIcon />}
               label="NRA245279615"
-              to="/claim/NRA245279615"
+              to={getClaimRoute('NRA245279615')}
             />
           </div>
 
           <SidebarSeparator />
           {/* Other tabs */}
           <div>
-            <SidebarTab icon={<GearIcon />} label="Settings" to="/settings" />
+            <SidebarTab
+              icon={<GearIcon />}
+              label="Settings"
+              to={ROUTES.SETTINGS}
+            />
             <SidebarTab
               icon={<MagicWandIcon />}
               label="Send feedback"
-              to="/feedback"
+              to={ROUTES.FEEDBACK}
             />
           </div>
 

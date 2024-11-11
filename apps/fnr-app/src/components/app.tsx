@@ -9,6 +9,7 @@ import { SettingsPage } from '../pages/SettingsPage';
 import { FeedbackPage } from '../pages/FeedbackPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ClaimPage } from '../pages/ClaimPage';
+import { ROUTES } from '../routes';
 
 export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -37,11 +38,11 @@ export function App() {
         <div className="flex flex-1">
           {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/assigned" element={<AssignedPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/feedback" element={<FeedbackPage />} />
-            <Route path="/claim/:id" element={<ClaimPage />} />
+            <Route path={ROUTES.HOME} element={<HomePage />} />
+            <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
+            <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+            <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
+            <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
