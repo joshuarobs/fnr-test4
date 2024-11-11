@@ -7,6 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from '@react-monorepo/shared';
+import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface Claim {
   id: number;
@@ -29,6 +31,7 @@ const fetchClaims = async () => {
 };
 
 export const TestAllClaimsTable = () => {
+  const navigate = useNavigate();
   const {
     data: claims,
     isLoading,
@@ -55,6 +58,7 @@ export const TestAllClaimsTable = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>ID</TableHead>
             <TableHead>Claim #</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Status</TableHead>
@@ -67,7 +71,21 @@ export const TestAllClaimsTable = () => {
         </TableHeader>
         <TableBody>
           {claims?.map((claim) => (
-            <TableRow key={claim.id}>
+            <TableRow
+              key={claim.id}
+              className="cursor-pointer hover:bg-gray-50 relative"
+              onClick={() => navigate(`/claim/${claim.claimNumber}`)}
+            >
+              <TableCell className="relative">
+                <a
+                  href={`/claim/${claim.claimNumber}`}
+                  onClick={(e) => e.preventDefault()}
+                  className="absolute inset-0 z-10 opacity-0"
+                >
+                  {claim.claimNumber}
+                </a>
+                {claim.id}
+              </TableCell>
               <TableCell>{claim.claimNumber}</TableCell>
               <TableCell>{claim.description}</TableCell>
               <TableCell>
@@ -83,10 +101,14 @@ export const TestAllClaimsTable = () => {
                   : '-'}
               </TableCell>
               <TableCell>
-                {new Date(claim.createdAt).toLocaleDateString()}
+                {formatDistanceToNow(new Date(claim.createdAt), {
+                  addSuffix: true,
+                })}
               </TableCell>
               <TableCell>
-                {new Date(claim.updatedAt).toLocaleDateString()}
+                {formatDistanceToNow(new Date(claim.updatedAt), {
+                  addSuffix: true,
+                })}
               </TableCell>
             </TableRow>
           ))}
