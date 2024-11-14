@@ -13,6 +13,8 @@ import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
 import { Item } from '../item';
 import { ItemCategory } from '../itemCategories';
+import { ItemStatus } from '../ItemStatus';
+import { ITEM_KEYS } from '../itemKeys';
 
 interface AddNewItemModalProps {
   addItem: (item: Item | Item[]) => void;
@@ -54,7 +56,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       name: name.trim(),
       group: group,
       category: ItemCategory.Other,
-      status: 'NR',
+      [ITEM_KEYS.ITEM_STATUS]: ItemStatus.NR, // Using ITEM_KEYS.STATUS and ItemStatus.NR
       insuredsQuote: null,
       ourquote: 0,
       dateCreated: new Date().toISOString().split('T')[0],

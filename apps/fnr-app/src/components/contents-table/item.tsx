@@ -1,4 +1,5 @@
 import { ItemCategory } from './itemCategories';
+import { ItemStatus } from './ItemStatus';
 
 export type Item = {
   id: number;
@@ -6,7 +7,7 @@ export type Item = {
   name: string;
   category: ItemCategory | null;
   modelSerialNumber: string | null; // Keep this as modelSerialNumber for now since it's used in many places
-  status: 'RS' | 'NR' | 'VPOL';
+  itemStatus: (typeof ItemStatus)[keyof typeof ItemStatus]; // Using ItemStatus type
   insuredsQuote: number | null;
   ourquote: number | null;
   receiptPhotoUrl: string | null;

@@ -18,9 +18,11 @@ export interface StatusDetails {
 
 // Define the function to get status details
 export const getStatusDetails = (
-  status: Item[typeof ITEM_KEYS.STATUS]
+  itemStatus: Item[typeof ITEM_KEYS.ITEM_STATUS]
 ): StatusDetails => {
-  switch (status) {
+  console.log('TEST STATUS:', itemStatus);
+
+  switch (itemStatus) {
     case ItemStatus.RS:
       return {
         bgClass: 'bg-red-200',
@@ -42,26 +44,33 @@ export const getStatusDetails = (
         text: 'VPOL',
         tooltip: 'Verbal Proof of Loss',
       };
+    case ItemStatus.OTHER:
+      return {
+        bgClass: 'bg-blue-200',
+        textClass: 'text-blue-800',
+        text: 'Other',
+        tooltip: 'Other Status',
+      };
     default:
       return {
         bgClass: 'bg-gray-200',
         textClass: 'text-gray-600',
         text: '?',
-        tooltip: '?',
+        tooltip: 'Unknown Status',
       };
   }
 };
 
 type ItemStatusBadgeProps = {
-  status: Item[typeof ITEM_KEYS.STATUS];
+  itemStatus: Item[typeof ITEM_KEYS.ITEM_STATUS];
   showTooltip?: boolean;
 };
 
 export const ItemStatusBadge = ({
-  status,
+  itemStatus,
   showTooltip = true,
 }: ItemStatusBadgeProps) => {
-  const statusDetails: StatusDetails = getStatusDetails(status);
+  const statusDetails: StatusDetails = getStatusDetails(itemStatus);
 
   return (
     <TooltipProvider>

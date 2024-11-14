@@ -4,7 +4,7 @@ export const ITEM_KEYS = {
   NAME: 'name',
   CATEGORY: 'category',
   MODEL_SERIAL_NUMBER: 'modelSerialNumber',
-  STATUS: 'status',
+  ITEM_STATUS: 'itemStatus', // Changed from 'status' to 'itemStatus' to match database field
   OIS_QUOTE: 'insuredsQuote',
   OUR_QUOTE: 'ourquote',
   DIFFERENCE: 'difference',

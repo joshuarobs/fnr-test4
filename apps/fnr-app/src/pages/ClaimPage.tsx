@@ -9,6 +9,7 @@ import { TestAddDeleteStuff } from '../components/contents-table/TestAddDeleteSt
 import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalculatedPriceText';
 import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
 import { SecondSidebar } from '../components/app-shell/SecondSidebar';
+import { ItemStatus } from '../components/contents-table/ItemStatus';
 
 const fetchClaimData = async (id: string) => {
   const response = await fetch(`http://localhost:3333/api/claims/${id}`);
@@ -43,13 +44,13 @@ export const ClaimPage = () => {
       group: item.group || '',
       name: item.name,
       category: item.category,
-      status: item.status || 'NR',
+      modelSerialNumber: item.modelSerialNumber,
+      itemStatus: item.itemStatus || ItemStatus.NR, // Changed from status to itemStatus
       insuredsQuote: item.insuredsQuote,
       ourquote: item.ourQuote || 0,
-      dateCreated: new Date(item.createdAt),
-      modelSerialNumber: item.modelSerialNumber,
       receiptPhotoUrl: item.receiptPhotoUrl,
       ourquoteLink: item.ourQuoteLink,
+      dateCreated: new Date(item.createdAt),
     }));
   }, [claimData]);
 
@@ -119,12 +120,13 @@ export const ClaimPage = () => {
     }
   };
 
-  const testGetRandomStatus = (): 'RS' | 'NR' | 'VPOL' => {
-    const rand = Math.random();
-    if (rand < 0.6) return 'NR';
-    if (rand < 0.8) return 'RS';
-    return 'VPOL';
-  };
+  const testGetRandomStatus =
+    (): (typeof ItemStatus)[keyof typeof ItemStatus] => {
+      const rand = Math.random();
+      if (rand < 0.6) return ItemStatus.NR;
+      if (rand < 0.8) return ItemStatus.RS;
+      return ItemStatus.VPOL;
+    };
 
   const testCreateRandomItem = (customName?: string) => {
     let randomItem =
@@ -136,13 +138,13 @@ export const ClaimPage = () => {
       group: randomItem.group,
       name: itemName,
       category: randomItem.category || null,
-      status: testGetRandomStatus(),
+      modelSerialNumber: randomItem.modelSerialNumber || null,
+      itemStatus: testGetRandomStatus(),
       insuredsQuote: randomItem.insuredsQuote || null,
       ourquote: randomItem.ourquote || 0,
-      dateCreated: new Date(),
-      modelSerialNumber: randomItem.modelSerialNumber || null,
       receiptPhotoUrl: randomItem.receiptPhotoUrl || null,
       ourquoteLink: null,
+      dateCreated: new Date(),
     };
   };
 

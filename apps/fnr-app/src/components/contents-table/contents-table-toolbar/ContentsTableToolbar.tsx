@@ -188,21 +188,25 @@ export function ContentsTableToolbar<TData extends Item>({
       </div>
       <div className="ml-4 flex-1 overflow-x-auto">
         <div className="flex items-center space-x-2 min-w-max">
-          {table.getColumn(ITEM_KEYS.STATUS) && (
+          {table.getColumn(ITEM_KEYS.ITEM_STATUS) && (
             <DataTableFacetedFilterButton
-              column={table.getColumn(ITEM_KEYS.STATUS) as any}
+              column={table.getColumn(ITEM_KEYS.ITEM_STATUS) as any}
               title="Status"
               options={statusOptions}
               disableFilterInput
               renderOption={(option) => (
                 <ItemStatusBadge
-                  status={option.value as Item['status']}
+                  itemStatus={
+                    option.value as Item[typeof ITEM_KEYS.ITEM_STATUS]
+                  }
                   showTooltip={false}
                 />
               )}
               renderSelected={(option) => (
                 <ItemStatusBadge
-                  status={option.value as Item['status']}
+                  itemStatus={
+                    option.value as Item[typeof ITEM_KEYS.ITEM_STATUS]
+                  }
                   showTooltip={false}
                 />
               )}

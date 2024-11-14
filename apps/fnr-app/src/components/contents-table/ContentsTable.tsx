@@ -69,7 +69,7 @@ export const ContentsTableWithToolbar: React.FC<
   const [frozenColumnKeys, setFrozenColumnKeys] = useState<ItemColumnId[]>([
     ITEM_KEYS.ID,
     ITEM_KEYS.NAME,
-    ITEM_KEYS.STATUS,
+    ITEM_KEYS.ITEM_STATUS,
   ] as ItemColumnId[]);
 
   // State for right frozen column keys

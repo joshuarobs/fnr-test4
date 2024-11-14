@@ -23,13 +23,14 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 import { GreenTickIcon } from './GreenTickIcon';
 import { SortableHeader } from './SortableHeader';
+import { ItemStatus } from './ItemStatus';
 
 // New constant for short readable column names
 export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ID]: 'ID',
   [ITEM_KEYS.GROUP]: 'Group',
   [ITEM_KEYS.NAME]: 'Name',
-  [ITEM_KEYS.STATUS]: 'Status',
+  [ITEM_KEYS.ITEM_STATUS]: 'Status',
   [ITEM_KEYS.CATEGORY]: 'Category',
   [ITEM_KEYS.MODEL_SERIAL_NUMBER]: 'Model/Serial',
   [ITEM_KEYS.OIS_QUOTE]: "Insured's Quote",
@@ -86,16 +87,18 @@ export const createColumns = (
       },
     },
     {
-      accessorKey: ITEM_KEYS.STATUS,
+      accessorKey: ITEM_KEYS.ITEM_STATUS,
       header: ({ column }) => <SortableHeader column={column} title="Status" />,
       meta: {
         headerClassName: 'min-w-[96px]',
       },
       cell: ({ row }) => {
-        const status = row.getValue(ITEM_KEYS.STATUS) as Item['status'];
+        // Access status directly from row.original since we know its type
+        const status = row.original.itemStatus;
+        console.log('Status from row.original:', status); // Debug log
         return (
           <div className={CELL_CONTENT_MARGIN}>
-            <ItemStatusBadge status={status} />
+            <ItemStatusBadge itemStatus={status} />
           </div>
         );
       },
@@ -286,7 +289,7 @@ export const createColumns = (
         if (b === null) return -1;
         return a - b;
       },
-      accessorFn: (row) => getDifferenceType(row), // Add this line to generate facet values
+      accessorFn: (row) => getDifferenceType(row),
     },
     {
       accessorKey: ITEM_KEYS.OUR_QUOTE,
