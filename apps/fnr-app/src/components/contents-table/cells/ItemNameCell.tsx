@@ -33,10 +33,19 @@ const pastelColors = [
   'bg-rose-300',
 ] as const;
 
-const getPastelColorFromTimestamp = (date: Date): string => {
-  // Use hours + minutes + seconds as a seed for random color selection
-  const seed = date.getHours() + date.getMinutes() + date.getSeconds();
-  const index = seed % pastelColors.length;
+const getPastelColorFromId = (id: number): string => {
+  // Generates a random enough colour based on the id
+  // This is so users don't see distracting patterns on claims that don't have any images on it
+  // Combine multiple trigonometric functions with different frequencies and phases
+  const x = id * 0.7; // Base frequency
+  const chaos =
+    Math.abs(
+      Math.sin(x) * Math.cos(x * 1.3) +
+        Math.sin(x * 2.4) * Math.cos(x * 0.6) +
+        Math.sin(x * 3.7)
+    ) * 10000;
+
+  const index = Math.floor(chaos % pastelColors.length);
   return pastelColors[index];
 };
 
@@ -122,7 +131,7 @@ export const ItemNameCell = ({
       <div className="mr-2">
         <PlaceholderImageGeneric
           itemCategory={item.category || undefined}
-          color={getPastelColorFromTimestamp(item.dateCreated)}
+          color={getPastelColorFromId(item.id)}
         />
       </div>
     );
