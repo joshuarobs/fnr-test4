@@ -20,8 +20,6 @@ export interface StatusDetails {
 export const getStatusDetails = (
   itemStatus: Item[typeof ITEM_KEYS.ITEM_STATUS]
 ): StatusDetails => {
-  console.log('TEST STATUS:', itemStatus);
-
   switch (itemStatus) {
     case ItemStatus.RS:
       return {

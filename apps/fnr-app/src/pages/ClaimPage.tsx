@@ -47,7 +47,7 @@ export const ClaimPage = () => {
       modelSerialNumber: item.modelSerialNumber,
       itemStatus: item.itemStatus || ItemStatus.NR, // Changed from status to itemStatus
       insuredsQuote: item.insuredsQuote,
-      ourquote: item.ourQuote || 0,
+      ourquote: item.ourQuote, // Remove the || 0 to preserve null values
       receiptPhotoUrl: item.receiptPhotoUrl,
       ourquoteLink: item.ourQuoteLink,
       dateCreated: new Date(item.createdAt),
@@ -67,7 +67,7 @@ export const ClaimPage = () => {
   ): { value: number; maxValue: number } => {
     const totalItems = items.length;
     const itemsWithOurQuote = items.filter(
-      (item) => (item.ourquote || 0) > 0
+      (item) => item.ourquote !== null
     ).length;
     return {
       value: itemsWithOurQuote,
@@ -141,7 +141,7 @@ export const ClaimPage = () => {
       modelSerialNumber: randomItem.modelSerialNumber || null,
       itemStatus: testGetRandomStatus(),
       insuredsQuote: randomItem.insuredsQuote || null,
-      ourquote: randomItem.ourquote || 0,
+      ourquote: randomItem.ourquote || null, // Changed to preserve null
       receiptPhotoUrl: randomItem.receiptPhotoUrl || null,
       ourquoteLink: null,
       dateCreated: new Date(),

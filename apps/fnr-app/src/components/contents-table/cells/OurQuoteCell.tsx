@@ -15,10 +15,14 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   const [value, setValue] = useState(item.ourquote?.toString() ?? '');
 
   const formatQuote = (quote: number | null) => {
-    // Return a div with the empty character, to prevent the double clicking to
-    // highlight a number in another cell. Its better to highlight the same cell as its
-    // the lesser of the evils.
-    if (quote === null) return <div>{'ㅤ'}</div>;
+    // Check if quote is exactly 0 (not null)
+    if (quote === 0) {
+      return '0.00';
+    }
+    // Check if quote is null or undefined
+    if (quote == null) {
+      return <div className="text-muted-foreground italic">No quote</div>;
+    }
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -94,7 +98,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
         </div>
         <div>{formatQuote(item.ourquote)}</div>
       </div>
-      <OurQuoteLinkIcon quoteLink={item.ourquoteLink} />
+      <OurQuoteLinkIcon quoteLink={item.ourquoteLink || undefined} />
     </div>
   );
 };
