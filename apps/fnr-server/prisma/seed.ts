@@ -312,6 +312,7 @@ async function main() {
             modelSerialNumber: item.modelSerialNumber,
             description: item.description,
             insuredsQuote: item.insuredsQuote,
+            ourQuote: item.ourQuote,
             condition: item.condition,
             itemStatus: item.itemStatus,
             evidence: {

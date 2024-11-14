@@ -21,10 +21,12 @@ this field needs to be filled out, this item needs a quote, this item needs to b
 docker-compose up -d
 ```
 
-### 2. Apply Database Migrations
+### 2. Reset and Initialize Database
 ```sh
-cd apps/fnr-server && npx prisma migrate deploy
+cd apps/fnr-server && npx prisma db push --force-reset
 ```
+
+This command will reset the database and apply the current schema. Use this instead of migrations when you need to start fresh.
 
 ### 3. Seed the Database
 
@@ -37,8 +39,10 @@ When prompted to install tsx, type 'y' to proceed. The seed script will create a
 
 #### On macOS/Linux
 ```sh
-cd apps/fnr-server && npx prisma db seed
+cd apps/fnr-server && npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts
 ```
+
+> **Note**: Make sure to include the single quotes around the compiler options on macOS/Linux.
 
 ---
 
