@@ -9,7 +9,7 @@ export const clm003Items = [
     insuredsQuote: 2000,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -26,7 +26,7 @@ export const clm003Items = [
     insuredsQuote: 500,
     ourQuote: 450,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.RS,
     evidence: [],
   },
   {
@@ -37,7 +37,7 @@ export const clm003Items = [
     insuredsQuote: null,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.PENDING,
+    itemStatus: ItemStatus.NR,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -54,7 +54,7 @@ export const clm003Items = [
     insuredsQuote: 1600,
     ourQuote: 1600,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.VPOL,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -71,7 +71,7 @@ export const clm003Items = [
     insuredsQuote: 155,
     ourQuote: null,
     condition: 'N/A',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -82,7 +82,7 @@ export const clm003Items = [
     insuredsQuote: 500,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.RS,
     evidence: [],
   },
   {
@@ -93,7 +93,7 @@ export const clm003Items = [
     insuredsQuote: 300.75,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -110,7 +110,7 @@ export const clm003Items = [
     insuredsQuote: 400,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.VPOL,
     evidence: [],
   },
   {
@@ -121,7 +121,7 @@ export const clm003Items = [
     insuredsQuote: null,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.PENDING,
+    itemStatus: ItemStatus.NR,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -138,7 +138,7 @@ export const clm003Items = [
     insuredsQuote: 180,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -149,7 +149,7 @@ export const clm003Items = [
     insuredsQuote: 250,
     ourQuote: 250,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.RS,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -166,7 +166,7 @@ export const clm003Items = [
     insuredsQuote: 750,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -177,7 +177,7 @@ export const clm003Items = [
     insuredsQuote: null,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.PENDING,
+    itemStatus: ItemStatus.VPOL,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -194,7 +194,7 @@ export const clm003Items = [
     insuredsQuote: 1200,
     ourQuote: 900,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [
       {
         type: EvidenceType.RECEIPT,
@@ -211,7 +211,7 @@ export const clm003Items = [
     insuredsQuote: 120,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -222,7 +222,7 @@ export const clm003Items = [
     insuredsQuote: 150,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.VPOL,
     evidence: [],
   },
   {
@@ -233,7 +233,7 @@ export const clm003Items = [
     insuredsQuote: 200,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -244,7 +244,7 @@ export const clm003Items = [
     insuredsQuote: 150,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -255,7 +255,7 @@ export const clm003Items = [
     insuredsQuote: 300,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.RS,
     evidence: [],
   },
   {
@@ -266,7 +266,7 @@ export const clm003Items = [
     insuredsQuote: null,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.PENDING,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -277,7 +277,7 @@ export const clm003Items = [
     insuredsQuote: 600,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.VPOL,
     evidence: [],
   },
   {
@@ -288,7 +288,7 @@ export const clm003Items = [
     insuredsQuote: 400,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -299,7 +299,7 @@ export const clm003Items = [
     insuredsQuote: 200,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -310,7 +310,7 @@ export const clm003Items = [
     insuredsQuote: 80,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.RS,
     evidence: [],
   },
   {
@@ -321,7 +321,7 @@ export const clm003Items = [
     insuredsQuote: 250,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.VPOL,
     evidence: [],
   },
   {
@@ -332,7 +332,7 @@ export const clm003Items = [
     insuredsQuote: 350,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -343,7 +343,7 @@ export const clm003Items = [
     insuredsQuote: 120,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
   {
@@ -354,7 +354,7 @@ export const clm003Items = [
     insuredsQuote: 180,
     ourQuote: null,
     condition: 'Good',
-    status: ItemStatus.AWAITING_QUOTES,
+    itemStatus: ItemStatus.NR,
     evidence: [],
   },
 ];

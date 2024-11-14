@@ -179,7 +179,7 @@ async function main() {
           insuredsQuote: 2499.99,
           ourQuote: 2499.99,
           condition: 'Damaged - water exposure',
-          status: ItemStatus.AWAITING_QUOTES,
+          itemStatus: ItemStatus.NR,
           evidence: [
             {
               type: EvidenceType.PHOTO,
@@ -200,7 +200,7 @@ async function main() {
           description: 'Water damaged phone',
           insuredsQuote: 999.99,
           condition: 'Damaged - water exposure',
-          status: ItemStatus.AWAITING_QUOTES,
+          itemStatus: ItemStatus.RS,
           evidence: [
             {
               type: EvidenceType.PHOTO,
@@ -224,7 +224,7 @@ async function main() {
           insuredsQuote: 3499.99,
           ourQuote: 2000,
           condition: 'Damaged - fire exposure',
-          status: ItemStatus.AWAITING_QUOTES,
+          itemStatus: ItemStatus.VPOL,
           evidence: [
             {
               type: EvidenceType.PHOTO,
@@ -254,7 +254,7 @@ async function main() {
           insuredsQuote: 1200,
           ourQuote: 1300,
           condition: 'Good',
-          status: ItemStatus.AWAITING_QUOTES,
+          itemStatus: ItemStatus.NR,
           evidence: [
             {
               type: EvidenceType.RECEIPT,
@@ -271,7 +271,7 @@ async function main() {
           insuredsQuote: null,
           ourQuote: null,
           condition: 'Good',
-          status: ItemStatus.PENDING,
+          itemStatus: ItemStatus.RS,
           evidence: [
             {
               type: EvidenceType.RECEIPT,
@@ -313,7 +313,7 @@ async function main() {
             description: item.description,
             insuredsQuote: item.insuredsQuote,
             condition: item.condition,
-            status: item.status,
+            itemStatus: item.itemStatus,
             evidence: {
               create: item.evidence,
             },
