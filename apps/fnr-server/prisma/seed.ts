@@ -177,6 +177,7 @@ async function main() {
           modelSerialNumber: 'MP2023ABC',
           description: 'Water damaged laptop',
           insuredsQuote: 2499.99,
+          ourQuote: 2499.99,
           condition: 'Damaged - water exposure',
           status: ItemStatus.AWAITING_QUOTES,
           evidence: [
@@ -221,6 +222,7 @@ async function main() {
           modelSerialNumber: 'RF123ABC',
           description: 'Fire damaged fridge',
           insuredsQuote: 3499.99,
+          ourQuote: 2000,
           condition: 'Damaged - fire exposure',
           status: ItemStatus.AWAITING_QUOTES,
           evidence: [
@@ -250,6 +252,7 @@ async function main() {
           modelSerialNumber: 'TV-2023-4K',
           description: '4K Television',
           insuredsQuote: 1200,
+          ourQuote: 1300,
           condition: 'Good',
           status: ItemStatus.AWAITING_QUOTES,
           evidence: [
@@ -266,6 +269,7 @@ async function main() {
           modelSerialNumber: 'VC-2023-ROBOT',
           description: 'Robot vacuum cleaner',
           insuredsQuote: null,
+          ourQuote: null,
           condition: 'Good',
           status: ItemStatus.PENDING,
           evidence: [
