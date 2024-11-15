@@ -45,9 +45,9 @@ export const ClaimPage = () => {
       name: item.name,
       category: item.category,
       modelSerialNumber: item.modelSerialNumber,
-      itemStatus: item.itemStatus || ItemStatus.NR, // Changed from status to itemStatus
+      itemStatus: item.itemStatus || ItemStatus.NR,
       insuredsQuote: item.insuredsQuote,
-      ourquote: item.ourQuote, // Remove the || 0 to preserve null values
+      ourquote: item.ourQuote,
       receiptPhotoUrl: item.receiptPhotoUrl,
       ourquoteLink: item.ourQuoteLink,
       dateCreated: new Date(item.createdAt),
@@ -81,23 +81,19 @@ export const ClaimPage = () => {
 
   const addItem = (newItem: Item | Item[]) => {
     if (Array.isArray(newItem)) {
-      // Handle array of items
       const nextId = getHighestId() + 1;
       const itemsWithNewIds = newItem.map((item: Item, index) => ({
         ...item,
         id: nextId + index,
       }));
-      // Update claimData to trigger useMemo
       if (claimData) {
         claimData.items = [...claimData.items, ...itemsWithNewIds];
       }
     } else {
-      // Handle single item
       const itemWithNewId = {
         ...newItem,
         id: getHighestId() + 1,
       };
-      // Update claimData to trigger useMemo
       if (claimData) {
         claimData.items = [...claimData.items, itemWithNewId];
       }
@@ -112,11 +108,33 @@ export const ClaimPage = () => {
     }
   };
 
-  const updateItem = (updatedItem: Item) => {
-    if (claimData) {
-      claimData.items = claimData.items.map((item: Item) =>
-        item.id === updatedItem.id ? updatedItem : item
+  const updateItem = async (updatedItem: Item) => {
+    try {
+      // Make API call to update the item name
+      const response = await fetch(
+        `http://localhost:3333/api/items/${updatedItem.id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: updatedItem.name }),
+        }
       );
+
+      if (!response.ok) {
+        throw new Error('Failed to update item');
+      }
+
+      // Update local state after successful API call
+      if (claimData) {
+        claimData.items = claimData.items.map((item: Item) =>
+          item.id === updatedItem.id ? updatedItem : item
+        );
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+      // You might want to show an error message to the user here
     }
   };
 
@@ -141,7 +159,7 @@ export const ClaimPage = () => {
       modelSerialNumber: randomItem.modelSerialNumber || null,
       itemStatus: testGetRandomStatus(),
       insuredsQuote: randomItem.insuredsQuote || null,
-      ourquote: randomItem.ourquote || null, // Changed to preserve null
+      ourquote: randomItem.ourquote || null,
       receiptPhotoUrl: randomItem.receiptPhotoUrl || null,
       ourquoteLink: null,
       dateCreated: new Date(),
