@@ -6,7 +6,11 @@ const router: Router = express.Router();
 // GET /api/items
 router.get('/', async (req, res) => {
   try {
-    const items = await prisma.item.findMany();
+    const items = await prisma.item.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
     res.json(items);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch items' });

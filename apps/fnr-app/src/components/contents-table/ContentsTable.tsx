@@ -10,6 +10,7 @@ import {
   FilterFns,
   getFacetedRowModel,
   getFacetedUniqueValues,
+  SortingState,
 } from '@tanstack/react-table';
 import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
 import { ContentsDataTable } from './ContentsDataTable';
@@ -65,6 +66,11 @@ export const ContentsTableWithToolbar: React.FC<
     columns.map((col) => col.id || '').filter(Boolean)
   );
 
+  // Initialize sorting state
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: ITEM_KEYS.ID, desc: false },
+  ]);
+
   // State for frozen column keys
   const [frozenColumnKeys, setFrozenColumnKeys] = useState<ItemColumnId[]>([
     ITEM_KEYS.ID,
@@ -97,7 +103,9 @@ export const ContentsTableWithToolbar: React.FC<
     state: {
       globalFilter,
       columnOrder,
+      sorting,
     },
+    onSortingChange: setSorting,
     onColumnOrderChange: setColumnOrder,
   });
 
