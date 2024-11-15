@@ -43,10 +43,18 @@
   height: var(--table-cell-height) !important;
 }
 
-/* Apply consistent height to all table cells */
+/* Apply consistent height and layout to all table cells */
 .tableContainer :global(td),
 .tableContainer :global(th) {
   height: var(--table-cell-height) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+/* Ensure flex content stays on one line */
+.tableContainer :global(td) > div {
+  white-space: nowrap !important;
+  overflow: hidden !important;
 }
 
 /* Hide scrollbar for frozen sections */
