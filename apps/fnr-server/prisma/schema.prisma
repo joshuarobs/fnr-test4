@@ -88,6 +88,7 @@ model Claim {
   incidentDate  DateTime
   description   String
   items         Item[]
+  itemOrder     Int[]       @default([]) // Added to store custom item ordering
   comments      Comment[]
   totalClaimed  Float
   totalApproved Float?
@@ -112,7 +113,7 @@ model Item {
   name              String
   category          String?
   group             String?
-  modelSerialNumber String?     // Updated from modelSerial to modelSerialNumber
+  modelSerialNumber String?
   description       String?
   purchaseDate      DateTime?
   age               Int?

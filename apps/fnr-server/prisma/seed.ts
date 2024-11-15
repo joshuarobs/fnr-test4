@@ -291,7 +291,8 @@ async function main() {
   }
 
   for (const claim of claimData) {
-    await prisma.claim.create({
+    // Create the claim first
+    const createdClaim = await prisma.claim.create({
       data: {
         claimNumber: claim.claimNumber,
         policyNumber: claim.policyNumber,
@@ -305,21 +306,36 @@ async function main() {
         insuredId: firstInsured.id,
         handlerId: staffMembers[0].id,
         creatorId: staffMembers[0].id,
-        items: {
-          create: claim.items.map((item) => ({
-            name: item.name,
-            category: item.category,
-            modelSerialNumber: item.modelSerialNumber,
-            description: item.description,
-            insuredsQuote: item.insuredsQuote,
-            ourQuote: item.ourQuote,
-            condition: item.condition,
-            itemStatus: item.itemStatus,
-            evidence: {
-              create: item.evidence,
-            },
-          })),
+      },
+    });
+
+    // Create items and collect their IDs in order
+    const itemIds: number[] = [];
+    for (const item of claim.items) {
+      const createdItem = await prisma.item.create({
+        data: {
+          claimId: createdClaim.id,
+          name: item.name,
+          category: item.category,
+          modelSerialNumber: item.modelSerialNumber,
+          description: item.description,
+          insuredsQuote: item.insuredsQuote,
+          ourQuote: item.ourQuote,
+          condition: item.condition,
+          itemStatus: item.itemStatus,
+          evidence: {
+            create: item.evidence,
+          },
         },
+      });
+      itemIds.push(createdItem.id);
+    }
+
+    // Update claim with itemOrder
+    await prisma.claim.update({
+      where: { id: createdClaim.id },
+      data: {
+        itemOrder: itemIds,
       },
     });
   }
