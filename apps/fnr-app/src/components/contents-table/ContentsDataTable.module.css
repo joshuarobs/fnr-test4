@@ -1,3 +1,7 @@
+:root {
+  --table-cell-height: 42.44px;
+}
+
 .tableContainer {
   position: relative;
   width: 100%;
@@ -31,11 +35,18 @@
 
 .frozenCell {
   background-color: white;
+  height: var(--table-cell-height) !important;
 }
 
 .frozenHeaderCell {
   background-color: white;
-  height: 42.44px !important;
+  height: var(--table-cell-height) !important;
+}
+
+/* Apply consistent height to all table cells */
+.tableContainer :global(td),
+.tableContainer :global(th) {
+  height: var(--table-cell-height) !important;
 }
 
 /* Hide scrollbar for frozen sections */
