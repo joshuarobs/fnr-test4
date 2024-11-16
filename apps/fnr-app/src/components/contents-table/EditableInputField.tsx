@@ -9,6 +9,7 @@ interface EditableInputFieldProps {
   validate?: (value: string) => boolean;
   inputClassName?: string;
   iconPosition: 'left' | 'right';
+  textAlign?: 'left' | 'center' | 'right';
 }
 
 export const EditableInputField = ({
@@ -18,6 +19,7 @@ export const EditableInputField = ({
   validate = () => true,
   inputClassName = '',
   iconPosition = 'left',
+  textAlign = 'left',
 }: EditableInputFieldProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -73,7 +75,7 @@ export const EditableInputField = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             autoFocus
-            className={`text-right px-2 py-1 ${inputClassName}`}
+            className={`px-2 py-1 text-${textAlign} ${inputClassName}`}
           />
         </div>
       ) : (
@@ -86,7 +88,9 @@ export const EditableInputField = ({
           onClick={handleClick}
         >
           {iconPosition === 'left' && <div className="mr-1">{iconElement}</div>}
-          <div>{formatDisplay(value)}</div>
+          <div className={`text-${textAlign} flex-grow`}>
+            {formatDisplay(value)}
+          </div>
           {iconPosition === 'right' && (
             <div className="ml-1">{iconElement}</div>
           )}
