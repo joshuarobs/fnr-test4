@@ -62,42 +62,40 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
     [handleBlur]
   );
 
-  if (isEditing) {
-    return (
-      <div className="flex justify-end">
-        <Input
-          type="text"
-          value={value}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          className="w-24 text-right px-2 py-1"
-          pattern="^\d*\.?\d{0,2}$"
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="flex items-center justify-end w-full">
-      <div
-        className={`flex items-center mr-2 p-2 rounded ${
-          isHovering ? 'bg-black bg-opacity-10' : ''
-        }`}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-        onDoubleClick={handleDoubleClick}
-      >
-        <div className="w-4 mr-1">
-          {isHovering ? (
-            <PencilIcon size={16} className="text-gray-500" />
-          ) : (
-            <div className="w-4 h-4" /> // Empty div to maintain space
-          )}
+      {isEditing ? (
+        <div className="flex justify-end mr-2">
+          <Input
+            type="text"
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            className="w-24 text-right px-2 py-1"
+            pattern="^\d*\.?\d{0,2}$"
+          />
         </div>
-        <div>{formatQuote(item.ourquote)}</div>
-      </div>
+      ) : (
+        <div
+          className={`flex items-center mr-2 p-2 rounded ${
+            isHovering ? 'bg-black bg-opacity-10' : ''
+          }`}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          onDoubleClick={handleDoubleClick}
+        >
+          <div className="w-4 mr-1">
+            {isHovering ? (
+              <PencilIcon size={16} className="text-gray-500" />
+            ) : (
+              <div className="w-4 h-4" /> // Empty div to maintain space
+            )}
+          </div>
+          <div>{formatQuote(item.ourquote)}</div>
+        </div>
+      )}
       <OurQuoteLinkIcon quoteLink={item.ourquoteLink || undefined} />
     </div>
   );
