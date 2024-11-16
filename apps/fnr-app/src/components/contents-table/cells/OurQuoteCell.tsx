@@ -49,6 +49,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
         }
         validate={validateInput}
         inputClassName="w-24"
+        iconPosition="left"
       />
       <OurQuoteLinkIcon quoteLink={item.ourquoteLink || undefined} />
     </div>

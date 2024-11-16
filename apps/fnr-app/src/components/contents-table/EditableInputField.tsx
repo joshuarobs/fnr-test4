@@ -8,7 +8,7 @@ interface EditableInputFieldProps {
   formatDisplay: (value: string) => React.ReactNode;
   validate?: (value: string) => boolean;
   inputClassName?: string;
-  iconPosition?: 'left' | 'right';
+  iconPosition: 'left' | 'right';
 }
 
 export const EditableInputField = ({
