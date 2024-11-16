@@ -168,17 +168,8 @@ export const createColumns = (
         </RightAlignedHeader>
       ),
       cell: ({ row }) => {
-        const insuredsQuote = row.getValue(ITEM_KEYS.OIS_QUOTE) as
-          | number
-          | null;
-        const receiptPhotoUrl = row.original[ITEM_KEYS.RECEIPT_PHOTO_URL] as
-          | string
-          | null;
         return (
-          <InsuredsQuoteCell
-            insuredsQuote={insuredsQuote}
-            receiptPhotoUrl={receiptPhotoUrl}
-          />
+          <InsuredsQuoteCell item={row.original} updateItem={updateItem} />
         );
       },
       enableColumnFilter: true,
