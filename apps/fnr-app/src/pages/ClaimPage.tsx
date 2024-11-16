@@ -68,6 +68,7 @@ export const ClaimPage = () => {
           body: JSON.stringify({
             name: updatedItem.name,
             ourQuote: updatedItem.ourquote,
+            insuredsQuote: updatedItem.insuredsQuote,
           }),
         }
       );
@@ -92,6 +93,7 @@ export const ClaimPage = () => {
                 ...item,
                 name: updatedItem.name,
                 ourQuote: updatedItem.ourquote,
+                insuredsQuote: updatedItem.insuredsQuote,
               }
             : item
         ),
