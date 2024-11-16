@@ -29,7 +29,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
     }).format(quote);
   };
 
-  const handleDoubleClick = useCallback(() => {
+  const handleClick = useCallback(() => {
     setIsEditing(true);
     setIsHovering(false); // Cancel hover state when editing starts
   }, []);
@@ -79,12 +79,12 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
         </div>
       ) : (
         <div
-          className={`flex items-center mr-2 p-2 rounded ${
+          className={`flex items-center mr-2 p-2 rounded cursor-pointer ${
             isHovering ? 'bg-black bg-opacity-10' : ''
           }`}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          onDoubleClick={handleDoubleClick}
+          onClick={handleClick}
         >
           <div className="w-4 mr-1">
             {isHovering ? (
