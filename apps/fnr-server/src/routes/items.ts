@@ -65,15 +65,21 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, ourQuote } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
+    // Validate that at least one field is provided
+    if (!name && ourQuote === undefined) {
+      return res.status(400).json({ error: 'At least one field is required' });
     }
+
+    // Build update data object
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
 
     const updatedItem = await prisma.item.update({
       where: { id: parseInt(id) },
-      data: { name },
+      data: updateData,
     });
 
     res.json(updatedItem);

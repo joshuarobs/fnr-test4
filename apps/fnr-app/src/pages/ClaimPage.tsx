@@ -65,7 +65,10 @@ export const ClaimPage = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ name: updatedItem.name }),
+          body: JSON.stringify({
+            name: updatedItem.name,
+            ourQuote: updatedItem.ourquote,
+          }),
         }
       );
       if (!response.ok) {
@@ -85,7 +88,11 @@ export const ClaimPage = () => {
         ...old,
         items: old.items.map((item: any) =>
           item.id === updatedItem.id
-            ? { ...item, name: updatedItem.name }
+            ? {
+                ...item,
+                name: updatedItem.name,
+                ourQuote: updatedItem.ourquote,
+              }
             : item
         ),
       }));
