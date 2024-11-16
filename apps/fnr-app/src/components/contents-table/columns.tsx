@@ -61,10 +61,10 @@ export const createColumns = (
 ): ColumnDef<Item>[] =>
   [
     {
-      accessorKey: ITEM_KEYS.ID,
+      accessorKey: ITEM_KEYS.LOCAL_ID,
       header: ({ column }) => <SortableHeader column={column} title="ID" />,
       cell: ({ row }) => {
-        const value = row.getValue(ITEM_KEYS.ID) as number;
+        const value = row.getValue(ITEM_KEYS.LOCAL_ID) as number;
         return <IdCell value={value} />;
       },
     },

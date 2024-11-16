@@ -1,5 +1,6 @@
 export const ITEM_KEYS = {
   ID: 'id',
+  LOCAL_ID: 'localId',
   GROUP: 'group',
   NAME: 'name',
   CATEGORY: 'category',

@@ -3,6 +3,7 @@ import { ItemStatus } from './ItemStatus';
 
 export type Item = {
   id: number;
+  localId: number; // Position in localItemIds array + 1
   group: string;
   name: string;
   category: ItemCategory | null;

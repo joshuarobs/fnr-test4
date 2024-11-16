@@ -68,12 +68,12 @@ export const ContentsTableWithToolbar: React.FC<
 
   // Initialize sorting state
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: ITEM_KEYS.ID, desc: false },
+    { id: ITEM_KEYS.LOCAL_ID, desc: false },
   ]);
 
   // State for frozen column keys
   const [frozenColumnKeys, setFrozenColumnKeys] = useState<ItemColumnId[]>([
-    ITEM_KEYS.ID,
+    ITEM_KEYS.LOCAL_ID,
     ITEM_KEYS.NAME,
     ITEM_KEYS.ITEM_STATUS,
   ] as ItemColumnId[]);

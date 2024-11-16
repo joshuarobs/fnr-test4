@@ -41,6 +41,7 @@ export const ClaimPage = () => {
 
     return claimData.items.map((item: any) => ({
       id: item.id,
+      localId: claimData.localItemIds.indexOf(item.id) + 1,
       group: item.group || '',
       name: item.name,
       category: item.category,
@@ -75,8 +76,11 @@ export const ClaimPage = () => {
     };
   };
 
-  const getHighestId = () => {
-    return tableData.reduce((maxId, item) => Math.max(maxId, item.id), 0);
+  const getHighestId = (): number => {
+    return tableData.reduce(
+      (maxId: number, item: Item) => Math.max(maxId, item.id),
+      0
+    );
   };
 
   const addItem = (newItem: Item | Item[]) => {
@@ -88,6 +92,11 @@ export const ClaimPage = () => {
       }));
       if (claimData) {
         claimData.items = [...claimData.items, ...itemsWithNewIds];
+        // Update localItemIds array
+        claimData.localItemIds = [
+          ...claimData.localItemIds,
+          ...itemsWithNewIds.map((item) => item.id),
+        ];
       }
     } else {
       const itemWithNewId = {
@@ -96,15 +105,24 @@ export const ClaimPage = () => {
       };
       if (claimData) {
         claimData.items = [...claimData.items, itemWithNewId];
+        // Update localItemIds array
+        claimData.localItemIds = [...claimData.localItemIds, itemWithNewId.id];
       }
     }
   };
 
   const removeItem = (itemId: number) => {
     if (claimData) {
-      claimData.items = claimData.items.filter(
-        (item: Item) => item.id !== itemId
-      );
+      const item = claimData.items.find((item: any) => item.id === itemId);
+      if (item) {
+        claimData.items = claimData.items.filter(
+          (item: any) => item.id !== itemId
+        );
+        // Update localItemIds array
+        claimData.localItemIds = claimData.localItemIds.filter(
+          (id: number) => id !== itemId
+        );
+      }
     }
   };
 
@@ -153,6 +171,7 @@ export const ClaimPage = () => {
 
     return {
       id: getHighestId() + 1,
+      localId: (claimData?.localItemIds?.length || 0) + 1,
       group: randomItem.group,
       name: itemName,
       category: randomItem.category || null,
