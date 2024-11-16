@@ -170,3 +170,12 @@ And join the Nx community:
 - [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+
+### Test ideas
+- Single clicking is clunky and hard to "cancel out of"
+- Make it like google sheets but fancier
+- So our approach is double click to edit, like before
+- But now clicking on a cell will show the outline
+- User can use Tab or arrows to navigate quickly between cells
+- Better UX
