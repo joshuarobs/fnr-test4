@@ -76,7 +76,7 @@ export const TestAllClaimsTable = () => {
               className="cursor-pointer hover:bg-gray-50 relative"
               onClick={() => navigate(`/claim/${claim.claimNumber}`)}
             >
-              <TableCell className="relative">
+              <TableCell className="relative p-2">
                 <a
                   href={`/claim/${claim.claimNumber}`}
                   onClick={(e) => e.preventDefault()}

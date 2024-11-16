@@ -1,4 +1,4 @@
-import { ColumnDef, FilterFn } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { Item, calculateDifference } from './item';
 import { ModelSerialCell } from './cells/ModelSerialCell';
 import { ItemStatusBadge } from './ItemStatusBadge';
@@ -24,7 +24,6 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 import { GreenTickIcon } from './GreenTickIcon';
 import { SortableHeader } from './SortableHeader';
-import { ItemStatus } from './ItemStatus';
 
 // New constant for short readable column names
 export const ShortReadibleColumnNames = {
