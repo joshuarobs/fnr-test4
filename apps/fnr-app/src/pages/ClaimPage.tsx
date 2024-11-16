@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { randomItemsData } from '../components/contents-table/randomItemsData';
@@ -24,6 +24,7 @@ export const ClaimPage = () => {
   const [newItemName, setNewItemName] = React.useState('');
   const [updateItemId, setUpdateItemId] = React.useState<number | null>(null);
   const [updateItemName, setUpdateItemName] = React.useState('');
+  const queryClient = useQueryClient();
 
   const {
     data: claimData,
@@ -54,6 +55,55 @@ export const ClaimPage = () => {
       dateCreated: new Date(item.createdAt),
     }));
   }, [claimData]);
+
+  const updateItemMutation = useMutation({
+    mutationFn: async (updatedItem: Item) => {
+      const response = await fetch(
+        `http://localhost:3333/api/items/${updatedItem.id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: updatedItem.name }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Failed to update item');
+      }
+      return response.json();
+    },
+    onMutate: async (updatedItem) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['claim', id] });
+
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData(['claim', id]);
+
+      // Optimistically update the cache
+      queryClient.setQueryData(['claim', id], (old: any) => ({
+        ...old,
+        items: old.items.map((item: any) =>
+          item.id === updatedItem.id
+            ? { ...item, name: updatedItem.name }
+            : item
+        ),
+      }));
+
+      // Return context with the previous data
+      return { previousData };
+    },
+    onError: (err, newItem, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousData) {
+        queryClient.setQueryData(['claim', id], context.previousData);
+      }
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure cache is in sync with server
+      queryClient.invalidateQueries({ queryKey: ['claim', id] });
+    },
+  });
 
   const calculateInsuredsTotal = (items: Item[]): number => {
     return items.reduce((total, item) => total + (item.insuredsQuote || 0), 0);
@@ -126,34 +176,8 @@ export const ClaimPage = () => {
     }
   };
 
-  const updateItem = async (updatedItem: Item) => {
-    try {
-      // Make API call to update the item name
-      const response = await fetch(
-        `http://localhost:3333/api/items/${updatedItem.id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name: updatedItem.name }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to update item');
-      }
-
-      // Update local state after successful API call
-      if (claimData) {
-        claimData.items = claimData.items.map((item: Item) =>
-          item.id === updatedItem.id ? updatedItem : item
-        );
-      }
-    } catch (error) {
-      console.error('Error updating item:', error);
-      // You might want to show an error message to the user here
-    }
+  const updateItem = (updatedItem: Item) => {
+    updateItemMutation.mutate(updatedItem);
   };
 
   const testGetRandomStatus =
