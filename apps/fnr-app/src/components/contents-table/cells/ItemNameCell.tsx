@@ -63,7 +63,7 @@ export const ItemNameCell = ({
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(item.name);
 
-  const handleDoubleClick = useCallback(() => {
+  const handleClick = useCallback(() => {
     setIsEditing(true);
   }, []);
 
@@ -86,20 +86,6 @@ export const ItemNameCell = ({
     },
     [handleBlur]
   );
-
-  if (isEditing) {
-    return (
-      <Input
-        type="text"
-        value={value}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        autoFocus
-        className="w-full px-2 py-1"
-      />
-    );
-  }
 
   const truncatedName = cliTruncate(item.name, 25, { position: 'end' });
   const shouldShowTooltip = item.name.length > 25;
@@ -141,12 +127,22 @@ export const ItemNameCell = ({
     <div className="flex items-center justify-between w-full">
       <div className="flex items-center flex-grow min-w-0">
         {renderImageIcon()}
-        {shouldShowTooltip ? (
+        {isEditing ? (
+          <Input
+            type="text"
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            className="w-full px-2 py-1"
+          />
+        ) : shouldShowTooltip ? (
           <TooltipProvider>
             <Tooltip delayDuration={350}>
               <TooltipTrigger asChild>
                 <div
-                  onDoubleClick={handleDoubleClick}
+                  onClick={handleClick}
                   className="cursor-pointer flex-grow min-w-0"
                   style={textStyle}
                 >
@@ -160,7 +156,7 @@ export const ItemNameCell = ({
           </TooltipProvider>
         ) : (
           <div
-            onDoubleClick={handleDoubleClick}
+            onClick={handleClick}
             className="cursor-pointer flex-grow min-w-0"
             style={textStyle}
           >
