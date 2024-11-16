@@ -88,7 +88,8 @@ model Claim {
   incidentDate  DateTime
   description   String
   items         Item[]
-  itemOrder     Int[]       @default([]) // Added to store custom item ordering
+  itemOrder     Int[]       @default([]) // Controls display order of items
+  localItemIds  Int[]       @default([]) // Permanent local IDs for items
   comments      Comment[]
   totalClaimed  Float
   totalApproved Float?

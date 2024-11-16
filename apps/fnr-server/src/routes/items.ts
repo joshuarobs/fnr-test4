@@ -20,11 +20,27 @@ router.get('/', async (req, res) => {
 // POST /api/items
 router.post('/', async (req, res) => {
   try {
+    // Create the new item
     const newItem = await prisma.item.create({
       data: req.body,
     });
+
+    // Update the claim's localItemIds array
+    await prisma.claim.update({
+      where: { id: req.body.claimId },
+      data: {
+        localItemIds: {
+          push: newItem.id,
+        },
+        itemOrder: {
+          push: newItem.id,
+        },
+      },
+    });
+
     res.status(201).json(newItem);
   } catch (error) {
+    console.error('Error creating item:', error);
     res.status(500).json({ error: 'Failed to create item' });
   }
 });

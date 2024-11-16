@@ -291,7 +291,7 @@ async function main() {
   }
 
   for (const claim of claimData) {
-    // Create the claim first
+    // Create the claim first with empty arrays
     const createdClaim = await prisma.claim.create({
       data: {
         claimNumber: claim.claimNumber,
@@ -306,11 +306,14 @@ async function main() {
         insuredId: firstInsured.id,
         handlerId: staffMembers[0].id,
         creatorId: staffMembers[0].id,
+        itemOrder: [],
+        localItemIds: [],
       },
     });
 
-    // Create items and collect their IDs in order
+    // Create items and collect their IDs
     const itemIds: number[] = [];
+
     for (const item of claim.items) {
       const createdItem = await prisma.item.create({
         data: {
@@ -331,11 +334,15 @@ async function main() {
       itemIds.push(createdItem.id);
     }
 
-    // Update claim with itemOrder
+    // Update claim with both itemOrder and localItemIds arrays
+    // Both arrays contain the same database IDs initially
+    // localItemIds: stores the permanent local IDs (the actual database IDs)
+    // itemOrder: controls display order, can be reordered
     await prisma.claim.update({
       where: { id: createdClaim.id },
       data: {
         itemOrder: itemIds,
+        localItemIds: itemIds,
       },
     });
   }

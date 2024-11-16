@@ -1,10 +1,3 @@
-/*
-  Warnings:
-
-  - The `status` column on the `Item` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - Added the required column `claimId` to the `Item` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('STAFF', 'ADMIN', 'SUPPLIER', 'INSURED');
 
@@ -12,19 +5,10 @@ CREATE TYPE "UserRole" AS ENUM ('STAFF', 'ADMIN', 'SUPPLIER', 'INSURED');
 CREATE TYPE "ClaimStatus" AS ENUM ('DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'PENDING_QUOTES', 'APPROVED', 'SETTLED', 'REJECTED');
 
 -- CreateEnum
-CREATE TYPE "ItemStatus" AS ENUM ('PENDING', 'AWAITING_EVIDENCE', 'AWAITING_QUOTES', 'APPROVED', 'REJECTED');
+CREATE TYPE "ItemStatus" AS ENUM ('RS', 'NR', 'VPOL', 'OTHER');
 
 -- CreateEnum
 CREATE TYPE "EvidenceType" AS ENUM ('PHOTO', 'RECEIPT', 'MANUAL', 'WARRANTY', 'OTHER');
-
--- AlterTable
-ALTER TABLE "Item" ADD COLUMN     "age" INTEGER,
-ADD COLUMN     "claimId" INTEGER NOT NULL,
-ADD COLUMN     "condition" TEXT,
-ADD COLUMN     "description" TEXT,
-ADD COLUMN     "purchaseDate" TIMESTAMP(3),
-DROP COLUMN "status",
-ADD COLUMN     "status" "ItemStatus" NOT NULL DEFAULT 'PENDING';
 
 -- CreateTable
 CREATE TABLE "BaseUser" (
@@ -88,6 +72,8 @@ CREATE TABLE "Claim" (
     "status" "ClaimStatus" NOT NULL DEFAULT 'DRAFT',
     "incidentDate" TIMESTAMP(3) NOT NULL,
     "description" TEXT NOT NULL,
+    "itemOrder" INTEGER[] DEFAULT ARRAY[]::INTEGER[],
+    "localItemIds" INTEGER[] DEFAULT ARRAY[]::INTEGER[],
     "totalClaimed" DOUBLE PRECISION NOT NULL,
     "totalApproved" DOUBLE PRECISION,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -97,17 +83,24 @@ CREATE TABLE "Claim" (
 );
 
 -- CreateTable
-CREATE TABLE "Quote" (
+CREATE TABLE "Item" (
     "id" SERIAL NOT NULL,
-    "itemId" INTEGER NOT NULL,
-    "supplierId" INTEGER NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
-    "notes" TEXT,
-    "validUntil" TIMESTAMP(3),
+    "claimId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "category" TEXT,
+    "group" TEXT,
+    "modelSerialNumber" TEXT,
+    "description" TEXT,
+    "purchaseDate" TIMESTAMP(3),
+    "age" INTEGER,
+    "condition" TEXT,
+    "insuredsQuote" DOUBLE PRECISION,
+    "ourQuote" DOUBLE PRECISION,
+    "itemStatus" "ItemStatus" NOT NULL DEFAULT 'NR',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Quote_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Item_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -173,12 +166,6 @@ ALTER TABLE "Claim" ADD CONSTRAINT "Claim_creatorId_fkey" FOREIGN KEY ("creatorI
 
 -- AddForeignKey
 ALTER TABLE "Item" ADD CONSTRAINT "Item_claimId_fkey" FOREIGN KEY ("claimId") REFERENCES "Claim"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Quote" ADD CONSTRAINT "Quote_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Quote" ADD CONSTRAINT "Quote_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Evidence" ADD CONSTRAINT "Evidence_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
