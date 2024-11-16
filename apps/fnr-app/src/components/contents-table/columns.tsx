@@ -10,6 +10,7 @@ import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import { IdCell } from './cells/IdCell';
 import { ItemCategory } from './itemCategories';
+import { CellWrapper } from './CellWrapper'; // Import the new CellWrapper component
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,7 +66,11 @@ export const createColumns = (
       header: ({ column }) => <SortableHeader column={column} title="ID" />,
       cell: ({ row }) => {
         const value = row.getValue(ITEM_KEYS.LOCAL_ID) as number;
-        return <IdCell value={value} />;
+        return (
+          <CellWrapper>
+            <IdCell value={value} />
+          </CellWrapper>
+        );
       },
     },
     {
@@ -73,13 +78,15 @@ export const createColumns = (
       header: ({ column }) => <SortableHeader column={column} title="Name" />,
       cell: ({ row, table }) => {
         return (
-          <div className={CELL_CONTENT_MARGIN}>
-            <ItemNameCell
-              item={row.original}
-              updateItem={updateItem}
-              filterText={table.getState().globalFilter}
-            />
-          </div>
+          <CellWrapper>
+            <div className={CELL_CONTENT_MARGIN}>
+              <ItemNameCell
+                item={row.original}
+                updateItem={updateItem}
+                filterText={table.getState().globalFilter}
+              />
+            </div>
+          </CellWrapper>
         );
       },
       meta: {
@@ -93,13 +100,13 @@ export const createColumns = (
         headerClassName: 'min-w-[96px]',
       },
       cell: ({ row }) => {
-        // Access status directly from row.original since we know its type
         const status = row.original.itemStatus;
-        console.log('Status from row.original:', status); // Debug log
         return (
-          <div className={CELL_CONTENT_MARGIN}>
-            <ItemStatusBadge itemStatus={status} />
-          </div>
+          <CellWrapper>
+            <div className={CELL_CONTENT_MARGIN}>
+              <ItemStatusBadge itemStatus={status} />
+            </div>
+          </CellWrapper>
         );
       },
       enableColumnFilter: true,
@@ -111,9 +118,11 @@ export const createColumns = (
       cell: ({ row }) => {
         const group = row.getValue(ITEM_KEYS.GROUP) as string;
         return (
-          <div className={CELL_CONTENT_MARGIN}>
-            <GroupCell group={group} />
-          </div>
+          <CellWrapper>
+            <div className={CELL_CONTENT_MARGIN}>
+              <GroupCell group={group} />
+            </div>
+          </CellWrapper>
         );
       },
       enableColumnFilter: true,
@@ -126,13 +135,15 @@ export const createColumns = (
       ),
       cell: ({ row, table }) => {
         return (
-          <div className={CELL_CONTENT_MARGIN}>
-            <CategoryCell
-              item={row.original}
-              updateItem={updateItem}
-              filterText={table.getState().globalFilter}
-            />
-          </div>
+          <CellWrapper>
+            <div className={CELL_CONTENT_MARGIN}>
+              <CategoryCell
+                item={row.original}
+                updateItem={updateItem}
+                filterText={table.getState().globalFilter}
+              />
+            </div>
+          </CellWrapper>
         );
       },
       enableColumnFilter: true,
@@ -151,9 +162,11 @@ export const createColumns = (
           ITEM_KEYS.MODEL_SERIAL_NUMBER
         ) as string | null;
         return modelSerialNumber ? (
-          <div className={CELL_CONTENT_MARGIN}>
-            <ModelSerialCell modelSerialNumber={modelSerialNumber} />
-          </div>
+          <CellWrapper>
+            <div className={CELL_CONTENT_MARGIN}>
+              <ModelSerialCell modelSerialNumber={modelSerialNumber} />
+            </div>
+          </CellWrapper>
         ) : null;
       },
     },
@@ -169,7 +182,9 @@ export const createColumns = (
       ),
       cell: ({ row }) => {
         return (
-          <InsuredsQuoteCell item={row.original} updateItem={updateItem} />
+          <CellWrapper>
+            <InsuredsQuoteCell item={row.original} updateItem={updateItem} />
+          </CellWrapper>
         );
       },
       enableColumnFilter: true,
@@ -209,26 +224,33 @@ export const createColumns = (
         const ourQuote = item[ITEM_KEYS.OUR_QUOTE] as number | null;
 
         if (insuredsQuote === null || ourQuote === null) {
-          return <div className="text-right">N/A</div>;
+          return (
+            <CellWrapper>
+              <div className="text-right">N/A</div>
+            </CellWrapper>
+          );
         }
 
         if (insuredsQuote === ourQuote) {
           return (
-            <div className="text-right">
-              Same
-              <GreenTickIcon />
-            </div>
+            <CellWrapper>
+              <div className="text-right">
+                Same
+                <GreenTickIcon />
+              </div>
+            </CellWrapper>
           );
         }
 
-        const difference = calculateDifference(item);
         return (
-          <div className="flex items-center justify-end">
-            <QuoteDifferenceIcon
-              insuredsQuote={insuredsQuote}
-              ourquote={ourQuote}
-            />
-          </div>
+          <CellWrapper>
+            <div className="flex items-center justify-end">
+              <QuoteDifferenceIcon
+                insuredsQuote={insuredsQuote}
+                ourquote={ourQuote}
+              />
+            </div>
+          </CellWrapper>
         );
       },
       enableColumnFilter: true,
@@ -293,7 +315,11 @@ export const createColumns = (
         </RightAlignedHeader>
       ),
       cell: ({ row }) => {
-        return <OurQuoteCell item={row.original} updateItem={updateItem} />;
+        return (
+          <CellWrapper>
+            <OurQuoteCell item={row.original} updateItem={updateItem} />
+          </CellWrapper>
+        );
       },
       enableColumnFilter: true,
       filterFn: (row, id, value: Array<string | null>) => {
