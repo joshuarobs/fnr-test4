@@ -18,6 +18,7 @@ import {
   useAddItemMutation,
   useRemoveItemMutation,
   useRecordClaimViewMutation,
+  useGetRecentlyViewedClaimsQuery,
   api,
 } from '../store/services/api';
 
@@ -27,6 +28,7 @@ export const ClaimPage = () => {
   const dispatch = useDispatch();
 
   const { data: claimData, isLoading, error } = useGetClaimQuery(id!);
+  const { data: recentViews } = useGetRecentlyViewedClaimsQuery();
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
@@ -37,14 +39,17 @@ export const ClaimPage = () => {
     dispatch(setSelectedCell({ rowId: '1', columnId: ITEM_KEYS.LOCAL_ID }));
   }, [dispatch, id]);
 
-  // Record view when claim is loaded
+  // Record view when claim is loaded, but only if it's not the most recent view
   React.useEffect(() => {
-    if (id && !isLoading && !error) {
-      recordView(id);
+    if (id && !isLoading && !error && recentViews) {
+      const mostRecentView = recentViews[0];
+      if (!mostRecentView || mostRecentView.claim.claimNumber !== id) {
+        recordView(id);
+      }
     }
-  }, [id, isLoading, error, recordView]);
+  }, [id, isLoading, error, recordView, recentViews]);
 
-  // Invalidate recent views on unmount
+  // Invalidate recent views on unmount to update UI when leaving the page
   React.useEffect(() => {
     return () => {
       if (!error) {

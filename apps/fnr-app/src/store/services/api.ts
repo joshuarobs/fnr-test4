@@ -64,7 +64,7 @@ export const api = createApi({
         url: `claims/${id}/view`,
         method: 'POST',
       }),
-      // Remove the invalidatesTags to prevent immediate update
+      // Remove invalidatesTags to prevent immediate UI updates
     }),
     updateItem: builder.mutation<Item, Partial<Item>>({
       query: (item) => ({
