@@ -65,26 +65,57 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, ourQuote, insuredsQuote } = req.body;
+    const {
+      name,
+      category,
+      group,
+      modelSerialNumber,
+      description,
+      purchaseDate,
+      age,
+      condition,
+      insuredsQuote,
+      ourQuote,
+      itemStatus,
+    } = req.body;
 
-    // Validate that at least one field is provided
-    if (!name && ourQuote === undefined && insuredsQuote === undefined) {
-      return res.status(400).json({ error: 'At least one field is required' });
-    }
-
-    // Build update data object
+    // Build update data object with all possible fields
     const updateData: any = {};
-    if (name) updateData.name = name;
-    if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
+    if (name !== undefined) updateData.name = name;
+    if (category !== undefined) updateData.category = category;
+    if (group !== undefined) updateData.group = group;
+    if (modelSerialNumber !== undefined)
+      updateData.modelSerialNumber = modelSerialNumber;
+    if (description !== undefined) updateData.description = description;
+    if (purchaseDate !== undefined) updateData.purchaseDate = purchaseDate;
+    if (age !== undefined) updateData.age = age;
+    if (condition !== undefined) updateData.condition = condition;
     if (insuredsQuote !== undefined) updateData.insuredsQuote = insuredsQuote;
+    if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
+    if (itemStatus !== undefined) updateData.itemStatus = itemStatus;
 
-    const updatedItem = await prisma.item.update({
-      where: { id: parseInt(id) },
-      data: updateData,
+    // Use transaction to update both item and parent claim
+    const updatedItem = await prisma.$transaction(async (prisma) => {
+      // First update the item
+      const item = await prisma.item.update({
+        where: { id: parseInt(id) },
+        data: updateData,
+      });
+
+      // Then explicitly update the claim's updatedAt
+      await prisma.claim.update({
+        where: { id: item.claimId },
+        data: {
+          updatedAt: new Date(),
+        },
+      });
+
+      return item;
     });
 
     res.json(updatedItem);
   } catch (error) {
+    console.error('Error updating item:', error);
     res.status(500).json({ error: 'Failed to update item' });
   }
 });
