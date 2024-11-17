@@ -18,6 +18,7 @@ import {
   useAddItemMutation,
   useRemoveItemMutation,
   useRecordClaimViewMutation,
+  api,
 } from '../store/services/api';
 
 export const ClaimPage = () => {
@@ -42,6 +43,15 @@ export const ClaimPage = () => {
       recordView(id);
     }
   }, [id, isLoading, error, recordView]);
+
+  // Invalidate recent views on unmount
+  React.useEffect(() => {
+    return () => {
+      if (!error) {
+        dispatch(api.util.invalidateTags(['RecentViews']));
+      }
+    };
+  }, [dispatch, error]);
 
   // Transform API data to match our Item interface
   const tableData: Item[] = React.useMemo(() => {

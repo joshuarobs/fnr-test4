@@ -64,7 +64,7 @@ export const api = createApi({
         url: `claims/${id}/view`,
         method: 'POST',
       }),
-      invalidatesTags: ['RecentViews'],
+      // Remove the invalidatesTags to prevent immediate update
     }),
     updateItem: builder.mutation<Item, Partial<Item>>({
       query: (item) => ({
