@@ -9,6 +9,9 @@ import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalc
 import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
 import { SecondSidebar } from '../components/app-shell/SecondSidebar';
 import { ItemStatus } from '../components/contents-table/ItemStatus';
+import { ITEM_KEYS } from '../components/contents-table/itemKeys';
+import { useDispatch } from 'react-redux';
+import { setSelectedCell } from '../store/features/selectedCellSlice';
 import {
   useGetClaimQuery,
   useUpdateItemMutation,
@@ -20,12 +23,18 @@ import {
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
   const [newItemName, setNewItemName] = React.useState('');
+  const dispatch = useDispatch();
 
   const { data: claimData, isLoading, error } = useGetClaimQuery(id!);
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
   const [recordView] = useRecordClaimViewMutation();
+
+  // Reset selected cell when entering claim page or when claim ID changes
+  React.useEffect(() => {
+    dispatch(setSelectedCell({ rowId: '1', columnId: ITEM_KEYS.LOCAL_ID }));
+  }, [dispatch, id]);
 
   // Record view when claim is loaded
   React.useEffect(() => {
