@@ -14,6 +14,16 @@ this field needs to be filled out, this item needs a quote, this item needs to b
 
 ---
 
+## Installation
+### 1. Cline prompt for Vscode
+Be sure to copy this prompt and put it in the "Custom Instructions" section in Cline's settings.
+This will make it so that Cline acts properly and will hopefully make less mistakes.
+
+````
+Do not delete existing comments unless necessary. Do not waste time trying to change quotetation mark as it doesn't matter if its ' or ". If you need help with database migrations, look at README and when running commands assume docker is running.
+When you make new components, please write some comments, and use arrow format. When importing from 'shared/src/components/ui', e.g. DropdownMenu, Button, shadcn related stuff, import it as from "@react-monorepo/shared".
+````
+
 ## Database Setup and Seeding
 
 ### 1. Start the PostgreSQL Database
