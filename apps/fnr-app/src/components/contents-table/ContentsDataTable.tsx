@@ -39,19 +39,12 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const totalRows = table.getRowModel().rows.length;
-      // Get all visible column IDs in order (frozen left, main, frozen right)
-      const visibleColumns = [
-        ...frozenColumnKeys,
-        ...table
-          .getAllColumns()
-          .filter(
-            (col) =>
-              !frozenColumnKeys.includes(col.id as keyof Item) &&
-              !frozenRightColumnKeys.includes(col.id)
-          )
-          .map((col) => col.id),
-        ...frozenRightColumnKeys,
-      ];
+
+      // Get all visible columns in order (frozen left, main, frozen right)
+      const visibleColumns = table
+        .getAllColumns()
+        .filter((column) => column.getIsVisible())
+        .map((column) => column.id);
 
       switch (e.key) {
         case 'ArrowUp':
@@ -76,7 +69,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
     // Add event listener to window to ensure it catches all keyboard events
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch, table, frozenColumnKeys, frozenRightColumnKeys]);
+  }, [dispatch, table]);
 
   // Sync scroll positions between frozen and main tables
   useEffect(() => {
