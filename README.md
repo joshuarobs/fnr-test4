@@ -173,9 +173,4 @@ And join the Nx community:
 
 
 ### Test ideas
-- Single clicking is clunky and hard to "cancel out of"
-- Make it like google sheets but fancier
-- So our approach is double click to edit, like before
-- But now clicking on a cell will show the outline
-- User can use Tab or arrows to navigate quickly between cells
-- Better UX
+- Pressing down with the highlighted cell at bottom of table will automatically go to next page

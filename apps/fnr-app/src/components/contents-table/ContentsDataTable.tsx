@@ -8,6 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from '@react-monorepo/shared';
+import { useDispatch } from 'react-redux';
+import {
+  moveSelectionUp,
+  moveSelectionDown,
+} from '../../store/features/selectedCellSlice';
 import { Item } from './item';
 import { DataTablePagination } from './DataTablePagination';
 import styles from './ContentsDataTable.module.css';
@@ -23,9 +28,32 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   frozenColumnKeys,
   frozenRightColumnKeys,
 }: ContentaDataTableProps<TData, TValue>) => {
+  const dispatch = useDispatch();
   const mainTableRef = useRef<HTMLDivElement>(null);
   const frozenTableRef = useRef<HTMLDivElement>(null);
   const frozenRightTableRef = useRef<HTMLDivElement>(null);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const totalRows = table.getRowModel().rows.length;
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          dispatch(moveSelectionUp());
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          dispatch(moveSelectionDown({ maxRows: totalRows }));
+          break;
+      }
+    };
+
+    // Add event listener to window to ensure it catches all keyboard events
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [dispatch, table]);
 
   // Sync scroll positions between frozen and main tables
   useEffect(() => {

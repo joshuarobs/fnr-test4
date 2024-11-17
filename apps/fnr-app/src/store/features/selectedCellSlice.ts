@@ -30,8 +30,27 @@ export const selectedCellSlice = createSlice({
         state.selectedCell = action.payload;
       }
     },
+
+    // Move selection up one row, clamping to minimum of 1
+    moveSelectionUp: (state) => {
+      const currentRowId = parseInt(state.selectedCell.rowId);
+      // Clamp to minimum of 1 (first row)
+      const newRowId = Math.max(1, currentRowId - 1);
+      state.selectedCell.rowId = newRowId.toString();
+    },
+
+    // Move selection down one row
+    // Note: The maximum row will be handled by the component using this reducer
+    // since it has access to the actual data length
+    moveSelectionDown: (state, action: PayloadAction<{ maxRows: number }>) => {
+      const currentRowId = parseInt(state.selectedCell.rowId);
+      // Clamp to maximum number of rows
+      const newRowId = Math.min(action.payload.maxRows, currentRowId + 1);
+      state.selectedCell.rowId = newRowId.toString();
+    },
   },
 });
 
-export const { setSelectedCell } = selectedCellSlice.actions;
+export const { setSelectedCell, moveSelectionUp, moveSelectionDown } =
+  selectedCellSlice.actions;
 export default selectedCellSlice.reducer;
