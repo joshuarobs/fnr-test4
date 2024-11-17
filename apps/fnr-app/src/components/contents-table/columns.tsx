@@ -10,7 +10,7 @@ import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import { IdCell } from './cells/IdCell';
 import { ItemCategory } from './itemCategories';
-import { CellWrapper } from './CellWrapper'; // Import the new CellWrapper component
+import { CellWrapper } from './CellWrapper';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +25,6 @@ import { ITEM_KEYS } from './itemKeys';
 import { GreenTickIcon } from './GreenTickIcon';
 import { SortableHeader } from './SortableHeader';
 
-// New constant for short readable column names
 export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ID]: 'ID',
   [ITEM_KEYS.GROUP]: 'Group',
@@ -38,15 +37,12 @@ export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ACTIONS]: '',
 };
 
-// Standardized margin class for cell content
 const CELL_CONTENT_MARGIN = 'ml-2';
 
-// Component for right-aligned header
 const RightAlignedHeader = ({ children }: { children: React.ReactNode }) => (
   <div className="text-right">{children}</div>
 );
 
-// Helper function to determine difference type
 const getDifferenceType = (item: Item): 'higher' | 'lower' | 'same' | 'na' => {
   const insuredsQuote = item[ITEM_KEYS.OIS_QUOTE];
   const ourQuote = item[ITEM_KEYS.OUR_QUOTE];
@@ -66,7 +62,10 @@ export const createColumns = (
       cell: ({ row }) => {
         const value = row.getValue(ITEM_KEYS.LOCAL_ID) as number;
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.LOCAL_ID}
+          >
             <IdCell value={value} />
           </CellWrapper>
         );
@@ -77,7 +76,10 @@ export const createColumns = (
       header: ({ column }) => <SortableHeader column={column} title="Name" />,
       cell: ({ row, table }) => {
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.NAME}
+          >
             <div className={CELL_CONTENT_MARGIN}>
               <ItemNameCell
                 item={row.original}
@@ -101,7 +103,10 @@ export const createColumns = (
       cell: ({ row }) => {
         const status = row.original.itemStatus;
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.ITEM_STATUS}
+          >
             <div className={CELL_CONTENT_MARGIN}>
               <ItemStatusBadge itemStatus={status} />
             </div>
@@ -117,7 +122,10 @@ export const createColumns = (
       cell: ({ row }) => {
         const group = row.getValue(ITEM_KEYS.GROUP) as string;
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.GROUP}
+          >
             <div className={CELL_CONTENT_MARGIN}>
               <GroupCell group={group} />
             </div>
@@ -134,7 +142,10 @@ export const createColumns = (
       ),
       cell: ({ row, table }) => {
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.CATEGORY}
+          >
             <div className={CELL_CONTENT_MARGIN}>
               <CategoryCell
                 item={row.original}
@@ -161,7 +172,10 @@ export const createColumns = (
           ITEM_KEYS.MODEL_SERIAL_NUMBER
         ) as string | null;
         return modelSerialNumber ? (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.MODEL_SERIAL_NUMBER}
+          >
             <div className={CELL_CONTENT_MARGIN}>
               <ModelSerialCell modelSerialNumber={modelSerialNumber} />
             </div>
@@ -181,7 +195,10 @@ export const createColumns = (
       ),
       cell: ({ row }) => {
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.OIS_QUOTE}
+          >
             <InsuredsQuoteCell item={row.original} updateItem={updateItem} />
           </CellWrapper>
         );
@@ -224,7 +241,10 @@ export const createColumns = (
 
         if (insuredsQuote === null || ourQuote === null) {
           return (
-            <CellWrapper>
+            <CellWrapper
+              rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+              columnId={ITEM_KEYS.DIFFERENCE}
+            >
               <div className="text-right">N/A</div>
             </CellWrapper>
           );
@@ -232,7 +252,10 @@ export const createColumns = (
 
         if (insuredsQuote === ourQuote) {
           return (
-            <CellWrapper>
+            <CellWrapper
+              rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+              columnId={ITEM_KEYS.DIFFERENCE}
+            >
               <div className="text-right">
                 Same
                 <GreenTickIcon />
@@ -242,7 +265,10 @@ export const createColumns = (
         }
 
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.DIFFERENCE}
+          >
             <div className="flex items-center justify-end">
               <QuoteDifferenceIcon
                 insuredsQuote={insuredsQuote}
@@ -315,7 +341,10 @@ export const createColumns = (
       ),
       cell: ({ row }) => {
         return (
-          <CellWrapper>
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.OUR_QUOTE}
+          >
             <OurQuoteCell item={row.original} updateItem={updateItem} />
           </CellWrapper>
         );
