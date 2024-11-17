@@ -124,4 +124,46 @@ router.post('/:claimNumber/view', async (req, res) => {
   }
 });
 
+// POST /api/claims/:claimNumber/recalculate
+router.post('/:claimNumber/recalculate', async (req, res) => {
+  try {
+    const { claimNumber } = req.params;
+
+    const claim = await prisma.claim.findUnique({
+      where: { claimNumber },
+      include: {
+        items: true,
+      },
+    });
+
+    if (!claim) {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+
+    // Calculate totals from items
+    const totalClaimed = claim.items.reduce(
+      (sum, item) => sum + (item.insuredsQuote || 0),
+      0
+    );
+    const totalApproved = claim.items.reduce(
+      (sum, item) => sum + (item.ourQuote || 0),
+      0
+    );
+
+    // Update claim with new totals
+    await prisma.claim.update({
+      where: { claimNumber },
+      data: {
+        totalClaimed,
+        totalApproved,
+      },
+    });
+
+    res.json({ success: true, totalClaimed, totalApproved });
+  } catch (error) {
+    console.error('Error recalculating claim totals:', error);
+    res.status(500).json({ error: 'Failed to recalculate claim totals' });
+  }
+});
+
 export default router;

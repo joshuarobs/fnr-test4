@@ -39,6 +39,12 @@ interface RecentlyViewedClaim {
   };
 }
 
+interface RecalculateResponse {
+  success: boolean;
+  totalClaimed: number;
+  totalApproved: number;
+}
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3333/api/' }),
@@ -93,6 +99,13 @@ export const api = createApi({
       }),
       invalidatesTags: ['Claim'],
     }),
+    recalculateQuotes: builder.mutation<RecalculateResponse, string>({
+      query: (claimNumber) => ({
+        url: `claims/${claimNumber}/recalculate`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Claim'],
+    }),
   }),
 });
 
@@ -105,4 +118,5 @@ export const {
   useUpdateItemMutation,
   useAddItemMutation,
   useRemoveItemMutation,
+  useRecalculateQuotesMutation,
 } = api;
