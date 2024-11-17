@@ -12,6 +12,8 @@ import { useDispatch } from 'react-redux';
 import {
   moveSelectionUp,
   moveSelectionDown,
+  moveSelectionLeft,
+  moveSelectionRight,
 } from '../../store/features/selectedCellSlice';
 import { Item } from './item';
 import { DataTablePagination } from './DataTablePagination';
@@ -37,6 +39,19 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const totalRows = table.getRowModel().rows.length;
+      // Get all visible column IDs in order (frozen left, main, frozen right)
+      const visibleColumns = [
+        ...frozenColumnKeys,
+        ...table
+          .getAllColumns()
+          .filter(
+            (col) =>
+              !frozenColumnKeys.includes(col.id as keyof Item) &&
+              !frozenRightColumnKeys.includes(col.id)
+          )
+          .map((col) => col.id),
+        ...frozenRightColumnKeys,
+      ];
 
       switch (e.key) {
         case 'ArrowUp':
@@ -47,13 +62,21 @@ export const ContentsDataTable = <TData extends Item, TValue>({
           e.preventDefault();
           dispatch(moveSelectionDown({ maxRows: totalRows }));
           break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          dispatch(moveSelectionLeft({ visibleColumns }));
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          dispatch(moveSelectionRight({ visibleColumns }));
+          break;
       }
     };
 
     // Add event listener to window to ensure it catches all keyboard events
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch, table]);
+  }, [dispatch, table, frozenColumnKeys, frozenRightColumnKeys]);
 
   // Sync scroll positions between frozen and main tables
   useEffect(() => {

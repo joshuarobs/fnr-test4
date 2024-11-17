@@ -48,9 +48,44 @@ export const selectedCellSlice = createSlice({
       const newRowId = Math.min(action.payload.maxRows, currentRowId + 1);
       state.selectedCell.rowId = newRowId.toString();
     },
+
+    // Move selection left one column
+    // Note: The valid columns will be handled by the component using this reducer
+    moveSelectionLeft: (
+      state,
+      action: PayloadAction<{ visibleColumns: string[] }>
+    ) => {
+      const currentColumnIndex = action.payload.visibleColumns.indexOf(
+        state.selectedCell.columnId
+      );
+      if (currentColumnIndex > 0) {
+        state.selectedCell.columnId =
+          action.payload.visibleColumns[currentColumnIndex - 1];
+      }
+    },
+
+    // Move selection right one column
+    // Note: The valid columns will be handled by the component using this reducer
+    moveSelectionRight: (
+      state,
+      action: PayloadAction<{ visibleColumns: string[] }>
+    ) => {
+      const currentColumnIndex = action.payload.visibleColumns.indexOf(
+        state.selectedCell.columnId
+      );
+      if (currentColumnIndex < action.payload.visibleColumns.length - 1) {
+        state.selectedCell.columnId =
+          action.payload.visibleColumns[currentColumnIndex + 1];
+      }
+    },
   },
 });
 
-export const { setSelectedCell, moveSelectionUp, moveSelectionDown } =
-  selectedCellSlice.actions;
+export const {
+  setSelectedCell,
+  moveSelectionUp,
+  moveSelectionDown,
+  moveSelectionLeft,
+  moveSelectionRight,
+} = selectedCellSlice.actions;
 export default selectedCellSlice.reducer;
