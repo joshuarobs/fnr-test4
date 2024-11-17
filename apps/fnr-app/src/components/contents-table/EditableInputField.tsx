@@ -10,6 +10,7 @@ interface EditableInputFieldProps {
   inputClassName?: string;
   iconPosition: 'left' | 'right';
   textAlign?: 'left' | 'center' | 'right';
+  isEditable?: boolean; // New prop
 }
 
 export const EditableInputField = ({
@@ -20,15 +21,18 @@ export const EditableInputField = ({
   inputClassName = '',
   iconPosition = 'left',
   textAlign = 'left',
+  isEditable = true, // Default to true
 }: EditableInputFieldProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [value, setValue] = useState(initialValue);
 
   const handleDoubleClick = useCallback(() => {
-    setIsEditing(true);
-    setIsHovering(false);
-  }, []);
+    if (isEditable) {
+      setIsEditing(true);
+      setIsHovering(false);
+    }
+  }, [isEditable]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +60,7 @@ export const EditableInputField = ({
 
   const iconElement = (
     <div className="w-4">
-      {isHovering ? (
+      {isHovering && isEditable ? (
         <PencilIcon size={16} className="text-gray-500" />
       ) : (
         <div className="w-4 h-4" />
@@ -80,11 +84,11 @@ export const EditableInputField = ({
         </div>
       ) : (
         <div
-          className={`flex items-center mr-2 p-2 rounded cursor-pointer ${
-            isHovering ? 'bg-black bg-opacity-10' : ''
-          }`}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
+          className={`flex items-center mr-2 p-2 rounded ${
+            isEditable ? 'cursor-pointer' : ''
+          } ${isHovering && isEditable ? 'bg-black bg-opacity-10' : ''}`}
+          onMouseEnter={() => isEditable && setIsHovering(true)}
+          onMouseLeave={() => isEditable && setIsHovering(false)}
           onDoubleClick={handleDoubleClick}
         >
           {iconPosition === 'left' && <div className="mr-1">{iconElement}</div>}

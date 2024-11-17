@@ -201,7 +201,11 @@ export const createColumns = (
             rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
             columnId={ITEM_KEYS.OIS_QUOTE}
           >
-            <InsuredsQuoteCell item={row.original} updateItem={updateItem} />
+            <InsuredsQuoteCell
+              item={row.original}
+              updateItem={updateItem}
+              isEditable={false} // Set isEditable to false as a test
+            />
           </CellWrapper>
         );
       },

@@ -5,11 +5,13 @@ import { EditableInputField } from '../EditableInputField';
 interface InsuredsQuoteCellProps {
   item: Item;
   updateItem: (updatedItem: Item) => void;
+  isEditable?: boolean;
 }
 
 export const InsuredsQuoteCell = ({
   item,
   updateItem,
+  isEditable = true,
 }: InsuredsQuoteCellProps) => {
   const formatQuote = (quote: number | null) => {
     // Check if quote is exactly 0 (not null)
@@ -53,6 +55,7 @@ export const InsuredsQuoteCell = ({
         inputClassName="w-24"
         iconPosition="left"
         textAlign="right"
+        isEditable={isEditable}
       />
       <ReceiptIcon receiptLink={item.receiptPhotoUrl} />
     </div>
