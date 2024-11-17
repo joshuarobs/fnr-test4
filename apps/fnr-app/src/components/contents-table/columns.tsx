@@ -171,16 +171,18 @@ export const createColumns = (
         const modelSerialNumber = row.getValue(
           ITEM_KEYS.MODEL_SERIAL_NUMBER
         ) as string | null;
-        return modelSerialNumber ? (
+        return (
           <CellWrapper
             rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
             columnId={ITEM_KEYS.MODEL_SERIAL_NUMBER}
           >
             <div className={CELL_CONTENT_MARGIN}>
-              <ModelSerialCell modelSerialNumber={modelSerialNumber} />
+              {modelSerialNumber ? (
+                <ModelSerialCell modelSerialNumber={modelSerialNumber} />
+              ) : null}
             </div>
           </CellWrapper>
-        ) : null;
+        );
       },
     },
     {
