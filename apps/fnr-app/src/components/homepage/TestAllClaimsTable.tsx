@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import {
   Table,
   TableBody,
@@ -9,37 +8,11 @@ import {
 } from '@react-monorepo/shared';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-
-interface Claim {
-  id: number;
-  claimNumber: string;
-  description: string;
-  status: string;
-  items: { id: number }[];
-  totalClaimed: number;
-  totalApproved: number | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-const fetchClaims = async () => {
-  const response = await fetch('http://localhost:3333/api/claims?limit=10');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { useGetClaimsQuery } from '../../store/services/api';
 
 export const TestAllClaimsTable = () => {
   const navigate = useNavigate();
-  const {
-    data: claims,
-    isLoading,
-    error,
-  } = useQuery<Claim[]>({
-    queryKey: ['claims'],
-    queryFn: fetchClaims,
-  });
+  const { data: claims, isLoading, error } = useGetClaimsQuery();
 
   if (isLoading) {
     return <div className="p-4">Loading claims...</div>;

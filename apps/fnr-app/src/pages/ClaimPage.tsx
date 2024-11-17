@@ -1,6 +1,5 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { randomItemsData } from '../components/contents-table/randomItemsData';
@@ -10,31 +9,21 @@ import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalc
 import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
 import { SecondSidebar } from '../components/app-shell/SecondSidebar';
 import { ItemStatus } from '../components/contents-table/ItemStatus';
-
-const fetchClaimData = async (id: string) => {
-  const response = await fetch(`http://localhost:3333/api/claims/${id}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch claim data');
-  }
-  return response.json();
-};
+import {
+  useGetClaimQuery,
+  useUpdateItemMutation,
+  useAddItemMutation,
+  useRemoveItemMutation,
+} from '../store/services/api';
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
   const [newItemName, setNewItemName] = React.useState('');
-  const [updateItemId, setUpdateItemId] = React.useState<number | null>(null);
-  const [updateItemName, setUpdateItemName] = React.useState('');
-  const queryClient = useQueryClient();
 
-  const {
-    data: claimData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['claim', id],
-    queryFn: () => fetchClaimData(id!),
-    enabled: !!id,
-  });
+  const { data: claimData, isLoading, error } = useGetClaimQuery(id!);
+  const [updateItem] = useUpdateItemMutation();
+  const [addItemMutation] = useAddItemMutation();
+  const [removeItemMutation] = useRemoveItemMutation();
 
   // Transform API data to match our Item interface
   const tableData: Item[] = React.useMemo(() => {
@@ -55,64 +44,6 @@ export const ClaimPage = () => {
       dateCreated: new Date(item.createdAt),
     }));
   }, [claimData]);
-
-  const updateItemMutation = useMutation({
-    mutationFn: async (updatedItem: Item) => {
-      const response = await fetch(
-        `http://localhost:3333/api/items/${updatedItem.id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: updatedItem.name,
-            ourQuote: updatedItem.ourquote,
-            insuredsQuote: updatedItem.insuredsQuote,
-          }),
-        }
-      );
-      if (!response.ok) {
-        throw new Error('Failed to update item');
-      }
-      return response.json();
-    },
-    onMutate: async (updatedItem) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['claim', id] });
-
-      // Snapshot the previous value
-      const previousData = queryClient.getQueryData(['claim', id]);
-
-      // Optimistically update the cache
-      queryClient.setQueryData(['claim', id], (old: any) => ({
-        ...old,
-        items: old.items.map((item: any) =>
-          item.id === updatedItem.id
-            ? {
-                ...item,
-                name: updatedItem.name,
-                ourQuote: updatedItem.ourquote,
-                insuredsQuote: updatedItem.insuredsQuote,
-              }
-            : item
-        ),
-      }));
-
-      // Return context with the previous data
-      return { previousData };
-    },
-    onError: (err, newItem, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
-      if (context?.previousData) {
-        queryClient.setQueryData(['claim', id], context.previousData);
-      }
-    },
-    onSettled: () => {
-      // Always refetch after error or success to ensure cache is in sync with server
-      queryClient.invalidateQueries({ queryKey: ['claim', id] });
-    },
-  });
 
   const calculateInsuredsTotal = (items: Item[]): number => {
     return items.reduce((total, item) => total + (item.insuredsQuote || 0), 0);
@@ -142,51 +73,49 @@ export const ClaimPage = () => {
     );
   };
 
-  const addItem = (newItem: Item | Item[]) => {
-    if (Array.isArray(newItem)) {
-      const nextId = getHighestId() + 1;
-      const itemsWithNewIds = newItem.map((item: Item, index) => ({
-        ...item,
-        id: nextId + index,
-      }));
-      if (claimData) {
-        claimData.items = [...claimData.items, ...itemsWithNewIds];
-        // Update localItemIds array
-        claimData.localItemIds = [
-          ...claimData.localItemIds,
-          ...itemsWithNewIds.map((item) => item.id),
-        ];
+  const addItem = async (newItem: Item | Item[]) => {
+    if (!id) return;
+
+    try {
+      if (Array.isArray(newItem)) {
+        // Handle bulk add
+        for (const item of newItem) {
+          await addItemMutation({
+            claimId: id,
+            item,
+          }).unwrap();
+        }
+      } else {
+        // Handle single item add
+        await addItemMutation({
+          claimId: id,
+          item: newItem,
+        }).unwrap();
       }
-    } else {
-      const itemWithNewId = {
-        ...newItem,
-        id: getHighestId() + 1,
-      };
-      if (claimData) {
-        claimData.items = [...claimData.items, itemWithNewId];
-        // Update localItemIds array
-        claimData.localItemIds = [...claimData.localItemIds, itemWithNewId.id];
-      }
+    } catch (err) {
+      console.error('Failed to add item(s):', err);
     }
   };
 
-  const removeItem = (itemId: number) => {
-    if (claimData) {
-      const item = claimData.items.find((item: any) => item.id === itemId);
-      if (item) {
-        claimData.items = claimData.items.filter(
-          (item: any) => item.id !== itemId
-        );
-        // Update localItemIds array
-        claimData.localItemIds = claimData.localItemIds.filter(
-          (id: number) => id !== itemId
-        );
-      }
+  const removeItem = async (itemId: number) => {
+    if (!id) return;
+
+    try {
+      await removeItemMutation({
+        claimId: id,
+        itemId,
+      }).unwrap();
+    } catch (err) {
+      console.error('Failed to remove item:', err);
     }
   };
 
-  const updateItem = (updatedItem: Item) => {
-    updateItemMutation.mutate(updatedItem);
+  const handleUpdateItem = async (updatedItem: Item) => {
+    try {
+      await updateItem(updatedItem).unwrap();
+    } catch (err) {
+      console.error('Failed to update item:', err);
+    }
   };
 
   const testGetRandomStatus =
@@ -230,18 +159,6 @@ export const ClaimPage = () => {
     }
   };
 
-  const handleUpdateItem = () => {
-    if (updateItemId !== null && updateItemName) {
-      const itemToUpdate = tableData.find((item) => item.id === updateItemId);
-      if (itemToUpdate) {
-        const updatedItem = { ...itemToUpdate, name: updateItemName };
-        updateItem(updatedItem);
-        setUpdateItemId(null);
-        setUpdateItemName('');
-      }
-    }
-  };
-
   if (isLoading) {
     return <div className="flex-1 min-w-0 p-4">Loading claim data...</div>;
   }
@@ -249,7 +166,7 @@ export const ClaimPage = () => {
   if (error) {
     return (
       <div className="flex-1 min-w-0 p-4 text-red-500">
-        {error instanceof Error ? error.message : 'An error occurred'}
+        An error occurred while loading the claim
       </div>
     );
   }
@@ -292,7 +209,7 @@ export const ClaimPage = () => {
           data={tableData}
           addItem={addItem}
           removeItem={removeItem}
-          updateItem={updateItem}
+          updateItem={handleUpdateItem}
         />
       </div>
       <SecondSidebar />

@@ -1,18 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-
-const fetchMessage = async () => {
-  const response = await fetch('http://localhost:3333/api');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { useGetMessageQuery } from '../../store/services/api';
 
 export const TestApi = () => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['message'],
-    queryFn: fetchMessage,
-  });
+  const { data, isLoading, error } = useGetMessageQuery();
 
   if (isLoading) {
     return <div className="p-4">Loading...</div>;
