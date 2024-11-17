@@ -23,10 +23,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import {
-  setSelectedCell,
-  clearSelectedCell,
-} from '../../store/features/selectedCellSlice';
+import { setSelectedCell } from '../../store/features/selectedCellSlice';
 
 interface CellWrapperProps {
   children: React.ReactNode;
@@ -48,11 +45,8 @@ export const CellWrapper = ({
     selectedCell.rowId === rowId && selectedCell.columnId === columnId;
 
   const handleClick = () => {
-    if (isSelected) {
-      // If clicking the already selected cell, deselect it
-      dispatch(clearSelectedCell());
-    } else {
-      // Select this cell and automatically deselect any other cell
+    if (!isSelected) {
+      // Only select if not already selected
       dispatch(setSelectedCell({ rowId, columnId }));
     }
   };
