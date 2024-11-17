@@ -83,17 +83,21 @@ router.get('/:claimNumber', async (req, res) => {
   }
 });
 
-// POST /api/claims/:id/view
-router.post('/:id/view', async (req, res) => {
+// POST /api/claims/:claimNumber/view
+router.post('/:claimNumber/view', async (req, res) => {
   try {
-    const { id } = req.params;
+    const { claimNumber } = req.params;
     // TODO: Get actual user ID from auth
     const userId = 1; // Temporary for testing
 
-    // Convert string ID to number
-    const claimId = parseInt(id);
-    if (isNaN(claimId)) {
-      return res.status(400).json({ error: 'Invalid claim ID' });
+    // Find the claim by claimNumber to get its ID
+    const claim = await prisma.claim.findUnique({
+      where: { claimNumber },
+      select: { id: true },
+    });
+
+    if (!claim) {
+      return res.status(404).json({ error: 'Claim not found' });
     }
 
     // Upsert the view record - creates new or updates existing
@@ -101,7 +105,7 @@ router.post('/:id/view', async (req, res) => {
       where: {
         userId_claimId: {
           userId,
-          claimId,
+          claimId: claim.id,
         },
       },
       update: {
@@ -109,7 +113,7 @@ router.post('/:id/view', async (req, res) => {
       },
       create: {
         userId,
-        claimId,
+        claimId: claim.id,
       },
     });
 
