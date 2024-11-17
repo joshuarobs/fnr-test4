@@ -1,21 +1,13 @@
 import { AddNewItemModal } from './new-item-modal/AddNewItemModal';
 import { Item } from './item';
 
-interface TestAddDeleteStuffProps {
-  newItemName: string;
-  setNewItemName: (updatedItem: string) => void;
-  handleAddItem: () => void;
-  handleRemoveLastItem: () => void;
+interface ClaimPageHeaderActionsProps {
   addItem: (item: Item | Item[]) => void;
 }
 
-export const TestAddDeleteStuff = ({
-  newItemName,
-  setNewItemName,
-  handleAddItem,
-  handleRemoveLastItem,
+export const ClaimPageHeaderActions = ({
   addItem,
-}: TestAddDeleteStuffProps) => {
+}: ClaimPageHeaderActionsProps) => {
   return (
     <div className="flex items-center mb-2">
       <AddNewItemModal addItem={addItem} />

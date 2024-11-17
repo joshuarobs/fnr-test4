@@ -4,7 +4,7 @@ import { ContentsTableWithToolbar } from '../components/contents-table/ContentsT
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { randomItemsData } from '../components/contents-table/randomItemsData';
 import { Item } from '../components/contents-table/item';
-import { TestAddDeleteStuff } from '../components/contents-table/TestAddDeleteStuff';
+import { ClaimPageHeaderActions } from '../components/contents-table/ClaimPageHeaderActions';
 import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalculatedPriceText';
 import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
 import { SecondSidebar } from '../components/app-shell/SecondSidebar';
@@ -230,13 +230,7 @@ export const ClaimPage = () => {
               maxValue={progress.maxValue}
             />
           </div>
-          <TestAddDeleteStuff
-            newItemName={newItemName}
-            setNewItemName={setNewItemName}
-            handleAddItem={testHandleAddItem}
-            handleRemoveLastItem={handleRemoveLastItem}
-            addItem={addItem}
-          />
+          <ClaimPageHeaderActions addItem={addItem} />
         </div>
         <ContentsTableWithToolbar
           data={tableData}
