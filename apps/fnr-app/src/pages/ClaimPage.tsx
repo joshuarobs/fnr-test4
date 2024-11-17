@@ -14,6 +14,7 @@ import {
   useUpdateItemMutation,
   useAddItemMutation,
   useRemoveItemMutation,
+  useRecordClaimViewMutation,
 } from '../store/services/api';
 
 export const ClaimPage = () => {
@@ -24,6 +25,14 @@ export const ClaimPage = () => {
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
+  const [recordView] = useRecordClaimViewMutation();
+
+  // Record view when claim is loaded
+  React.useEffect(() => {
+    if (id && !isLoading && !error) {
+      recordView(id);
+    }
+  }, [id, isLoading, error, recordView]);
 
   // Transform API data to match our Item interface
   const tableData: Item[] = React.useMemo(() => {

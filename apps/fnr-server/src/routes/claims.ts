@@ -25,6 +25,42 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/claims/recent-views
+router.get('/recent-views', async (req, res) => {
+  try {
+    // TODO: Get actual user ID from auth
+    const userId = 1; // Temporary for testing
+
+    const recentViews = await prisma.recentlyViewedClaim.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        claim: {
+          select: {
+            claimNumber: true,
+            description: true,
+            status: true,
+            totalClaimed: true,
+            totalApproved: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+      orderBy: {
+        viewedAt: 'desc',
+      },
+      take: 100, // Limit to last 100 viewed claims
+    });
+
+    res.json(recentViews);
+  } catch (error) {
+    console.error('Error fetching recent views:', error);
+    res.status(500).json({ error: 'Failed to fetch recent views' });
+  }
+});
+
 // GET /api/claims/:claimNumber
 router.get('/:claimNumber', async (req, res) => {
   try {
@@ -44,6 +80,43 @@ router.get('/:claimNumber', async (req, res) => {
   } catch (error) {
     console.error('Error fetching claim:', error);
     res.status(500).json({ error: 'Failed to fetch claim' });
+  }
+});
+
+// POST /api/claims/:id/view
+router.post('/:id/view', async (req, res) => {
+  try {
+    const { id } = req.params;
+    // TODO: Get actual user ID from auth
+    const userId = 1; // Temporary for testing
+
+    // Convert string ID to number
+    const claimId = parseInt(id);
+    if (isNaN(claimId)) {
+      return res.status(400).json({ error: 'Invalid claim ID' });
+    }
+
+    // Upsert the view record - creates new or updates existing
+    await prisma.recentlyViewedClaim.upsert({
+      where: {
+        userId_claimId: {
+          userId,
+          claimId,
+        },
+      },
+      update: {
+        viewedAt: new Date(),
+      },
+      create: {
+        userId,
+        claimId,
+      },
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error recording claim view:', error);
+    res.status(500).json({ error: 'Failed to record claim view' });
   }
 });
 

@@ -24,10 +24,25 @@ interface ClaimOverview {
   updatedAt: string;
 }
 
+// Used for recently viewed claims
+interface RecentlyViewedClaim {
+  id: number;
+  viewedAt: string;
+  claim: {
+    claimNumber: string;
+    description: string;
+    status: string;
+    totalClaimed: number;
+    totalApproved: number | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3333/api/' }),
-  tagTypes: ['Claim', 'Item', 'Claims'],
+  tagTypes: ['Claim', 'Item', 'Claims', 'RecentViews'],
   endpoints: (builder) => ({
     getMessage: builder.query<Message, void>({
       query: () => '',
@@ -39,6 +54,17 @@ export const api = createApi({
     getClaim: builder.query<ClaimDetail, string>({
       query: (id) => `claims/${id}`,
       providesTags: ['Claim'],
+    }),
+    getRecentlyViewedClaims: builder.query<RecentlyViewedClaim[], void>({
+      query: () => 'claims/recent-views',
+      providesTags: ['RecentViews'],
+    }),
+    recordClaimView: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `claims/${id}/view`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['RecentViews'],
     }),
     updateItem: builder.mutation<Item, Partial<Item>>({
       query: (item) => ({
@@ -74,6 +100,8 @@ export const {
   useGetMessageQuery,
   useGetClaimsQuery,
   useGetClaimQuery,
+  useGetRecentlyViewedClaimsQuery,
+  useRecordClaimViewMutation,
   useUpdateItemMutation,
   useAddItemMutation,
   useRemoveItemMutation,
