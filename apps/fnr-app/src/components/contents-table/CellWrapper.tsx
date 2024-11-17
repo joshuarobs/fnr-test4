@@ -54,7 +54,7 @@ export const CellWrapper = ({
   return (
     <div
       onClick={handleClick}
-      className={`cursor-pointer rounded-sm h-full w-full flex items-center p-2 ${
+      className={`h-full w-full flex items-center p-2 ${
         isSelected
           ? 'outline outline-2 outline-blue-500 outline-offset-[-1px]'
           : ''

@@ -25,7 +25,7 @@ export const EditableInputField = ({
   const [isHovering, setIsHovering] = useState(false);
   const [value, setValue] = useState(initialValue);
 
-  const handleClick = useCallback(() => {
+  const handleDoubleClick = useCallback(() => {
     setIsEditing(true);
     setIsHovering(false);
   }, []);
@@ -85,7 +85,7 @@ export const EditableInputField = ({
           }`}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          onClick={handleClick}
+          onDoubleClick={handleDoubleClick}
         >
           {iconPosition === 'left' && <div className="mr-1">{iconElement}</div>}
           <div className={`text-${textAlign} flex-grow`}>
