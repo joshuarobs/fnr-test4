@@ -83,6 +83,7 @@ export const ContentsTableWithToolbar: React.FC<
     ITEM_KEYS.OIS_QUOTE,
     ITEM_KEYS.DIFFERENCE,
     ITEM_KEYS.OUR_QUOTE,
+    ITEM_KEYS.ACTIONS,
   ]);
 
   const table = useReactTable({
