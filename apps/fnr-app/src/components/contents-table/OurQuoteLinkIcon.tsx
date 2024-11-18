@@ -15,12 +15,14 @@ import {
 } from '@react-monorepo/shared';
 
 interface OurQuoteLinkIconProps {
-  quoteLink?: string;
+  ourQuoteProof?: string;
 }
 
-export const OurQuoteLinkIcon = ({ quoteLink }: OurQuoteLinkIconProps) => {
-  const [websiteUrl, setWebsiteUrl] = useState<string>(quoteLink || '');
-  const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>(quoteLink || '');
+export const OurQuoteLinkIcon = ({ ourQuoteProof }: OurQuoteLinkIconProps) => {
+  const [websiteUrl, setWebsiteUrl] = useState<string>(ourQuoteProof || '');
+  const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>(
+    ourQuoteProof || ''
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -62,12 +64,18 @@ export const OurQuoteLinkIcon = ({ quoteLink }: OurQuoteLinkIconProps) => {
   const buttonContent = () => (
     <Button
       variant="outline"
-      className={`w-8 h-8 p-1 rounded-full bg-blue-400 hover:bg-blue-500 flex items-center justify-center ${
+      className={`w-8 h-8 p-1 rounded-full ${
+        ourQuoteProof
+          ? 'bg-blue-400 hover:bg-blue-500'
+          : 'bg-white hover:bg-gray-100'
+      } flex items-center justify-center ${
         hasChanges ? 'shadow-[0_0_10px_rgba(249,115,22,1.0)]' : ''
       }`}
       aria-label="View our quote"
     >
-      <Link className="w-4 h-4 text-white" />
+      <Link
+        className={`w-4 h-4 ${ourQuoteProof ? 'text-white' : 'text-gray-500'}`}
+      />
     </Button>
   );
 

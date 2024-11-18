@@ -12,7 +12,7 @@ export type Item = {
   insuredsQuote: number | null;
   ourquote: number | null;
   receiptPhotoUrl: string | null;
-  ourquoteLink: string | null;
+  ourQuoteProof: string | null; // Updated to match database schema
   dateCreated: Date;
 };
 

@@ -52,7 +52,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
         iconPosition="left"
         textAlign="right"
       />
-      <OurQuoteLinkIcon quoteLink={item.ourquoteLink || undefined} />
+      <OurQuoteLinkIcon ourQuoteProof={item.ourQuoteProof || undefined} />
     </div>
   );
 };
