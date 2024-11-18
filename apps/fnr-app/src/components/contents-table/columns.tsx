@@ -251,7 +251,7 @@ export const createColumns = (
               rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
               columnId={ITEM_KEYS.DIFFERENCE}
             >
-              <div className="text-right">N/A</div>
+              <div className="text-right text-muted-foreground">N/A</div>
             </CellWrapper>
           );
         }
