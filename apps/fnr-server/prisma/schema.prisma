@@ -97,6 +97,18 @@ model Claim {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   recentViews   RecentlyViewedClaim[] @relation("ClaimViews")
+
+  // Adding fields to support stacked progress bars UI:
+  // Top bar shows "Quotes Submitted" progress
+  totalItems Int @default(0)
+  insuredQuotesComplete Int @default(0)
+  insuredProgressPercent Float @default(0)  // insuredQuotesComplete/totalItems * 100
+  
+  // Bottom bar shows "Quotes Reviewed" progress
+  ourQuotesComplete Int @default(0)
+  ourProgressPercent Float @default(0)  // ourQuotesComplete/totalItems * 100
+  
+  lastProgressUpdate DateTime?  // track when we last updated these counters
 }
 
 enum ClaimStatus {
