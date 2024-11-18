@@ -8,7 +8,66 @@ import {
 } from '@react-monorepo/shared';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import { useGetClaimsQuery } from '../../store/services/api';
+import {
+  useGetClaimsQuery,
+  useRecalculateQuotesMutation,
+} from '../../store/services/api';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@react-monorepo/shared';
+import { MoreHorizontal, RefreshCw } from 'lucide-react';
+
+/**
+ * TableRowActions - A component that provides additional actions through a three dots menu dropdown
+ * Modified version of ClaimHeaderMiscActions for use in the claims table
+ */
+const TableRowActions = ({
+  claimId,
+  onClick,
+}: {
+  claimId: string;
+  onClick: (e: React.MouseEvent) => void;
+}) => {
+  const [recalculateQuotes] = useRecalculateQuotesMutation();
+
+  const handleRecalculateValues = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click event
+    try {
+      await recalculateQuotes(claimId);
+    } catch (err) {
+      console.error('Failed to recalculate values:', err);
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+        <Button variant="outline" size="icon" className="p-2">
+          <MoreHorizontal className="h-5 w-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={handleRecalculateValues}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Recalculate values
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+          Export Items
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+          Print View
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+          Archive Claim
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 export const TestAllClaimsTable = () => {
   const navigate = useNavigate();
@@ -46,6 +105,7 @@ export const TestAllClaimsTable = () => {
             </TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Last Updated</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -98,6 +158,12 @@ export const TestAllClaimsTable = () => {
                 {formatDistanceToNow(new Date(claim.updatedAt), {
                   addSuffix: true,
                 })}
+              </TableCell>
+              <TableCell>
+                <TableRowActions
+                  claimId={claim.claimNumber}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </TableCell>
             </TableRow>
           ))}

@@ -45,6 +45,8 @@ interface RecalculateResponse {
   success: boolean;
   totalClaimed: number;
   totalApproved: number;
+  insuredProgressPercent: number;
+  ourProgressPercent: number;
 }
 
 export const api = createApi({
@@ -72,7 +74,6 @@ export const api = createApi({
         url: `claims/${id}/view`,
         method: 'POST',
       }),
-      // Remove invalidatesTags to prevent immediate UI updates
     }),
     updateItem: builder.mutation<Item, Partial<Item>>({
       query: (item) => ({
@@ -106,7 +107,27 @@ export const api = createApi({
         url: `claims/${claimNumber}/recalculate`,
         method: 'POST',
       }),
-      invalidatesTags: ['Claim'],
+      // Optimistically update the claim's values
+      async onQueryStarted(claimNumber, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          // Update the values once we have them
+          dispatch(
+            api.util.updateQueryData('getClaims', undefined, (draft) => {
+              const claim = draft.find((c) => c.claimNumber === claimNumber);
+              if (claim) {
+                claim.totalClaimed = data.totalClaimed;
+                claim.totalApproved = data.totalApproved;
+                claim.insuredProgressPercent = data.insuredProgressPercent;
+                claim.ourProgressPercent = data.ourProgressPercent;
+              }
+            })
+          );
+        } catch {
+          // If the mutation fails, the cache will remain unchanged
+          console.error('Failed to recalculate quotes');
+        }
+      },
     }),
   }),
 });
