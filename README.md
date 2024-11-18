@@ -21,7 +21,7 @@ This will make it so that Cline acts properly and will hopefully make less mista
 
 ````
 Do not delete existing comments unless necessary. Do not waste time trying to change quotetation mark as it doesn't matter if its ' or ". If you need help with database migrations, look at README and when running commands assume docker is running.
-When you make new components, please write some comments, and use arrow format. When importing from 'shared/src/components/ui', e.g. DropdownMenu, Button, shadcn related stuff, import it as from "@react-monorepo/shared".
+When you make new components, please write some comments, and use arrow format and export const. When importing from 'shared/src/components/ui', e.g. DropdownMenu, Button, shadcn related stuff, import it as from "@react-monorepo/shared".
 ````
 
 ## Database Setup and Seeding
