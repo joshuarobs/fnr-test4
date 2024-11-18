@@ -81,7 +81,7 @@ export const api = createApi({
         method: 'PATCH',
         body: {
           name: item.name,
-          ourQuote: item.ourquote,
+          ourQuote: item.ourQuote, // Fixed casing
           insuredsQuote: item.insuredsQuote,
         },
       }),

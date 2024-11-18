@@ -10,14 +10,14 @@ import {
 
 interface QuoteDifferenceIconProps {
   insuredsQuote: number;
-  ourquote: number;
+  ourQuote: number; // Fixed casing to match database schema
 }
 
 export const QuoteDifferenceIcon = ({
   insuredsQuote,
-  ourquote,
+  ourQuote, // Fixed casing to match database schema
 }: QuoteDifferenceIconProps) => {
-  const diff = insuredsQuote - ourquote;
+  const diff = insuredsQuote - ourQuote;
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

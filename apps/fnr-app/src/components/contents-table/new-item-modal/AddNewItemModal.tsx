@@ -53,14 +53,17 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const createNewItem = (name: string, group: string = ''): Item => {
     return {
       id: Date.now(), // This will be overridden by MainContents' addItem function
+      localId: 0, // This will be set by the backend
       name: name.trim(),
       group: group,
       category: ItemCategory.Other,
-      [ITEM_KEYS.ITEM_STATUS]: ItemStatus.NR, // Using ITEM_KEYS.STATUS and ItemStatus.NR
+      modelSerialNumber: null,
+      itemStatus: ItemStatus.NR,
       insuredsQuote: null,
-      ourquote: 0,
-      dateCreated: new Date().toISOString().split('T')[0],
-      dueDate: new Date().toISOString().split('T')[0],
+      ourQuote: 0, // Fixed casing
+      receiptPhotoUrl: null,
+      ourQuoteProof: null,
+      dateCreated: new Date(),
     };
   };
 

@@ -278,7 +278,7 @@ export const createColumns = (
             <div className="flex items-center justify-end">
               <QuoteDifferenceIcon
                 insuredsQuote={insuredsQuote}
-                ourquote={ourQuote}
+                ourQuote={ourQuote}
               />
             </div>
           </CellWrapper>

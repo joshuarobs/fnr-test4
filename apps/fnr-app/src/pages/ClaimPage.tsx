@@ -71,9 +71,9 @@ export const ClaimPage = () => {
       modelSerialNumber: item.modelSerialNumber,
       itemStatus: item.itemStatus || ItemStatus.NR,
       insuredsQuote: item.insuredsQuote,
-      ourquote: item.ourQuote,
+      ourQuote: item.ourQuote, // Fixed casing
       receiptPhotoUrl: item.receiptPhotoUrl,
-      ourquoteLink: item.ourQuoteLink,
+      ourQuoteProof: item.ourQuoteProof, // Fixed casing
       dateCreated: new Date(item.createdAt),
     }));
   }, [claimData]);
@@ -83,7 +83,7 @@ export const ClaimPage = () => {
   };
 
   const calculateOurTotal = (items: Item[]): number => {
-    return items.reduce((total, item) => total + (item.ourquote || 0), 0);
+    return items.reduce((total, item) => total + (item.ourQuote || 0), 0); // Fixed casing
   };
 
   const calculateProgress = (
@@ -91,7 +91,7 @@ export const ClaimPage = () => {
   ): { value: number; maxValue: number } => {
     const totalItems = items.length;
     const itemsWithOurQuote = items.filter(
-      (item) => item.ourquote !== null
+      (item) => item.ourQuote !== null // Fixed casing
     ).length;
     return {
       value: itemsWithOurQuote,
@@ -173,9 +173,9 @@ export const ClaimPage = () => {
       modelSerialNumber: randomItem.modelSerialNumber || null,
       itemStatus: testGetRandomStatus(),
       insuredsQuote: randomItem.insuredsQuote || null,
-      ourquote: randomItem.ourquote || null,
+      ourQuote: randomItem.ourQuote || null, // Fixed casing
       receiptPhotoUrl: randomItem.receiptPhotoUrl || null,
-      ourquoteLink: null,
+      ourQuoteProof: randomItem.ourQuoteProof || null, // Fixed casing
       dateCreated: new Date(),
     };
   };
@@ -217,7 +217,7 @@ export const ClaimPage = () => {
               title="Insured's total"
               value={insuredsTotal}
               insuredsQuote={insuredsTotal}
-              ourquote={ourTotal}
+              ourQuote={ourTotal} // Fixed casing
               warningString="Insured has not provided quotes for all items yet."
             />
             <TotalCalculatedPriceText

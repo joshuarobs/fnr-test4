@@ -5,7 +5,7 @@ interface TotalCalculatedPriceTextProps {
   title?: string;
   value: number;
   insuredsQuote?: number;
-  ourquote?: number;
+  ourQuote?: number; // Fixed casing
   warningString?: string;
 }
 
@@ -13,14 +13,14 @@ export const TotalCalculatedPriceText = ({
   title = 'Total',
   value,
   insuredsQuote,
-  ourquote,
+  ourQuote, // Fixed casing
   warningString = '',
 }: TotalCalculatedPriceTextProps) => {
   const showQuoteDifference =
     insuredsQuote !== undefined &&
-    ourquote !== undefined &&
+    ourQuote !== undefined && // Fixed casing
     insuredsQuote > 1 &&
-    ourquote > 1;
+    ourQuote > 1; // Fixed casing
 
   const formattedValue = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -38,7 +38,7 @@ export const TotalCalculatedPriceText = ({
         {showQuoteDifference && (
           <QuoteDifferenceIcon
             insuredsQuote={insuredsQuote}
-            ourquote={ourquote}
+            ourQuote={ourQuote} // Fixed casing
           />
         )}
       </div>

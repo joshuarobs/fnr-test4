@@ -75,17 +75,17 @@ export const ItemNameCell = ({
   };
 
   const renderImageIcon = () => {
-    if (item.ourquoteLink) {
-      return (
-        <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0 mr-2">
-          <img
-            src={item.ourquoteLink}
-            alt={item.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      );
-    }
+    // if (item.ourQuoteProof) {
+    //   return (
+    //     <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0 mr-2">
+    //       <img
+    //         src={item.ourQuoteProof}
+    //         alt={item.name}
+    //         className="w-full h-full object-cover"
+    //       />
+    //     </div>
+    //   );
+    // }
     return (
       <div className="mr-2">
         <PlaceholderImageGeneric

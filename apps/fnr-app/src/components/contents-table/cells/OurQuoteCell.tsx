@@ -30,11 +30,11 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
 
   const handleSave = (value: string) => {
     if (value === '') {
-      updateItem({ ...item, ourquote: null });
+      updateItem({ ...item, ourQuote: null });
     } else {
       const newQuote = parseFloat(value);
-      if (!isNaN(newQuote) && newQuote !== item.ourquote) {
-        updateItem({ ...item, ourquote: newQuote });
+      if (!isNaN(newQuote) && newQuote !== item.ourQuote) {
+        updateItem({ ...item, ourQuote: newQuote });
       }
     }
   };
@@ -42,7 +42,7 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
   return (
     <div className="flex items-center justify-end w-full">
       <EditableInputField
-        initialValue={item.ourquote?.toString() ?? ''}
+        initialValue={item.ourQuote?.toString() ?? ''}
         onSave={handleSave}
         formatDisplay={(value) =>
           formatQuote(value === '' ? null : parseFloat(value))

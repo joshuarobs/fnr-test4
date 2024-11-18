@@ -10,7 +10,7 @@ export type Item = {
   modelSerialNumber: string | null; // Keep this as modelSerialNumber for now since it's used in many places
   itemStatus: (typeof ItemStatus)[keyof typeof ItemStatus]; // Using ItemStatus type
   insuredsQuote: number | null;
-  ourquote: number | null;
+  ourQuote: number | null; // Fixed casing to match database schema
   receiptPhotoUrl: string | null;
   ourQuoteProof: string | null; // Updated to match database schema
   dateCreated: Date;
@@ -18,6 +18,6 @@ export type Item = {
 
 // Helper function to calculate difference
 export const calculateDifference = (item: Item): number | null => {
-  if (item.insuredsQuote === null || item.ourquote === null) return null;
-  return item.insuredsQuote - item.ourquote;
+  if (item.insuredsQuote === null || item.ourQuote === null) return null;
+  return item.insuredsQuote - item.ourQuote;
 };
