@@ -21,6 +21,7 @@ import {
 } from '@react-monorepo/shared';
 import { MoreHorizontal, RefreshCw } from 'lucide-react';
 import { WarningIconTooltip } from '../contents-other/WarningIconTooltip';
+import { GreenTickIcon } from '../contents-table/GreenTickIcon';
 
 /**
  * Format a number value, with special handling for zero
@@ -159,15 +160,27 @@ export const TestAllClaimsTable = () => {
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-sm text-gray-500 text-right">
-                {claim.items.length > 0
-                  ? `${Math.round(claim.insuredProgressPercent)}%`
-                  : '-'}
+              <TableCell className="text-sm text-right">
+                <div className="flex items-center justify-end">
+                  {claim.items.length > 0
+                    ? `${Math.round(claim.insuredProgressPercent)}%`
+                    : '-'}
+                  {claim.items.length > 0 &&
+                    claim.insuredProgressPercent === 100 && (
+                      <GreenTickIcon size="small" />
+                    )}
+                </div>
               </TableCell>
-              <TableCell className="text-sm text-gray-500 text-right pr-4">
-                {claim.items.length > 0
-                  ? `${Math.round(claim.ourProgressPercent)}%`
-                  : '-'}
+              <TableCell className="text-sm text-right pr-4">
+                <div className="flex items-center justify-end">
+                  {claim.items.length > 0
+                    ? `${Math.round(claim.ourProgressPercent)}%`
+                    : '-'}
+                  {claim.items.length > 0 &&
+                    claim.ourProgressPercent === 100 && (
+                      <GreenTickIcon size="small" />
+                    )}
+                </div>
               </TableCell>
               <TableCell>
                 {formatDistanceToNow(new Date(claim.createdAt), {
