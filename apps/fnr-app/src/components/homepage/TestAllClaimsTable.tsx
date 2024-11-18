@@ -38,6 +38,12 @@ export const TestAllClaimsTable = () => {
             <TableHead>Items #</TableHead>
             <TableHead>Total Claimed</TableHead>
             <TableHead>Total Approved</TableHead>
+            <TableHead className="whitespace-pre-line">
+              {'Insureds\nProgress'}
+            </TableHead>
+            <TableHead className="whitespace-pre-line">
+              {'Our\nProgress'}
+            </TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Last Updated</TableHead>
           </TableRow>
@@ -72,6 +78,12 @@ export const TestAllClaimsTable = () => {
                 {claim.totalApproved
                   ? `$${claim.totalApproved.toLocaleString()}`
                   : '-'}
+              </TableCell>
+              <TableCell className="text-sm text-gray-500">
+                {claim.items.length > 0 ? '0%' : '-'}
+              </TableCell>
+              <TableCell className="text-sm text-gray-500">
+                {claim.items.length > 0 ? '0%' : '-'}
               </TableCell>
               <TableCell>
                 {formatDistanceToNow(new Date(claim.createdAt), {
