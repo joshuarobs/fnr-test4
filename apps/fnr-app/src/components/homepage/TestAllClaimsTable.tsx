@@ -23,6 +23,15 @@ import { MoreHorizontal, RefreshCw } from 'lucide-react';
 import { WarningIconTooltip } from '../contents-other/WarningIconTooltip';
 
 /**
+ * Format a number value, with special handling for zero
+ */
+const formatNumber = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) return '-';
+  if (Math.abs(value) < 0.01) return '0';
+  return value.toLocaleString();
+};
+
+/**
  * TableRowActions - A component that provides additional actions through a three dots menu dropdown
  * Modified version of ClaimHeaderMiscActions for use in the claims table
  */
@@ -91,17 +100,17 @@ export const TestAllClaimsTable = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
+            <TableHead className="text-right">ID</TableHead>
             <TableHead>Claim #</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Items #</TableHead>
-            <TableHead>Total Claimed</TableHead>
-            <TableHead>Total Approved</TableHead>
-            <TableHead className="whitespace-pre-line">
+            <TableHead className="text-right">Items #</TableHead>
+            <TableHead className="text-right">Total Claimed ($)</TableHead>
+            <TableHead className="text-right">Total Approved ($)</TableHead>
+            <TableHead className="whitespace-pre-line text-right">
               {'Insureds\nProgress'}
             </TableHead>
-            <TableHead className="whitespace-pre-line">
+            <TableHead className="whitespace-pre-line text-right">
               {'Our\nProgress'}
             </TableHead>
             <TableHead>Created</TableHead>
@@ -116,7 +125,7 @@ export const TestAllClaimsTable = () => {
               className="cursor-pointer hover:bg-gray-50 relative"
               onClick={() => navigate(`/claim/${claim.claimNumber}`)}
             >
-              <TableCell className="relative p-2">
+              <TableCell className="relative p-2 text-right">
                 <a
                   href={`/claim/${claim.claimNumber}`}
                   onClick={(e) => e.preventDefault()}
@@ -133,31 +142,29 @@ export const TestAllClaimsTable = () => {
                   {claim.status.toLowerCase().replace('_', ' ')}
                 </span>
               </TableCell>
-              <TableCell>{claim.items.length}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  ${claim.totalClaimed.toLocaleString()}
+              <TableCell className="text-right">{claim.items.length}</TableCell>
+              <TableCell className="text-right">
+                <div className="flex items-center justify-end gap-1">
+                  {formatNumber(claim.totalClaimed)}
                   {claim.insuredProgressPercent !== 100 && (
                     <WarningIconTooltip warningString="Total claimed amount may not be final as insureds progress is not complete" />
                   )}
                 </div>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  {claim.totalApproved
-                    ? `$${claim.totalApproved.toLocaleString()}`
-                    : '-'}
+              <TableCell className="text-right">
+                <div className="flex items-center justify-end gap-1">
+                  {formatNumber(claim.totalApproved)}
                   {claim.ourProgressPercent !== 100 && claim.totalApproved && (
                     <WarningIconTooltip warningString="Total approved amount may not be final as our progress is not complete" />
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-sm text-gray-500">
+              <TableCell className="text-sm text-gray-500 text-right">
                 {claim.items.length > 0
                   ? `${Math.round(claim.insuredProgressPercent)}%`
                   : '-'}
               </TableCell>
-              <TableCell className="text-sm text-gray-500">
+              <TableCell className="text-sm text-gray-500 text-right pr-4">
                 {claim.items.length > 0
                   ? `${Math.round(claim.ourProgressPercent)}%`
                   : '-'}
