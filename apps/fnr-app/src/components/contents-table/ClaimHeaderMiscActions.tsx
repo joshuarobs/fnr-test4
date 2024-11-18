@@ -17,12 +17,12 @@ export const ClaimHeaderMiscActions = () => {
   const { id } = useParams<{ id: string }>();
   const [recalculateQuotes] = useRecalculateQuotesMutation();
 
-  const handleRecalculateQuotes = async () => {
+  const handleRecalculateValues = async () => {
     if (!id) return;
     try {
       await recalculateQuotes(id).unwrap();
     } catch (err) {
-      console.error('Failed to recalculate quotes:', err);
+      console.error('Failed to recalculate values:', err);
     }
   };
 
@@ -34,9 +34,9 @@ export const ClaimHeaderMiscActions = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleRecalculateQuotes}>
+        <DropdownMenuItem onClick={handleRecalculateValues}>
           <RefreshCw className="mr-2 h-4 w-4" />
-          Recalculate quotes
+          Recalculate values
         </DropdownMenuItem>
         <DropdownMenuItem>Export Items</DropdownMenuItem>
         <DropdownMenuItem>Print View</DropdownMenuItem>

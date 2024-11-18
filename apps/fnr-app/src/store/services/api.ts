@@ -22,6 +22,8 @@ interface ClaimOverview {
   totalApproved: number | null;
   createdAt: string;
   updatedAt: string;
+  insuredProgressPercent: number;
+  ourProgressPercent: number;
 }
 
 // Used for recently viewed claims

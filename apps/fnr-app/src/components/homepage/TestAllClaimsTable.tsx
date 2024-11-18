@@ -80,10 +80,14 @@ export const TestAllClaimsTable = () => {
                   : '-'}
               </TableCell>
               <TableCell className="text-sm text-gray-500">
-                {claim.items.length > 0 ? '0%' : '-'}
+                {claim.items.length > 0
+                  ? `${Math.round(claim.insuredProgressPercent)}%`
+                  : '-'}
               </TableCell>
               <TableCell className="text-sm text-gray-500">
-                {claim.items.length > 0 ? '0%' : '-'}
+                {claim.items.length > 0
+                  ? `${Math.round(claim.ourProgressPercent)}%`
+                  : '-'}
               </TableCell>
               <TableCell>
                 {formatDistanceToNow(new Date(claim.createdAt), {
