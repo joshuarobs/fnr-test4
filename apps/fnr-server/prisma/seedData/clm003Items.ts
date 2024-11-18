@@ -10,13 +10,15 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'laptop.jpg',
         url: 'https://example.com/receipts/laptop.jpg',
       },
     ],
+    ourQuoteProof:
+      'https://www.apple.com/au/shop/buy-mac/macbook-pro/14-inch-space-black-standard-display-apple-m4-chip-with-10-core-cpu-and-10-core-gpu-16gb-memory-512gb',
   },
   {
     name: 'Office Desk',
@@ -27,7 +29,7 @@ export const clm003Items = [
     ourQuote: 450,
     condition: 'Good',
     itemStatus: ItemStatus.RS,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Antivirus License',
@@ -38,7 +40,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'antivirus.jpg',
@@ -55,7 +57,7 @@ export const clm003Items = [
     ourQuote: 1600,
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'smartphone.jpg',
@@ -72,7 +74,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'N/A',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Area Rug',
@@ -83,7 +85,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.RS,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Coffee Maker',
@@ -94,7 +96,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'coffeemaker.jpg',
@@ -111,7 +113,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Printer',
@@ -122,7 +124,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'printer.jpg',
@@ -139,7 +141,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Microwave',
@@ -150,13 +152,15 @@ export const clm003Items = [
     ourQuote: 250,
     condition: 'Good',
     itemStatus: ItemStatus.RS,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'microwave.jpg',
         url: 'https://example.com/receipts/microwave.jpg',
       },
     ],
+    ourQuoteProof:
+      'https://www.thegoodguys.com.au/panasonic-32l-1100w-inverter-microwave-white-nn-st64jwqpq',
   },
   {
     name: 'Dining Table',
@@ -167,7 +171,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Vacuum Cleaner',
@@ -178,7 +182,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'vacuum.jpg',
@@ -195,7 +199,7 @@ export const clm003Items = [
     ourQuote: 900,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [
+    insuredsEvidence: [
       {
         type: EvidenceType.RECEIPT,
         filename: 'television.jpg',
@@ -212,7 +216,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Curtains',
@@ -223,7 +227,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Car Battery',
@@ -234,7 +238,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Bath towel',
@@ -245,7 +249,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Leather Jacket',
@@ -256,7 +260,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.RS,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Insurance Papers',
@@ -267,7 +271,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Lawn Mower',
@@ -278,7 +282,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Lego Toys',
@@ -289,7 +293,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Miscellaneous Items Box',
@@ -300,7 +304,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Dog Bed',
@@ -311,7 +315,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.RS,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Tennis Racket',
@@ -322,7 +326,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Storage Cabinet',
@@ -333,7 +337,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Cleaning Supplies Set',
@@ -344,7 +348,7 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
   {
     name: 'Power Drill',
@@ -355,6 +359,6 @@ export const clm003Items = [
     ourQuote: null,
     condition: 'Good',
     itemStatus: ItemStatus.NR,
-    evidence: [],
+    insuredsEvidence: [],
   },
 ];

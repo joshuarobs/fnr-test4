@@ -130,13 +130,15 @@ model Item {
   group             String?
   modelSerialNumber String?
   description       String?
+  quantity          Int         @default(1)
   purchaseDate      DateTime?
   age               Int?
   condition         String?
   insuredsQuote     Float?
   ourQuote          Float?
+  ourQuoteProof     String?
   itemStatus        ItemStatus  @default(NR)
-  evidence          Evidence[]
+  insuredsEvidence  Evidence[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 }

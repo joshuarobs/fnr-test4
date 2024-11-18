@@ -180,7 +180,7 @@ async function main() {
           ourQuote: 2499.99,
           condition: 'Damaged - water exposure',
           itemStatus: ItemStatus.NR,
-          evidence: [
+          insuredsEvidence: [
             {
               type: EvidenceType.PHOTO,
               filename: 'laptop1.jpg',
@@ -201,7 +201,7 @@ async function main() {
           insuredsQuote: 999.99,
           condition: 'Damaged - water exposure',
           itemStatus: ItemStatus.RS,
-          evidence: [
+          insuredsEvidence: [
             {
               type: EvidenceType.PHOTO,
               filename: 'phone1.jpg',
@@ -225,7 +225,7 @@ async function main() {
           ourQuote: 2000,
           condition: 'Damaged - fire exposure',
           itemStatus: ItemStatus.VPOL,
-          evidence: [
+          insuredsEvidence: [
             {
               type: EvidenceType.PHOTO,
               filename: 'fridge1.jpg',
@@ -251,17 +251,19 @@ async function main() {
           category: 'Electronics',
           modelSerialNumber: 'TV-2023-4K',
           description: '4K Television',
-          insuredsQuote: 1200,
-          ourQuote: 1300,
+          insuredsQuote: 2000,
+          ourQuote: 1995,
           condition: 'Good',
           itemStatus: ItemStatus.NR,
-          evidence: [
+          insuredsEvidence: [
             {
               type: EvidenceType.RECEIPT,
               filename: 'television.jpg',
               url: 'https://example.com/receipts/television.jpg',
             },
           ],
+          ourQuoteProof:
+            'https://www.thegoodguys.com.au/lg-55-inches-oled-b4-4k-smart-tv-24-oled55b4psa',
         },
         {
           name: 'Vacuum Cleaner',
@@ -272,7 +274,7 @@ async function main() {
           ourQuote: null,
           condition: 'Good',
           itemStatus: ItemStatus.RS,
-          evidence: [
+          insuredsEvidence: [
             {
               type: EvidenceType.RECEIPT,
               filename: 'vacuum.jpg',
@@ -326,11 +328,23 @@ async function main() {
           ourQuote: item.ourQuote,
           condition: item.condition,
           itemStatus: item.itemStatus,
-          evidence: {
-            create: item.evidence,
-          },
         },
       });
+
+      // Create evidence separately if it exists
+      if (item.insuredsEvidence && item.insuredsEvidence.length > 0) {
+        await Promise.all(
+          item.insuredsEvidence.map((evidence) =>
+            prisma.evidence.create({
+              data: {
+                ...evidence,
+                itemId: createdItem.id,
+              },
+            })
+          )
+        );
+      }
+
       itemIds.push(createdItem.id);
     }
 
