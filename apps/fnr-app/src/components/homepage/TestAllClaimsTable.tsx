@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from '@react-monorepo/shared';
 import { MoreHorizontal, RefreshCw } from 'lucide-react';
+import { WarningIconTooltip } from '../contents-other/WarningIconTooltip';
 
 /**
  * TableRowActions - A component that provides additional actions through a three dots menu dropdown
@@ -133,11 +134,23 @@ export const TestAllClaimsTable = () => {
                 </span>
               </TableCell>
               <TableCell>{claim.items.length}</TableCell>
-              <TableCell>${claim.totalClaimed.toLocaleString()}</TableCell>
               <TableCell>
-                {claim.totalApproved
-                  ? `$${claim.totalApproved.toLocaleString()}`
-                  : '-'}
+                <div className="flex items-center gap-1">
+                  ${claim.totalClaimed.toLocaleString()}
+                  {claim.insuredProgressPercent !== 100 && (
+                    <WarningIconTooltip warningString="Total claimed amount may not be final as insureds progress is not complete" />
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1">
+                  {claim.totalApproved
+                    ? `$${claim.totalApproved.toLocaleString()}`
+                    : '-'}
+                  {claim.ourProgressPercent !== 100 && claim.totalApproved && (
+                    <WarningIconTooltip warningString="Total approved amount may not be final as our progress is not complete" />
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-sm text-gray-500">
                 {claim.items.length > 0
