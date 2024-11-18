@@ -3,6 +3,57 @@ import prisma from '../lib/prisma';
 
 const router: Router = express.Router();
 
+// Helper function to recalculate claim values
+const recalculateClaimValues = async (claimId: number) => {
+  const claim = await prisma.claim.findUnique({
+    where: { id: claimId },
+    include: {
+      items: true,
+    },
+  });
+
+  if (!claim) return null;
+
+  // Calculate totals from items
+  const totalClaimed = claim.items.reduce(
+    (sum, item) => sum + (item.insuredsQuote || 0),
+    0
+  );
+  const totalApproved = claim.items.reduce(
+    (sum, item) => sum + (item.ourQuote || 0),
+    0
+  );
+
+  // Calculate progress values
+  const totalItems = claim.items.length;
+  const insuredQuotesComplete = claim.items.filter(
+    (item) => item.insuredsQuote !== null
+  ).length;
+  const ourQuotesComplete = claim.items.filter(
+    (item) => item.ourQuote !== null
+  ).length;
+
+  const insuredProgressPercent =
+    totalItems > 0 ? (insuredQuotesComplete / totalItems) * 100 : 0;
+  const ourProgressPercent =
+    totalItems > 0 ? (ourQuotesComplete / totalItems) * 100 : 0;
+
+  // Update claim with calculated values
+  return prisma.claim.update({
+    where: { id: claimId },
+    data: {
+      totalClaimed,
+      totalApproved,
+      totalItems,
+      insuredQuotesComplete,
+      ourQuotesComplete,
+      insuredProgressPercent,
+      ourProgressPercent,
+      lastProgressUpdate: new Date(),
+    },
+  });
+};
+
 // GET /api/items
 router.get('/', async (req, res) => {
   try {
@@ -20,25 +71,33 @@ router.get('/', async (req, res) => {
 // POST /api/items
 router.post('/', async (req, res) => {
   try {
-    // Create the new item
-    const newItem = await prisma.item.create({
-      data: req.body,
+    // Use transaction to create item and update claim
+    const result = await prisma.$transaction(async (prisma) => {
+      // Create the new item
+      const newItem = await prisma.item.create({
+        data: req.body,
+      });
+
+      // Update the claim's localItemIds array
+      await prisma.claim.update({
+        where: { id: req.body.claimId },
+        data: {
+          localItemIds: {
+            push: newItem.id,
+          },
+          itemOrder: {
+            push: newItem.id,
+          },
+        },
+      });
+
+      // Recalculate claim values
+      await recalculateClaimValues(req.body.claimId);
+
+      return newItem;
     });
 
-    // Update the claim's localItemIds array
-    await prisma.claim.update({
-      where: { id: req.body.claimId },
-      data: {
-        localItemIds: {
-          push: newItem.id,
-        },
-        itemOrder: {
-          push: newItem.id,
-        },
-      },
-    });
-
-    res.status(201).json(newItem);
+    res.status(201).json(result);
   } catch (error) {
     console.error('Error creating item:', error);
     res.status(500).json({ error: 'Failed to create item' });
@@ -94,26 +153,21 @@ router.patch('/:id', async (req, res) => {
     if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
     if (itemStatus !== undefined) updateData.itemStatus = itemStatus;
 
-    // Use transaction to update both item and parent claim
-    const updatedItem = await prisma.$transaction(async (prisma) => {
+    // Use transaction to update both item and recalculate claim values
+    const result = await prisma.$transaction(async (prisma) => {
       // First update the item
       const item = await prisma.item.update({
         where: { id: parseInt(id) },
         data: updateData,
       });
 
-      // Then explicitly update the claim's updatedAt
-      await prisma.claim.update({
-        where: { id: item.claimId },
-        data: {
-          updatedAt: new Date(),
-        },
-      });
+      // Recalculate claim values
+      await recalculateClaimValues(item.claimId);
 
       return item;
     });
 
-    res.json(updatedItem);
+    res.json(result);
   } catch (error) {
     console.error('Error updating item:', error);
     res.status(500).json({ error: 'Failed to update item' });
