@@ -192,6 +192,7 @@ async function main() {
               url: '/uploads/receipt.pdf',
             },
           ],
+          ourQuoteProof: null,
         },
         {
           name: 'iPhone 14',
@@ -199,6 +200,7 @@ async function main() {
           modelSerialNumber: 'IP14XYZ',
           description: 'Water damaged phone',
           insuredsQuote: 999.99,
+          ourQuote: null,
           condition: 'Damaged - water exposure',
           itemStatus: ItemStatus.RS,
           insuredsEvidence: [
@@ -208,6 +210,7 @@ async function main() {
               url: '/uploads/phone1.jpg',
             },
           ],
+          ourQuoteProof: null,
         },
       ],
     },
@@ -232,6 +235,7 @@ async function main() {
               url: '/uploads/fridge1.jpg',
             },
           ],
+          ourQuoteProof: null,
         },
       ],
     },
@@ -281,6 +285,7 @@ async function main() {
               url: 'https://example.com/receipts/vacuum.jpg',
             },
           ],
+          ourQuoteProof: null,
         },
       ],
     },
@@ -328,6 +333,7 @@ async function main() {
           ourQuote: item.ourQuote,
           condition: item.condition,
           itemStatus: item.itemStatus,
+          ourQuoteProof: item.ourQuoteProof,
         },
       });
 
