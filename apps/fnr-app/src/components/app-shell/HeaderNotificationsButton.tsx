@@ -9,7 +9,7 @@ import {
 } from '@react-monorepo/shared';
 
 // Component for displaying notifications button in the header
-export const HeaderNotifications = () => {
+export const HeaderNotificationsButton = () => {
   return (
     <TooltipProvider>
       <Tooltip>

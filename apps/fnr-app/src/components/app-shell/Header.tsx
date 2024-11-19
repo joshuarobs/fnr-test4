@@ -2,7 +2,7 @@ import React from 'react';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 import { Button } from '@react-monorepo/shared';
 import { HeaderCreateNew } from './HeaderCreateNew';
-import { HeaderNotifications } from './HeaderNotifications';
+import { HeaderNotificationsButton } from './HeaderNotificationsButton';
 import { HeaderProfileButton } from './HeaderProfileButton';
 
 interface HeaderProps {
@@ -11,7 +11,7 @@ interface HeaderProps {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   return (
-    <header className="bg-gray-100 h-[56px] flex items-center px-4">
+    <header className="bg-gray-100 h-[56px] flex items-center px-4 border-b border-gray-200 shadow-sm">
       <Button
         variant="ghost"
         size="icon"
@@ -23,7 +23,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       <h1 className="text-l font-bold">My App</h1>
       <div className="ml-auto flex items-center gap-3 mr-3">
         <HeaderCreateNew />
-        <HeaderNotifications />
+        <HeaderNotificationsButton />
         <HeaderProfileButton />
       </div>
     </header>
