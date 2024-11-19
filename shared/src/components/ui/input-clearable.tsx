@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IoCloseCircle } from 'react-icons/io5';
+import keys from 'ctrl-keys';
 import { cn } from '../../lib/utils';
 import { Input } from './input';
 import {
@@ -18,6 +19,40 @@ export interface InputClearableProps
 
 const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
   ({ className, onClear, value, onChange, keyboardKey, ...props }, ref) => {
+    // Create internal ref if no ref provided
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const resolvedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
+
+    React.useEffect(() => {
+      if (keyboardKey) {
+        // Create a new handler instance for this component
+        const handler = keys();
+
+        // Add the binding
+        handler.add(keyboardKey, () => {
+          // Focus the input
+          if (resolvedRef.current) {
+            resolvedRef.current.focus();
+          }
+        });
+
+        // Attach the handler to the window
+        const handleKeyDown = (e: KeyboardEvent) => {
+          // Prevent the key from being typed into the input
+          if (e.key === keyboardKey) {
+            e.preventDefault();
+          }
+          handler.handle(e);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        // Cleanup
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+      }
+    }, [keyboardKey, resolvedRef]);
+
     const handleClear = () => {
       if (onChange) {
         const event = {
@@ -34,7 +69,7 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
           value={value}
           onChange={onChange}
           className={cn('pr-8 w-full', className)}
-          ref={ref}
+          ref={resolvedRef}
           {...props}
         />
         {value ? (
