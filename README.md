@@ -11,6 +11,11 @@ And hours of tinkering around.
 ### Suggestions for improvements
 - A suggestion button that shows what still needs to be done on this claim, e.g.
 this field needs to be filled out, this item needs a quote, this item needs to be verified etc.
+- A universal search input bar. Press / or double shift to open it.
+  - Allows user to search for anything, for another claim or for filtering a specific item.
+  - Better UX as users only have to press the keybind for this search bar
+  - If users still want to filter only, they can press "t"
+  - Look at Github and vscode for inspiration for this.
 
 ---
 

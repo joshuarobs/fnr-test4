@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ITEM_KEYS } from '../../components/contents-table/itemKeys';
+import { SLICE_NAMES } from '../sliceNames';
 
 interface SelectedCellState {
   // Store row and column identifiers to uniquely identify the selected cell
@@ -18,7 +19,7 @@ const initialState: SelectedCellState = {
 };
 
 export const selectedCellSlice = createSlice({
-  name: 'selectedCell',
+  name: SLICE_NAMES.SELECTED_CELL,
   initialState,
   reducers: {
     setSelectedCell: (

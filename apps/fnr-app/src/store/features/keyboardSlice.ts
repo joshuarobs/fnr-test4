@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SLICE_NAMES } from '../sliceNames';
 
 interface KeyboardState {
   isEnabled: boolean;
@@ -11,7 +12,7 @@ const initialState: KeyboardState = {
 };
 
 const keyboardSlice = createSlice({
-  name: 'keyboard',
+  name: SLICE_NAMES.KEYBOARD,
   initialState,
   reducers: {
     setEnabled: (state, action: PayloadAction<boolean>) => {
