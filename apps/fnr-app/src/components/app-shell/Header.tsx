@@ -3,7 +3,7 @@ import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 import { Button } from '@react-monorepo/shared';
 import { HeaderCreateNew } from './HeaderCreateNew';
 import { HeaderNotifications } from './HeaderNotifications';
-import { HeaderProfile } from './HeaderProfile';
+import { HeaderProfileButton } from './HeaderProfileButton';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -24,7 +24,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       <div className="ml-auto flex items-center gap-3 mr-3">
         <HeaderCreateNew />
         <HeaderNotifications />
-        <HeaderProfile />
+        <HeaderProfileButton />
       </div>
     </header>
   );
