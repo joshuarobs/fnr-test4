@@ -24,6 +24,23 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
     const resolvedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
 
     React.useEffect(() => {
+      // Handle escape key press when input is focused
+      const handleEscapeKey = (e: KeyboardEvent) => {
+        if (
+          e.key === 'Escape' &&
+          document.activeElement === resolvedRef.current
+        ) {
+          if (value) {
+            // If there's a value, clear it
+            handleClear();
+          } else {
+            // If there's no value, blur the input
+            resolvedRef.current?.blur();
+          }
+        }
+      };
+      window.addEventListener('keydown', handleEscapeKey);
+
       if (keyboardKey) {
         // Create a new handler instance for this component
         const handler = keys();
@@ -49,9 +66,15 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
         // Cleanup
         return () => {
           window.removeEventListener('keydown', handleKeyDown);
+          window.removeEventListener('keydown', handleEscapeKey);
         };
       }
-    }, [keyboardKey, resolvedRef]);
+
+      // If no keyboardKey, still need to cleanup escape handler
+      return () => {
+        window.removeEventListener('keydown', handleEscapeKey);
+      };
+    }, [keyboardKey, resolvedRef, value]);
 
     const handleClear = () => {
       if (onChange) {
