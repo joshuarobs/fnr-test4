@@ -8,14 +8,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './tooltip';
+import { KeyboardKeyIcon } from './keyboard-key-icon';
 
 export interface InputClearableProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   onClear?: () => void;
+  keyboardKey?: string;
 }
 
 const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
-  ({ className, onClear, value, onChange, ...props }, ref) => {
+  ({ className, onClear, value, onChange, keyboardKey, ...props }, ref) => {
     const handleClear = () => {
       if (onChange) {
         const event = {
@@ -35,7 +37,7 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
           ref={ref}
           {...props}
         />
-        {value && (
+        {value ? (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -52,7 +54,11 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        )}
+        ) : keyboardKey ? (
+          <div className="absolute right-2 top-1/2 -translate-y-1/2">
+            <KeyboardKeyIcon letter={keyboardKey} />
+          </div>
+        ) : null}
       </div>
     );
   }
