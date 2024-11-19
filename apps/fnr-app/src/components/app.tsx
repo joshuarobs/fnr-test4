@@ -10,6 +10,10 @@ import { FeedbackPage } from '../pages/FeedbackPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ClaimPage } from '../pages/ClaimPage';
 import { ROUTES } from '../routes';
+import {
+  initializeKeyboardBindings,
+  getKeyboardHandler,
+} from '../services/keyboardService';
 
 export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -19,14 +23,20 @@ export function App() {
   };
 
   useEffect(() => {
+    // Initialize keyboard bindings for other shortcuts
+    initializeKeyboardBindings();
+    window.addEventListener('keydown', getKeyboardHandler());
+
+    // Keep existing sidebar toggle behavior
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === '[') {
         handleToggleSidebar();
       }
     };
-
     window.addEventListener('keydown', handleKeyPress);
+
     return () => {
+      window.removeEventListener('keydown', getKeyboardHandler());
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, []);
