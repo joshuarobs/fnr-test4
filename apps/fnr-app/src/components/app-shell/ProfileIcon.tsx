@@ -5,6 +5,7 @@ interface ProfileIconProps {
   size?: 'sm' | 'md';
   userInitials?: string;
   color?: string;
+  showHeaderRing?: boolean;
 }
 
 // Component for displaying a user's profile avatar with customizable size and fallback
@@ -12,6 +13,7 @@ export const ProfileIcon = ({
   size = 'sm',
   userInitials = 'JD',
   color = 'bg-gray-500',
+  showHeaderRing = false,
 }: ProfileIconProps) => {
   // Map size prop to actual dimensions
   const sizeClasses = {
@@ -20,7 +22,11 @@ export const ProfileIcon = ({
   };
 
   return (
-    <Avatar className={`${sizeClasses[size]}`}>
+    <Avatar
+      className={`${sizeClasses[size]} ${
+        showHeaderRing ? 'ring-1 ring-gray-300' : ''
+      }`}
+    >
       <AvatarFallback className={`${color} text-white`}>
         {userInitials}
       </AvatarFallback>

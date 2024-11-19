@@ -22,7 +22,7 @@ export const HeaderProfileButton = () => {
           variant="ghost"
           className="p-0 hover:cursor-pointer hover:bg-transparent focus-visible:ring-2"
         >
-          <ProfileIcon size="sm" color={color} />
+          <ProfileIcon size="sm" color={color} showHeaderRing />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
