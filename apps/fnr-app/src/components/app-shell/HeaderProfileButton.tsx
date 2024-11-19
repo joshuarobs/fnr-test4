@@ -13,6 +13,8 @@ import { ProfileIcon } from './ProfileIcon';
 // Component for displaying profile dropdown in the header
 // Uses ProfileIcon component for avatar display and contains menu items for various actions
 export const HeaderProfileButton = () => {
+  const color = 'bg-blue-600';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,12 +22,12 @@ export const HeaderProfileButton = () => {
           variant="ghost"
           className="p-0 hover:cursor-pointer hover:bg-transparent focus-visible:ring-2"
         >
-          <ProfileIcon size="sm" />
+          <ProfileIcon size="sm" color={color} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <div className="flex items-center justify-start gap-2 p-2">
-          <ProfileIcon size="sm" className="bg-blue-800" />
+          <ProfileIcon size="sm" color={color} />
           <div className="flex flex-col">
             <span className="text-sm font-medium">John Doe</span>
             <span className="text-sm">AGENT (748600)</span>
