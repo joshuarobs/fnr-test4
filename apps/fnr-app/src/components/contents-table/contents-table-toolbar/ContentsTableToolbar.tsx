@@ -13,7 +13,7 @@ import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
 import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
-import { ItemCategory, NO_CATEGORY_VALUE } from '../itemCategories';
+import { ItemCategory } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { ItemStatus } from '../ItemStatus';
 import { ITEM_KEYS } from '../itemKeys';
@@ -184,6 +184,7 @@ export function ContentsTableToolbar<TData extends Item>({
           onChange={(event) => table.setGlobalFilter(event.target.value)}
           onClear={() => table.setGlobalFilter('')}
           className="pl-8"
+          keyboardKey="/"
         />
       </div>
       <div className="ml-4 flex-1 overflow-x-auto">
