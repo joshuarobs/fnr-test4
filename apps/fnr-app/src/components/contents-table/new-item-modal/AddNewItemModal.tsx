@@ -5,6 +5,9 @@ import {
   DialogContent,
   DialogTrigger,
   DialogFooter,
+  RadioGroup,
+  RadioGroupItem,
+  Label,
 } from '@react-monorepo/shared';
 import { PlusIcon } from '@radix-ui/react-icons';
 import { File, Files } from 'lucide-react';
@@ -13,7 +16,8 @@ import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
 import { Item } from '../item';
 import { ItemCategory } from '../itemCategories';
-import { ItemStatus } from '../ItemStatus';
+import { ItemStatus, ItemStatusType } from '../ItemStatus';
+import { ItemStatusBadge } from '../ItemStatusBadge';
 import { useParams } from 'react-router-dom';
 
 interface AddNewItemModalProps {
@@ -38,12 +42,20 @@ const TABS = [
   },
 ] as const;
 
+// Define the order of status options
+const STATUS_OPTIONS = [
+  ItemStatus.NR,
+  ItemStatus.VPOL,
+  ItemStatus.RS,
+  ItemStatus.OTHER,
+] as const;
+
 // Helper function to create a new item with only required fields
-const createNewItem = (name: string): Partial<Item> => {
+const createNewItem = (name: string, status: ItemStatusType): Partial<Item> => {
   return {
     name: name.trim(),
     category: ItemCategory.Other,
-    itemStatus: ItemStatus.NR,
+    itemStatus: status,
   };
 };
 
@@ -57,11 +69,14 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
   const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
   const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<ItemStatusType>(
+    ItemStatus.NR
+  );
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
       if (e.key === 'Enter' && quickAddInput.trim()) {
-        const newItem = createNewItem(quickAddInput);
+        const newItem = createNewItem(quickAddInput, selectedStatus);
         addItem(newItem as Item);
         setQuickAddInput('');
         setIsOpen(false);
@@ -69,7 +84,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
         setIsOpen(false);
       }
     },
-    [quickAddInput, addItem]
+    [quickAddInput, selectedStatus, addItem]
   );
 
   const handleMultiAdd = () => {
@@ -77,7 +92,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       .split('\n')
       .map((item) => item.trim())
       .filter(Boolean)
-      .map((itemName) => createNewItem(itemName) as Item);
+      .map((itemName) => createNewItem(itemName, selectedStatus) as Item);
 
     if (items.length > 0) {
       addItem(items);
@@ -158,22 +173,75 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
 
         <div className="pt-4">
           {activeTab === TabType.Single ? (
-            <QuickAddTab
-              quickAddInput={quickAddInput}
-              setQuickAddInput={handleQuickAddInputChange}
-              selectedGroup=""
-              setSelectedGroup={() => {}} // Group selection removed as per requirements
-              groupOpen={false}
-              setGroupOpen={() => {}}
-              handleQuickAdd={handleQuickAdd}
-            />
+            <div className="space-y-4">
+              <QuickAddTab
+                quickAddInput={quickAddInput}
+                setQuickAddInput={handleQuickAddInputChange}
+                selectedGroup=""
+                setSelectedGroup={() => {}} // Group selection removed as per requirements
+                groupOpen={false}
+                setGroupOpen={() => {}}
+                handleQuickAdd={handleQuickAdd}
+              />
+
+              {/* Status Section - Vertically aligned with name and group */}
+              <div>
+                <Label className="text-sm font-medium">Status</Label>
+                <RadioGroup
+                  value={selectedStatus}
+                  onValueChange={(value) =>
+                    setSelectedStatus(value as ItemStatusType)
+                  }
+                  className="mt-2 space-y-2"
+                >
+                  {STATUS_OPTIONS.map((status) => (
+                    <div key={status} className="flex items-center space-x-2">
+                      <RadioGroupItem value={status} id={`status-${status}`} />
+                      <Label
+                        htmlFor={`status-${status}`}
+                        className="flex items-center gap-2"
+                      >
+                        <ItemStatusBadge itemStatus={status} />
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            </div>
           ) : (
-            <MultiAddTab
-              multiAddInput={multiAddInput}
-              setMultiAddInput={handleMultiAddInputChange}
-            />
+            <div className="space-y-4">
+              <MultiAddTab
+                multiAddInput={multiAddInput}
+                setMultiAddInput={handleMultiAddInputChange}
+              />
+
+              {/* Status Section - Vertically aligned with name and group */}
+              <div>
+                <Label className="text-sm font-medium">Status</Label>
+                <RadioGroup
+                  value={selectedStatus}
+                  onValueChange={(value) =>
+                    setSelectedStatus(value as ItemStatusType)
+                  }
+                  className="mt-2 space-y-2"
+                >
+                  {STATUS_OPTIONS.map((status) => (
+                    <div key={status} className="flex items-center space-x-2">
+                      <RadioGroupItem value={status} id={`status-${status}`} />
+                      <Label
+                        htmlFor={`status-${status}`}
+                        className="flex items-center gap-2"
+                      >
+                        <ItemStatusBadge itemStatus={status} />
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            </div>
           )}
         </div>
+
         <DialogFooter>
           <div className="w-full flex items-center">
             <Button
