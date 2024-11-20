@@ -13,6 +13,9 @@ import {
 } from '@react-monorepo/shared';
 import { KeyboardKeys } from '../../constants/keyboard-constants';
 
+// Common table cell padding style
+const TABLE_CELL_STYLE = 'p-2';
+
 interface KeyboardShortcutsPopupProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,6 +28,7 @@ const KeyboardShortcutsPopup = ({
 }: KeyboardShortcutsPopupProps) => {
   // Example keyboard shortcuts - can be expanded as needed
   const shortcuts = [
+    { action: 'Toggle sidebar', keys: [KeyboardKeys.LEFT_BRACKET] },
     { action: 'Edit cell', keys: [KeyboardKeys.ENTER] },
     { action: 'Focus filter bar', keys: [KeyboardKeys.FORWARD_SLASH] },
     {
@@ -38,20 +42,24 @@ const KeyboardShortcutsPopup = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Keyboard Shortcuts</DialogTitle>
+          <DialogTitle>Keyboard shortcuts</DialogTitle>
         </DialogHeader>
         <Table>
           <TableHeader>
-            <TableRow className="p-2">
-              <TableHead>Action</TableHead>
-              <TableHead>Shortcut</TableHead>
+            <TableRow>
+              <TableHead className={TABLE_CELL_STYLE}>Action</TableHead>
+              <TableHead className={TABLE_CELL_STYLE}>Shortcut</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {shortcuts.map((shortcut, index) => (
-              <TableRow key={index} className="">
-                <TableCell className="py-2">{shortcut.action}</TableCell>
-                <TableCell className="flex items-center gap-1 py-2">
+              <TableRow key={index}>
+                <TableCell className={TABLE_CELL_STYLE}>
+                  {shortcut.action}
+                </TableCell>
+                <TableCell
+                  className={`${TABLE_CELL_STYLE} flex items-center gap-1`}
+                >
                   {shortcut.keys.map((key, keyIndex) => (
                     <>
                       <KeyboardKeyIcon key={keyIndex} letter={key} />
