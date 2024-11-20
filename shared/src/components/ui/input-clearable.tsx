@@ -15,10 +15,22 @@ export interface InputClearableProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   onClear?: () => void;
   keyboardKey?: string;
+  escapeKeyClears?: boolean; // Controls if escape key can clear input
 }
 
 const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
-  ({ className, onClear, value, onChange, keyboardKey, ...props }, ref) => {
+  (
+    {
+      className,
+      onClear,
+      value,
+      onChange,
+      keyboardKey,
+      escapeKeyClears = false,
+      ...props
+    },
+    ref
+  ) => {
     // Create internal ref if no ref provided
     const inputRef = React.useRef<HTMLInputElement>(null);
     const resolvedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
@@ -30,11 +42,11 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
           e.key === 'Escape' &&
           document.activeElement === resolvedRef.current
         ) {
-          if (value) {
-            // If there's a value, clear it
+          if (value && escapeKeyClears) {
+            // If there's a value and escapeKeyClears is true, clear it
             handleClear();
           } else {
-            // If there's no value, blur the input
+            // If there's no value or escapeKeyClears is false, blur the input
             resolvedRef.current?.blur();
           }
         }
@@ -74,7 +86,7 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
       return () => {
         window.removeEventListener('keydown', handleEscapeKey);
       };
-    }, [keyboardKey, resolvedRef, value]);
+    }, [keyboardKey, resolvedRef, value, escapeKeyClears]);
 
     const handleClear = () => {
       if (onChange) {

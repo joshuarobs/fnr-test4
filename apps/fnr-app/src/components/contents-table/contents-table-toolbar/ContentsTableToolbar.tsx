@@ -185,6 +185,7 @@ export function ContentsTableToolbar<TData extends Item>({
           onClear={() => table.setGlobalFilter('')}
           className="pl-8"
           keyboardKey="/"
+          escapeKeyClears
         />
       </div>
       <div className="ml-4 flex-1 overflow-x-auto">
