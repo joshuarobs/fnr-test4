@@ -7,11 +7,17 @@ export const KeyboardKeyIcon = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     letter: string;
+    width?: string;
   }
->(({ letter, className, ...props }, ref) => {
+>(({ letter, className, width, style, ...props }, ref) => {
   return (
-    <div ref={ref} className={cn(styles.key, className)} {...props}>
-      {letter}
+    <div
+      ref={ref}
+      className={cn(styles.key, className)}
+      style={{ ...style, width }}
+      {...props}
+    >
+      <div className={styles.keyContent}>{letter}</div>
     </div>
   );
 });

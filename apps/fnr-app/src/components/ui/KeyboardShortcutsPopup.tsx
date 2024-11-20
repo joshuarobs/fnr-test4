@@ -11,6 +11,7 @@ import {
   TableRow,
   KeyboardKeyIcon,
 } from '@react-monorepo/shared';
+import { KeyboardKeys } from '../../constants/keyboard-constants';
 
 interface KeyboardShortcutsPopupProps {
   isOpen: boolean;
@@ -24,12 +25,13 @@ const KeyboardShortcutsPopup = ({
 }: KeyboardShortcutsPopupProps) => {
   // Example keyboard shortcuts - can be expanded as needed
   const shortcuts = [
-    { action: 'Show Shortcuts', keys: ['?'] },
-    { action: 'Navigate cells', keys: ['↑', '↓', '←', '→'] },
-    { action: 'Edit cell', keys: ['Enter'] },
-    { action: 'Focus filter bar', keys: ['/'] },
-    { action: 'View this keyboard shortcuts popup', keys: ['?'] },
-    { action: 'Save changes', keys: ['Ctrl', 'S'] },
+    { action: 'Edit cell', keys: [KeyboardKeys.ENTER] },
+    { action: 'Focus filter bar', keys: [KeyboardKeys.FORWARD_SLASH] },
+    {
+      action: 'View this keyboard shortcuts popup',
+      keys: [KeyboardKeys.QUESTION_MARK],
+    },
+    { action: 'Save changes', keys: [KeyboardKeys.CTRL, KeyboardKeys.S] },
   ];
 
   return (
@@ -53,7 +55,7 @@ const KeyboardShortcutsPopup = ({
                   {shortcut.keys.map((key, keyIndex) => (
                     <>
                       <KeyboardKeyIcon key={keyIndex} letter={key} />
-                      {keyIndex < shortcut.keys.length - 1 && <span>+</span>}
+                      <span className="" />
                     </>
                   ))}
                 </TableCell>

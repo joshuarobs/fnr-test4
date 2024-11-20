@@ -1,5 +1,5 @@
 .key {
-  --keycap-text-color: rgb(120, 130, 140);
+  --keycap-text-color: rgb(61, 64, 67);
   --keycap-gradient: linear-gradient(
     -225deg,
     rgb(233, 236, 239) 0%,
@@ -13,14 +13,26 @@
   box-shadow: var(--keycap-key-shadow);
   color: var(--keycap-text-color);
   display: flex;
-  width: 20px;
+  min-width: 20px;
+  width: fit-content;
   height: 22px;
   justify-content: center;
   position: relative;
-  padding: 0px 0px 2px 0px;
   border: 0px;
   top: 0px;
   user-select: none;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+}
+
+.keyContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+  height: 100%;
+  margin: 0 4px;
+  padding-bottom: 2px;
 }
 
 :global(html[data-theme='dark']) .key {
