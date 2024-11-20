@@ -3,8 +3,18 @@ import { Item } from '../../components/contents-table/item';
 
 // Used when fetching a single claim with full item details
 interface ClaimDetail {
+  id: number;
+  claimNumber: string; // Added this field
   items: Item[];
   localItemIds: number[];
+  description: string;
+  status: string;
+  totalClaimed: number;
+  totalApproved: number | null;
+  createdAt: string;
+  updatedAt: string;
+  insuredProgressPercent: number;
+  ourProgressPercent: number;
 }
 
 interface Message {
@@ -81,7 +91,7 @@ export const api = createApi({
         method: 'PATCH',
         body: {
           name: item.name,
-          ourQuote: item.ourQuote, // Fixed casing
+          ourQuote: item.ourQuote,
           insuredsQuote: item.insuredsQuote,
         },
       }),

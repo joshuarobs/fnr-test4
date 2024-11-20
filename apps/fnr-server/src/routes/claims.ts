@@ -102,6 +102,8 @@ router.get('/:claimNumber', async (req, res) => {
 router.post('/:claimNumber/items', async (req, res) => {
   try {
     const { claimNumber } = req.params;
+    console.log('Creating item for claim:', claimNumber);
+    console.log('Request body:', req.body);
 
     // First get the claim to ensure it exists and get its ID
     const claim = await prisma.claim.findUnique({
@@ -110,42 +112,49 @@ router.post('/:claimNumber/items', async (req, res) => {
     });
 
     if (!claim) {
+      console.log('Claim not found:', claimNumber);
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    // Use transaction to create item and update claim
-    const result = await prisma.$transaction(async (prisma) => {
-      // Create the new item with the claim's ID
-      const newItem = await prisma.item.create({
-        data: {
-          ...req.body,
-          claimId: claim.id,
-        },
-      });
+    console.log('Found claim with ID:', claim.id);
 
-      // Update the claim's localItemIds and itemOrder arrays
-      await prisma.claim.update({
-        where: { id: claim.id },
-        data: {
-          localItemIds: {
-            push: newItem.id,
-          },
-          itemOrder: {
-            push: newItem.id,
-          },
-        },
-      });
-
-      // Recalculate claim values using shared helper
-      await recalculateClaimValues(claim.id);
-
-      return newItem;
+    // Create the new item first
+    const newItem = await prisma.item.create({
+      data: {
+        name: req.body.name,
+        category: req.body.category || 'Other',
+        itemStatus: req.body.itemStatus || 'NR',
+        claimId: claim.id,
+      },
     });
 
-    res.status(201).json(result);
+    console.log('Created new item:', newItem);
+
+    // Then update the claim's arrays
+    await prisma.claim.update({
+      where: { id: claim.id },
+      data: {
+        localItemIds: {
+          push: newItem.id,
+        },
+        itemOrder: {
+          push: newItem.id,
+        },
+      },
+    });
+
+    console.log('Updated claim arrays');
+
+    // Finally recalculate values
+    await recalculateClaimValues(claim.id);
+
+    console.log('Recalculated claim values');
+    res.status(201).json(newItem);
   } catch (error) {
-    console.error('Error creating item:', error);
-    res.status(500).json({ error: 'Failed to create item' });
+    console.error('Detailed error creating item:', error);
+    res
+      .status(500)
+      .json({ error: 'Failed to create item', details: error.message });
   }
 });
 

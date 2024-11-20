@@ -14,7 +14,7 @@ import { MultiAddTab } from './MultiAddTab';
 import { Item } from '../item';
 import { ItemCategory } from '../itemCategories';
 import { ItemStatus } from '../ItemStatus';
-import { ITEM_KEYS } from '../itemKeys';
+import { useParams } from 'react-router-dom';
 
 interface AddNewItemModalProps {
   addItem: (item: Item | Item[]) => void;
@@ -38,47 +38,38 @@ const TABS = [
   },
 ] as const;
 
+// Helper function to create a new item with only required fields
+const createNewItem = (name: string): Partial<Item> => {
+  return {
+    name: name.trim(),
+    category: ItemCategory.Other,
+    itemStatus: ItemStatus.NR,
+  };
+};
+
 export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
+  const { id } = useParams<{ id: string }>();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
   const [quickAddInput, setQuickAddInput] = useState('');
   const [multiAddInput, setMultiAddInput] = useState('');
-  const [groupOpen, setGroupOpen] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState('');
   const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
   const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
   const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
   const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
 
-  const createNewItem = (name: string, group: string = ''): Item => {
-    return {
-      id: Date.now(), // This will be overridden by MainContents' addItem function
-      localId: 0, // This will be set by the backend
-      name: name.trim(),
-      group: group,
-      category: ItemCategory.Other,
-      modelSerialNumber: null,
-      itemStatus: ItemStatus.NR,
-      insuredsQuote: null,
-      ourQuote: 0, // Fixed casing
-      receiptPhotoUrl: null,
-      ourQuoteProof: null,
-      dateCreated: new Date(),
-    };
-  };
-
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
       if (e.key === 'Enter' && quickAddInput.trim()) {
-        const newItem = createNewItem(quickAddInput, selectedGroup);
-        addItem(newItem);
+        const newItem = createNewItem(quickAddInput);
+        addItem(newItem as Item);
         setQuickAddInput('');
         setIsOpen(false);
       } else if (e.key === 'Escape') {
         setIsOpen(false);
       }
     },
-    [quickAddInput, selectedGroup, addItem]
+    [quickAddInput, addItem]
   );
 
   const handleMultiAdd = () => {
@@ -86,7 +77,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       .split('\n')
       .map((item) => item.trim())
       .filter(Boolean)
-      .map((itemName) => createNewItem(itemName, selectedGroup));
+      .map((itemName) => createNewItem(itemName) as Item);
 
     if (items.length > 0) {
       addItem(items);
@@ -107,7 +98,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const handleQuickAddInputChange = (value: string) => {
     setQuickAddInput(value);
     setAddItemHasMinReqs(value.trim() !== '');
-    setQuickAddHasChanges(value.trim() !== '' || selectedGroup !== '');
+    setQuickAddHasChanges(value.trim() !== '');
   };
 
   // Update multiAddHasMinReqs and multiAddHasChanges whenever multiAddInput changes
@@ -117,16 +108,9 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     setMultiAddHasChanges(value.trim() !== '');
   };
 
-  // Update quickAddHasChanges when group changes
-  const handleGroupChange = (value: string) => {
-    setSelectedGroup(value);
-    setQuickAddHasChanges(quickAddInput.trim() !== '' || value !== '');
-  };
-
   const handleClearFields = () => {
     if (activeTab === TabType.Single) {
       setQuickAddInput('');
-      setSelectedGroup('');
       setAddItemHasMinReqs(false);
       setQuickAddHasChanges(false);
     }
@@ -177,10 +161,10 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
             <QuickAddTab
               quickAddInput={quickAddInput}
               setQuickAddInput={handleQuickAddInputChange}
-              selectedGroup={selectedGroup}
-              setSelectedGroup={handleGroupChange}
-              groupOpen={groupOpen}
-              setGroupOpen={setGroupOpen}
+              selectedGroup=""
+              setSelectedGroup={() => {}} // Group selection removed as per requirements
+              groupOpen={false}
+              setGroupOpen={() => {}}
               handleQuickAdd={handleQuickAdd}
             />
           ) : (

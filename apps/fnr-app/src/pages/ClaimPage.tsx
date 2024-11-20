@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
-import { randomItemsData } from '../components/contents-table/randomItemsData';
 import { Item } from '../components/contents-table/item';
 import { ClaimPageHeaderActions } from '../components/contents-table/ClaimPageHeaderActions';
 import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalculatedPriceText';
@@ -24,7 +23,6 @@ import {
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [newItemName, setNewItemName] = React.useState('');
   const dispatch = useDispatch();
 
   const { data: claimData, isLoading, error } = useGetClaimQuery(id!);
@@ -71,9 +69,9 @@ export const ClaimPage = () => {
       modelSerialNumber: item.modelSerialNumber,
       itemStatus: item.itemStatus || ItemStatus.NR,
       insuredsQuote: item.insuredsQuote,
-      ourQuote: item.ourQuote, // Fixed casing
+      ourQuote: item.ourQuote,
       receiptPhotoUrl: item.receiptPhotoUrl,
-      ourQuoteProof: item.ourQuoteProof, // Fixed casing
+      ourQuoteProof: item.ourQuoteProof,
       dateCreated: new Date(item.createdAt),
     }));
   }, [claimData]);
@@ -83,7 +81,7 @@ export const ClaimPage = () => {
   };
 
   const calculateOurTotal = (items: Item[]): number => {
-    return items.reduce((total, item) => total + (item.ourQuote || 0), 0); // Fixed casing
+    return items.reduce((total, item) => total + (item.ourQuote || 0), 0);
   };
 
   const calculateProgress = (
@@ -91,7 +89,7 @@ export const ClaimPage = () => {
   ): { value: number; maxValue: number } => {
     const totalItems = items.length;
     const itemsWithOurQuote = items.filter(
-      (item) => item.ourQuote !== null // Fixed casing
+      (item) => item.ourQuote !== null
     ).length;
     return {
       value: itemsWithOurQuote,
@@ -99,15 +97,8 @@ export const ClaimPage = () => {
     };
   };
 
-  const getHighestId = (): number => {
-    return tableData.reduce(
-      (maxId: number, item: Item) => Math.max(maxId, item.id),
-      0
-    );
-  };
-
   const addItem = async (newItem: Item | Item[]) => {
-    if (!id) return;
+    if (!id) return; // Make sure we have the claim number
 
     try {
       if (Array.isArray(newItem)) {
@@ -115,14 +106,22 @@ export const ClaimPage = () => {
         for (const item of newItem) {
           await addItemMutation({
             claimId: id,
-            item,
+            item: {
+              name: item.name,
+              category: item.category,
+              itemStatus: item.itemStatus,
+            },
           }).unwrap();
         }
       } else {
         // Handle single item add
         await addItemMutation({
           claimId: id,
-          item: newItem,
+          item: {
+            name: newItem.name,
+            category: newItem.category,
+            itemStatus: newItem.itemStatus,
+          },
         }).unwrap();
       }
     } catch (err) {
@@ -131,7 +130,7 @@ export const ClaimPage = () => {
   };
 
   const removeItem = async (itemId: number) => {
-    if (!id) return;
+    if (!id) return; // Make sure we have the claim number
 
     try {
       await removeItemMutation({
@@ -148,47 +147,6 @@ export const ClaimPage = () => {
       await updateItem(updatedItem).unwrap();
     } catch (err) {
       console.error('Failed to update item:', err);
-    }
-  };
-
-  const testGetRandomStatus =
-    (): (typeof ItemStatus)[keyof typeof ItemStatus] => {
-      const rand = Math.random();
-      if (rand < 0.6) return ItemStatus.NR;
-      if (rand < 0.8) return ItemStatus.RS;
-      return ItemStatus.VPOL;
-    };
-
-  const testCreateRandomItem = (customName?: string) => {
-    let randomItem =
-      randomItemsData[Math.floor(Math.random() * randomItemsData.length)];
-    let itemName = customName || randomItem.name;
-
-    return {
-      id: getHighestId() + 1,
-      localId: (claimData?.localItemIds?.length || 0) + 1,
-      group: randomItem.group,
-      name: itemName,
-      category: randomItem.category || null,
-      modelSerialNumber: randomItem.modelSerialNumber || null,
-      itemStatus: testGetRandomStatus(),
-      insuredsQuote: randomItem.insuredsQuote || null,
-      ourQuote: randomItem.ourQuote || null, // Fixed casing
-      receiptPhotoUrl: randomItem.receiptPhotoUrl || null,
-      ourQuoteProof: randomItem.ourQuoteProof || null, // Fixed casing
-      dateCreated: new Date(),
-    };
-  };
-
-  const testHandleAddItem = () => {
-    const newItem = testCreateRandomItem(newItemName);
-    addItem(newItem);
-    setNewItemName('');
-  };
-
-  const handleRemoveLastItem = () => {
-    if (tableData.length > 0) {
-      removeItem(tableData[tableData.length - 1].id);
     }
   };
 
@@ -217,7 +175,7 @@ export const ClaimPage = () => {
               title="Insured's total"
               value={insuredsTotal}
               insuredsQuote={insuredsTotal}
-              ourQuote={ourTotal} // Fixed casing
+              ourQuote={ourTotal}
               warningString="Insured has not provided quotes for all items yet."
             />
             <TotalCalculatedPriceText
