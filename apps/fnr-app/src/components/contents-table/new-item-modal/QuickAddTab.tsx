@@ -1,6 +1,5 @@
 import { KeyboardEvent, useEffect, useState } from 'react';
 import {
-  Input,
   Label,
   Popover,
   PopoverContent,
@@ -19,9 +18,10 @@ import {
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { placeholderContentsData } from '../placeholderContentsData';
-import { ItemCategory, categoryIcons } from '../itemCategories';
+import { ItemCategory } from '../itemCategories';
 import { ItemStatus, ItemStatusType } from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
+import { CategoryDropdown } from '../shared/CategoryDropdown';
 
 const labelMinWidthClass = 'min-w-[80px] text-right';
 
@@ -32,12 +32,6 @@ const STATUS_OPTIONS = [
   ItemStatus.RS,
   ItemStatus.OTHER,
 ] as const;
-
-// Define the order of category options
-const CATEGORY_OPTIONS = Object.values(ItemCategory).map((category) => ({
-  value: category,
-  label: category,
-}));
 
 // Function to get all unique groups from placeholderContentsData
 const getAllGroups = () => {
@@ -91,75 +85,8 @@ export function QuickAddTab({
     setGroups(getAllGroups());
   }, []);
 
-  const renderCategorySection = () => {
-    const Icon = categoryIcons[selectedCategory];
-    return (
-      <div className="flex items-center gap-4">
-        <Label className={labelMinWidthClass}>Category</Label>
-        <Popover
-          open={categoryOpen}
-          onOpenChange={setCategoryOpen}
-          modal={true}
-        >
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={categoryOpen}
-              className="flex-1 justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4" />
-                <span>{selectedCategory}</span>
-              </div>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="w-[var(--radix-popover-trigger-width)] p-0"
-            style={{
-              ['--radix-popover-trigger-width' as any]:
-                'var(--radix-popover-trigger-width)',
-            }}
-          >
-            <Command>
-              <CommandInput placeholder="Search category..." />
-              <CommandList>
-                <CommandEmpty>No category found.</CommandEmpty>
-                <CommandGroup>
-                  {CATEGORY_OPTIONS.map((category) => {
-                    const CategoryIcon = categoryIcons[category.value];
-                    return (
-                      <CommandItem
-                        key={category.value}
-                        value={category.value}
-                        onSelect={(currentValue) => {
-                          setSelectedCategory(currentValue as ItemCategory);
-                          setCategoryOpen(false);
-                        }}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              selectedCategory === category.value
-                                ? 'opacity-100'
-                                : 'opacity-0'
-                            )}
-                          />
-                          <CategoryIcon className="h-4 w-4" />
-                          <span>{category.label}</span>
-                        </div>
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
-    );
+  const handleCategorySelect = (category: ItemCategory | null) => {
+    setSelectedCategory(category as ItemCategory);
   };
 
   return (
@@ -242,7 +169,17 @@ export function QuickAddTab({
       </div>
 
       {/* Category Section */}
-      {renderCategorySection()}
+      <div className="flex items-center gap-4">
+        <Label className={labelMinWidthClass}>Category</Label>
+        <div className="flex-1">
+          <CategoryDropdown
+            selectedCategory={selectedCategory}
+            onCategorySelect={handleCategorySelect}
+            onOpenChange={setCategoryOpen}
+            className="w-full"
+          />
+        </div>
+      </div>
 
       {/* Status Section */}
       <div>
