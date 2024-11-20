@@ -9,18 +9,9 @@ import { CategoryCell } from './cells/CategoryCell';
 import { GroupCell } from './cells/GroupCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import { IdCell } from './cells/IdCell';
+import { ActionCell } from './cells/ActionCell';
 import { ItemCategory } from './itemCategories';
 import { CellWrapper } from './CellWrapper';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@react-monorepo/shared';
-import { Button } from '@react-monorepo/shared';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ITEM_KEYS } from './itemKeys';
 import { GreenTickIcon } from './GreenTickIcon';
 import { SortableHeader } from './SortableHeader';
@@ -380,37 +371,11 @@ export const createColumns = (
       accessorKey: ITEM_KEYS.ACTIONS,
       header: () => <div />,
       cell: ({ row }) => {
-        const payment = row.original;
-
         return (
-          <CellWrapper
-            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
-            columnId={ITEM_KEYS.ACTIONS}
-          >
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <DotsHorizontalIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={() =>
-                    navigator.clipboard.writeText(
-                      payment[ITEM_KEYS.ID].toString()
-                    )
-                  }
-                >
-                  Copy payment ID
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>View customer</DropdownMenuItem>
-                <DropdownMenuItem>View payment details</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CellWrapper>
+          <ActionCell
+            item={row.original}
+            localId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+          />
         );
       },
     },
