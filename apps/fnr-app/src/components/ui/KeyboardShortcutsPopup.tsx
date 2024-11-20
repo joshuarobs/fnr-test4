@@ -11,7 +11,7 @@ import {
   TableRow,
   KeyboardKeyIcon,
 } from '@react-monorepo/shared';
-import { KeyboardKeys } from '../../constants/keyboard-constants';
+import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 
 // Common table cell padding style
 const TABLE_CELL_STYLE = 'p-2';
@@ -26,18 +26,6 @@ const KeyboardShortcutsPopup = ({
   isOpen,
   onClose,
 }: KeyboardShortcutsPopupProps) => {
-  // Example keyboard shortcuts - can be expanded as needed
-  const shortcuts = [
-    { action: 'Toggle sidebar', keys: [KeyboardKeys.LEFT_BRACKET] },
-    { action: 'Edit cell', keys: [KeyboardKeys.ENTER] },
-    { action: 'Focus filter bar', keys: [KeyboardKeys.FORWARD_SLASH] },
-    {
-      action: 'View this keyboard shortcuts popup',
-      keys: [KeyboardKeys.QUESTION_MARK],
-    },
-    { action: 'Save changes', keys: [KeyboardKeys.CTRL, KeyboardKeys.S] },
-  ];
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -52,18 +40,24 @@ const KeyboardShortcutsPopup = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {shortcuts.map((shortcut, index) => (
+            {KEYBOARD_SHORTCUTS.map((shortcut, index) => (
               <TableRow key={index}>
                 <TableCell className={TABLE_CELL_STYLE}>
                   {shortcut.action}
                 </TableCell>
                 <TableCell
-                  className={`${TABLE_CELL_STYLE} flex items-center gap-1`}
+                  className={`${TABLE_CELL_STYLE} flex items-center gap-2 flex-wrap`}
                 >
-                  {shortcut.keys.map((key, keyIndex) => (
+                  {shortcut.keybinds.map((keybind, keybindIndex) => (
                     <>
-                      <KeyboardKeyIcon key={keyIndex} letter={key} />
-                      <span className="" />
+                      <span className="flex items-center gap-1">
+                        {keybind.map((key, keyIndex) => (
+                          <KeyboardKeyIcon key={keyIndex} letter={key} />
+                        ))}
+                      </span>
+                      {keybindIndex < shortcut.keybinds.length - 1 && (
+                        <span className="text-gray-500">or</span>
+                      )}
                     </>
                   ))}
                 </TableCell>
