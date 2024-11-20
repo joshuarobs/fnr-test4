@@ -13,12 +13,31 @@ import {
   CommandItem,
   CommandList,
   InputClearable,
+  RadioGroup,
+  RadioGroupItem,
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { placeholderContentsData } from '../placeholderContentsData';
+import { ItemCategory, categoryIcons } from '../itemCategories';
+import { ItemStatus, ItemStatusType } from '../ItemStatus';
+import { ItemStatusBadge } from '../ItemStatusBadge';
 
 const labelMinWidthClass = 'min-w-[80px] text-right';
+
+// Define the order of status options
+const STATUS_OPTIONS = [
+  ItemStatus.NR,
+  ItemStatus.VPOL,
+  ItemStatus.RS,
+  ItemStatus.OTHER,
+] as const;
+
+// Define the order of category options
+const CATEGORY_OPTIONS = Object.values(ItemCategory).map((category) => ({
+  value: category,
+  label: category,
+}));
 
 // Function to get all unique groups from placeholderContentsData
 const getAllGroups = () => {
@@ -41,6 +60,12 @@ interface QuickAddTabProps {
   groupOpen: boolean;
   setGroupOpen: (value: boolean) => void;
   handleQuickAdd: (e: KeyboardEvent<HTMLInputElement>) => void;
+  selectedCategory: ItemCategory;
+  setSelectedCategory: (category: ItemCategory) => void;
+  categoryOpen: boolean;
+  setCategoryOpen: (open: boolean) => void;
+  selectedStatus: ItemStatusType;
+  setSelectedStatus: (status: ItemStatusType) => void;
 }
 
 export function QuickAddTab({
@@ -51,6 +76,12 @@ export function QuickAddTab({
   groupOpen,
   setGroupOpen,
   handleQuickAdd,
+  selectedCategory,
+  setSelectedCategory,
+  categoryOpen,
+  setCategoryOpen,
+  selectedStatus,
+  setSelectedStatus,
 }: QuickAddTabProps) {
   const [groups, setGroups] = useState<Array<{ value: string; label: string }>>(
     []
@@ -60,8 +91,79 @@ export function QuickAddTab({
     setGroups(getAllGroups());
   }, []);
 
+  const renderCategorySection = () => {
+    const Icon = categoryIcons[selectedCategory];
+    return (
+      <div className="flex items-center gap-4">
+        <Label className={labelMinWidthClass}>Category</Label>
+        <Popover
+          open={categoryOpen}
+          onOpenChange={setCategoryOpen}
+          modal={true}
+        >
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={categoryOpen}
+              className="flex-1 justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4" />
+                <span>{selectedCategory}</span>
+              </div>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-[var(--radix-popover-trigger-width)] p-0"
+            style={{
+              ['--radix-popover-trigger-width' as any]:
+                'var(--radix-popover-trigger-width)',
+            }}
+          >
+            <Command>
+              <CommandInput placeholder="Search category..." />
+              <CommandList>
+                <CommandEmpty>No category found.</CommandEmpty>
+                <CommandGroup>
+                  {CATEGORY_OPTIONS.map((category) => {
+                    const CategoryIcon = categoryIcons[category.value];
+                    return (
+                      <CommandItem
+                        key={category.value}
+                        value={category.value}
+                        onSelect={(currentValue) => {
+                          setSelectedCategory(currentValue as ItemCategory);
+                          setCategoryOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              selectedCategory === category.value
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )}
+                          />
+                          <CategoryIcon className="h-4 w-4" />
+                          <span>{category.label}</span>
+                        </div>
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+    );
+  };
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <div className="flex items-center gap-4">
         <Label htmlFor="name" className={labelMinWidthClass}>
           Name
@@ -137,6 +239,34 @@ export function QuickAddTab({
             </Command>
           </PopoverContent>
         </Popover>
+      </div>
+
+      {/* Category Section */}
+      {renderCategorySection()}
+
+      {/* Status Section */}
+      <div>
+        <Label className="text-sm font-medium">Status</Label>
+        <RadioGroup
+          value={selectedStatus}
+          onValueChange={(value) => setSelectedStatus(value as ItemStatusType)}
+          className="mt-2"
+        >
+          {STATUS_OPTIONS.map((status) => (
+            <Label
+              key={status}
+              htmlFor={`status-${status}`}
+              className="flex items-center w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value={status} id={`status-${status}`} />
+                <div className="flex items-center gap-2">
+                  <ItemStatusBadge itemStatus={status} />
+                </div>
+              </div>
+            </Label>
+          ))}
+        </RadioGroup>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
+import React, { useState, useCallback, KeyboardEvent } from 'react';
 import {
   Button,
   Dialog,
@@ -8,14 +8,24 @@ import {
   RadioGroup,
   RadioGroupItem,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from '@react-monorepo/shared';
 import { PlusIcon } from '@radix-ui/react-icons';
 import { File, Files } from 'lucide-react';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
 import { Item } from '../item';
-import { ItemCategory } from '../itemCategories';
+import { ItemCategory, categoryIcons } from '../itemCategories';
 import { ItemStatus, ItemStatusType } from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { useParams } from 'react-router-dom';
@@ -50,11 +60,21 @@ const STATUS_OPTIONS = [
   ItemStatus.OTHER,
 ] as const;
 
+// Define the order of category options
+const CATEGORY_OPTIONS = Object.values(ItemCategory).map((category) => ({
+  value: category,
+  label: category,
+}));
+
 // Helper function to create a new item with only required fields
-const createNewItem = (name: string, status: ItemStatusType): Partial<Item> => {
+const createNewItem = (
+  name: string,
+  status: ItemStatusType,
+  category: ItemCategory
+): Partial<Item> => {
   return {
     name: name.trim(),
-    category: ItemCategory.Other,
+    category,
     itemStatus: status,
   };
 };
@@ -72,11 +92,19 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const [selectedStatus, setSelectedStatus] = useState<ItemStatusType>(
     ItemStatus.NR
   );
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategory>(
+    ItemCategory.Other
+  );
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
       if (e.key === 'Enter' && quickAddInput.trim()) {
-        const newItem = createNewItem(quickAddInput, selectedStatus);
+        const newItem = createNewItem(
+          quickAddInput,
+          selectedStatus,
+          selectedCategory
+        );
         addItem(newItem as Item);
         setQuickAddInput('');
         setIsOpen(false);
@@ -84,7 +112,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
         setIsOpen(false);
       }
     },
-    [quickAddInput, selectedStatus, addItem]
+    [quickAddInput, selectedStatus, selectedCategory, addItem]
   );
 
   const handleMultiAdd = () => {
@@ -92,7 +120,10 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       .split('\n')
       .map((item) => item.trim())
       .filter(Boolean)
-      .map((itemName) => createNewItem(itemName, selectedStatus) as Item);
+      .map(
+        (itemName) =>
+          createNewItem(itemName, selectedStatus, selectedCategory) as Item
+      );
 
     if (items.length > 0) {
       addItem(items);
@@ -173,41 +204,21 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
 
         <div className="pt-4">
           {activeTab === TabType.Single ? (
-            <div className="space-y-4">
-              <QuickAddTab
-                quickAddInput={quickAddInput}
-                setQuickAddInput={handleQuickAddInputChange}
-                selectedGroup=""
-                setSelectedGroup={() => {}} // Group selection removed as per requirements
-                groupOpen={false}
-                setGroupOpen={() => {}}
-                handleQuickAdd={handleQuickAdd}
-              />
-
-              {/* Status Section - Vertically aligned with name and group */}
-              <div>
-                <Label className="text-sm font-medium">Status</Label>
-                <RadioGroup
-                  value={selectedStatus}
-                  onValueChange={(value) =>
-                    setSelectedStatus(value as ItemStatusType)
-                  }
-                  className="mt-2 space-y-2"
-                >
-                  {STATUS_OPTIONS.map((status) => (
-                    <div key={status} className="flex items-center space-x-2">
-                      <RadioGroupItem value={status} id={`status-${status}`} />
-                      <Label
-                        htmlFor={`status-${status}`}
-                        className="flex items-center gap-2"
-                      >
-                        <ItemStatusBadge itemStatus={status} />
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </div>
-            </div>
+            <QuickAddTab
+              quickAddInput={quickAddInput}
+              setQuickAddInput={handleQuickAddInputChange}
+              selectedGroup=""
+              setSelectedGroup={() => {}}
+              groupOpen={false}
+              setGroupOpen={() => {}}
+              handleQuickAdd={handleQuickAdd}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              categoryOpen={categoryOpen}
+              setCategoryOpen={setCategoryOpen}
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+            />
           ) : (
             <div className="space-y-4">
               <MultiAddTab
@@ -215,7 +226,78 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                 setMultiAddInput={handleMultiAddInputChange}
               />
 
-              {/* Status Section - Vertically aligned with name and group */}
+              {/* Category Section */}
+              <div className="flex items-center gap-4">
+                <Label className="min-w-[80px] text-right">Category</Label>
+                <Popover
+                  open={categoryOpen}
+                  onOpenChange={setCategoryOpen}
+                  modal={true}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={categoryOpen}
+                      className="flex-1 justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        {React.createElement(categoryIcons[selectedCategory], {
+                          className: 'h-4 w-4',
+                        })}
+                        <span>{selectedCategory}</span>
+                      </div>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[var(--radix-popover-trigger-width)] p-0"
+                    style={{
+                      ['--radix-popover-trigger-width' as any]:
+                        'var(--radix-popover-trigger-width)',
+                    }}
+                  >
+                    <Command>
+                      <CommandInput placeholder="Search category..." />
+                      <CommandList>
+                        <CommandEmpty>No category found.</CommandEmpty>
+                        <CommandGroup>
+                          {CATEGORY_OPTIONS.map((category) => {
+                            const CategoryIcon = categoryIcons[category.value];
+                            return (
+                              <CommandItem
+                                key={category.value}
+                                value={category.value}
+                                onSelect={(currentValue) => {
+                                  setSelectedCategory(
+                                    currentValue as ItemCategory
+                                  );
+                                  setCategoryOpen(false);
+                                }}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      selectedCategory === category.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                  <CategoryIcon className="h-4 w-4" />
+                                  <span>{category.label}</span>
+                                </div>
+                              </CommandItem>
+                            );
+                          })}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {/* Status Section */}
               <div>
                 <Label className="text-sm font-medium">Status</Label>
                 <RadioGroup
@@ -223,18 +305,24 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                   onValueChange={(value) =>
                     setSelectedStatus(value as ItemStatusType)
                   }
-                  className="mt-2 space-y-2"
+                  className="mt-2"
                 >
                   {STATUS_OPTIONS.map((status) => (
-                    <div key={status} className="flex items-center space-x-2">
-                      <RadioGroupItem value={status} id={`status-${status}`} />
-                      <Label
-                        htmlFor={`status-${status}`}
-                        className="flex items-center gap-2"
-                      >
-                        <ItemStatusBadge itemStatus={status} />
-                      </Label>
-                    </div>
+                    <Label
+                      key={status}
+                      htmlFor={`status-${status}`}
+                      className="flex items-center w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={status}
+                          id={`status-${status}`}
+                        />
+                        <div className="flex items-center gap-2">
+                          <ItemStatusBadge itemStatus={status} />
+                        </div>
+                      </div>
+                    </Label>
                   ))}
                 </RadioGroup>
               </div>
