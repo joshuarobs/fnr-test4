@@ -54,8 +54,8 @@ interface QuickAddTabProps {
   groupOpen: boolean;
   setGroupOpen: (value: boolean) => void;
   handleQuickAdd: (e: KeyboardEvent<HTMLInputElement>) => void;
-  selectedCategory: ItemCategory;
-  setSelectedCategory: (category: ItemCategory) => void;
+  selectedCategory: ItemCategory | null;
+  setSelectedCategory: (category: ItemCategory | null) => void;
   categoryOpen: boolean;
   setCategoryOpen: (open: boolean) => void;
   selectedStatus: ItemStatusType;
@@ -84,10 +84,6 @@ export function QuickAddTab({
   useEffect(() => {
     setGroups(getAllGroups());
   }, []);
-
-  const handleCategorySelect = (category: ItemCategory | null) => {
-    setSelectedCategory(category as ItemCategory);
-  };
 
   return (
     <div className="space-y-4">
@@ -174,7 +170,7 @@ export function QuickAddTab({
         <div className="flex-1">
           <CategoryDropdown
             selectedCategory={selectedCategory}
-            onCategorySelect={handleCategorySelect}
+            onCategorySelect={setSelectedCategory}
             onOpenChange={setCategoryOpen}
             className="w-full"
           />

@@ -122,7 +122,7 @@ router.post('/:claimNumber/items', async (req, res) => {
     const newItem = await prisma.item.create({
       data: {
         name: req.body.name,
-        category: req.body.category || 'Other',
+        category: req.body.category, // Removed the default 'Other' value
         itemStatus: req.body.itemStatus || 'NR',
         claimId: claim.id,
       },

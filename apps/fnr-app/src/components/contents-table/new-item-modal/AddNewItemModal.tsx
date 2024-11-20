@@ -61,16 +61,19 @@ const STATUS_OPTIONS = [
 ] as const;
 
 // Define the order of category options
-const CATEGORY_OPTIONS = Object.values(ItemCategory).map((category) => ({
-  value: category,
-  label: category,
-}));
+const CATEGORY_OPTIONS = [
+  { value: null, label: 'None' },
+  ...Object.values(ItemCategory).map((category) => ({
+    value: category,
+    label: category,
+  })),
+];
 
 // Helper function to create a new item with only required fields
 const createNewItem = (
   name: string,
   status: ItemStatusType,
-  category: ItemCategory
+  category: ItemCategory | null
 ): Partial<Item> => {
   return {
     name: name.trim(),
@@ -92,8 +95,8 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const [selectedStatus, setSelectedStatus] = useState<ItemStatusType>(
     ItemStatus.NR
   );
-  const [selectedCategory, setSelectedCategory] = useState<ItemCategory>(
-    ItemCategory.Other
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(
+    null
   );
   const [categoryOpen, setCategoryOpen] = useState(false);
 
@@ -242,10 +245,11 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                       className="flex-1 justify-between"
                     >
                       <div className="flex items-center gap-2">
-                        {React.createElement(categoryIcons[selectedCategory], {
-                          className: 'h-4 w-4',
-                        })}
-                        <span>{selectedCategory}</span>
+                        {selectedCategory &&
+                          React.createElement(categoryIcons[selectedCategory], {
+                            className: 'h-4 w-4',
+                          })}
+                        <span>{selectedCategory || 'None'}</span>
                       </div>
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -263,14 +267,18 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                         <CommandEmpty>No category found.</CommandEmpty>
                         <CommandGroup>
                           {CATEGORY_OPTIONS.map((category) => {
-                            const CategoryIcon = categoryIcons[category.value];
+                            const CategoryIcon = category.value
+                              ? categoryIcons[category.value]
+                              : null;
                             return (
                               <CommandItem
-                                key={category.value}
-                                value={category.value}
+                                key={category.value || 'none'}
+                                value={category.value || 'none'}
                                 onSelect={(currentValue) => {
                                   setSelectedCategory(
-                                    currentValue as ItemCategory
+                                    currentValue === 'none'
+                                      ? null
+                                      : (currentValue as ItemCategory)
                                   );
                                   setCategoryOpen(false);
                                 }}
@@ -284,7 +292,9 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                                         : 'opacity-0'
                                     )}
                                   />
-                                  <CategoryIcon className="h-4 w-4" />
+                                  {CategoryIcon && (
+                                    <CategoryIcon className="h-4 w-4" />
+                                  )}
                                   <span>{category.label}</span>
                                 </div>
                               </CommandItem>
