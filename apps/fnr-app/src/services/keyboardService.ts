@@ -22,7 +22,7 @@ const trackBinding = (binding: string, isActive: boolean) => {
  * Add new bindings here as needed
  */
 export const initializeKeyboardBindings = () => {
-  // Example bindings - customize these based on your needs
+  // Add other keyboard shortcuts here
   handler.add('ctrl+/', () => {
     // Toggle search/command palette
     trackBinding('ctrl+/', true);
@@ -30,7 +30,6 @@ export const initializeKeyboardBindings = () => {
     return () => trackBinding('ctrl+/', false);
   });
 
-  // Return the handler for event binding
   return handler;
 };
 

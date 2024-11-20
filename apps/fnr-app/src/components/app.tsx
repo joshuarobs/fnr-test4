@@ -10,36 +10,48 @@ import { FeedbackPage } from '../pages/FeedbackPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ClaimPage } from '../pages/ClaimPage';
 import { ROUTES } from '../routes';
-import {
-  initializeKeyboardBindings,
-  getKeyboardHandler,
-} from '../services/keyboardService';
+import KeyboardShortcutsPopup from './ui/KeyboardShortcutsPopup';
 
 export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
   const handleToggleSidebar = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
-  useEffect(() => {
-    // Initialize keyboard bindings for other shortcuts
-    initializeKeyboardBindings();
-    window.addEventListener('keydown', getKeyboardHandler());
+  // Handle keyboard events at the root level
+  const handleKeyDown = (event: KeyboardEvent) => {
+    console.log(
+      'Key event in App:',
+      event.key,
+      'Active element:',
+      document.activeElement?.tagName
+    );
 
-    // Keep existing sidebar toggle behavior
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === '[') {
-        handleToggleSidebar();
-      }
-    };
-    window.addEventListener('keydown', handleKeyPress);
+    // Only handle ? key if not in an input/textarea
+    if (
+      event.key === '?' &&
+      !(document.activeElement instanceof HTMLInputElement) &&
+      !(document.activeElement instanceof HTMLTextAreaElement)
+    ) {
+      console.log('Question mark detected, showing shortcuts');
+      event.preventDefault();
+      event.stopPropagation();
+      setIsShortcutsOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    console.log('Setting up keyboard shortcuts');
+    window.addEventListener('keydown', handleKeyDown, true); // Use capture phase
+    console.log('Keyboard handler attached');
 
     return () => {
-      window.removeEventListener('keydown', getKeyboardHandler());
-      window.removeEventListener('keydown', handleKeyPress);
+      console.log('Cleaning up keyboard handler');
+      window.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, []);
+  }, []); // Empty dependency array since handleKeyDown uses no props/state
 
   return (
     <BrowserRouter>
@@ -56,6 +68,10 @@ export function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
+        <KeyboardShortcutsPopup
+          isOpen={isShortcutsOpen}
+          onClose={() => setIsShortcutsOpen(false)}
+        />
       </div>
     </BrowserRouter>
   );
