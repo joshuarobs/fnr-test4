@@ -14,8 +14,9 @@ import { KeyboardKeyIcon } from './keyboard-key-icon';
 export interface InputClearableProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   onClear?: () => void;
-  keyboardKey?: string;
+  focusKeyboardKey?: string;
   escapeKeyClears?: boolean; // Controls if escape key can clear input
+  canPressFocusKeybind?: boolean; // Controls if focus keyboard shortcut should be processed
 }
 
 const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
@@ -25,8 +26,9 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
       onClear,
       value,
       onChange,
-      keyboardKey,
+      focusKeyboardKey,
       escapeKeyClears = false,
+      canPressFocusKeybind = true, // Default to true to maintain backward compatibility
       ...props
     },
     ref
@@ -53,12 +55,12 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
       };
       window.addEventListener('keydown', handleEscapeKey);
 
-      if (keyboardKey) {
+      if (focusKeyboardKey && canPressFocusKeybind) {
         // Create a new handler instance for this component
         const handler = keys();
 
         // Add the binding
-        handler.add(keyboardKey, () => {
+        handler.add(focusKeyboardKey, () => {
           // Focus the input
           if (resolvedRef.current) {
             resolvedRef.current.focus();
@@ -67,8 +69,11 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
 
         // Attach the handler to the window
         const handleKeyDown = (e: KeyboardEvent) => {
-          // Prevent the key from being typed into the input
-          if (e.key === keyboardKey) {
+          // Only prevent the key from being typed if the input is not focused
+          if (
+            e.key === focusKeyboardKey &&
+            document.activeElement !== resolvedRef.current
+          ) {
             e.preventDefault();
           }
           handler.handle(e);
@@ -82,11 +87,17 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
         };
       }
 
-      // If no keyboardKey, still need to cleanup escape handler
+      // If no focusKeyboardKey or canPressFocusKeybind is false, still need to cleanup escape handler
       return () => {
         window.removeEventListener('keydown', handleEscapeKey);
       };
-    }, [keyboardKey, resolvedRef, value, escapeKeyClears]);
+    }, [
+      focusKeyboardKey,
+      resolvedRef,
+      value,
+      escapeKeyClears,
+      canPressFocusKeybind,
+    ]);
 
     const handleClear = () => {
       if (onChange) {
@@ -124,9 +135,9 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        ) : keyboardKey ? (
+        ) : focusKeyboardKey ? (
           <div className="absolute right-2 top-1/2 -translate-y-1/2">
-            <KeyboardKeyIcon letter={keyboardKey} />
+            <KeyboardKeyIcon letter={focusKeyboardKey} />
           </div>
         ) : null}
       </div>
