@@ -49,6 +49,8 @@ const getAllGroups = () => {
 interface QuickAddTabProps {
   quickAddInput: string;
   setQuickAddInput: (value: string) => void;
+  modelSerialInput: string;
+  setModelSerialInput: (value: string) => void;
   selectedGroup: string;
   setSelectedGroup: (value: string) => void;
   groupOpen: boolean;
@@ -65,6 +67,8 @@ interface QuickAddTabProps {
 export function QuickAddTab({
   quickAddInput,
   setQuickAddInput,
+  modelSerialInput,
+  setModelSerialInput,
   selectedGroup,
   setSelectedGroup,
   groupOpen,
@@ -105,6 +109,7 @@ export function QuickAddTab({
           autoFocus
         />
       </div>
+
       <div className="flex items-center gap-4">
         <Label htmlFor="group" className={labelMinWidthClass}>
           Group
@@ -200,6 +205,25 @@ export function QuickAddTab({
             </Label>
           ))}
         </RadioGroup>
+      </div>
+
+      {/* Model/Serial Number Section */}
+      <div className="flex items-center gap-4">
+        <Label htmlFor="modelSerial" className={labelMinWidthClass}>
+          Model/SN
+        </Label>
+        <InputClearable
+          id="modelSerial"
+          name="model-serial"
+          autoComplete="off"
+          defaultValue=""
+          placeholder="Model or Serial Number..."
+          className="flex-1"
+          value={modelSerialInput}
+          onChange={(e) => setModelSerialInput(e.target.value)}
+          onKeyDown={handleQuickAdd}
+          onClear={() => setModelSerialInput('')}
+        />
       </div>
     </div>
   );

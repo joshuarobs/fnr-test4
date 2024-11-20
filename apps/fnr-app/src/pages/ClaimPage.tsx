@@ -110,6 +110,7 @@ export const ClaimPage = () => {
               name: item.name,
               category: item.category,
               itemStatus: item.itemStatus,
+              modelSerialNumber: item.modelSerialNumber,
             },
           }).unwrap();
         }
@@ -121,6 +122,7 @@ export const ClaimPage = () => {
             name: newItem.name,
             category: newItem.category,
             itemStatus: newItem.itemStatus,
+            modelSerialNumber: newItem.modelSerialNumber,
           },
         }).unwrap();
       }

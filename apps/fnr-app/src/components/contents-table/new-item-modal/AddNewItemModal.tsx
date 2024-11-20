@@ -73,12 +73,14 @@ const CATEGORY_OPTIONS = [
 const createNewItem = (
   name: string,
   status: ItemStatusType,
-  category: ItemCategory | null
+  category: ItemCategory | null,
+  modelSerialNumber?: string
 ): Partial<Item> => {
   return {
     name: name.trim(),
     category,
     itemStatus: status,
+    modelSerialNumber: modelSerialNumber?.trim() || null,
   };
 };
 
@@ -87,6 +89,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
   const [quickAddInput, setQuickAddInput] = useState('');
+  const [modelSerialInput, setModelSerialInput] = useState('');
   const [multiAddInput, setMultiAddInput] = useState('');
   const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
   const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
@@ -106,16 +109,18 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
         const newItem = createNewItem(
           quickAddInput,
           selectedStatus,
-          selectedCategory
+          selectedCategory,
+          modelSerialInput
         );
         addItem(newItem as Item);
         setQuickAddInput('');
+        setModelSerialInput('');
         setIsOpen(false);
       } else if (e.key === 'Escape') {
         setIsOpen(false);
       }
     },
-    [quickAddInput, selectedStatus, selectedCategory, addItem]
+    [quickAddInput, modelSerialInput, selectedStatus, selectedCategory, addItem]
   );
 
   const handleMultiAdd = () => {
@@ -160,6 +165,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const handleClearFields = () => {
     if (activeTab === TabType.Single) {
       setQuickAddInput('');
+      setModelSerialInput('');
       setAddItemHasMinReqs(false);
       setQuickAddHasChanges(false);
     }
@@ -210,6 +216,8 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
             <QuickAddTab
               quickAddInput={quickAddInput}
               setQuickAddInput={handleQuickAddInputChange}
+              modelSerialInput={modelSerialInput}
+              setModelSerialInput={setModelSerialInput}
               selectedGroup=""
               setSelectedGroup={() => {}}
               groupOpen={false}
