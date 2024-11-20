@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import prisma from '../lib/prisma';
+import { recalculateClaimValues } from '../lib/claimHelpers';
 
 const router: Router = express.Router();
 
@@ -97,6 +98,57 @@ router.get('/:claimNumber', async (req, res) => {
   }
 });
 
+// POST /api/claims/:claimNumber/items
+router.post('/:claimNumber/items', async (req, res) => {
+  try {
+    const { claimNumber } = req.params;
+
+    // First get the claim to ensure it exists and get its ID
+    const claim = await prisma.claim.findUnique({
+      where: { claimNumber },
+      select: { id: true },
+    });
+
+    if (!claim) {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+
+    // Use transaction to create item and update claim
+    const result = await prisma.$transaction(async (prisma) => {
+      // Create the new item with the claim's ID
+      const newItem = await prisma.item.create({
+        data: {
+          ...req.body,
+          claimId: claim.id,
+        },
+      });
+
+      // Update the claim's localItemIds and itemOrder arrays
+      await prisma.claim.update({
+        where: { id: claim.id },
+        data: {
+          localItemIds: {
+            push: newItem.id,
+          },
+          itemOrder: {
+            push: newItem.id,
+          },
+        },
+      });
+
+      // Recalculate claim values using shared helper
+      await recalculateClaimValues(claim.id);
+
+      return newItem;
+    });
+
+    res.status(201).json(result);
+  } catch (error) {
+    console.error('Error creating item:', error);
+    res.status(500).json({ error: 'Failed to create item' });
+  }
+});
+
 // POST /api/claims/:claimNumber/view
 router.post('/:claimNumber/view', async (req, res) => {
   try {
@@ -145,63 +197,30 @@ router.post('/:claimNumber/recalculate', async (req, res) => {
 
     const claim = await prisma.claim.findUnique({
       where: { claimNumber },
-      include: {
-        items: true,
-      },
+      select: { id: true },
     });
 
     if (!claim) {
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    // Calculate totals from items
-    const totalClaimed = claim.items.reduce(
-      (sum, item) => sum + (item.insuredsQuote || 0),
-      0
-    );
-    const totalApproved = claim.items.reduce(
-      (sum, item) => sum + (item.ourQuote || 0),
-      0
-    );
+    const updatedClaim = await recalculateClaimValues(claim.id);
 
-    // Calculate progress values
-    const totalItems = claim.items.length;
-    const insuredQuotesComplete = claim.items.filter(
-      (item) => item.insuredsQuote !== null
-    ).length;
-    const ourQuotesComplete = claim.items.filter(
-      (item) => item.ourQuote !== null
-    ).length;
-
-    const insuredProgressPercent =
-      totalItems > 0 ? (insuredQuotesComplete / totalItems) * 100 : 0;
-    const ourProgressPercent =
-      totalItems > 0 ? (ourQuotesComplete / totalItems) * 100 : 0;
-
-    // Update claim with all calculated values
-    await prisma.claim.update({
-      where: { claimNumber },
-      data: {
-        totalClaimed,
-        totalApproved,
-        totalItems,
-        insuredQuotesComplete,
-        ourQuotesComplete,
-        insuredProgressPercent,
-        ourProgressPercent,
-        lastProgressUpdate: new Date(),
-      },
-    });
+    if (!updatedClaim) {
+      return res
+        .status(404)
+        .json({ error: 'Failed to recalculate claim values' });
+    }
 
     res.json({
       success: true,
-      totalClaimed,
-      totalApproved,
-      totalItems,
-      insuredQuotesComplete,
-      ourQuotesComplete,
-      insuredProgressPercent,
-      ourProgressPercent,
+      totalClaimed: updatedClaim.totalClaimed,
+      totalApproved: updatedClaim.totalApproved,
+      totalItems: updatedClaim.totalItems,
+      insuredQuotesComplete: updatedClaim.insuredQuotesComplete,
+      ourQuotesComplete: updatedClaim.ourQuotesComplete,
+      insuredProgressPercent: updatedClaim.insuredProgressPercent,
+      ourProgressPercent: updatedClaim.ourProgressPercent,
     });
   } catch (error) {
     console.error('Error recalculating claim values:', error);
