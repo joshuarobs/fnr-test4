@@ -56,7 +56,10 @@ export function App() {
   return (
     <BrowserRouter>
       <div className="flex flex-col h-screen">
-        <Header onToggleSidebar={handleToggleSidebar} />
+        <Header
+          onToggleSidebar={handleToggleSidebar}
+          setIsShortcutsOpen={setIsShortcutsOpen}
+        />
         <div className="flex flex-1">
           {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
           <Routes>
