@@ -10,7 +10,7 @@ datasource db {
   url      = "postgresql://user:12345@localhost:5432/fnr_db"
 }
 
-// Base user model with common fields
+/// Represents the base user model with common fields across all user types
 model BaseUser {
   id            Int       @id @default(autoincrement())
   email         String    @unique
@@ -38,7 +38,10 @@ model BaseUser {
   comments      Comment[]
   recentlyViewedClaims RecentlyViewedClaim[] @relation("UserRecentViews")
 
+  @@index([email])
   @@index([isDeleted])
+  @@index([role, isActive])
+  @@index([lastName, firstName]) // For name-based searches
 }
 
 enum UserRole {
@@ -48,7 +51,7 @@ enum UserRole {
   INSURED
 }
 
-// Staff-specific fields
+/// Staff member specific information
 model Staff {
   id            Int       @id @default(autoincrement())
   baseUserId    Int       @unique  // One-to-one with BaseUser
@@ -60,10 +63,12 @@ model Staff {
   isDeleted     Boolean   @default(false) @map("is_deleted")
   deletedAt     DateTime? @map("deleted_at")
 
+  @@index([department])
+  @@index([employeeId])
   @@index([isDeleted])
 }
 
-// Insurance policy holder details
+/// Insurance policy holder information
 model Insured {
   id            Int       @id @default(autoincrement())
   baseUserId    Int       @unique  // One-to-one with BaseUser
@@ -76,7 +81,7 @@ model Insured {
   @@index([isDeleted])
 }
 
-// Supplier/vendor information
+/// Supplier/vendor information and ratings
 model Supplier {
   id            Int       @id @default(autoincrement())
   baseUserId    Int       @unique  // One-to-one with BaseUser
@@ -88,9 +93,12 @@ model Supplier {
   isDeleted     Boolean   @default(false) @map("is_deleted")
   deletedAt     DateTime? @map("deleted_at")
 
+  @@index([company])
+  @@index([ratings])
   @@index([isDeleted])
 }
 
+/// Insurance claim information and tracking
 model Claim {
   id            Int         @id @default(autoincrement())
   claimNumber   String      @unique
@@ -113,22 +121,26 @@ model Claim {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   recentViews   RecentlyViewedClaim[] @relation("ClaimViews")
-  isDeleted     Boolean   @default(false) @map("is_deleted")
-  deletedAt     DateTime? @map("deleted_at")
+  isDeleted     Boolean     @default(false) @map("is_deleted")
+  deletedAt     DateTime?   @map("deleted_at")
 
-  // Adding fields to support stacked progress bars UI:
-  // Top bar shows "Quotes Submitted" progress
+  // Progress tracking fields
   totalItems Int @default(0)
   insuredQuotesComplete Int @default(0)
   insuredProgressPercent Float @default(0)  // insuredQuotesComplete/totalItems * 100
-  
-  // Bottom bar shows "Quotes Reviewed" progress
   ourQuotesComplete Int @default(0)
   ourProgressPercent Float @default(0)  // ourQuotesComplete/totalItems * 100
-  
   lastProgressUpdate DateTime?  // track when we last updated these counters
 
+  @@index([claimNumber])
+  @@index([policyNumber])
+  @@index([status])
+  @@index([insuredId])
+  @@index([handlerId])
+  @@index([createdAt])
   @@index([isDeleted])
+  @@index([status, isDeleted])
+  @@index([insuredId, status])
 }
 
 enum ClaimStatus {
@@ -141,6 +153,7 @@ enum ClaimStatus {
   REJECTED
 }
 
+/// Claim item details and tracking
 model Item {
   id                Int         @id @default(autoincrement())
   claimId           Int
@@ -164,17 +177,21 @@ model Item {
   isDeleted         Boolean     @default(false) @map("is_deleted")
   deletedAt         DateTime?   @map("deleted_at")
 
+  @@index([claimId])
+  @@index([category])
+  @@index([itemStatus])
   @@index([isDeleted])
+  @@index([claimId, itemStatus])
 }
 
 enum ItemStatus {
-  RS
-  NR
-  VPOL
-  OTHER
+  RS    @map("RS")     /// Replacement Same
+  NR    @map("NR")     /// Not Replaced
+  VPOL  @map("VPOL")   /// Void - Proof of Loss
+  OTHER @map("OTHER")  /// Other Status
 }
 
-// Evidence (photos, receipts, etc.)
+/// Evidence documentation for claims
 model Evidence {
   id          Int           @id @default(autoincrement())
   itemId      Int
@@ -186,18 +203,21 @@ model Evidence {
   isDeleted   Boolean       @default(false) @map("is_deleted")
   deletedAt   DateTime?     @map("deleted_at")
 
+  @@index([itemId])
+  @@index([type])
   @@index([isDeleted])
+  @@index([itemId, type])
 }
 
 enum EvidenceType {
-  PHOTO
-  RECEIPT
-  MANUAL
-  WARRANTY
-  OTHER
+  PHOTO    @map("PHOTO")    /// Photographic evidence
+  RECEIPT  @map("RECEIPT")  /// Purchase receipt
+  MANUAL   @map("MANUAL")   /// Product manual
+  WARRANTY @map("WARRANTY") /// Warranty documentation
+  OTHER    @map("OTHER")    /// Other documentation
 }
 
-// Comments/notes on claims
+/// Comments and notes on claims
 model Comment {
   id          Int       @id @default(autoincrement())
   claimId     Int
@@ -211,10 +231,14 @@ model Comment {
   isDeleted   Boolean   @default(false) @map("is_deleted")
   deletedAt   DateTime? @map("deleted_at")
 
+  @@index([claimId])
+  @@index([userId])
   @@index([isDeleted])
+  @@index([claimId, isInternal])
+  @@index([createdAt])
 }
 
-// Recently viewed claims tracking
+/// Tracks recently viewed claims by users
 model RecentlyViewedClaim {
   id        Int      @id @default(autoincrement())
   userId    Int
