@@ -43,10 +43,17 @@ const getDifferenceType = (item: Item): 'higher' | 'lower' | 'same' | 'na' => {
   return insuredsQuote > ourQuote ? 'higher' : 'lower';
 };
 
-export const createColumns = (
-  updateItem: (item: Item) => void,
-  removeItem?: (itemId: number) => void
-): ColumnDef<Item>[] =>
+interface CreateColumnsOptions {
+  updateItem: (item: Item) => void;
+  removeItem?: (itemId: number) => void;
+  claimNumber: string;
+}
+
+export const createColumns = ({
+  updateItem,
+  removeItem,
+  claimNumber,
+}: CreateColumnsOptions): ColumnDef<Item>[] =>
   [
     {
       accessorKey: ITEM_KEYS.LOCAL_ID,
@@ -343,7 +350,11 @@ export const createColumns = (
             rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
             columnId={ITEM_KEYS.OUR_QUOTE}
           >
-            <OurQuoteCell item={row.original} updateItem={updateItem} />
+            <OurQuoteCell
+              item={row.original}
+              updateItem={updateItem}
+              claimNumber={claimNumber}
+            />
           </CellWrapper>
         );
       },

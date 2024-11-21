@@ -85,9 +85,12 @@ export const api = createApi({
         method: 'POST',
       }),
     }),
-    updateItem: builder.mutation<Item, Partial<Item>>({
-      query: (item) => ({
-        url: `items/${item.id}`,
+    updateItem: builder.mutation<
+      Item,
+      { claimNumber: string; item: Partial<Item> }
+    >({
+      query: ({ claimNumber, item }) => ({
+        url: `claims/${claimNumber}/items/${item.id}`,
         method: 'PATCH',
         body: {
           name: item.name,

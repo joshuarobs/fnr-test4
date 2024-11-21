@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { Item } from '../components/contents-table/item';
@@ -20,12 +20,40 @@ import {
   useGetRecentlyViewedClaimsQuery,
   api,
 } from '../store/services/api';
+import { Input } from '@react-monorepo/shared';
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [claimInput, setClaimInput] = React.useState('');
 
-  const { data: claimData, isLoading, error } = useGetClaimQuery(id!);
+  if (!id) {
+    return (
+      <div className="flex-1 min-w-0 p-4 flex flex-col items-center justify-center gap-4">
+        <div className="text-xl font-semibold">No Claim Number Provided</div>
+        <div className="text-muted-foreground">
+          Please enter a claim number below
+        </div>
+        <div className="flex gap-2">
+          <Input
+            value={claimInput}
+            onChange={(e) => setClaimInput(e.target.value)}
+            placeholder="Enter claim number"
+            className="w-64"
+          />
+          <button
+            onClick={() => navigate(`/claims/${claimInput}`)}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Go
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: claimData, isLoading, error } = useGetClaimQuery(id);
   const { data: recentViews } = useGetRecentlyViewedClaimsQuery();
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
@@ -39,7 +67,7 @@ export const ClaimPage = () => {
 
   // Record view when claim is loaded, but only if it's not the most recent view
   React.useEffect(() => {
-    if (id && !isLoading && !error && recentViews) {
+    if (!isLoading && !error && recentViews) {
       const mostRecentView = recentViews[0];
       if (!mostRecentView || mostRecentView.claim.claimNumber !== id) {
         recordView(id);
@@ -98,8 +126,6 @@ export const ClaimPage = () => {
   };
 
   const addItem = async (newItem: Item | Item[]) => {
-    if (!id) return; // Make sure we have the claim number
-
     try {
       if (Array.isArray(newItem)) {
         // Handle bulk add
@@ -132,8 +158,6 @@ export const ClaimPage = () => {
   };
 
   const removeItem = async (itemId: number) => {
-    if (!id) return; // Make sure we have the claim number
-
     try {
       await removeItemMutation({
         claimId: id,
@@ -146,7 +170,7 @@ export const ClaimPage = () => {
 
   const handleUpdateItem = async (updatedItem: Item) => {
     try {
-      await updateItem(updatedItem).unwrap();
+      await updateItem({ claimNumber: id, item: updatedItem }).unwrap();
     } catch (err) {
       console.error('Failed to update item:', err);
     }
@@ -158,8 +182,27 @@ export const ClaimPage = () => {
 
   if (error) {
     return (
-      <div className="flex-1 min-w-0 p-4 text-red-500">
-        An error occurred while loading the claim
+      <div className="flex-1 min-w-0 p-4 flex flex-col items-center justify-center gap-4">
+        <div className="text-xl font-semibold text-red-500">
+          Error Loading Claim
+        </div>
+        <div className="text-muted-foreground">
+          Try a different claim number
+        </div>
+        <div className="flex gap-2">
+          <Input
+            value={claimInput}
+            onChange={(e) => setClaimInput(e.target.value)}
+            placeholder="Enter claim number"
+            className="w-64"
+          />
+          <button
+            onClick={() => navigate(`/claims/${claimInput}`)}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Go
+          </button>
+        </div>
       </div>
     );
   }
@@ -197,6 +240,7 @@ export const ClaimPage = () => {
           addItem={addItem}
           removeItem={removeItem}
           updateItem={handleUpdateItem}
+          claimNumber={id}
         />
       </div>
       <SecondSidebar />

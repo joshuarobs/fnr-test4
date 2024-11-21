@@ -23,6 +23,7 @@ interface ContentsTableWithToolbarProps {
   addItem: (newItem: Item) => void;
   removeItem: (itemId: number) => void;
   updateItem: (updatedItem: Item) => void;
+  claimNumber: string;
 }
 
 // Type for valid column IDs based on Item type
@@ -57,10 +58,10 @@ declare module '@tanstack/table-core' {
 
 export const ContentsTableWithToolbar: React.FC<
   ContentsTableWithToolbarProps
-> = ({ data, addItem, removeItem, updateItem }) => {
+> = ({ data, addItem, removeItem, updateItem, claimNumber }) => {
   const columns = React.useMemo(
-    () => createColumns(updateItem, removeItem),
-    [updateItem, removeItem]
+    () => createColumns({ updateItem, removeItem, claimNumber }),
+    [updateItem, removeItem, claimNumber]
   );
   const [globalFilter, setGlobalFilter] = React.useState('');
 

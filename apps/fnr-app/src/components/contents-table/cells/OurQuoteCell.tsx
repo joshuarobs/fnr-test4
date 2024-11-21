@@ -5,10 +5,15 @@ import { EditableInputField } from '../EditableInputField';
 
 interface OurQuoteCellProps {
   item: Item;
-  updateItem: (updatedItem: Item) => void;
+  claimNumber: string;
+  updateItem: (updatedItem: Item, claimNumber: string) => void;
 }
 
-export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
+export const OurQuoteCell = ({
+  item,
+  claimNumber,
+  updateItem,
+}: OurQuoteCellProps) => {
   const formatQuote = (quote: number | null) => {
     // Check if quote is exactly 0 (not null)
     if (quote === 0) {
@@ -30,11 +35,11 @@ export const OurQuoteCell = ({ item, updateItem }: OurQuoteCellProps) => {
 
   const handleSave = (value: string) => {
     if (value === '') {
-      updateItem({ ...item, ourQuote: null });
+      updateItem({ ...item, ourQuote: null }, claimNumber);
     } else {
       const newQuote = parseFloat(value);
       if (!isNaN(newQuote) && newQuote !== item.ourQuote) {
-        updateItem({ ...item, ourQuote: newQuote });
+        updateItem({ ...item, ourQuote: newQuote }, claimNumber);
       }
     }
   };
