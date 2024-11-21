@@ -4,12 +4,12 @@ import { CellWrapper } from '../CellWrapper';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Button,
 } from '@react-monorepo/shared';
-import { Button } from '@react-monorepo/shared';
+import { DropdownMenuListItem } from '../../ui/DropdownMenuListItem';
 import { DotsHorizontalIcon, TrashIcon } from '@radix-ui/react-icons';
 
 // Component for rendering the actions cell in the contents table
@@ -37,26 +37,26 @@ export const ActionCell = ({
             <DotsHorizontalIcon className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="min-w-[180px]">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            className="text-red-600 focus:bg-red-100 focus:text-red-600"
+          <DropdownMenuListItem
+            icon={<TrashIcon />}
             onClick={handleDelete}
+            danger
           >
-            <TrashIcon className="mr-1 h-4 w-4" />
             Delete
-          </DropdownMenuItem>
+          </DropdownMenuListItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
+          <DropdownMenuListItem
             onClick={() =>
               navigator.clipboard.writeText(item[ITEM_KEYS.ID].toString())
             }
           >
             Copy payment ID
-          </DropdownMenuItem>
+          </DropdownMenuListItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>View customer</DropdownMenuItem>
-          <DropdownMenuItem>View payment details</DropdownMenuItem>
+          <DropdownMenuListItem>View customer</DropdownMenuListItem>
+          <DropdownMenuListItem>View payment details</DropdownMenuListItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </CellWrapper>
