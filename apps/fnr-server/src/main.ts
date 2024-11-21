@@ -6,7 +6,6 @@
 import express from 'express';
 import * as path from 'path';
 import cors from 'cors';
-import itemsRouter from './routes/items';
 import claimsRouter from './routes/claims/index';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
@@ -38,14 +37,12 @@ app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to fnr-server!',
     endpoints: {
-      items: '/api/items',
       claims: '/api/claims',
     },
   });
 });
 
 // Routes
-app.use('/api/items', itemsRouter);
 app.use('/api/claims', claimsRouter);
 
 const server = app.listen(SERVER_CONFIG.port, () => {

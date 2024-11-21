@@ -1,82 +1,146 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
-import { recalculateClaimValues } from '../../lib/claimHelpers';
+import { calculateClaimValues } from '../../lib/claimHelpers';
 
 const router: Router = express.Router();
 
+// Hard delete
 // DELETE /api/claims/:claimNumber/items/:itemId
 router.delete('/:claimNumber/items/:itemId', async (req, res) => {
   try {
     const { claimNumber, itemId } = req.params;
-    const parsedItemId = parseInt(itemId);
 
-    console.log(
-      `Attempting to delete item ${itemId} from claim ${claimNumber}`
-    );
+    const result = await prisma.$transaction(async (tx) => {
+      // First verify the claim exists and the item belongs to it
+      const claim = await tx.claim.findUnique({
+        where: { claimNumber },
+        include: {
+          items: {
+            where: { id: parseInt(itemId) },
+          },
+        },
+      });
 
-    // First get the claim to ensure it exists
-    const claim = await prisma.claim.findUnique({
-      where: { claimNumber },
-      select: { id: true, localItemIds: true, itemOrder: true },
+      if (!claim) {
+        throw new Error('Claim not found');
+      }
+
+      if (claim.items.length === 0) {
+        throw new Error('Item not found in claim');
+      }
+
+      // Hard delete the item
+      await tx.item.delete({
+        where: { id: parseInt(itemId) },
+      });
+
+      // Update claim's localItemIds and itemOrder arrays
+      await tx.claim.update({
+        where: { id: claim.id },
+        data: {
+          localItemIds: {
+            set: claim.localItemIds.filter((id) => id !== parseInt(itemId)),
+          },
+          itemOrder: {
+            set: claim.itemOrder.filter((id) => id !== parseInt(itemId)),
+          },
+        },
+      });
+
+      // Recalculate claim values
+      const values = calculateClaimValues(claim.items);
+
+      // Update claim with calculated values
+      await tx.claim.update({
+        where: { id: claim.id },
+        data: values,
+      });
+
+      return { success: true, message: 'Item permanently deleted' };
     });
 
-    if (!claim) {
-      console.log(`Claim ${claimNumber} not found`);
+    res.json(result);
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    if (error.message === 'Claim not found') {
       return res.status(404).json({ error: 'Claim not found' });
     }
-
-    console.log('Found claim:', claim);
-
-    // Verify the item exists and belongs to this claim
-    const item = await prisma.item.findUnique({
-      where: { id: parsedItemId },
-      select: { id: true, claimId: true },
-    });
-
-    if (!item) {
-      console.log(`Item ${itemId} not found`);
-      return res.status(404).json({ error: 'Item not found' });
+    if (error.message === 'Item not found in claim') {
+      return res.status(404).json({ error: 'Item not found in claim' });
     }
+    res.status(500).json({ error: 'Failed to delete item' });
+  }
+});
 
-    if (item.claimId !== claim.id) {
-      console.log(`Item ${itemId} does not belong to claim ${claimNumber}`);
-      return res
-        .status(400)
-        .json({ error: 'Item does not belong to this claim' });
-    }
+// Soft delete
+// POST /api/claims/:claimNumber/items/:itemId/soft-delete
+router.post('/:claimNumber/items/:itemId/soft-delete', async (req, res) => {
+  try {
+    const { claimNumber, itemId } = req.params;
 
-    console.log('Found item:', item);
-
-    // Delete the item
-    await prisma.item.delete({
-      where: { id: parsedItemId },
-    });
-    console.log('Deleted item');
-
-    // Update the claim's arrays
-    await prisma.claim.update({
-      where: { id: claim.id },
-      data: {
-        localItemIds: {
-          set: claim.localItemIds.filter((id) => id !== parsedItemId),
+    const result = await prisma.$transaction(async (tx) => {
+      // First verify the claim exists and the item belongs to it
+      const claim = await tx.claim.findUnique({
+        where: { claimNumber },
+        include: {
+          items: {
+            where: { id: parseInt(itemId) },
+          },
         },
-        itemOrder: {
-          set: claim.itemOrder.filter((id) => id !== parsedItemId),
+      });
+
+      if (!claim) {
+        throw new Error('Claim not found');
+      }
+
+      if (claim.items.length === 0) {
+        throw new Error('Item not found in claim');
+      }
+
+      // Soft delete the item
+      await tx.item.update({
+        where: { id: parseInt(itemId) },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
         },
-      },
+      });
+
+      // Update claim's localItemIds and itemOrder arrays
+      await tx.claim.update({
+        where: { id: claim.id },
+        data: {
+          localItemIds: {
+            set: claim.localItemIds.filter((id) => id !== parseInt(itemId)),
+          },
+          itemOrder: {
+            set: claim.itemOrder.filter((id) => id !== parseInt(itemId)),
+          },
+        },
+      });
+
+      // Recalculate claim values
+      const values = calculateClaimValues(claim.items);
+
+      // Update claim with calculated values
+      await tx.claim.update({
+        where: { id: claim.id },
+        data: values,
+      });
+
+      return { success: true, message: 'Item soft deleted' };
     });
-    console.log('Updated claim arrays');
 
-    // Recalculate claim values
-    await recalculateClaimValues(claim.id);
-    console.log('Recalculated claim values');
-
-    res.json({ success: true, message: 'Item deleted successfully' });
+    res.json(result);
   } catch (error) {
-    console.error('Detailed error deleting item:', error);
-    res
-      .status(500)
-      .json({ error: 'Failed to delete item', details: error.message });
+    console.error('Error soft deleting item:', error);
+    if (error.message === 'Claim not found') {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+    if (error.message === 'Item not found in claim') {
+      return res.status(404).json({ error: 'Item not found in claim' });
+    }
+    res.status(500).json({ error: 'Failed to soft delete item' });
   }
 });
 
