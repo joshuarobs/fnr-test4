@@ -24,6 +24,8 @@ model BaseUser {
   lastLogin     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
 
   // One-to-one relations to specific user types
   staff         Staff?
@@ -35,6 +37,8 @@ model BaseUser {
   createdClaims Claim[]   @relation("ClaimCreator")
   comments      Comment[]
   recentlyViewedClaims RecentlyViewedClaim[] @relation("UserRecentViews")
+
+  @@index([isDeleted])
 }
 
 enum UserRole {
@@ -53,6 +57,10 @@ model Staff {
   employeeId    String    @unique
   position      String
   permissions   String[]  // Array of permission strings
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
+
+  @@index([isDeleted])
 }
 
 // Insurance policy holder details
@@ -62,6 +70,10 @@ model Insured {
   baseUser      BaseUser  @relation(fields: [baseUserId], references: [id])
   address       String
   claims        Claim[]
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
+
+  @@index([isDeleted])
 }
 
 // Supplier/vendor information
@@ -73,6 +85,10 @@ model Supplier {
   serviceType   String[]  // Types of services provided
   areas         String[]  // Service areas
   ratings       Float?
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
+
+  @@index([isDeleted])
 }
 
 model Claim {
@@ -97,6 +113,8 @@ model Claim {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   recentViews   RecentlyViewedClaim[] @relation("ClaimViews")
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
 
   // Adding fields to support stacked progress bars UI:
   // Top bar shows "Quotes Submitted" progress
@@ -109,6 +127,8 @@ model Claim {
   ourProgressPercent Float @default(0)  // ourQuotesComplete/totalItems * 100
   
   lastProgressUpdate DateTime?  // track when we last updated these counters
+
+  @@index([isDeleted])
 }
 
 enum ClaimStatus {
@@ -141,6 +161,10 @@ model Item {
   insuredsEvidence  Evidence[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+  isDeleted         Boolean     @default(false) @map("is_deleted")
+  deletedAt         DateTime?   @map("deleted_at")
+
+  @@index([isDeleted])
 }
 
 enum ItemStatus {
@@ -159,6 +183,10 @@ model Evidence {
   url         String
   filename    String
   createdAt   DateTime      @default(now())
+  isDeleted   Boolean       @default(false) @map("is_deleted")
+  deletedAt   DateTime?     @map("deleted_at")
+
+  @@index([isDeleted])
 }
 
 enum EvidenceType {
@@ -180,6 +208,10 @@ model Comment {
   isInternal  Boolean   @default(false)  // Internal notes vs customer-visible
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  isDeleted   Boolean   @default(false) @map("is_deleted")
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@index([isDeleted])
 }
 
 // Recently viewed claims tracking
@@ -190,7 +222,10 @@ model RecentlyViewedClaim {
   claimId   Int
   claim     Claim    @relation("ClaimViews", fields: [claimId], references: [id])
   viewedAt  DateTime @default(now())
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  deletedAt DateTime? @map("deleted_at")
 
   @@unique([userId, claimId])
   @@index([userId, viewedAt])
+  @@index([isDeleted])
 }
