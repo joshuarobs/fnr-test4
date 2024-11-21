@@ -118,13 +118,29 @@ router.post('/:claimNumber/items', async (req, res) => {
 
     console.log('Found claim with ID:', claim.id);
 
-    // Create the new item first
+    // Validate required fields
+    if (!req.body.name) {
+      return res.status(400).json({ error: 'Item name is required' });
+    }
+
+    // Create the new item with all possible fields from the schema
     const newItem = await prisma.item.create({
       data: {
         name: req.body.name,
-        category: req.body.category,
+        category: req.body.category || null,
+        group: req.body.group || null,
+        modelSerialNumber: req.body.modelSerialNumber || null,
+        description: req.body.description || null,
+        quantity: req.body.quantity || 1,
+        purchaseDate: req.body.purchaseDate
+          ? new Date(req.body.purchaseDate)
+          : null,
+        age: req.body.age || null,
+        condition: req.body.condition || null,
+        insuredsQuote: req.body.insuredsQuote || null,
+        ourQuote: req.body.ourQuote || null,
+        ourQuoteProof: req.body.ourQuoteProof || null,
         itemStatus: req.body.itemStatus || 'NR',
-        modelSerialNumber: req.body.modelSerialNumber,
         claimId: claim.id,
       },
     });

@@ -78,6 +78,12 @@ CREATE TABLE "Claim" (
     "totalApproved" DOUBLE PRECISION,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "totalItems" INTEGER NOT NULL DEFAULT 0,
+    "insuredQuotesComplete" INTEGER NOT NULL DEFAULT 0,
+    "insuredProgressPercent" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "ourQuotesComplete" INTEGER NOT NULL DEFAULT 0,
+    "ourProgressPercent" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "lastProgressUpdate" TIMESTAMP(3),
 
     CONSTRAINT "Claim_pkey" PRIMARY KEY ("id")
 );
@@ -91,11 +97,13 @@ CREATE TABLE "Item" (
     "group" TEXT,
     "modelSerialNumber" TEXT,
     "description" TEXT,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
     "purchaseDate" TIMESTAMP(3),
     "age" INTEGER,
     "condition" TEXT,
     "insuredsQuote" DOUBLE PRECISION,
     "ourQuote" DOUBLE PRECISION,
+    "ourQuoteProof" TEXT,
     "itemStatus" "ItemStatus" NOT NULL DEFAULT 'NR',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -128,6 +136,16 @@ CREATE TABLE "Comment" (
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "RecentlyViewedClaim" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "claimId" INTEGER NOT NULL,
+    "viewedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RecentlyViewedClaim_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "BaseUser_email_key" ON "BaseUser"("email");
 
@@ -145,6 +163,12 @@ CREATE UNIQUE INDEX "Supplier_baseUserId_key" ON "Supplier"("baseUserId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Claim_claimNumber_key" ON "Claim"("claimNumber");
+
+-- CreateIndex
+CREATE INDEX "RecentlyViewedClaim_userId_viewedAt_idx" ON "RecentlyViewedClaim"("userId", "viewedAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RecentlyViewedClaim_userId_claimId_key" ON "RecentlyViewedClaim"("userId", "claimId");
 
 -- AddForeignKey
 ALTER TABLE "Staff" ADD CONSTRAINT "Staff_baseUserId_fkey" FOREIGN KEY ("baseUserId") REFERENCES "BaseUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -175,3 +199,9 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_claimId_fkey" FOREIGN KEY ("claimI
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "BaseUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RecentlyViewedClaim" ADD CONSTRAINT "RecentlyViewedClaim_userId_fkey" FOREIGN KEY ("userId") REFERENCES "BaseUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RecentlyViewedClaim" ADD CONSTRAINT "RecentlyViewedClaim_claimId_fkey" FOREIGN KEY ("claimId") REFERENCES "Claim"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
