@@ -115,10 +115,93 @@ mockRouter.post('/:claimNumber/recalculate', async (req, res) => {
   }
 });
 
+// Add GET routes to mock router
+mockRouter.get('/', async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const claims = await prisma.claim.findMany({
+      take: limit,
+      select: {
+        id: true,
+        claimNumber: true,
+        description: true,
+        status: true,
+        items: {
+          select: {
+            id: true,
+          },
+        },
+        totalClaimed: true,
+        totalApproved: true,
+        createdAt: true,
+        updatedAt: true,
+        insuredProgressPercent: true,
+        ourProgressPercent: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    res.json(claims);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch claims' });
+  }
+});
+
+mockRouter.get('/recent-views', async (req, res) => {
+  try {
+    const userId = 1;
+    const recentViews = await prisma.recentlyViewedClaim.findMany({
+      where: { userId },
+      include: {
+        claim: {
+          select: {
+            claimNumber: true,
+            description: true,
+            status: true,
+            totalClaimed: true,
+            totalApproved: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+      orderBy: {
+        viewedAt: 'desc',
+      },
+      take: 100,
+    });
+    res.json(recentViews);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch recent views' });
+  }
+});
+
+mockRouter.get('/:claimNumber', async (req, res) => {
+  try {
+    const { claimNumber } = req.params;
+    const claim = await prisma.claim.findUnique({
+      where: { claimNumber },
+      include: {
+        items: true,
+      },
+    });
+
+    if (!claim) {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+
+    res.json(claim);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch claim' });
+  }
+});
+
 // Mock prisma
 const prisma = {
   claim: {
     findUnique: jest.fn(),
+    findMany: jest.fn(),
     update: jest.fn(),
   },
   item: {
@@ -126,6 +209,7 @@ const prisma = {
   },
   recentlyViewedClaim: {
     upsert: jest.fn(),
+    findMany: jest.fn(),
   },
 } as unknown as PrismaClient;
 
@@ -137,6 +221,130 @@ describe('Claims API', () => {
     app.use(express.json());
     app.use('/api/claims', mockRouter);
     jest.clearAllMocks();
+  });
+
+  describe('GET /api/claims', () => {
+    const mockClaims = [
+      {
+        id: 1,
+        claimNumber: 'CLM001',
+        description: 'Test Claim 1',
+        status: 'OPEN',
+        items: [{ id: 1 }, { id: 2 }],
+        totalClaimed: 1000,
+        totalApproved: 800,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        insuredProgressPercent: 60,
+        ourProgressPercent: 80,
+      },
+    ];
+
+    beforeEach(() => {
+      (prisma.claim.findMany as jest.Mock).mockResolvedValue(mockClaims);
+    });
+
+    it('should fetch claims with default limit', async () => {
+      const response = await request(app).get('/api/claims');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockClaims);
+      expect(prisma.claim.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          take: 10,
+        })
+      );
+    });
+
+    it('should fetch claims with custom limit', async () => {
+      const response = await request(app).get('/api/claims?limit=5');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockClaims);
+      expect(prisma.claim.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          take: 5,
+        })
+      );
+    });
+  });
+
+  describe('GET /api/claims/recent-views', () => {
+    const mockRecentViews = [
+      {
+        id: 1,
+        viewedAt: new Date().toISOString(),
+        claim: {
+          claimNumber: 'CLM001',
+          description: 'Test Claim 1',
+          status: 'OPEN',
+          totalClaimed: 1000,
+          totalApproved: 800,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      },
+    ];
+
+    beforeEach(() => {
+      (prisma.recentlyViewedClaim.findMany as jest.Mock).mockResolvedValue(
+        mockRecentViews
+      );
+    });
+
+    it('should fetch recently viewed claims', async () => {
+      const response = await request(app).get('/api/claims/recent-views');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockRecentViews);
+      expect(prisma.recentlyViewedClaim.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: 1 },
+          take: 100,
+        })
+      );
+    });
+  });
+
+  describe('GET /api/claims/:claimNumber', () => {
+    const mockClaim = {
+      id: 1,
+      claimNumber: 'CLM001',
+      description: 'Test Claim',
+      status: 'OPEN',
+      items: [
+        {
+          id: 1,
+          name: 'Test Item',
+          category: 'Electronics',
+          quantity: 1,
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      (prisma.claim.findUnique as jest.Mock).mockResolvedValue(mockClaim);
+    });
+
+    it('should fetch a specific claim by claim number', async () => {
+      const response = await request(app).get('/api/claims/CLM001');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockClaim);
+      expect(prisma.claim.findUnique).toHaveBeenCalledWith({
+        where: { claimNumber: 'CLM001' },
+        include: { items: true },
+      });
+    });
+
+    it('should return 404 if claim is not found', async () => {
+      (prisma.claim.findUnique as jest.Mock).mockResolvedValue(null);
+
+      const response = await request(app).get('/api/claims/INVALID');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: 'Claim not found' });
+    });
   });
 
   describe('POST /api/claims/:claimNumber/items', () => {
