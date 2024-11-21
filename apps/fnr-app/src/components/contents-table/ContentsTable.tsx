@@ -58,7 +58,10 @@ declare module '@tanstack/table-core' {
 export const ContentsTableWithToolbar: React.FC<
   ContentsTableWithToolbarProps
 > = ({ data, addItem, removeItem, updateItem }) => {
-  const columns = React.useMemo(() => createColumns(updateItem), [updateItem]);
+  const columns = React.useMemo(
+    () => createColumns(updateItem, removeItem),
+    [updateItem, removeItem]
+  );
   const [globalFilter, setGlobalFilter] = React.useState('');
 
   // Initialize column order with all column IDs

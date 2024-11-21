@@ -44,7 +44,8 @@ const getDifferenceType = (item: Item): 'higher' | 'lower' | 'same' | 'na' => {
 };
 
 export const createColumns = (
-  updateItem: (item: Item) => void
+  updateItem: (item: Item) => void,
+  removeItem?: (itemId: number) => void
 ): ColumnDef<Item>[] =>
   [
     {
@@ -375,6 +376,7 @@ export const createColumns = (
           <ActionCell
             item={row.original}
             localId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            removeItem={removeItem}
           />
         );
       },

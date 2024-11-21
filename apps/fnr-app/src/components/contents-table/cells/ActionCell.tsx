@@ -16,10 +16,18 @@ import { DotsHorizontalIcon, TrashIcon } from '@radix-ui/react-icons';
 export const ActionCell = ({
   item,
   localId,
+  removeItem,
 }: {
   item: Item;
   localId: string;
+  removeItem?: (itemId: number) => void;
 }) => {
+  const handleDelete = () => {
+    if (removeItem && item.id) {
+      removeItem(item.id);
+    }
+  };
+
   return (
     <CellWrapper rowId={localId} columnId={ITEM_KEYS.ACTIONS}>
       <DropdownMenu>
@@ -31,7 +39,10 @@ export const ActionCell = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem className="text-red-600 focus:bg-red-100 focus:text-red-600">
+          <DropdownMenuItem
+            className="text-red-600 focus:bg-red-100 focus:text-red-600"
+            onClick={handleDelete}
+          >
             <TrashIcon className="mr-1 h-4 w-4" />
             Delete
           </DropdownMenuItem>
