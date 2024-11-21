@@ -7,7 +7,7 @@ import express from 'express';
 import * as path from 'path';
 import cors from 'cors';
 import itemsRouter from './routes/items';
-import claimsRouter from './routes/claims';
+import claimsRouter from './routes/claims/index';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
 
