@@ -187,7 +187,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
           Add Item
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <h4 className="font-medium leading-none">Add a new Item</h4>
         <div className="flex space-x-1 border-b">
           {TABS.map((tab) => {

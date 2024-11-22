@@ -183,26 +183,29 @@ export function QuickAddTab({
       </div>
 
       {/* Status Section */}
-      <div>
-        <Label className="text-sm font-medium">Status</Label>
+      <div className="flex items-center gap-4">
+        <Label className={labelMinWidthClass}>Status</Label>
         <RadioGroup
           value={selectedStatus}
           onValueChange={(value) => setSelectedStatus(value as ItemStatusType)}
-          className="mt-2"
+          className="flex gap-3 flex-1"
         >
           {STATUS_OPTIONS.map((status) => (
-            <Label
+            <div
               key={status}
-              htmlFor={`status-${status}`}
-              className="flex items-center w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+              className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+              onClick={() => setSelectedStatus(status)}
             >
-              <div className="flex items-center space-x-2">
+              <Label
+                htmlFor={`status-${status}`}
+                className="flex items-center cursor-pointer"
+              >
                 <RadioGroupItem value={status} id={`status-${status}`} />
-                <div className="flex items-center gap-2">
+                <span className="ml-2">
                   <ItemStatusBadge itemStatus={status} />
-                </div>
-              </div>
-            </Label>
+                </span>
+              </Label>
+            </div>
           ))}
         </RadioGroup>
       </div>
