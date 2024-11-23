@@ -153,6 +153,23 @@ enum ClaimStatus {
   REJECTED
 }
 
+enum RoomCategory {
+  MASTER_BEDROOM @map("MASTER_BEDROOM")
+  BEDROOM_1      @map("BEDROOM_1")
+  BEDROOM_2      @map("BEDROOM_2")
+  KITCHEN_DINING @map("KITCHEN_DINING")
+  LIVING_ROOM    @map("LIVING_ROOM")
+  BATHROOM       @map("BATHROOM")
+  LAUNDRY        @map("LAUNDRY")
+  OUTDOOR        @map("OUTDOOR")
+  GARDEN         @map("GARDEN")
+  GARAGE         @map("GARAGE")
+  STORAGE        @map("STORAGE")
+  BASEMENT       @map("BASEMENT")
+  OFFICE_STUDY   @map("OFFICE_STUDY")
+  OTHER          @map("OTHER")
+}
+
 /// Claim item details and tracking
 model Item {
   id                Int         @id @default(autoincrement())
@@ -160,6 +177,7 @@ model Item {
   claim             Claim       @relation(fields: [claimId], references: [id])
   name              String
   category          String?
+  roomcategory      RoomCategory? @map("ROOMCATEGORY")
   group             String?
   modelSerialNumber String?
   description       String?
@@ -179,6 +197,7 @@ model Item {
 
   @@index([claimId])
   @@index([category])
+  @@index([roomcategory])
   @@index([itemStatus])
   @@index([isDeleted])
   @@index([claimId, itemStatus])

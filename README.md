@@ -28,7 +28,7 @@ This will make it so that Cline acts properly and will hopefully make less mista
 Do not delete existing comments unless necessary. Do not waste time trying to change quotetation mark as it doesn't matter if its ' or ". If you need help with database migrations, look at README and when running commands assume docker is running.
 When you make new components, please write some comments, and use arrow format and export const. When importing from 'shared/src/components/ui', e.g. DropdownMenu, Button, shadcn related stuff, import it as from "@react-monorepo/shared".
 Stop worrying about tsconfig files and composite = true, unless its really necessary which in many cases it isn't.
-For server tests, try "npx nx test fnr-server-e2e". If that wont work, try look in package.json for the script.
+For server tests, try "npx nx test fnr-server-e2e". If that wont work, try look in package.json for the script. If there's prisma migration issues with permissions, look at README for help.
 ````
 
 ## Database Setup and Seeding
@@ -60,6 +60,27 @@ cd apps/fnr-server && npx ts-node --compiler-options '{"module":"CommonJS"}' pri
 ```
 
 > **Note**: Make sure to include the single quotes around the compiler options on macOS/Linux.
+
+### 4. Prisma Troubleshooting
+
+When running Prisma commands (like `prisma generate` or `prisma migrate`), you might encounter permission errors, especially on Windows. To resolve these:
+
+1. **Close Running Processes**: Ensure the following are not running:
+   - Nx development server (`nx serve fnr-app`)
+   - Server application
+   - Prisma Studio
+   - Any other processes that might be using the Prisma client
+
+2. **Run Prisma Commands**: After closing all processes, run your Prisma commands:
+```sh
+cd apps/fnr-server && npx prisma generate
+# or
+cd apps/fnr-server && npx prisma migrate dev --name your_migration_name
+```
+
+3. **Restart Services**: After successful Prisma operations, you can restart your development servers and other services.
+
+> **Note**: If you still encounter permission errors, try closing VSCode and reopening it, as it might have locks on some files.
 
 ---
 
