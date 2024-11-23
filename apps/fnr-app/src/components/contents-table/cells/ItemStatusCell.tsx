@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
-import { ItemStatus } from '../ItemStatus';
+import { ItemStatus, ORDERED_ITEM_STATUSES } from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 
 interface ItemStatusCellProps {
@@ -42,9 +42,9 @@ export const StatusDropdown = ({
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {Object.values(ItemStatus).map((status) => (
+        {ORDERED_ITEM_STATUSES.map((status) => (
           <SelectItem key={status} value={status}>
-            <ItemStatusBadge itemStatus={status} />
+            <ItemStatusBadge itemStatus={status} showTooltip={false} />
           </SelectItem>
         ))}
       </SelectContent>

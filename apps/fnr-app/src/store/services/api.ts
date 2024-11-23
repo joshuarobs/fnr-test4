@@ -96,6 +96,7 @@ export const api = createApi({
           name: item.name,
           ourQuote: item.ourQuote,
           insuredsQuote: item.insuredsQuote,
+          itemStatus: item.itemStatus, // Added itemStatus to be sent to server
         },
       }),
       invalidatesTags: ['Claim'],

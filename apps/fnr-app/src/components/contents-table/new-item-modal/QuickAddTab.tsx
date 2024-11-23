@@ -19,19 +19,15 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { placeholderContentsData } from '../placeholderContentsData';
 import { ItemCategory } from '../itemCategories';
-import { ItemStatus, ItemStatusType } from '../ItemStatus';
+import {
+  ItemStatus,
+  ItemStatusType,
+  ORDERED_ITEM_STATUSES,
+} from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { CategoryDropdown } from '../shared/CategoryDropdown';
 
 const labelMinWidthClass = 'min-w-[80px] text-right';
-
-// Define the order of status options
-const STATUS_OPTIONS = [
-  ItemStatus.NR,
-  ItemStatus.VPOL,
-  ItemStatus.RS,
-  ItemStatus.OTHER,
-] as const;
 
 // Function to get all unique groups from placeholderContentsData
 const getAllGroups = () => {
@@ -190,7 +186,7 @@ export function QuickAddTab({
           onValueChange={(value) => setSelectedStatus(value as ItemStatusType)}
           className="flex gap-3 flex-1"
         >
-          {STATUS_OPTIONS.map((status) => (
+          {ORDERED_ITEM_STATUSES.map((status) => (
             <div
               key={status}
               className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"

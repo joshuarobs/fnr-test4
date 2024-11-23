@@ -15,7 +15,7 @@ import { Item } from '../item';
 import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
 import { ItemCategory } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
-import { ItemStatus } from '../ItemStatus';
+import { ItemStatus, ORDERED_ITEM_STATUSES } from '../ItemStatus';
 import { ITEM_KEYS } from '../itemKeys';
 import { OptionGroups, FilterOption } from './types';
 
@@ -26,11 +26,10 @@ interface ContentsTableToolbarProps<TData> {
 }
 
 const statusOptions: OptionGroups = {
-  mainGroup: [
-    { label: 'Non-Restorable', value: ItemStatus.NR },
-    { label: 'VPOL', value: ItemStatus.VPOL },
-    { label: 'Restorable', value: ItemStatus.RS },
-  ],
+  mainGroup: ORDERED_ITEM_STATUSES.map((status) => ({
+    label: status === ItemStatus.NR ? 'Non-Restorable' : status,
+    value: status,
+  })),
 };
 
 const categoryOptions: OptionGroups = {

@@ -26,7 +26,11 @@ import { QuickAddTab } from './QuickAddTab';
 import { MultiAddTab } from './MultiAddTab';
 import { Item } from '../item';
 import { ItemCategory, categoryIcons } from '../itemCategories';
-import { ItemStatus, ItemStatusType } from '../ItemStatus';
+import {
+  ItemStatus,
+  ItemStatusType,
+  ORDERED_ITEM_STATUSES,
+} from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { useParams } from 'react-router-dom';
 
@@ -50,14 +54,6 @@ const TABS = [
     label: 'Multi add',
     icon: Files,
   },
-] as const;
-
-// Define the order of status options
-const STATUS_OPTIONS = [
-  ItemStatus.NR,
-  ItemStatus.VPOL,
-  ItemStatus.RS,
-  ItemStatus.OTHER,
 ] as const;
 
 // Define the order of category options
@@ -325,7 +321,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                   }
                   className="mt-2"
                 >
-                  {STATUS_OPTIONS.map((status) => (
+                  {ORDERED_ITEM_STATUSES.map((status) => (
                     <Label
                       key={status}
                       htmlFor={`status-${status}`}
