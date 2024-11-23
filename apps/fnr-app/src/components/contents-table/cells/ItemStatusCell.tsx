@@ -43,7 +43,11 @@ export const StatusDropdown = ({
       </SelectTrigger>
       <SelectContent>
         {ORDERED_ITEM_STATUSES.map((status) => (
-          <SelectItem key={status} value={status}>
+          <SelectItem
+            key={status}
+            value={status}
+            className="hover:cursor-pointer"
+          >
             <ItemStatusBadge itemStatus={status} showTooltip={false} />
           </SelectItem>
         ))}

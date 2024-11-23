@@ -31,7 +31,7 @@ export const DropdownMenuListItem = ({
     <DropdownMenuItem
       onClick={onClick}
       className={clsx(
-        'flex items-center gap-2 justify-between',
+        'flex items-center gap-2 justify-between cursor-pointer',
         {
           'text-red-600 focus:bg-red-100 focus:text-red-600': danger,
           'text-gray-600 focus:bg-gray-100 focus:text-gray-700': !danger,

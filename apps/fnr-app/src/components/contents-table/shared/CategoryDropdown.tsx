@@ -80,7 +80,10 @@ export const CategoryDropdown = ({
           />
         </div>
         <ScrollArea className="h-[200px]">
-          <SelectItem value={NO_CATEGORY_VALUE}>
+          <SelectItem
+            value={NO_CATEGORY_VALUE}
+            className="hover:cursor-pointer"
+          >
             <div className="flex items-center gap-2 text-muted-foreground italic">
               No category
             </div>
@@ -89,7 +92,11 @@ export const CategoryDropdown = ({
           {filteredCategories.map((category) => {
             const CategoryIcon = categoryIcons[category as ItemCategory];
             return (
-              <SelectItem key={category} value={category}>
+              <SelectItem
+                key={category}
+                value={category}
+                className="hover:cursor-pointer"
+              >
                 <div className="flex items-center gap-2">
                   <CategoryIcon className="h-4 w-4 text-gray-600" />
                   <span>{category}</span>
