@@ -75,9 +75,6 @@ export const RoomCategoryCell = ({
   item,
   updateItem,
 }: RoomCategoryCellProps) => {
-  console.log('RoomCategoryCell - item:', item);
-  console.log('RoomCategoryCell - roomCategory:', item.roomCategory);
-
   const [isEditing, setIsEditing] = useState(false);
 
   const handleDoubleClick = useCallback(() => {
