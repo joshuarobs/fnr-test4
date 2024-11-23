@@ -8,7 +8,7 @@ export type Item = {
   group: string;
   name: string;
   category: ItemCategory | null;
-  roomcategory: RoomCategory | null; // Added room category field
+  roomCategory: RoomCategory | null; // Updated to match database schema
   modelSerialNumber: string | null; // Keep this as modelSerialNumber for now since it's used in many places
   itemStatus: (typeof ItemStatus)[keyof typeof ItemStatus]; // Using ItemStatus type
   insuredsQuote: number | null;

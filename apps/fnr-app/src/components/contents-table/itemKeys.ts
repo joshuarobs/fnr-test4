@@ -1,7 +1,7 @@
 export const ITEM_KEYS = {
   ID: 'id',
   LOCAL_ID: 'localId',
-  GROUP: 'group',
+  GROUP: 'roomCategory', // Updated to match the actual field being used
   NAME: 'name',
   CATEGORY: 'category',
   MODEL_SERIAL_NUMBER: 'modelSerialNumber',
