@@ -89,7 +89,10 @@ export const ItemStatusCell = ({ item, updateItem }: ItemStatusCellProps) => {
   }
 
   return (
-    <div onDoubleClick={handleDoubleClick} className="cursor-pointer flex-grow">
+    <div
+      onDoubleClick={handleDoubleClick}
+      className="cursor-pointer flex-grow h-full flex items-center px-2 hover:bg-gray-50"
+    >
       <ItemStatusBadge itemStatus={item.itemStatus} />
     </div>
   );
