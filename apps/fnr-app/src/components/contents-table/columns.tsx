@@ -1,7 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Item, calculateDifference } from './item';
 import { ModelSerialCell } from './cells/ModelSerialCell';
-import { ItemStatusBadge } from './ItemStatusBadge';
 import { InsuredsQuoteCell } from './cells/InsuredsQuoteCell';
 import { OurQuoteCell } from './cells/OurQuoteCell';
 import { ItemNameCell } from './cells/ItemNameCell';
@@ -15,6 +14,7 @@ import { CellWrapper } from './CellWrapper';
 import { ITEM_KEYS } from './itemKeys';
 import { GreenTickIcon } from './GreenTickIcon';
 import { SortableHeader } from './SortableHeader';
+import { ItemStatusCell } from './cells/ItemStatusCell';
 
 export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ID]: 'ID',
@@ -100,14 +100,13 @@ export const createColumns = ({
         headerClassName: 'min-w-[96px]',
       },
       cell: ({ row }) => {
-        const status = row.original.itemStatus;
         return (
           <CellWrapper
             rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
             columnId={ITEM_KEYS.ITEM_STATUS}
           >
             <div className={CELL_CONTENT_MARGIN}>
-              <ItemStatusBadge itemStatus={status} />
+              <ItemStatusCell item={row.original} updateItem={updateItem} />
             </div>
           </CellWrapper>
         );
