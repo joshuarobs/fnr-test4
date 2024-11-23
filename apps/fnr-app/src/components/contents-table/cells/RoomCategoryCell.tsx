@@ -7,7 +7,11 @@ import {
   SelectValue,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
-import { RoomCategory, roomCategoryDisplayNames } from '../roomCategories';
+import {
+  RoomCategory,
+  roomCategoryDisplayNames,
+  NO_ROOM_CATEGORY_VALUE,
+} from '../roomCategories';
 import { RoomCategoryBadge } from '../RoomCategoryBadge';
 
 interface RoomCategoryCellProps {
@@ -29,15 +33,27 @@ export const RoomCategoryDropdown = ({
   defaultOpen?: boolean;
   className?: string;
 }) => {
+  console.log('RoomCategoryDropdown - selectedCategory:', selectedCategory);
+
   return (
     <Select
       defaultOpen={defaultOpen}
       onValueChange={onCategorySelect}
-      defaultValue={selectedCategory ?? undefined}
+      value={selectedCategory || NO_ROOM_CATEGORY_VALUE}
+      defaultValue={selectedCategory || NO_ROOM_CATEGORY_VALUE}
       onOpenChange={onOpenChange}
     >
       <SelectTrigger className={className}>
-        <SelectValue />
+        <SelectValue>
+          {selectedCategory ? (
+            <RoomCategoryBadge
+              roomCategory={selectedCategory}
+              showTooltip={false}
+            />
+          ) : (
+            <span className="text-gray-500">Select room...</span>
+          )}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {Object.values(RoomCategory).map((category) => (
@@ -59,6 +75,9 @@ export const RoomCategoryCell = ({
   item,
   updateItem,
 }: RoomCategoryCellProps) => {
+  console.log('RoomCategoryCell - item:', item);
+  console.log('RoomCategoryCell - roomCategory:', item.roomCategory);
+
   const [isEditing, setIsEditing] = useState(false);
 
   const handleDoubleClick = useCallback(() => {
@@ -67,6 +86,7 @@ export const RoomCategoryCell = ({
 
   const handleCategorySelect = useCallback(
     (newCategory: RoomCategory) => {
+      console.log('handleCategorySelect - newCategory:', newCategory);
       setIsEditing(false);
       if (newCategory !== item.roomCategory) {
         updateItem({ ...item, roomCategory: newCategory });
@@ -98,8 +118,10 @@ export const RoomCategoryCell = ({
       onDoubleClick={handleDoubleClick}
       className="cursor-pointer flex-grow h-full flex items-center px-2 hover:bg-gray-50"
     >
-      {item.roomCategory && (
+      {item.roomCategory ? (
         <RoomCategoryBadge roomCategory={item.roomCategory} />
+      ) : (
+        <span className="text-gray-500">Select room...</span>
       )}
     </div>
   );

@@ -94,6 +94,7 @@ export const ClaimPage = () => {
       group: item.group || '',
       name: item.name,
       category: item.category,
+      roomCategory: item.roomCategory, // Added roomCategory field
       modelSerialNumber: item.modelSerialNumber,
       itemStatus: item.itemStatus || ItemStatus.NR,
       insuredsQuote: item.insuredsQuote,
@@ -137,6 +138,7 @@ export const ClaimPage = () => {
               category: item.category,
               itemStatus: item.itemStatus,
               modelSerialNumber: item.modelSerialNumber,
+              roomCategory: item.roomCategory, // Added roomCategory field
             },
           }).unwrap();
         }
@@ -149,6 +151,7 @@ export const ClaimPage = () => {
             category: newItem.category,
             itemStatus: newItem.itemStatus,
             modelSerialNumber: newItem.modelSerialNumber,
+            roomCategory: newItem.roomCategory, // Added roomCategory field
           },
         }).unwrap();
       }

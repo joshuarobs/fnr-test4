@@ -5,7 +5,7 @@ import { InsuredsQuoteCell } from './cells/InsuredsQuoteCell';
 import { OurQuoteCell } from './cells/OurQuoteCell';
 import { ItemNameCell } from './cells/ItemNameCell';
 import { CategoryCell } from './cells/CategoryCell';
-import { GroupCell } from './cells/GroupCell';
+import { RoomCategoryCell } from './cells/RoomCategoryCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
 import { IdCell } from './cells/IdCell';
 import { ActionCell } from './cells/ActionCell';
@@ -18,7 +18,7 @@ import { ItemStatusCell } from './cells/ItemStatusCell';
 
 export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ID]: 'ID',
-  [ITEM_KEYS.GROUP]: 'Group',
+  [ITEM_KEYS.ROOM_CATEGORY]: 'Group',
   [ITEM_KEYS.NAME]: 'Name',
   [ITEM_KEYS.ITEM_STATUS]: 'Status',
   [ITEM_KEYS.CATEGORY]: 'Category',
@@ -115,18 +115,15 @@ export const createColumns = ({
       filterFn: 'faceted' as const,
     },
     {
-      accessorKey: ITEM_KEYS.GROUP,
+      accessorKey: ITEM_KEYS.ROOM_CATEGORY,
       header: ({ column }) => <SortableHeader column={column} title="Group" />,
       cell: ({ row }) => {
-        const group = row.getValue(ITEM_KEYS.GROUP) as string;
         return (
           <CellWrapper
             rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
-            columnId={ITEM_KEYS.GROUP}
+            columnId={ITEM_KEYS.ROOM_CATEGORY}
           >
-            <div className={CELL_CONTENT_MARGIN}>
-              <GroupCell group={group} />
-            </div>
+            <RoomCategoryCell item={row.original} updateItem={updateItem} />
           </CellWrapper>
         );
       },
