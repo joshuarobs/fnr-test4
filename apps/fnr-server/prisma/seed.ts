@@ -4,6 +4,7 @@ import {
   EvidenceType,
   ItemStatus,
   ClaimStatus,
+  RoomCategory,
 } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { clm003Items } from './seedData/clm003Items';
@@ -174,6 +175,7 @@ async function main() {
         {
           name: 'MacBook Pro',
           category: 'Electronics',
+          roomCategory: RoomCategory.OFFICE_STUDY, // Keep - key office item
           modelSerialNumber: 'MP2023ABC',
           description: 'Water damaged laptop',
           insuredsQuote: 2499.99,
@@ -222,6 +224,7 @@ async function main() {
         {
           name: 'Samsung Refrigerator',
           category: 'Appliances',
+          roomCategory: RoomCategory.KITCHEN_DINING, // Keep - key kitchen item
           modelSerialNumber: 'RF123ABC',
           description: 'Fire damaged fridge',
           insuredsQuote: 3499.99,
@@ -253,6 +256,7 @@ async function main() {
         {
           name: 'Television',
           category: 'Electronics',
+          roomCategory: RoomCategory.LIVING_ROOM, // Keep - key living room item
           modelSerialNumber: 'TV-2023-4K',
           description: '4K Television',
           insuredsQuote: 2000,
@@ -327,6 +331,7 @@ async function main() {
           claimId: createdClaim.id,
           name: item.name,
           category: item.category,
+          roomCategory: item.roomCategory,
           modelSerialNumber: item.modelSerialNumber,
           description: item.description,
           insuredsQuote: item.insuredsQuote,
