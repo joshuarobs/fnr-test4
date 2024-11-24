@@ -214,10 +214,10 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
               setQuickAddInput={handleQuickAddInputChange}
               modelSerialInput={modelSerialInput}
               setModelSerialInput={setModelSerialInput}
-              selectedGroup=""
-              setSelectedGroup={() => {}}
-              groupOpen={false}
-              setGroupOpen={() => {}}
+              selectedRoom=""
+              setSelectedRoom={() => {}}
+              roomOpen={false}
+              setRoomOpen={() => {}}
               handleQuickAdd={handleQuickAdd}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}

@@ -5,7 +5,6 @@ import { RoomCategory } from './roomCategories';
 export type Item = {
   id: number;
   localId: number; // Position in localItemIds array + 1
-  group: string;
   name: string;
   category: ItemCategory | null;
   roomCategory: RoomCategory | null; // Updated to match database schema

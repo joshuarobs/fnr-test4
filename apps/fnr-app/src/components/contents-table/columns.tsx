@@ -18,7 +18,7 @@ import { ItemStatusCell } from './cells/ItemStatusCell';
 
 export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ID]: 'ID',
-  [ITEM_KEYS.ROOM_CATEGORY]: 'Group',
+  [ITEM_KEYS.ROOM_CATEGORY]: 'Room',
   [ITEM_KEYS.NAME]: 'Name',
   [ITEM_KEYS.ITEM_STATUS]: 'Status',
   [ITEM_KEYS.CATEGORY]: 'Category',
@@ -116,7 +116,7 @@ export const createColumns = ({
     },
     {
       accessorKey: ITEM_KEYS.ROOM_CATEGORY,
-      header: ({ column }) => <SortableHeader column={column} title="Group" />,
+      header: ({ column }) => <SortableHeader column={column} title="Room" />,
       cell: ({ row }) => {
         return (
           <CellWrapper

@@ -26,20 +26,21 @@ import {
 } from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { CategoryDropdown } from '../shared/CategoryDropdown';
+import { RoomCategory } from '../roomCategories';
 
 const labelMinWidthClass = 'min-w-[80px] text-right';
 
-// Function to get all unique groups from placeholderContentsData
-const getAllGroups = () => {
-  const uniqueGroups = new Set<string>();
+// Function to get all unique rooms from placeholderContentsData
+const getAllRooms = () => {
+  const uniqueRooms = new Set<string>();
   placeholderContentsData.forEach((item) => {
-    if (item.group) {
-      uniqueGroups.add(item.group);
+    if (item.roomCategory) {
+      uniqueRooms.add(item.roomCategory);
     }
   });
-  return Array.from(uniqueGroups)
+  return Array.from(uniqueRooms)
     .sort()
-    .map((group) => ({ value: group.toLowerCase(), label: group }));
+    .map((room) => ({ value: room.toLowerCase(), label: room }));
 };
 
 interface QuickAddTabProps {
@@ -47,10 +48,10 @@ interface QuickAddTabProps {
   setQuickAddInput: (value: string) => void;
   modelSerialInput: string;
   setModelSerialInput: (value: string) => void;
-  selectedGroup: string;
-  setSelectedGroup: (value: string) => void;
-  groupOpen: boolean;
-  setGroupOpen: (value: boolean) => void;
+  selectedRoom: string;
+  setSelectedRoom: (value: string) => void;
+  roomOpen: boolean;
+  setRoomOpen: (value: boolean) => void;
   handleQuickAdd: (e: KeyboardEvent<HTMLInputElement>) => void;
   selectedCategory: ItemCategory | null;
   setSelectedCategory: (category: ItemCategory | null) => void;
@@ -65,10 +66,10 @@ export function QuickAddTab({
   setQuickAddInput,
   modelSerialInput,
   setModelSerialInput,
-  selectedGroup,
-  setSelectedGroup,
-  groupOpen,
-  setGroupOpen,
+  selectedRoom,
+  setSelectedRoom,
+  roomOpen,
+  setRoomOpen,
   handleQuickAdd,
   selectedCategory,
   setSelectedCategory,
@@ -77,12 +78,22 @@ export function QuickAddTab({
   selectedStatus,
   setSelectedStatus,
 }: QuickAddTabProps) {
-  const [groups, setGroups] = useState<Array<{ value: string; label: string }>>(
+  const [rooms, setRooms] = useState<Array<{ value: string; label: string }>>(
     []
   );
 
   useEffect(() => {
-    setGroups(getAllGroups());
+    // Convert RoomCategory enum to options
+    const roomOptions = Object.values(RoomCategory).map((room) => ({
+      value: room.toLowerCase(),
+      label: room
+        .replace(/_/g, ' ')
+        .replace(
+          /\w\S*/g,
+          (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        ),
+    }));
+    setRooms(roomOptions);
   }, []);
 
   return (
@@ -107,20 +118,20 @@ export function QuickAddTab({
       </div>
 
       <div className="flex items-center gap-4">
-        <Label htmlFor="group" className={labelMinWidthClass}>
-          Group
+        <Label htmlFor="room" className={labelMinWidthClass}>
+          Room
         </Label>
-        <Popover open={groupOpen} onOpenChange={setGroupOpen} modal={true}>
+        <Popover open={roomOpen} onOpenChange={setRoomOpen} modal={true}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               role="combobox"
-              aria-expanded={groupOpen}
+              aria-expanded={roomOpen}
               className="flex-1 justify-between"
             >
-              {selectedGroup
-                ? groups.find((group) => group.value === selectedGroup)?.label
-                : 'Select group...'}
+              {selectedRoom
+                ? rooms.find((room) => room.value === selectedRoom)?.label
+                : 'Select room...'}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -132,30 +143,30 @@ export function QuickAddTab({
             }}
           >
             <Command>
-              <CommandInput placeholder="Search group..." />
+              <CommandInput placeholder="Search room..." />
               <CommandList>
-                <CommandEmpty>No group found.</CommandEmpty>
+                <CommandEmpty>No room found.</CommandEmpty>
                 <CommandGroup>
-                  {groups.map((group) => (
+                  {rooms.map((room) => (
                     <CommandItem
-                      key={group.value}
-                      value={group.value}
+                      key={room.value}
+                      value={room.value}
                       onSelect={(currentValue) => {
-                        setSelectedGroup(
-                          currentValue === selectedGroup ? '' : currentValue
+                        setSelectedRoom(
+                          currentValue === selectedRoom ? '' : currentValue
                         );
-                        setGroupOpen(false);
+                        setRoomOpen(false);
                       }}
                     >
                       <Check
                         className={cn(
                           'mr-2 h-4 w-4',
-                          selectedGroup === group.value
+                          selectedRoom === room.value
                             ? 'opacity-100'
                             : 'opacity-0'
                         )}
                       />
-                      {group.label}
+                      {room.label}
                     </CommandItem>
                   ))}
                 </CommandGroup>
