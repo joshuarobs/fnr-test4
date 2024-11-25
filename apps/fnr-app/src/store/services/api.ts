@@ -97,7 +97,8 @@ export const api = createApi({
           ourQuote: item.ourQuote,
           insuredsQuote: item.insuredsQuote,
           itemStatus: item.itemStatus,
-          roomCategory: item.roomCategory, // Updated to match database field name
+          roomCategory: item.roomCategory,
+          category: item.category, // Added category field to update request
         },
       }),
       invalidatesTags: ['Claim'],

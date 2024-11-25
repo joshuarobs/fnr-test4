@@ -7,7 +7,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 1,
     name: 'Laptop',
-    category: ItemCategory.Electronics,
+    category: ItemCategory.ELECTRONICS,
     modelSerialNumber: 'LT-2023-XPS15',
     dateCreated: new Date('2023-05-01T14:23:45'),
     itemStatus: ItemStatus.RS,
@@ -35,7 +35,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 3,
     name: 'Antivirus License Very Very Very Very Long Value',
-    category: ItemCategory.Digital,
+    category: ItemCategory.DIGITAL,
     modelSerialNumber: 'AV-2023-PRO',
     dateCreated: new Date('2023-05-03T16:45:12'),
     itemStatus: ItemStatus.VPOL,
@@ -49,7 +49,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 4,
     name: 'Smartphone',
-    category: ItemCategory.Electronics,
+    category: ItemCategory.ELECTRONICS,
     modelSerialNumber: 'SM-G-S23-ULTRA',
     dateCreated: new Date('2023-05-04T11:32:58'),
     itemStatus: ItemStatus.RS,
@@ -63,7 +63,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 5,
     name: 'Groceries',
-    category: ItemCategory.Food,
+    category: ItemCategory.FOOD,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-05T08:05:22'),
     itemStatus: ItemStatus.NR,
@@ -77,7 +77,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 6,
     name: 'Area Rug',
-    category: ItemCategory.Decor,
+    category: ItemCategory.DECOR,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-06T13:48:33'),
     itemStatus: ItemStatus.NR,
@@ -91,7 +91,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 7,
     name: 'Coffee Maker',
-    category: ItemCategory.Appliances,
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'CM-2023-DELUXE',
     dateCreated: new Date('2023-05-07T15:20:15'),
     itemStatus: ItemStatus.RS,
@@ -105,7 +105,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 8,
     name: 'Office Chair',
-    category: ItemCategory.Furniture,
+    category: ItemCategory.FURNITURE,
     modelSerialNumber: 'OC-2023-ERGO',
     dateCreated: new Date('2023-05-08T10:55:42'),
     itemStatus: ItemStatus.NR,
@@ -133,7 +133,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 10,
     name: 'Bookshelf',
-    category: ItemCategory.Furniture,
+    category: ItemCategory.FURNITURE,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-10T12:30:55'),
     itemStatus: ItemStatus.NR,
@@ -147,7 +147,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 11,
     name: 'Microwave',
-    category: ItemCategory.Appliances,
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'MW-2023-SMART',
     dateCreated: new Date('2023-05-11T09:42:28'),
     itemStatus: ItemStatus.RS,
@@ -161,7 +161,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 12,
     name: 'Dining Table',
-    category: ItemCategory.Furniture,
+    category: ItemCategory.FURNITURE,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-12T14:15:37'),
     itemStatus: ItemStatus.NR,
@@ -175,7 +175,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 13,
     name: 'Vacuum Cleaner',
-    category: ItemCategory.Appliances,
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'VC-2023-ROBOT',
     dateCreated: new Date('2023-05-13T16:28:51'),
     itemStatus: ItemStatus.VPOL,
@@ -189,7 +189,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 14,
     name: 'Television',
-    category: ItemCategory.Electronics,
+    category: ItemCategory.ELECTRONICS,
     modelSerialNumber: 'TV-2023-4K',
     dateCreated: new Date('2023-05-14T11:05:44'),
     itemStatus: ItemStatus.RS,
@@ -203,7 +203,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 15,
     name: 'Blender',
-    category: ItemCategory.Appliances,
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'BL-2023-PRO',
     dateCreated: new Date('2023-05-15T13:37:09'),
     itemStatus: ItemStatus.NR,
@@ -217,7 +217,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 16,
     name: 'Curtains',
-    category: ItemCategory.Decor,
+    category: ItemCategory.DECOR,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-16T15:52:23'),
     itemStatus: ItemStatus.NR,
@@ -231,7 +231,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 17,
     name: 'Car Battery',
-    category: ItemCategory.Auto,
+    category: ItemCategory.AUTO,
     modelSerialNumber: 'CB-2023-12V',
     dateCreated: new Date('2023-05-17T08:45:31'),
     itemStatus: ItemStatus.NR,
@@ -245,7 +245,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 18,
     name: 'Bath towel',
-    category: ItemCategory.Bath,
+    category: ItemCategory.BATH,
     modelSerialNumber: '',
     dateCreated: new Date('2023-05-18T10:18:47'),
     itemStatus: ItemStatus.RS,
@@ -259,7 +259,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 19,
     name: 'Leather Jacket',
-    category: ItemCategory.Clothing,
+    category: ItemCategory.CLOTHING,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-19T12:25:56'),
     itemStatus: ItemStatus.NR,
@@ -273,7 +273,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 20,
     name: 'Insurance Papers',
-    category: ItemCategory.Documents,
+    category: ItemCategory.DOCUMENTS,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-20T14:40:15'),
     itemStatus: ItemStatus.VPOL,
@@ -287,7 +287,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 21,
     name: 'Lawn Mower',
-    category: ItemCategory.Garden,
+    category: ItemCategory.GARDEN,
     modelSerialNumber: 'LM-2023-ELECTRIC',
     dateCreated: new Date('2023-05-21T09:33:28'),
     itemStatus: ItemStatus.RS,
@@ -301,7 +301,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 22,
     name: 'Lego Toys',
-    category: ItemCategory.Kids,
+    category: ItemCategory.KIDS,
     modelSerialNumber: 'BC-2023-SAFE',
     dateCreated: new Date('2023-05-22T11:50:42'),
     itemStatus: ItemStatus.NR,
@@ -315,7 +315,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 23,
     name: 'Miscellaneous Items Box',
-    category: ItemCategory.Other,
+    category: ItemCategory.OTHER,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-23T16:15:39'),
     itemStatus: ItemStatus.NR,
@@ -329,7 +329,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 24,
     name: 'Dog Bed',
-    category: ItemCategory.Pets,
+    category: ItemCategory.PETS,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-24T13:28:54'),
     itemStatus: ItemStatus.RS,
@@ -343,7 +343,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 25,
     name: 'Tennis Racket',
-    category: ItemCategory.Recreation,
+    category: ItemCategory.RECREATION,
     modelSerialNumber: 'TR-2023-PRO',
     dateCreated: new Date('2023-05-25T15:45:17'),
     itemStatus: ItemStatus.NR,
@@ -357,7 +357,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 26,
     name: 'Storage Cabinet',
-    category: ItemCategory.Storage,
+    category: ItemCategory.STORAGE,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-26T10:12:33'),
     itemStatus: ItemStatus.RS,
@@ -371,7 +371,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 27,
     name: 'Cleaning Supplies Set',
-    category: ItemCategory.Supplies,
+    category: ItemCategory.SUPPLIES,
     modelSerialNumber: null,
     dateCreated: new Date('2023-05-27T08:55:48'),
     itemStatus: ItemStatus.NR,
@@ -385,7 +385,7 @@ export const placeholderContentsData: Item[] = [
   {
     id: 28,
     name: 'Power Drill',
-    category: ItemCategory.Tools,
+    category: ItemCategory.TOOLS,
     modelSerialNumber: 'PD-2023-18V',
     dateCreated: new Date('2023-05-28T12:40:25'),
     itemStatus: ItemStatus.RS,

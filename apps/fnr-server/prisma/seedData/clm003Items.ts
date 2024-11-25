@@ -1,9 +1,14 @@
-import { ItemStatus, EvidenceType, RoomCategory } from '@prisma/client';
+import {
+  ItemStatus,
+  EvidenceType,
+  RoomCategory,
+  ItemCategory,
+} from '@prisma/client';
 
 export const clm003Items = [
   {
     name: 'Laptop',
-    category: 'Electronics',
+    category: ItemCategory.ELECTRONICS,
     roomCategory: RoomCategory.OFFICE_STUDY, // Keep - key office item
     modelSerialNumber: 'LT-2023-XPS15',
     description: 'Home office laptop',
@@ -23,7 +28,7 @@ export const clm003Items = [
   },
   {
     name: 'Office Desk',
-    category: 'Furniture',
+    category: ItemCategory.FURNITURE,
     modelSerialNumber: null,
     description: 'Home office desk',
     insuredsQuote: 500,
@@ -34,7 +39,7 @@ export const clm003Items = [
   },
   {
     name: 'Antivirus License',
-    category: 'Digital',
+    category: ItemCategory.DIGITAL,
     modelSerialNumber: 'AV-2023-PRO',
     description: 'Digital software license',
     insuredsQuote: null,
@@ -51,7 +56,7 @@ export const clm003Items = [
   },
   {
     name: 'Smartphone',
-    category: 'Electronics',
+    category: ItemCategory.ELECTRONICS,
     modelSerialNumber: 'SM-G-S23-ULTRA',
     description: 'Mobile phone',
     insuredsQuote: 1600,
@@ -68,7 +73,7 @@ export const clm003Items = [
   },
   {
     name: 'Groceries',
-    category: 'Food',
+    category: ItemCategory.FOOD,
     roomCategory: RoomCategory.KITCHEN_DINING, // Keep - key kitchen item
     modelSerialNumber: null,
     description: 'Food items',
@@ -80,7 +85,7 @@ export const clm003Items = [
   },
   {
     name: 'Area Rug',
-    category: 'Decor',
+    category: ItemCategory.DECOR,
     roomCategory: RoomCategory.LIVING_ROOM, // Keep - key living room item
     modelSerialNumber: null,
     description: 'Loungeroom rug',
@@ -92,7 +97,7 @@ export const clm003Items = [
   },
   {
     name: 'Coffee Maker',
-    category: 'Appliances',
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'CM-2023-DELUXE',
     description: 'Kitchen appliance',
     insuredsQuote: 300.75,
@@ -109,7 +114,7 @@ export const clm003Items = [
   },
   {
     name: 'Office Chair',
-    category: 'Furniture',
+    category: ItemCategory.FURNITURE,
     modelSerialNumber: 'OC-2023-ERGO',
     description: 'Ergonomic office chair',
     insuredsQuote: 400,
@@ -120,7 +125,7 @@ export const clm003Items = [
   },
   {
     name: 'Printer',
-    category: 'Electronics',
+    category: ItemCategory.ELECTRONICS,
     modelSerialNumber: 'PR-2023-LASER',
     description: 'Laser printer',
     insuredsQuote: null,
@@ -137,7 +142,7 @@ export const clm003Items = [
   },
   {
     name: 'Bookshelf',
-    category: 'Furniture',
+    category: ItemCategory.FURNITURE,
     roomCategory: RoomCategory.BEDROOM_1, // Keep - key bedroom item
     modelSerialNumber: null,
     description: 'Bedroom bookshelf',
@@ -149,7 +154,7 @@ export const clm003Items = [
   },
   {
     name: 'Microwave',
-    category: 'Appliances',
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'MW-2023-SMART',
     description: 'Kitchen microwave',
     insuredsQuote: 250,
@@ -168,7 +173,7 @@ export const clm003Items = [
   },
   {
     name: 'Dining Table',
-    category: 'Furniture',
+    category: ItemCategory.FURNITURE,
     modelSerialNumber: null,
     description: 'Dining room furniture',
     insuredsQuote: 750,
@@ -179,7 +184,7 @@ export const clm003Items = [
   },
   {
     name: 'Vacuum Cleaner',
-    category: 'Appliances',
+    category: ItemCategory.APPLIANCES,
     roomCategory: RoomCategory.STORAGE, // Keep - key storage item
     modelSerialNumber: 'VC-2023-ROBOT',
     description: 'Robot vacuum',
@@ -197,7 +202,7 @@ export const clm003Items = [
   },
   {
     name: 'Television',
-    category: 'Electronics',
+    category: ItemCategory.ELECTRONICS,
     modelSerialNumber: 'TV-2023-4K',
     description: '4K TV',
     insuredsQuote: 1200,
@@ -214,7 +219,7 @@ export const clm003Items = [
   },
   {
     name: 'Blender',
-    category: 'Appliances',
+    category: ItemCategory.APPLIANCES,
     modelSerialNumber: 'BL-2023-PRO',
     description: 'Kitchen blender',
     insuredsQuote: 120,
@@ -225,7 +230,7 @@ export const clm003Items = [
   },
   {
     name: 'Curtains',
-    category: 'Decor',
+    category: ItemCategory.DECOR,
     modelSerialNumber: null,
     description: 'Window curtains',
     insuredsQuote: 150,
@@ -236,7 +241,7 @@ export const clm003Items = [
   },
   {
     name: 'Car Battery',
-    category: 'Auto',
+    category: ItemCategory.AUTO,
     roomCategory: RoomCategory.GARAGE, // Keep - key garage item
     modelSerialNumber: 'CB-2023-12V',
     description: 'Garage car battery',
@@ -248,7 +253,7 @@ export const clm003Items = [
   },
   {
     name: 'Bath towel',
-    category: 'Bath',
+    category: ItemCategory.BATH,
     roomCategory: RoomCategory.BATHROOM, // Keep - key bathroom item
     modelSerialNumber: '',
     description: 'Bathroom towel',
@@ -260,7 +265,7 @@ export const clm003Items = [
   },
   {
     name: 'Leather Jacket',
-    category: 'Clothing',
+    category: ItemCategory.CLOTHING,
     modelSerialNumber: null,
     description: 'Wardrobe leather jacket',
     insuredsQuote: 300,
@@ -271,7 +276,7 @@ export const clm003Items = [
   },
   {
     name: 'Insurance Papers',
-    category: 'Documents',
+    category: ItemCategory.DOCUMENTS,
     modelSerialNumber: null,
     description: 'Important documents',
     insuredsQuote: null,
@@ -282,7 +287,7 @@ export const clm003Items = [
   },
   {
     name: 'Lawn Mower',
-    category: 'Garden',
+    category: ItemCategory.GARDEN,
     roomCategory: RoomCategory.GARDEN, // Keep - key garden item
     modelSerialNumber: 'LM-2023-ELECTRIC',
     description: 'Electric lawn mower',
@@ -294,7 +299,7 @@ export const clm003Items = [
   },
   {
     name: 'Lego Toys',
-    category: 'Kids',
+    category: ItemCategory.KIDS,
     modelSerialNumber: 'BC-2023-SAFE',
     description: 'Children toys',
     insuredsQuote: 400,
@@ -305,7 +310,7 @@ export const clm003Items = [
   },
   {
     name: 'Miscellaneous Items Box',
-    category: 'Other',
+    category: ItemCategory.OTHER,
     modelSerialNumber: null,
     description: 'Storage box with misc items',
     insuredsQuote: 200,
@@ -316,7 +321,7 @@ export const clm003Items = [
   },
   {
     name: 'Dog Bed',
-    category: 'Pets',
+    category: ItemCategory.PETS,
     modelSerialNumber: null,
     description: 'Pet supplies',
     insuredsQuote: 80,
@@ -327,7 +332,7 @@ export const clm003Items = [
   },
   {
     name: 'Tennis Racket',
-    category: 'Recreation',
+    category: ItemCategory.RECREATION,
     modelSerialNumber: 'TR-2023-PRO',
     description: 'Sports equipment',
     insuredsQuote: 250,
@@ -338,7 +343,7 @@ export const clm003Items = [
   },
   {
     name: 'Storage Cabinet',
-    category: 'Storage',
+    category: ItemCategory.STORAGE,
     modelSerialNumber: null,
     description: 'Garage storage',
     insuredsQuote: 350,
@@ -349,7 +354,7 @@ export const clm003Items = [
   },
   {
     name: 'Cleaning Supplies Set',
-    category: 'Supplies',
+    category: ItemCategory.SUPPLIES,
     modelSerialNumber: null,
     description: 'Laundry room supplies',
     insuredsQuote: 120,
@@ -360,7 +365,7 @@ export const clm003Items = [
   },
   {
     name: 'Power Drill',
-    category: 'Tools',
+    category: ItemCategory.TOOLS,
     modelSerialNumber: 'PD-2023-18V',
     description: 'Workshop power tool',
     insuredsQuote: 180,

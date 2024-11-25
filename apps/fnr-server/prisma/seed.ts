@@ -5,6 +5,7 @@ import {
   ItemStatus,
   ClaimStatus,
   RoomCategory,
+  ItemCategory,
 } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { clm003Items } from './seedData/clm003Items';
@@ -174,7 +175,7 @@ async function main() {
       items: [
         {
           name: 'MacBook Pro',
-          category: 'Electronics',
+          category: ItemCategory.ELECTRONICS,
           roomCategory: RoomCategory.OFFICE_STUDY, // Keep - key office item
           modelSerialNumber: 'MP2023ABC',
           description: 'Water damaged laptop',
@@ -198,7 +199,7 @@ async function main() {
         },
         {
           name: 'iPhone 14',
-          category: 'Electronics',
+          category: ItemCategory.ELECTRONICS,
           modelSerialNumber: 'IP14XYZ',
           description: 'Water damaged phone',
           insuredsQuote: 999.99,
@@ -223,7 +224,7 @@ async function main() {
       items: [
         {
           name: 'Samsung Refrigerator',
-          category: 'Appliances',
+          category: ItemCategory.APPLIANCES,
           roomCategory: RoomCategory.KITCHEN_DINING, // Keep - key kitchen item
           modelSerialNumber: 'RF123ABC',
           description: 'Fire damaged fridge',
@@ -255,7 +256,7 @@ async function main() {
       items: [
         {
           name: 'Television',
-          category: 'Electronics',
+          category: ItemCategory.ELECTRONICS,
           roomCategory: RoomCategory.LIVING_ROOM, // Keep - key living room item
           modelSerialNumber: 'TV-2023-4K',
           description: '4K Television',
@@ -275,7 +276,7 @@ async function main() {
         },
         {
           name: 'Vacuum Cleaner',
-          category: 'Appliances',
+          category: ItemCategory.APPLIANCES,
           modelSerialNumber: 'VC-2023-ROBOT',
           description: 'Robot vacuum cleaner',
           insuredsQuote: null,

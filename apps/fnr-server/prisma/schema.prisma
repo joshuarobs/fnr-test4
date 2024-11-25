@@ -170,13 +170,34 @@ enum RoomCategory {
   OTHER
 }
 
+enum ItemCategory {
+  APPLIANCES
+  AUTO
+  BATH
+  CLOTHING
+  DECOR
+  DIGITAL
+  DOCUMENTS
+  ELECTRONICS
+  FOOD
+  FURNITURE
+  GARDEN
+  KIDS
+  OTHER
+  PETS
+  RECREATION
+  STORAGE
+  SUPPLIES
+  TOOLS
+}
+
 /// Claim item details and tracking
 model Item {
   id                Int         @id @default(autoincrement())
   claimId           Int
   claim             Claim       @relation(fields: [claimId], references: [id])
   name              String
-  category          String?
+  category          ItemCategory?
   roomCategory      RoomCategory?
   group             String?
   modelSerialNumber String?

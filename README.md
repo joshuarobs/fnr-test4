@@ -45,7 +45,51 @@ cd apps/fnr-server && npx prisma db push --force-reset
 
 This command will reset the database and apply the current schema. Use this instead of migrations when you need to start fresh.
 
-### 3. Seed the Database
+### 3. Schema Changes and Migrations Workflow
+
+When making changes to the database schema, follow these steps in order:
+
+1. **Make Schema Changes**
+   - Edit the schema in `apps/fnr-server/prisma/schema.prisma`
+   - Save your changes
+
+2. **Stop Running Services**
+   ```sh
+   # Stop any running development servers and database processes
+   # Close Prisma Studio if it's running
+   ```
+
+3. **Create Migration**
+   ```sh
+   cd apps/fnr-server && npx prisma migrate dev --name your_migration_name
+   ```
+
+4. **Generate Prisma Client**
+   ```sh
+   cd apps/fnr-server && npx prisma generate
+   ```
+
+5. **Reset and Seed Database**
+   ```sh
+   cd apps/fnr-server && npx prisma db push --force-reset
+   # Then run the appropriate seed command for your OS:
+   ```
+   
+   Windows:
+   ```sh
+   cd apps/fnr-server && npx tsx prisma/seed.ts
+   ```
+   
+   macOS/Linux:
+   ```sh
+   cd apps/fnr-server && npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts
+   ```
+
+6. **Restart Services**
+   - Restart your development servers
+   - Restart any other necessary processes
+
+### 4. Seed the Database
 
 #### On Windows
 ```sh
@@ -61,7 +105,7 @@ cd apps/fnr-server && npx ts-node --compiler-options '{"module":"CommonJS"}' pri
 
 > **Note**: Make sure to include the single quotes around the compiler options on macOS/Linux.
 
-### 4. Prisma Troubleshooting
+### 5. Prisma Troubleshooting
 
 When running Prisma commands (like `prisma generate` or `prisma migrate`), you might encounter permission errors, especially on Windows. To resolve these:
 
