@@ -2,6 +2,7 @@ import {
   ItemCategory,
   categoryIcons,
   NO_CATEGORY_VALUE,
+  itemCategoryDisplayNames,
 } from '../itemCategories';
 import { FilterableDropdown } from './FilterableDropdown';
 
@@ -29,7 +30,7 @@ export const CategoryDropdown = ({
     return (
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4 text-gray-600" />
-        <span>{category}</span>
+        <span>{itemCategoryDisplayNames[category]}</span>
       </div>
     );
   };
@@ -39,7 +40,7 @@ export const CategoryDropdown = ({
     return (
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4 text-gray-600" />
-        <span>{category}</span>
+        <span>{itemCategoryDisplayNames[category]}</span>
       </div>
     );
   };
@@ -63,7 +64,7 @@ export const CategoryDropdown = ({
       renderTriggerContent={renderTriggerContent}
       renderItemContent={renderItemContent}
       renderNoValueContent={renderNoValueContent}
-      getFilterText={(category) => category}
+      getFilterText={(category) => itemCategoryDisplayNames[category]}
     />
   );
 };

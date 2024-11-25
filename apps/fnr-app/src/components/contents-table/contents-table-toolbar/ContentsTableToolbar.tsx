@@ -13,7 +13,7 @@ import { DataColumnToggleButton } from './DataColumnToggleButton';
 import { FreezeColumnToggleButton } from './FreezeColumnToggleButton';
 import { Item } from '../item';
 import { DataTableFacetedFilterButton } from './DataTableFacetedFilterButton';
-import { ItemCategory } from '../itemCategories';
+import { ItemCategory, itemCategoryDisplayNames } from '../itemCategories';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { ItemStatus, ORDERED_ITEM_STATUSES } from '../ItemStatus';
 import { ITEM_KEYS } from '../itemKeys';
@@ -35,7 +35,7 @@ const statusOptions: OptionGroups = {
 const categoryOptions: OptionGroups = {
   headerGroup: [{ label: 'No category', value: null }],
   mainGroup: Object.values(ItemCategory).map((category) => ({
-    label: category,
+    label: itemCategoryDisplayNames[category],
     value: category,
   })),
 };

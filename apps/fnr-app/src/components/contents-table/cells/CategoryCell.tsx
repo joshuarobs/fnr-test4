@@ -6,7 +6,11 @@ import {
   TooltipTrigger,
 } from '@react-monorepo/shared';
 import { Item } from '../item';
-import { ItemCategory, categoryIcons } from '../itemCategories';
+import {
+  ItemCategory,
+  categoryIcons,
+  itemCategoryDisplayNames,
+} from '../itemCategories';
 import cliTruncate from 'cli-truncate';
 import { highlightText } from '../utils/highlightText';
 import { CategoryDropdown } from '../shared/CategoryDropdown';
@@ -68,8 +72,9 @@ export const CategoryCell = ({
     );
   }
 
-  const truncatedCategory = cliTruncate(item.category, 25, { position: 'end' });
-  const shouldShowTooltip = item.category.length > 25;
+  const displayName = itemCategoryDisplayNames[item.category];
+  const truncatedCategory = cliTruncate(displayName, 25, { position: 'end' });
+  const shouldShowTooltip = displayName.length > 25;
   const Icon = categoryIcons[item.category];
 
   const textStyle = {
@@ -102,7 +107,7 @@ export const CategoryCell = ({
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{renderContent(item.category)}</p>
+              <p>{renderContent(displayName)}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

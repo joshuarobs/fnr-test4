@@ -54,6 +54,28 @@ export enum ItemCategory {
   TOOLS = 'TOOLS',
 }
 
+// Map item categories to their display names
+export const itemCategoryDisplayNames: Record<ItemCategory, string> = {
+  [ItemCategory.APPLIANCES]: 'Appliances',
+  [ItemCategory.AUTO]: 'Auto',
+  [ItemCategory.BATH]: 'Bath',
+  [ItemCategory.CLOTHING]: 'Clothing',
+  [ItemCategory.DECOR]: 'Decor',
+  [ItemCategory.DIGITAL]: 'Digital',
+  [ItemCategory.DOCUMENTS]: 'Documents',
+  [ItemCategory.ELECTRONICS]: 'Electronics',
+  [ItemCategory.FOOD]: 'Food',
+  [ItemCategory.FURNITURE]: 'Furniture',
+  [ItemCategory.GARDEN]: 'Garden',
+  [ItemCategory.KIDS]: 'Kids',
+  [ItemCategory.OTHER]: 'Other',
+  [ItemCategory.PETS]: 'Pets',
+  [ItemCategory.RECREATION]: 'Recreation',
+  [ItemCategory.STORAGE]: 'Storage',
+  [ItemCategory.SUPPLIES]: 'Supplies',
+  [ItemCategory.TOOLS]: 'Tools',
+};
+
 export const categoryIcons: Record<ItemCategory, IconType> = {
   [ItemCategory.APPLIANCES]: BiSolidFridge,
   [ItemCategory.AUTO]: FaCar,
