@@ -1,19 +1,9 @@
-import { useState } from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  InputClearable,
-  ScrollArea,
-  Separator,
-} from '@react-monorepo/shared';
 import {
   ItemCategory,
   categoryIcons,
   NO_CATEGORY_VALUE,
 } from '../itemCategories';
+import { FilterableDropdown } from './FilterableDropdown';
 
 interface CategoryDropdownProps {
   selectedCategory: ItemCategory | null;
@@ -23,7 +13,7 @@ interface CategoryDropdownProps {
   className?: string;
 }
 
-// Reusable category dropdown component
+// Item category specific implementation using FilterableDropdown
 export const CategoryDropdown = ({
   selectedCategory,
   onCategorySelect,
@@ -31,81 +21,49 @@ export const CategoryDropdown = ({
   defaultOpen,
   className,
 }: CategoryDropdownProps) => {
-  const [searchText, setSearchText] = useState('');
-
-  const handleInputKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
+  const renderTriggerContent = (category: ItemCategory | null) => {
+    if (category === null) {
+      return <div className="text-muted-foreground italic">No category</div>;
+    }
+    const Icon = categoryIcons[category];
+    return (
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-gray-600" />
+        <span>{category}</span>
+      </div>
+    );
   };
 
-  const handleCategorySelect = (value: string) => {
-    const newCategory =
-      value === NO_CATEGORY_VALUE ? null : (value as ItemCategory);
-    onCategorySelect(newCategory);
+  const renderItemContent = (category: ItemCategory) => {
+    const Icon = categoryIcons[category];
+    return (
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-gray-600" />
+        <span>{category}</span>
+      </div>
+    );
   };
 
-  const filteredCategories = Object.values(ItemCategory).filter((category) =>
-    category.toLowerCase().includes(searchText.toLowerCase())
+  const renderNoValueContent = () => (
+    <div className="flex items-center gap-2 text-muted-foreground italic">
+      No category
+    </div>
   );
 
-  const Icon = selectedCategory ? categoryIcons[selectedCategory] : null;
-
   return (
-    <Select
-      value={selectedCategory === null ? NO_CATEGORY_VALUE : selectedCategory}
-      onValueChange={handleCategorySelect}
-      defaultOpen={defaultOpen}
+    <FilterableDropdown
+      selectedValue={selectedCategory}
+      onValueSelect={onCategorySelect}
       onOpenChange={onOpenChange}
-    >
-      <SelectTrigger className={className}>
-        <SelectValue>
-          {selectedCategory === null ? (
-            <div className="text-muted-foreground italic">No category</div>
-          ) : (
-            <div className="flex items-center gap-2">
-              {Icon && <Icon className="h-4 w-4 text-gray-600" />}
-              <span>{selectedCategory}</span>
-            </div>
-          )}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <div className="p-1">
-          <InputClearable
-            placeholder="Filter categories..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onClear={() => setSearchText('')}
-            className="h-8"
-            onKeyDown={handleInputKeyDown}
-          />
-        </div>
-        <ScrollArea className="h-[200px]">
-          <SelectItem
-            value={NO_CATEGORY_VALUE}
-            className="hover:cursor-pointer"
-          >
-            <div className="flex items-center gap-2 text-muted-foreground italic">
-              No category
-            </div>
-          </SelectItem>
-          <Separator className="my-2" />
-          {filteredCategories.map((category) => {
-            const CategoryIcon = categoryIcons[category as ItemCategory];
-            return (
-              <SelectItem
-                key={category}
-                value={category}
-                className="hover:cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <CategoryIcon className="h-4 w-4 text-gray-600" />
-                  <span>{category}</span>
-                </div>
-              </SelectItem>
-            );
-          })}
-        </ScrollArea>
-      </SelectContent>
-    </Select>
+      defaultOpen={defaultOpen}
+      className={className}
+      values={Object.values(ItemCategory)}
+      noValueOption={NO_CATEGORY_VALUE}
+      filterPlaceholder="Filter categories..."
+      renderTriggerContent={renderTriggerContent}
+      renderItemContent={renderItemContent}
+      renderNoValueContent={renderNoValueContent}
+      getFilterText={(category) => category}
+    />
   );
 };
