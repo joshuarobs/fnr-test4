@@ -249,7 +249,7 @@ export const ClaimPage = () => {
           updateItem={handleUpdateItem}
           claimNumber={id}
         />
-        <ContentsDataTableSection />
+        <ContentsDataTableSection data={tableData} />
       </div>
       <SecondSidebar />
     </main>

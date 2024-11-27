@@ -16,6 +16,7 @@ this field needs to be filled out, this item needs a quote, this item needs to b
   - Better UX as users only have to press the keybind for this search bar
   - If users still want to filter only, they can press "t"
   - Look at Github and vscode for inspiration for this.
+- Add "TBD" as a status option, since sometimes contents people need to still determine if an item is repairable or not
 
 ---
 
