@@ -94,9 +94,10 @@ export const ClaimPage = () => {
       group: item.group || '',
       name: item.name,
       category: item.category,
-      roomCategory: item.roomCategory, // Added roomCategory field
+      roomCategory: item.roomCategory,
       modelSerialNumber: item.modelSerialNumber,
       itemStatus: item.itemStatus || ItemStatus.NR,
+      quantity: item.quantity || 1, // Added quantity field with default value of 1
       insuredsQuote: item.insuredsQuote,
       ourQuote: item.ourQuote,
       receiptPhotoUrl: item.receiptPhotoUrl,
@@ -138,7 +139,8 @@ export const ClaimPage = () => {
               category: item.category,
               itemStatus: item.itemStatus,
               modelSerialNumber: item.modelSerialNumber,
-              roomCategory: item.roomCategory, // Added roomCategory field
+              roomCategory: item.roomCategory,
+              quantity: item.quantity || 1, // Added quantity field
             },
           }).unwrap();
         }
@@ -151,7 +153,8 @@ export const ClaimPage = () => {
             category: newItem.category,
             itemStatus: newItem.itemStatus,
             modelSerialNumber: newItem.modelSerialNumber,
-            roomCategory: newItem.roomCategory, // Added roomCategory field
+            roomCategory: newItem.roomCategory,
+            quantity: newItem.quantity || 1, // Added quantity field
           },
         }).unwrap();
       }

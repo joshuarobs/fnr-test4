@@ -10,6 +10,7 @@ export type Item = {
   roomCategory: RoomCategory | null; // Updated to match database schema
   modelSerialNumber: string | null; // Keep this as modelSerialNumber for now since it's used in many places
   itemStatus: (typeof ItemStatus)[keyof typeof ItemStatus]; // Using ItemStatus type
+  quantity: number; // Added quantity field
   insuredsQuote: number | null;
   ourQuote: number | null; // Fixed casing to match database schema
   receiptPhotoUrl: string | null;

@@ -84,6 +84,7 @@ export const ContentsTableWithToolbar: React.FC<
 
   // State for right frozen column keys
   const [frozenRightColumnKeys] = useState([
+    ITEM_KEYS.QUANTITY,
     ITEM_KEYS.OIS_QUOTE,
     ITEM_KEYS.DIFFERENCE,
     ITEM_KEYS.OUR_QUOTE,

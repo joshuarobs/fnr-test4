@@ -69,7 +69,10 @@ When making changes to the database schema, follow these steps in order:
    cd apps/fnr-server && npx prisma generate
    ```
 
-5. **Reset and Seed Database**
+5. **Re-run client, server and studio**
+   Run the nx scripts in package.json or the IDE GUI to start the client and server so we can run the next operations afterwards.
+
+6. **Reset and Seed Database**
    ```sh
    cd apps/fnr-server && npx prisma db push --force-reset
    # Then run the appropriate seed command for your OS:
@@ -85,7 +88,7 @@ When making changes to the database schema, follow these steps in order:
    cd apps/fnr-server && npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts
    ```
 
-6. **Restart Services**
+7. **Restart Services**
    - Restart your development servers
    - Restart any other necessary processes
 

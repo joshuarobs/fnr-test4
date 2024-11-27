@@ -15,6 +15,7 @@ import { ITEM_KEYS } from './itemKeys';
 import { GreenTickIcon } from './GreenTickIcon';
 import { SortableHeader } from './SortableHeader';
 import { ItemStatusCell } from './cells/ItemStatusCell';
+import { QuantityCell } from './cells/QuantityCell';
 
 export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ID]: 'ID',
@@ -23,6 +24,7 @@ export const ShortReadibleColumnNames = {
   [ITEM_KEYS.ITEM_STATUS]: 'Status',
   [ITEM_KEYS.CATEGORY]: 'Category',
   [ITEM_KEYS.MODEL_SERIAL_NUMBER]: 'Model/Serial',
+  [ITEM_KEYS.QUANTITY]: 'Qty',
   [ITEM_KEYS.OIS_QUOTE]: "Insured's Quote",
   [ITEM_KEYS.OUR_QUOTE]: 'Our quote',
   [ITEM_KEYS.ACTIONS]: '',
@@ -175,6 +177,26 @@ export const createColumns = ({
               {modelSerialNumber ? (
                 <ModelSerialCell modelSerialNumber={modelSerialNumber} />
               ) : null}
+            </div>
+          </CellWrapper>
+        );
+      },
+    },
+    {
+      accessorKey: ITEM_KEYS.QUANTITY,
+      header: ({ column }) => (
+        <RightAlignedHeader>
+          <SortableHeader column={column} title="Qty" />
+        </RightAlignedHeader>
+      ),
+      cell: ({ row }) => {
+        return (
+          <CellWrapper
+            rowId={row.getValue(ITEM_KEYS.LOCAL_ID)?.toString() ?? ''}
+            columnId={ITEM_KEYS.QUANTITY}
+          >
+            <div className={CELL_CONTENT_MARGIN}>
+              <QuantityCell item={row.original} />
             </div>
           </CellWrapper>
         );

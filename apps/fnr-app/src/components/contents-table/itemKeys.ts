@@ -6,6 +6,7 @@ export const ITEM_KEYS = {
   CATEGORY: 'category',
   MODEL_SERIAL_NUMBER: 'modelSerialNumber',
   ITEM_STATUS: 'itemStatus', // Changed from 'status' to 'itemStatus' to match database field
+  QUANTITY: 'quantity', // Added for quantity display
   OIS_QUOTE: 'insuredsQuote',
   OUR_QUOTE: 'ourQuote', // Fixed casing to match database and Item interface
   DIFFERENCE: 'difference',
