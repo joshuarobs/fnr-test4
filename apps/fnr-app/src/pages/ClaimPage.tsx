@@ -21,6 +21,7 @@ import {
   api,
 } from '../store/services/api';
 import { Input } from '@react-monorepo/shared';
+import { ContentsDataTableSection } from '../components/contents-table/ContentsDataTableSection';
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -248,6 +249,7 @@ export const ClaimPage = () => {
           updateItem={handleUpdateItem}
           claimNumber={id}
         />
+        <ContentsDataTableSection />
       </div>
       <SecondSidebar />
     </main>
