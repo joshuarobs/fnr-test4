@@ -8,6 +8,11 @@ import {
 import { RoomCategoryBadge } from '../RoomCategoryBadge';
 import { FilterableDropdown } from '../shared/FilterableDropdown';
 
+// Reusable component for the "Select room..." text
+const SelectRoomText = () => (
+  <span className="text-gray-500 italic">No room</span>
+);
+
 interface RoomCategoryCellProps {
   item: Item;
   updateItem: (updatedItem: Item) => void;
@@ -53,15 +58,13 @@ export const RoomCategoryCell = ({
             category ? (
               <RoomCategoryBadge roomCategory={category} showTooltip={false} />
             ) : (
-              <span className="text-gray-500">Select room...</span>
+              <SelectRoomText />
             )
           }
           renderItemContent={(category) => (
             <RoomCategoryBadge roomCategory={category} showTooltip={false} />
           )}
-          renderNoValueContent={() => (
-            <span className="text-gray-500">Select room...</span>
-          )}
+          renderNoValueContent={() => <SelectRoomText />}
           getFilterText={(category) => roomCategoryDisplayNames[category]}
         />
       </div>
@@ -76,7 +79,7 @@ export const RoomCategoryCell = ({
       {item.roomCategory ? (
         <RoomCategoryBadge roomCategory={item.roomCategory} />
       ) : (
-        <span className="text-gray-500">Select room...</span>
+        <SelectRoomText />
       )}
     </div>
   );
