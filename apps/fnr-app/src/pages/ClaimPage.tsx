@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
+import { ContentsTableWithToolbar2 } from '../components/contents-table/ContentsTable2';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { Item } from '../components/contents-table/item';
 import { ClaimPageHeaderActions } from '../components/contents-table/ClaimPageHeaderActions';
@@ -241,7 +241,7 @@ export const ClaimPage = () => {
           </div>
           <ClaimPageHeaderActions addItem={addItem} />
         </div>
-        <ContentsTableWithToolbar
+        <ContentsTableWithToolbar2
           data={tableData}
           addItem={addItem}
           removeItem={removeItem}

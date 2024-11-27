@@ -25,7 +25,7 @@ interface ContentaDataTableProps<TData, TValue> {
   frozenRightColumnKeys: string[];
 }
 
-export const ContentsDataTable = <TData extends Item, TValue>({
+export const ContentsDataTable2 = <TData extends Item, TValue>({
   table,
   frozenColumnKeys,
   frozenRightColumnKeys,
