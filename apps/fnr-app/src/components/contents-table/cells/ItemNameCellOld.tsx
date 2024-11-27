@@ -34,7 +34,10 @@ const pastelColors = [
 ] as const;
 
 const getPastelColorFromId = (id: number): string => {
-  const x = id * 0.7;
+  // Generates a random enough colour based on the id
+  // This is so users don't see distracting patterns on claims that don't have any images on it
+  // Combine multiple trigonometric functions with different frequencies and phases
+  const x = id * 0.7; // Base frequency
   const chaos =
     Math.abs(
       Math.sin(x) * Math.cos(x * 1.3) +
@@ -47,38 +50,21 @@ const getPastelColorFromId = (id: number): string => {
 };
 
 interface ItemNameCellProps {
-  rowData: any; // This will be the row data from PrimeReact table
-  updateItem?: (updatedItem: Item) => void;
+  item: Item;
+  updateItem: (updatedItem: Item) => void;
   filterText?: string;
 }
 
-export const ItemNameCell = ({
-  rowData,
+export const ItemNameCellOld = ({
+  item,
   updateItem,
   filterText = '',
 }: ItemNameCellProps) => {
-  // Convert PrimeReact row data to Item type
-  const item: Item = {
-    id: rowData.id,
-    name: rowData.name,
-    itemStatus: rowData.status,
-    roomCategory: rowData.room,
-    category: rowData.category,
-    modelSerialNumber: rowData.modelSerial,
-    quantity: rowData.quantity,
-    insuredsQuote: rowData.insuredQuote,
-    ourQuote: rowData.ourQuote,
-    localId: rowData.id,
-    receiptPhotoUrl: null,
-    ourQuoteProof: null,
-    dateCreated: new Date(), // Using current date as fallback
-  };
-
   const truncatedName = cliTruncate(item.name, 25, { position: 'end' });
   const shouldShowTooltip = item.name.length > 25;
 
   const handleSave = (newValue: string) => {
-    if (newValue !== item.name && updateItem) {
+    if (newValue !== item.name) {
       updateItem({ ...item, name: newValue });
     }
   };
@@ -89,6 +75,17 @@ export const ItemNameCell = ({
   };
 
   const renderImageIcon = () => {
+    // if (item.ourQuoteProof) {
+    //   return (
+    //     <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0 mr-2">
+    //       <img
+    //         src={item.ourQuoteProof}
+    //         alt={item.name}
+    //         className="w-full h-full object-cover"
+    //       />
+    //     </div>
+    //   );
+    // }
     return (
       <div className="mr-2">
         <PlaceholderImageGeneric

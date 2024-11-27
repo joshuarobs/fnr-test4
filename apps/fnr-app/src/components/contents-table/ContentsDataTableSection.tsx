@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Item } from './item';
+import { ItemNameCell } from './cells/ItemNameCell';
 
 interface ContentsDataTableSectionProps {
   data: Item[];
@@ -38,6 +39,15 @@ export const ContentsDataTableSection = ({
 
   const [selectedCell, setSelectedCell] = useState(null);
 
+  const handleUpdateItem = (updatedItem: Item) => {
+    // TODO: Implement item update logic
+    console.log('Item updated:', updatedItem);
+  };
+
+  const nameBodyTemplate = (rowData: any) => {
+    return <ItemNameCell rowData={rowData} updateItem={handleUpdateItem} />;
+  };
+
   return (
     <DataTable
       value={transformedData}
@@ -67,6 +77,7 @@ export const ContentsDataTableSection = ({
         sortable
         style={{ minWidth: '260px' }}
         frozen
+        body={nameBodyTemplate}
       ></Column>
       <Column
         field="status"

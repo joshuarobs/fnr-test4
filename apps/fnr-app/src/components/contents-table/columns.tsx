@@ -3,7 +3,7 @@ import { Item, calculateDifference } from './item';
 import { ModelSerialCell } from './cells/ModelSerialCell';
 import { InsuredsQuoteCell } from './cells/InsuredsQuoteCell';
 import { OurQuoteCell } from './cells/OurQuoteCell';
-import { ItemNameCell } from './cells/ItemNameCell';
+import { ItemNameCellOld } from './cells/ItemNameCellOld';
 import { CategoryCell } from './cells/CategoryCell';
 import { RoomCategoryCell } from './cells/RoomCategoryCell';
 import { QuoteDifferenceIcon } from './QuoteDifferenceIcon';
@@ -82,7 +82,7 @@ export const createColumns = ({
             columnId={ITEM_KEYS.NAME}
           >
             <div className={CELL_CONTENT_MARGIN}>
-              <ItemNameCell
+              <ItemNameCellOld
                 item={row.original}
                 updateItem={updateItem}
                 filterText={table.getState().globalFilter}
