@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@react-monorepo/shared';
 import { TestAllClaimsTable } from '../components/homepage/TestAllClaimsTable';
 import { TestTableUXStuff } from '../components/contents-table/TestTableUXStuff';
+import { TestTableUXStuffPure } from '../components/contents-table/TestTableUXStuffPure';
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -25,6 +26,9 @@ export const HomePage = () => {
       </div>
       <div className="mt-4">
         <TestTableUXStuff />
+      </div>
+      <div className="mt-4">
+        <TestTableUXStuffPure />
       </div>
     </div>
   );

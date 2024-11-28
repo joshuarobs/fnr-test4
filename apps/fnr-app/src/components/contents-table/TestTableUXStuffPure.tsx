@@ -3,9 +3,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
-import { ItemStatus } from './ItemStatus';
-import { ItemStatusBadge } from './ItemStatusBadge';
-import { Input } from '@react-monorepo/shared';
 
 // Sample product data
 const ProductService = [
@@ -20,7 +17,6 @@ const ProductService = [
     quantity: 24,
     inventoryStatus: 'INSTOCK',
     rating: 5,
-    itemStatus: ItemStatus.RS,
   },
   {
     id: '1000',
@@ -33,7 +29,6 @@ const ProductService = [
     quantity: 24,
     inventoryStatus: 'INSTOCK',
     rating: 5,
-    itemStatus: ItemStatus.NR,
   },
   {
     id: '1000',
@@ -46,7 +41,6 @@ const ProductService = [
     quantity: 24,
     inventoryStatus: 'INSTOCK',
     rating: 5,
-    itemStatus: ItemStatus.VPOL,
   },
 ];
 
@@ -61,16 +55,14 @@ interface Product {
   quantity: number;
   inventoryStatus: string;
   rating: number;
-  itemStatus: (typeof ItemStatus)[keyof typeof ItemStatus];
 }
 
-export const TestTableUXStuff: React.FC = () => {
+export const TestTableUXStuffPure: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(ProductService);
 
   const columns = [
     { field: 'code', header: 'Code' },
     { field: 'name', header: 'Name' },
-    { field: 'itemStatus', header: 'Status' },
     { field: 'quantity', header: 'Quantity' },
     { field: 'price', header: 'Price' },
   ];
@@ -120,10 +112,10 @@ export const TestTableUXStuff: React.FC = () => {
     return textEditor(options);
   };
 
-  // Text input editor with shadcn Input
+  // Text input editor with primereact InputText
   const textEditor = (options: any) => {
     return (
-      <Input
+      <InputText
         type="text"
         value={options.value}
         onChange={(e) => options.editorCallback(e.target.value)}
@@ -157,11 +149,6 @@ export const TestTableUXStuff: React.FC = () => {
     }).format(rowData.price);
   };
 
-  // Status display formatter
-  const statusBodyTemplate = (rowData: Product) => {
-    return <ItemStatusBadge itemStatus={rowData.itemStatus} />;
-  };
-
   return (
     <div className="card p-fluid">
       <DataTable
@@ -175,18 +162,8 @@ export const TestTableUXStuff: React.FC = () => {
             field={field}
             header={header}
             style={{ width: '25%' }}
-            body={
-              field === 'price'
-                ? priceBodyTemplate
-                : field === 'itemStatus'
-                ? statusBodyTemplate
-                : undefined
-            }
-            editor={
-              field !== 'itemStatus'
-                ? (options) => cellEditor(options)
-                : undefined
-            }
+            body={field === 'price' ? priceBodyTemplate : undefined}
+            editor={(options) => cellEditor(options)}
             onCellEditComplete={onCellEditComplete}
           />
         ))}
