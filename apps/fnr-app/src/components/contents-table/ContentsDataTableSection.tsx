@@ -3,6 +3,8 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Item } from './item';
 import { ItemNameCell } from './cells/ItemNameCell';
+import { ItemStatusBadge } from './ItemStatusBadge';
+import { InputText } from 'primereact/inputtext';
 
 interface ContentsDataTableSectionProps {
   data: Item[];
@@ -48,6 +50,26 @@ export const ContentsDataTableSection = ({
     return <ItemNameCell rowData={rowData} updateItem={handleUpdateItem} />;
   };
 
+  const statusBodyTemplate = (rowData: any) => {
+    return <ItemStatusBadge itemStatus={rowData.status} />;
+  };
+
+  const textEditor = (options: any) => {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e: any) => options.editorCallback(e.target.value)}
+        style={{ width: '100%' }}
+      />
+    );
+  };
+
+  // The condition we check every row for, if we can edit this row or not
+  const allowEdit = (rowData: any) => {
+    return rowData.name !== 'Blue Band';
+  };
+
   return (
     <DataTable
       value={transformedData}
@@ -62,6 +84,7 @@ export const ContentsDataTableSection = ({
       scrollable
       selectionMode="single"
       selection={selectedCell}
+      editMode="row"
       onSelectionChange={(e: any) => setSelectedCell(e.value)}
     >
       <Column
@@ -85,6 +108,7 @@ export const ContentsDataTableSection = ({
         sortable
         style={{ width: '10%' }}
         frozen
+        body={statusBodyTemplate}
       ></Column>
       <Column
         field="room"
@@ -108,7 +132,8 @@ export const ContentsDataTableSection = ({
         field="quantity"
         header="Qty"
         sortable
-        style={{ width: '5%', textAlign: 'right' }}
+        editor={(options) => textEditor(options)}
+        style={{ maxWidth: '100px', textAlign: 'right' }}
         frozen
         alignFrozen="right"
       ></Column>
@@ -136,6 +161,13 @@ export const ContentsDataTableSection = ({
         sortable
         style={{ width: '10%', textAlign: 'right' }}
         body={(rowData) => formatCurrency(rowData.ourQuote)}
+        frozen
+        alignFrozen="right"
+      ></Column>
+      <Column
+        rowEditor={allowEdit}
+        headerStyle={{ width: '10%', minWidth: '8rem' }}
+        bodyStyle={{ textAlign: 'center' }}
         frozen
         alignFrozen="right"
       ></Column>
