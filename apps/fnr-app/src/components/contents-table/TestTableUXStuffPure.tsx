@@ -57,8 +57,19 @@ interface Product {
   rating: number;
 }
 
+interface EditingCell {
+  rowIndex: number;
+  field: string;
+}
+
 export const TestTableUXStuffPure: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(ProductService);
+  // Track selected cell and editing state
+  const [selectedCell, setSelectedCell] = useState<{
+    rowIndex: number;
+    field: string;
+  } | null>(null);
+  const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
   const columns = [
     { field: 'code', header: 'Code' },
@@ -97,19 +108,75 @@ export const TestTableUXStuffPure: React.FC = () => {
     }
   };
 
+  // Handle keyboard navigation
+  const onSelectionChange = (e: any) => {
+    const { rowIndex, field } = e.value || {};
+    if (rowIndex !== undefined && field) {
+      setSelectedCell({ rowIndex, field });
+      setEditingCell({ rowIndex, field });
+    }
+  };
+
+  // Handle tab key navigation
+  const onEditorKeyDown = (
+    e: React.KeyboardEvent,
+    options: { rowIndex: number; field: string }
+  ) => {
+    if (e.key === 'Tab') {
+      e.preventDefault(); // Prevent default tab behavior
+
+      const currentColIndex = columns.findIndex(
+        (col) => col.field === options.field
+      );
+      const nextColIndex = e.shiftKey
+        ? currentColIndex - 1
+        : currentColIndex + 1;
+      const currentRowIndex = options.rowIndex;
+
+      let nextRowIndex = currentRowIndex;
+      let nextField = options.field;
+
+      // Calculate next position
+      if (nextColIndex >= 0 && nextColIndex < columns.length) {
+        // Move to next/previous column in same row
+        nextField = columns[nextColIndex].field;
+      } else if (
+        !e.shiftKey &&
+        nextColIndex >= columns.length &&
+        currentRowIndex < products.length - 1
+      ) {
+        // Move to first column of next row
+        nextRowIndex = currentRowIndex + 1;
+        nextField = columns[0].field;
+      } else if (e.shiftKey && nextColIndex < 0 && currentRowIndex > 0) {
+        // Move to last column of previous row
+        nextRowIndex = currentRowIndex - 1;
+        nextField = columns[columns.length - 1].field;
+      }
+
+      // Only update if we have a valid next position
+      if (nextField !== options.field || nextRowIndex !== currentRowIndex) {
+        const nextCell = {
+          rowIndex: nextRowIndex,
+          field: nextField,
+        };
+        setSelectedCell(nextCell);
+        setEditingCell(nextCell);
+      }
+    }
+  };
+
   // Cell editor component selector
   const cellEditor = (options: any) => {
-    if (options.field === 'code') {
-      return (
-        <InputText
-          type="text"
-          value={options.value}
-          onChange={(e) => options.editorCallback(e.target.value)}
-          onKeyDown={(e) => e.stopPropagation()}
-        />
-      );
+    const editorProps = {
+      ...options,
+      onKeyDown: (e: React.KeyboardEvent) => onEditorKeyDown(e, options),
+    };
+
+    if (options.field === 'price') {
+      return priceEditor(editorProps);
     }
-    return textEditor(options);
+    return textEditor(editorProps);
   };
 
   // Text input editor with primereact InputText
@@ -120,9 +187,9 @@ export const TestTableUXStuffPure: React.FC = () => {
         value={options.value}
         onChange={(e) => options.editorCallback(e.target.value)}
         onBlur={(e) => options.editorCallback(e.target.value)}
-        onKeyDown={(e) => e.stopPropagation()}
-        autoFocus
+        onKeyDown={options.onKeyDown}
         className="px-2 py-1 text-left"
+        autoFocus
       />
     );
   };
@@ -133,10 +200,11 @@ export const TestTableUXStuffPure: React.FC = () => {
       <InputNumber
         value={options.value}
         onValueChange={(e) => options.editorCallback(e.value)}
+        onKeyDown={options.onKeyDown}
         mode="currency"
         currency="USD"
         locale="en-US"
-        onKeyDown={(e) => e.stopPropagation()}
+        autoFocus
       />
     );
   };
@@ -155,6 +223,12 @@ export const TestTableUXStuffPure: React.FC = () => {
         value={products}
         editMode="cell"
         tableStyle={{ minWidth: '50rem' }}
+        cellSelection
+        showGridlines
+        selectionMode="single"
+        selection={selectedCell}
+        onSelectionChange={onSelectionChange}
+        editingRows={editingCell ? [products[editingCell.rowIndex]] : []}
       >
         {columns.map(({ field, header }) => (
           <Column
