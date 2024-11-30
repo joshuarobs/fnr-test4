@@ -100,6 +100,7 @@ export const api = createApi({
           itemStatus: item.itemStatus,
           roomCategory: item.roomCategory,
           category: item.category,
+          quantity: item.quantity,
         },
       }),
       invalidatesTags: ['Claim'],

@@ -194,7 +194,11 @@ export const createColumns = ({
             columnId={ITEM_KEYS.QUANTITY}
           >
             <div className={CELL_CONTENT_MARGIN}>
-              <QuantityCell item={row.original} />
+              <QuantityCell
+                item={row.original}
+                updateItem={updateItem}
+                claimNumber={claimNumber}
+              />
             </div>
           </CellWrapper>
         );
