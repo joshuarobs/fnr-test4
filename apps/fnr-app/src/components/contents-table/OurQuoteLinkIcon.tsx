@@ -23,6 +23,7 @@ export const OurQuoteLinkIcon = ({
   ourQuoteProof,
   onSave,
 }: OurQuoteLinkIconProps) => {
+  // State for managing the website URL and its previous value
   const [websiteUrl, setWebsiteUrl] = useState<string>(ourQuoteProof || '');
   const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>(
     ourQuoteProof || ''
@@ -30,38 +31,30 @@ export const OurQuoteLinkIcon = ({
   const [isOpen, setIsOpen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Check if current value differs from previous value
   const calculateChanges = () => {
-    return websiteUrl !== prevWebsiteUrl && websiteUrl !== '';
+    return websiteUrl !== prevWebsiteUrl;
   };
 
   const handlePopoverOpenChange = (open: boolean) => {
-    if (websiteUrl === '') {
-      setHasChanges(false);
-      setPrevWebsiteUrl('');
-    } else {
-      setHasChanges(calculateChanges());
-    }
+    setHasChanges(calculateChanges());
     setIsOpen(open);
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value;
     setWebsiteUrl(newUrl);
-    setHasChanges(newUrl !== prevWebsiteUrl && newUrl !== '');
+    setHasChanges(newUrl !== prevWebsiteUrl);
   };
 
   const handleClear = () => {
     setWebsiteUrl('');
-    setHasChanges(false);
+    setHasChanges(true); // Set to true since we're clearing a value
   };
 
   const handleCancel = () => {
-    if (websiteUrl === '') {
-      setHasChanges(false);
-      setPrevWebsiteUrl('');
-    } else {
-      setHasChanges(calculateChanges());
-    }
+    setWebsiteUrl(prevWebsiteUrl);
+    setHasChanges(false);
     setIsOpen(false);
   };
 
@@ -74,11 +67,12 @@ export const OurQuoteLinkIcon = ({
     }
   };
 
+  // Button appearance based on server value and changes
   const buttonContent = () => (
     <Button
       variant="outline"
       className={`w-8 h-8 p-1 rounded-full ${
-        ourQuoteProof
+        prevWebsiteUrl
           ? 'bg-blue-400 hover:bg-blue-500'
           : 'bg-white hover:bg-gray-100'
       } flex items-center justify-center ${
@@ -87,7 +81,7 @@ export const OurQuoteLinkIcon = ({
       aria-label="View our quote"
     >
       <Link
-        className={`w-4 h-4 ${ourQuoteProof ? 'text-white' : 'text-gray-500'}`}
+        className={`w-4 h-4 ${prevWebsiteUrl ? 'text-white' : 'text-gray-500'}`}
       />
     </Button>
   );
@@ -126,6 +120,7 @@ export const OurQuoteLinkIcon = ({
                 onClear={handleClear}
                 className="h-8 w-full"
                 placeholder="e.g. www.amazon.com"
+                autoComplete="off"
               />
             </div>
           </div>
