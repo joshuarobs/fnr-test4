@@ -11,7 +11,7 @@ export interface KeyboardShortcut {
 }
 
 // Application keyboard shortcuts
-export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
+export const GENERAL_KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
   {
     action: 'Toggle sidebar',
     keybinds: [[KeyboardKeys.LEFT_BRACKET], [KeyboardKeys.RIGHT_BRACKET]],
@@ -20,6 +20,10 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
     action: 'View this keyboard shortcuts popup',
     keybinds: [[KeyboardKeys.QUESTION_MARK]],
   },
+];
+
+// Application keyboard shortcuts
+export const CLAIM_PAGE_KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
   {
     action: 'Edit cell',
     keybinds: [[KeyboardKeys.ENTER]],
