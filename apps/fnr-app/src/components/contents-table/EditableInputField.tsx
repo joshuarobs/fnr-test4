@@ -10,7 +10,7 @@ interface EditableInputFieldProps {
   inputClassName?: string;
   iconPosition: 'left' | 'right';
   textAlign?: 'left' | 'center' | 'right';
-  isEditable?: boolean; // New prop
+  isEditable?: boolean;
 }
 
 export const EditableInputField = ({
@@ -21,7 +21,7 @@ export const EditableInputField = ({
   inputClassName = '',
   iconPosition = 'left',
   textAlign = 'left',
-  isEditable = true, // Default to true
+  isEditable = true,
 }: EditableInputFieldProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -71,7 +71,7 @@ export const EditableInputField = ({
   return (
     <>
       {isEditing ? (
-        <div className="flex justify-end mr-2">
+        <div className="flex items-center min-w-0">
           <Input
             type="text"
             value={value}
@@ -79,12 +79,12 @@ export const EditableInputField = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             autoFocus
-            className={`px-2 py-1 text-${textAlign} ${inputClassName}`}
+            className={`px-2 py-1 text-${textAlign} min-w-0 w-full ${inputClassName}`}
           />
         </div>
       ) : (
         <div
-          className={`flex items-center mr-2 p-2 rounded ${
+          className={`flex items-center min-w-0 p-2 rounded ${
             isEditable ? 'cursor-pointer' : ''
           } ${isHovering && isEditable ? 'bg-black bg-opacity-10' : ''}`}
           onMouseEnter={() => isEditable && setIsHovering(true)}
@@ -92,7 +92,7 @@ export const EditableInputField = ({
           onDoubleClick={handleDoubleClick}
         >
           {iconPosition === 'left' && <div className="mr-1">{iconElement}</div>}
-          <div className={`text-${textAlign} flex-grow`}>
+          <div className={`text-${textAlign} flex-grow min-w-0 truncate`}>
             {formatDisplay(value)}
           </div>
           {iconPosition === 'right' && (

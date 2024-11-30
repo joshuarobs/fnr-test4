@@ -90,7 +90,7 @@ export const ItemNameCell = ({
 
   const renderImageIcon = () => {
     return (
-      <div className="mr-2">
+      <div className="mr-2 flex-shrink-0">
         <PlaceholderImageGeneric
           itemCategory={item.category || undefined}
           color={getPastelColorFromId(item.id)}
@@ -100,33 +100,16 @@ export const ItemNameCell = ({
   };
 
   const content = (
-    <div className="flex items-center flex-grow min-w-0">
+    <div className="flex items-center w-full min-w-0">
       {renderImageIcon()}
-      <EditableInputField
-        initialValue={item.name}
-        onSave={handleSave}
-        formatDisplay={formatDisplay}
-        iconPosition="right"
-      />
-    </div>
-  );
-
-  return (
-    <div className="flex items-center justify-between w-full">
-      {shouldShowTooltip ? (
-        <TooltipProvider>
-          <Tooltip delayDuration={350}>
-            <TooltipTrigger asChild>{content}</TooltipTrigger>
-            <TooltipContent>
-              <p>
-                {filterText ? highlightText(item.name, filterText) : item.name}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ) : (
-        content
-      )}
+      <div className="flex-grow min-w-0">
+        <EditableInputField
+          initialValue={item.name}
+          onSave={handleSave}
+          formatDisplay={formatDisplay}
+          iconPosition="right"
+        />
+      </div>
       <div className="flex-shrink-0 ml-4">
         <BrowseLinkButton
           tooltipText="Search for item in Google in a new tab"
@@ -134,5 +117,18 @@ export const ItemNameCell = ({
         />
       </div>
     </div>
+  );
+
+  return shouldShowTooltip ? (
+    <TooltipProvider>
+      <Tooltip delayDuration={350}>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
+        <TooltipContent>
+          <p>{filterText ? highlightText(item.name, filterText) : item.name}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  ) : (
+    content
   );
 };
