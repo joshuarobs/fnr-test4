@@ -221,7 +221,7 @@ export const ClaimPage = () => {
   return (
     <main className="flex-1 min-w-0 flex">
       <div className="flex-1 min-w-0 flex flex-col h-full">
-        <div className="p-4">
+        <div className="p-4 pb-0">
           <div className="flex justify-between items-center">
             <div className="flex gap-8">
               <TotalCalculatedPriceText
