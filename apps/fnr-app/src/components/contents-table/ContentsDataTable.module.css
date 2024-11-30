@@ -2,10 +2,30 @@
   --table-cell-height: 42.44px;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .tableContainer {
   position: relative;
   width: 100%;
   overflow-x: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.spacer {
+  flex: 1 1 auto;
+  min-height: 1rem;
+}
+
+.paginationWrapper {
+  margin-top: auto;
+  padding-top: 0.5rem;
 }
 
 .frozenColumnsWrapper {

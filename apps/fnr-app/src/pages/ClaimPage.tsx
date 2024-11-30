@@ -98,7 +98,7 @@ export const ClaimPage = () => {
       roomCategory: item.roomCategory,
       modelSerialNumber: item.modelSerialNumber,
       itemStatus: item.itemStatus || ItemStatus.NR,
-      quantity: item.quantity || 1, // Added quantity field with default value of 1
+      quantity: item.quantity || 1,
       insuredsQuote: item.insuredsQuote,
       ourQuote: item.ourQuote,
       receiptPhotoUrl: item.receiptPhotoUrl,
@@ -141,7 +141,7 @@ export const ClaimPage = () => {
               itemStatus: item.itemStatus,
               modelSerialNumber: item.modelSerialNumber,
               roomCategory: item.roomCategory,
-              quantity: item.quantity || 1, // Added quantity field
+              quantity: item.quantity || 1,
             },
           }).unwrap();
         }
@@ -155,7 +155,7 @@ export const ClaimPage = () => {
             itemStatus: newItem.itemStatus,
             modelSerialNumber: newItem.modelSerialNumber,
             roomCategory: newItem.roomCategory,
-            quantity: newItem.quantity || 1, // Added quantity field
+            quantity: newItem.quantity || 1,
           },
         }).unwrap();
       }
@@ -220,35 +220,39 @@ export const ClaimPage = () => {
 
   return (
     <main className="flex-1 min-w-0 flex">
-      <div className="flex-1 min-w-0 p-4">
-        <div className="flex justify-between items-center">
-          <div className="flex gap-8">
-            <TotalCalculatedPriceText
-              title="Insured's total"
-              value={insuredsTotal}
-              insuredsQuote={insuredsTotal}
-              ourQuote={ourTotal}
-              warningString="Insured has not provided quotes for all items yet."
-            />
-            <TotalCalculatedPriceText
-              title="Our total"
-              value={ourTotal}
-              warningString="We don't have quotes for all items yet."
-            />
-            <TotalProgressBar
-              value={progress.value}
-              maxValue={progress.maxValue}
-            />
+      <div className="flex-1 min-w-0 flex flex-col h-full">
+        <div className="p-4">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-8">
+              <TotalCalculatedPriceText
+                title="Insured's total"
+                value={insuredsTotal}
+                insuredsQuote={insuredsTotal}
+                ourQuote={ourTotal}
+                warningString="Insured has not provided quotes for all items yet."
+              />
+              <TotalCalculatedPriceText
+                title="Our total"
+                value={ourTotal}
+                warningString="We don't have quotes for all items yet."
+              />
+              <TotalProgressBar
+                value={progress.value}
+                maxValue={progress.maxValue}
+              />
+            </div>
+            <ClaimPageHeaderActions addItem={addItem} />
           </div>
-          <ClaimPageHeaderActions addItem={addItem} />
         </div>
-        <ContentsTableWithToolbar
-          data={tableData}
-          addItem={addItem}
-          removeItem={removeItem}
-          updateItem={handleUpdateItem}
-          claimNumber={id}
-        />
+        <div className="flex-1 min-h-0 px-4 pb-6">
+          <ContentsTableWithToolbar
+            data={tableData}
+            addItem={addItem}
+            removeItem={removeItem}
+            updateItem={handleUpdateItem}
+            claimNumber={id}
+          />
+        </div>
       </div>
       <SecondSidebar />
     </main>

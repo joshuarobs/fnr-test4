@@ -95,7 +95,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   const allColumns = table.getAllColumns();
 
   return (
-    <div className="w-full">
+    <div className={styles.container}>
       <div className={styles.tableContainer} ref={mainTableRef}>
         {/* Left Frozen Columns */}
         <div className={styles.frozenColumnsWrapper} ref={frozenTableRef}>
@@ -265,7 +265,9 @@ export const ContentsDataTable = <TData extends Item, TValue>({
           </TableBody>
         </UITable>
       </div>
-      <DataTablePagination table={table} />
+      <div className={styles.paginationWrapper}>
+        <DataTablePagination table={table} />
+      </div>
     </div>
   );
 };

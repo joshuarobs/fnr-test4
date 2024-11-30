@@ -116,17 +116,19 @@ export const ContentsTableWithToolbar: React.FC<
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full flex flex-col">
       <ContentsTableToolbar<Item>
         table={table}
         frozenColumnKeys={frozenColumnKeys}
         setFrozenColumnKeys={setFrozenColumnKeys}
       />
-      <ContentsDataTable<Item, unknown>
-        table={table}
-        frozenColumnKeys={frozenColumnKeys}
-        frozenRightColumnKeys={frozenRightColumnKeys}
-      />
+      <div className="flex-1 flex flex-col min-h-0">
+        <ContentsDataTable<Item, unknown>
+          table={table}
+          frozenColumnKeys={frozenColumnKeys}
+          frozenRightColumnKeys={frozenRightColumnKeys}
+        />
+      </div>
     </div>
   );
 };
