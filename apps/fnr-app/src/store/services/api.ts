@@ -95,10 +95,11 @@ export const api = createApi({
         body: {
           name: item.name,
           ourQuote: item.ourQuote,
+          ourQuoteProof: item.ourQuoteProof,
           insuredsQuote: item.insuredsQuote,
           itemStatus: item.itemStatus,
           roomCategory: item.roomCategory,
-          category: item.category, // Added category field to update request
+          category: item.category,
         },
       }),
       invalidatesTags: ['Claim'],

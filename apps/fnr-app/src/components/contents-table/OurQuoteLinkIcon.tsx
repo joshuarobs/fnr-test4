@@ -16,9 +16,13 @@ import {
 
 interface OurQuoteLinkIconProps {
   ourQuoteProof?: string;
+  onSave?: (url: string) => void;
 }
 
-export const OurQuoteLinkIcon = ({ ourQuoteProof }: OurQuoteLinkIconProps) => {
+export const OurQuoteLinkIcon = ({
+  ourQuoteProof,
+  onSave,
+}: OurQuoteLinkIconProps) => {
   const [websiteUrl, setWebsiteUrl] = useState<string>(ourQuoteProof || '');
   const [prevWebsiteUrl, setPrevWebsiteUrl] = useState<string>(
     ourQuoteProof || ''
@@ -59,6 +63,15 @@ export const OurQuoteLinkIcon = ({ ourQuoteProof }: OurQuoteLinkIconProps) => {
       setHasChanges(calculateChanges());
     }
     setIsOpen(false);
+  };
+
+  const handleSave = () => {
+    if (onSave) {
+      onSave(websiteUrl);
+      setPrevWebsiteUrl(websiteUrl);
+      setHasChanges(false);
+      setIsOpen(false);
+    }
   };
 
   const buttonContent = () => (
@@ -126,7 +139,12 @@ export const OurQuoteLinkIcon = ({ ourQuoteProof }: OurQuoteLinkIconProps) => {
             >
               Cancel
             </Button>
-            <Button size="sm" className="px-3" disabled={!hasChanges}>
+            <Button
+              size="sm"
+              className="px-3"
+              disabled={!hasChanges}
+              onClick={handleSave}
+            >
               Save
             </Button>
           </div>

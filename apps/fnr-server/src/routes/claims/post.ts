@@ -117,8 +117,9 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
       condition,
       insuredsQuote,
       ourQuote,
+      ourQuoteProof,
       itemStatus,
-      roomCategory, // Added roomCategory field
+      roomCategory,
     } = req.body;
 
     const result = await prisma.$transaction(async (tx) => {
@@ -153,8 +154,9 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
       if (condition !== undefined) updateData.condition = condition;
       if (insuredsQuote !== undefined) updateData.insuredsQuote = insuredsQuote;
       if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
+      if (ourQuoteProof !== undefined) updateData.ourQuoteProof = ourQuoteProof;
       if (itemStatus !== undefined) updateData.itemStatus = itemStatus;
-      if (roomCategory !== undefined) updateData.roomCategory = roomCategory; // Added roomCategory field
+      if (roomCategory !== undefined) updateData.roomCategory = roomCategory;
 
       // Update the item
       const updatedItem = await tx.item.update({

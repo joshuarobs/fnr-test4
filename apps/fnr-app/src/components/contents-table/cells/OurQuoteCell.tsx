@@ -44,6 +44,10 @@ export const OurQuoteCell = ({
     }
   };
 
+  const handleQuoteProofSave = (url: string) => {
+    updateItem({ ...item, ourQuoteProof: url }, claimNumber);
+  };
+
   return (
     <div className="flex items-center justify-end w-full">
       <EditableInputField
@@ -57,7 +61,10 @@ export const OurQuoteCell = ({
         iconPosition="left"
         textAlign="right"
       />
-      <OurQuoteLinkIcon ourQuoteProof={item.ourQuoteProof || undefined} />
+      <OurQuoteLinkIcon
+        ourQuoteProof={item.ourQuoteProof || undefined}
+        onSave={handleQuoteProofSave}
+      />
     </div>
   );
 };
