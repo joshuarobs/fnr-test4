@@ -17,6 +17,10 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
     keybinds: [[KeyboardKeys.LEFT_BRACKET], [KeyboardKeys.RIGHT_BRACKET]],
   },
   {
+    action: 'View this keyboard shortcuts popup',
+    keybinds: [[KeyboardKeys.QUESTION_MARK]],
+  },
+  {
     action: 'Edit cell',
     keybinds: [[KeyboardKeys.ENTER]],
   },
@@ -25,11 +29,11 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
     keybinds: [[KeyboardKeys.FORWARD_SLASH]],
   },
   {
-    action: 'View this keyboard shortcuts popup',
-    keybinds: [[KeyboardKeys.QUESTION_MARK]],
+    action: 'Navigate page left',
+    keybinds: [[KeyboardKeys.ALT, KeyboardKeys.ARROW_LEFT]],
   },
   {
-    action: 'Save changes',
-    keybinds: [[KeyboardKeys.CTRL, KeyboardKeys.S]],
+    action: 'Navigate page right',
+    keybinds: [[KeyboardKeys.ALT, KeyboardKeys.ARROW_RIGHT]],
   },
 ];

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,7 +11,9 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   SortingState,
+  PaginationState,
 } from '@tanstack/react-table';
+import { useSearchParams } from 'react-router-dom';
 import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
 import { ContentsDataTable } from './ContentsDataTable';
 import { Item } from './item';
@@ -64,6 +66,7 @@ export const ContentsTableWithToolbar: React.FC<
     [updateItem, removeItem, claimNumber]
   );
   const [globalFilter, setGlobalFilter] = React.useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Initialize column order with all column IDs
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
@@ -74,6 +77,34 @@ export const ContentsTableWithToolbar: React.FC<
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: ITEM_KEYS.LOCAL_ID, desc: false },
   ]);
+
+  // Initialize pagination state from URL parameters (convert from 1-based to 0-based)
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: Math.max(0, Number(searchParams.get('page') || '1') - 1),
+    pageSize: Number(searchParams.get('pageSize') || '10'),
+  });
+
+  // Update URL when pagination changes (convert from 0-based to 1-based)
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', (pagination.pageIndex + 1).toString());
+    newParams.set('pageSize', pagination.pageSize.toString());
+    setSearchParams(newParams);
+  }, [pagination, setSearchParams]);
+
+  // Update pagination when URL changes (convert from 1-based to 0-based)
+  useEffect(() => {
+    const pageFromUrl = Math.max(
+      0,
+      Number(searchParams.get('page') || '1') - 1
+    );
+    const pageSizeFromUrl = Number(searchParams.get('pageSize') || '10');
+
+    setPagination({
+      pageIndex: pageFromUrl,
+      pageSize: pageSizeFromUrl,
+    });
+  }, [searchParams]);
 
   // State for frozen column keys
   const [frozenColumnKeys, setFrozenColumnKeys] = useState<ItemColumnId[]>([
@@ -110,9 +141,13 @@ export const ContentsTableWithToolbar: React.FC<
       globalFilter,
       columnOrder,
       sorting,
+      pagination,
     },
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnOrderChange: setColumnOrder,
+    manualPagination: false,
+    pageCount: Math.ceil(data.length / pagination.pageSize),
   });
 
   return (

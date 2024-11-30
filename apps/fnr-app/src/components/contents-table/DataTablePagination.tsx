@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@react-monorepo/shared';
+import { useEffect } from 'react';
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -21,6 +22,24 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
+  // Add keyboard navigation for Alt+Left/Right
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey) {
+        if (e.key === 'ArrowLeft' && table.getCanPreviousPage()) {
+          e.preventDefault(); // Prevent browser back navigation
+          table.previousPage();
+        } else if (e.key === 'ArrowRight' && table.getCanNextPage()) {
+          e.preventDefault(); // Prevent browser forward navigation
+          table.nextPage();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [table]);
+
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
