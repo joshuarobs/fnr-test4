@@ -13,7 +13,7 @@ import {
   SortingState,
 } from '@tanstack/react-table';
 import { ContentsTableToolbar } from './contents-table-toolbar/ContentsTableToolbar';
-import { ContentsDataTable2 } from './ContentsDataTable2';
+import { ContentsDataTable } from './ContentsDataTable';
 import { Item } from './item';
 import { createColumns } from './columns';
 import { ITEM_KEYS } from './itemKeys';
@@ -56,7 +56,7 @@ declare module '@tanstack/table-core' {
   }
 }
 
-export const ContentsTableWithToolbar2: React.FC<
+export const ContentsTableWithToolbar: React.FC<
   ContentsTableWithToolbarProps
 > = ({ data, addItem, removeItem, updateItem, claimNumber }) => {
   const columns = React.useMemo(
@@ -122,7 +122,7 @@ export const ContentsTableWithToolbar2: React.FC<
         frozenColumnKeys={frozenColumnKeys}
         setFrozenColumnKeys={setFrozenColumnKeys}
       />
-      <ContentsDataTable2<Item, unknown>
+      <ContentsDataTable<Item, unknown>
         table={table}
         frozenColumnKeys={frozenColumnKeys}
         frozenRightColumnKeys={frozenRightColumnKeys}
