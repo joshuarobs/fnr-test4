@@ -4,15 +4,16 @@ import { PrismaClient, Prisma } from '@prisma/client';
 type Item = {
   insuredsQuote: number | null;
   ourQuote: number | null;
+  quantity: number;
 };
 
 export const calculateClaimValues = (items: Item[]) => {
   const totalClaimed = items.reduce(
-    (sum, item) => sum + (item.insuredsQuote || 0),
+    (sum, item) => sum + (item.insuredsQuote || 0) * item.quantity,
     0
   );
   const totalApproved = items.reduce(
-    (sum, item) => sum + (item.ourQuote || 0),
+    (sum, item) => sum + (item.ourQuote || 0) * item.quantity,
     0
   );
 
@@ -49,6 +50,7 @@ export const recalculateClaimValues = async (
         select: {
           insuredsQuote: true,
           ourQuote: true,
+          quantity: true,
         },
       },
     },

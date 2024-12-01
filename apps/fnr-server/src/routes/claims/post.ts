@@ -35,6 +35,7 @@ router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
             select: {
               insuredsQuote: true,
               ourQuote: true,
+              quantity: true,
             },
           },
         },
@@ -72,6 +73,7 @@ router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
         {
           insuredsQuote: newItem.insuredsQuote,
           ourQuote: newItem.ourQuote,
+          quantity: newItem.quantity,
         },
       ];
 
@@ -248,6 +250,7 @@ router.post('/:claimNumber/recalculate', async (req, res) => {
             select: {
               insuredsQuote: true,
               ourQuote: true,
+              quantity: true,
             },
           },
         },
