@@ -23,10 +23,31 @@ export const OurQuoteCell = ({
     if (quote == null) {
       return <div className="text-muted-foreground italic">No quote</div>;
     }
-    return new Intl.NumberFormat('en-US', {
+
+    const formattedEachPrice = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(quote);
+
+    // If quantity > 1, show total price and each price
+    if (item.quantity > 1) {
+      const totalPrice = quote * item.quantity;
+      const formattedTotalPrice = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(totalPrice);
+
+      return (
+        <div className="text-right max-h-[52px]">
+          <div>{formattedTotalPrice}</div>
+          <div className="text-muted-foreground text-sm">
+            ${formattedEachPrice} ea
+          </div>
+        </div>
+      );
+    }
+
+    return formattedEachPrice;
   };
 
   const validateInput = (value: string) => {

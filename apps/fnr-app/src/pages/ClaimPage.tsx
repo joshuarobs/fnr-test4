@@ -108,11 +108,17 @@ export const ClaimPage = () => {
   }, [claimData]);
 
   const calculateInsuredsTotal = (items: Item[]): number => {
-    return items.reduce((total, item) => total + (item.insuredsQuote || 0), 0);
+    return items.reduce(
+      (total, item) => total + (item.insuredsQuote || 0) * (item.quantity || 1),
+      0
+    );
   };
 
   const calculateOurTotal = (items: Item[]): number => {
-    return items.reduce((total, item) => total + (item.ourQuote || 0), 0);
+    return items.reduce(
+      (total, item) => total + (item.ourQuote || 0) * (item.quantity || 1),
+      0
+    );
   };
 
   const calculateProgress = (

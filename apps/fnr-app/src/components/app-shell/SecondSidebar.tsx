@@ -28,18 +28,6 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           {/* ======================================== */}
-          {/* Item Details */}
-          {/* ======================================== */}
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Item Details
-          </h2>
-          <div className="space-y-0">
-            <SidebarTab icon={<InfoCircledIcon />} label="Overview" />
-            <SidebarTab icon={<ChatBubbleIcon />} label="Notes" />
-            <SidebarTab icon={<ClockIcon />} label="History" />
-          </div>
-          <SidebarSeparator />
-          {/* ======================================== */}
           {/* Activity */}
           {/* ======================================== */}
           <LatestActivitiesContainer />

@@ -5,7 +5,7 @@ import { TestApi } from './TestApi';
 
 export const LatestActivitiesContainer = () => {
   return (
-    <div className="h-[400px] flex flex-col">
+    <div className="h-[600px] flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Latest activity</h2>
         <Button variant="outline" size="sm">
@@ -20,10 +20,6 @@ export const LatestActivitiesContainer = () => {
           ))}
         </div>
       </ScrollArea>
-      <Separator className="mt-4" />
-      <div className="mt-4">
-        <TestApi />
-      </div>
     </div>
   );
 };
