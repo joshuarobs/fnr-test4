@@ -37,7 +37,7 @@ export const InsuredsQuoteCell = ({
       }).format(totalPrice);
 
       return (
-        <div className="text-right">
+        <div className="text-right max-h-[52px]">
           <div>{formattedTotalPrice}</div>
           <div className="text-muted-foreground text-sm">
             ${formattedEachPrice} ea
