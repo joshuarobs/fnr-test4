@@ -40,7 +40,7 @@ export const QuantityCell = ({
         onSave={handleSave}
         formatDisplay={(value) => value}
         validate={validateInput}
-        inputClassName="w-20"
+        inputClassName="w-10"
         textAlign="right"
         iconPosition="left"
       />

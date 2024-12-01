@@ -223,7 +223,7 @@ export const createColumns = ({
             <InsuredsQuoteCell
               item={row.original}
               updateItem={updateItem}
-              isEditable={false} // Set isEditable to false as a test
+              isEditable={true} // Set isEditable to false as a test
             />
           </CellWrapper>
         );
