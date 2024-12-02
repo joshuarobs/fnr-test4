@@ -70,12 +70,14 @@ const createNewItem = (
   name: string,
   status: ItemStatusType,
   category: ItemCategory | null,
+  quantity: number,
   modelSerialNumber?: string
 ): Partial<Item> => {
   return {
     name: name.trim(),
     category,
     itemStatus: status,
+    quantity,
     modelSerialNumber: modelSerialNumber?.trim() || null,
   };
 };
@@ -86,6 +88,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
   const [quickAddInput, setQuickAddInput] = useState('');
   const [modelSerialInput, setModelSerialInput] = useState('');
+  const [quantityInput, setQuantityInput] = useState('1'); // Default quantity is 1
   const [multiAddInput, setMultiAddInput] = useState('');
   const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
   const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
@@ -102,21 +105,31 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
       if (e.key === 'Enter' && quickAddInput.trim()) {
+        const quantity = parseInt(quantityInput) || 1; // Default to 1 if invalid
         const newItem = createNewItem(
           quickAddInput,
           selectedStatus,
           selectedCategory,
+          quantity,
           modelSerialInput
         );
         addItem(newItem as Item);
         setQuickAddInput('');
         setModelSerialInput('');
+        setQuantityInput('1'); // Reset quantity to default
         setIsOpen(false);
       } else if (e.key === 'Escape') {
         setIsOpen(false);
       }
     },
-    [quickAddInput, modelSerialInput, selectedStatus, selectedCategory, addItem]
+    [
+      quickAddInput,
+      modelSerialInput,
+      quantityInput,
+      selectedStatus,
+      selectedCategory,
+      addItem,
+    ]
   );
 
   const handleMultiAdd = () => {
@@ -126,7 +139,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       .filter(Boolean)
       .map(
         (itemName) =>
-          createNewItem(itemName, selectedStatus, selectedCategory) as Item
+          createNewItem(itemName, selectedStatus, selectedCategory, 1) as Item
       );
 
     if (items.length > 0) {
@@ -162,6 +175,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     if (activeTab === TabType.Single) {
       setQuickAddInput('');
       setModelSerialInput('');
+      setQuantityInput('1'); // Reset quantity to default
       setAddItemHasMinReqs(false);
       setQuickAddHasChanges(false);
     }
@@ -214,6 +228,8 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
               setQuickAddInput={handleQuickAddInputChange}
               modelSerialInput={modelSerialInput}
               setModelSerialInput={setModelSerialInput}
+              quantityInput={quantityInput}
+              setQuantityInput={setQuantityInput}
               selectedRoom=""
               setSelectedRoom={() => {}}
               roomOpen={false}

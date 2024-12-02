@@ -14,6 +14,7 @@ import {
   InputClearable,
   RadioGroup,
   RadioGroupItem,
+  Input,
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
@@ -48,6 +49,8 @@ interface QuickAddTabProps {
   setQuickAddInput: (value: string) => void;
   modelSerialInput: string;
   setModelSerialInput: (value: string) => void;
+  quantityInput: string;
+  setQuantityInput: (value: string) => void;
   selectedRoom: string;
   setSelectedRoom: (value: string) => void;
   roomOpen: boolean;
@@ -66,6 +69,8 @@ export function QuickAddTab({
   setQuickAddInput,
   modelSerialInput,
   setModelSerialInput,
+  quantityInput,
+  setQuantityInput,
   selectedRoom,
   setSelectedRoom,
   roomOpen,
@@ -96,6 +101,18 @@ export function QuickAddTab({
     setRooms(roomOptions);
   }, []);
 
+  // Handle quantity input to only allow numbers
+  const handleQuantityChange = (value: string) => {
+    // Remove any non-digit characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+    // Ensure the value is not empty and is a positive number
+    if (numericValue === '' || parseInt(numericValue) === 0) {
+      setQuantityInput('1');
+    } else {
+      setQuantityInput(numericValue);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
@@ -114,6 +131,26 @@ export function QuickAddTab({
           onKeyDown={handleQuickAdd}
           onClear={() => setQuickAddInput('')}
           autoFocus
+        />
+      </div>
+
+      {/* Quantity Field */}
+      <div className="flex items-center gap-4">
+        <Label htmlFor="quantity" className={labelMinWidthClass}>
+          Quantity
+        </Label>
+        <Input
+          id="quantity"
+          name="quantity"
+          type="number"
+          min={1}
+          autoComplete="off"
+          defaultValue="1"
+          placeholder="Enter quantity..."
+          className="flex-1"
+          value={quantityInput}
+          onChange={(e) => handleQuantityChange(e.target.value)}
+          onKeyDown={handleQuickAdd}
         />
       </div>
 
