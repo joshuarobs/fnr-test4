@@ -18,5 +18,6 @@ export * from './components/ui/dialog';
 export * from './components/ui/command';
 export * from './components/ui/progress';
 export * from './components/ui/input-clearable';
+export * from './components/ui/form';
 export * from './components/ui/radio-group';
 export * from './components/ui/keyboard-key-icon';
