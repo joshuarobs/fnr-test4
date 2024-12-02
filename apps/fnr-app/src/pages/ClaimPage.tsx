@@ -28,6 +28,7 @@ export const ClaimPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [claimInput, setClaimInput] = React.useState('');
+  const tableRef = React.useRef<any>(null);
 
   if (!id) {
     return (
@@ -61,9 +62,19 @@ export const ClaimPage = () => {
   const [removeItemMutation] = useRemoveItemMutation();
   const [recordView] = useRecordClaimViewMutation();
 
-  // Reset selected cell when entering claim page or when claim ID changes
+  // Reset selected cell and filters when entering claim page or when claim ID changes
   React.useEffect(() => {
     dispatch(setSelectedCell({ rowId: '1', columnId: ITEM_KEYS.LOCAL_ID }));
+    // Reset filters if table reference exists
+    if (tableRef.current?.table) {
+      tableRef.current.table.getAllColumns().forEach((column: any) => {
+        if (column.getCanFilter()) {
+          column.setFilterValue(undefined);
+        }
+      });
+      // Reset global filter
+      tableRef.current.table.setGlobalFilter('');
+    }
   }, [dispatch, id]);
 
   // Record view when claim is loaded, but only if it's not the most recent view
@@ -252,6 +263,7 @@ export const ClaimPage = () => {
         </div>
         <div className="flex-1 min-h-0 px-4 pb-6">
           <ContentsTableWithToolbar
+            ref={tableRef}
             data={tableData}
             addItem={addItem}
             removeItem={removeItem}

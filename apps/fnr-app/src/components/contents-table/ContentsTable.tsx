@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -58,9 +63,10 @@ declare module '@tanstack/table-core' {
   }
 }
 
-export const ContentsTableWithToolbar: React.FC<
+export const ContentsTableWithToolbar = forwardRef<
+  { table: any },
   ContentsTableWithToolbarProps
-> = ({ data, addItem, removeItem, updateItem, claimNumber }) => {
+>(({ data, addItem, removeItem, updateItem, claimNumber }, ref) => {
   const columns = React.useMemo(
     () => createColumns({ updateItem, removeItem, claimNumber }),
     [updateItem, removeItem, claimNumber]
@@ -150,6 +156,11 @@ export const ContentsTableWithToolbar: React.FC<
     pageCount: Math.ceil(data.length / pagination.pageSize),
   });
 
+  // Expose table instance through ref
+  useImperativeHandle(ref, () => ({
+    table,
+  }));
+
   return (
     <div className="w-full h-full flex flex-col">
       <ContentsTableToolbar<Item>
@@ -166,4 +177,4 @@ export const ContentsTableWithToolbar: React.FC<
       </div>
     </div>
   );
-};
+});
