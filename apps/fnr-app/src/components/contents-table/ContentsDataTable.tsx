@@ -38,6 +38,14 @@ export const ContentsDataTable = <TData extends Item, TValue>({
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if we're in an input field
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
       const totalRows = table.getRowModel().rows.length;
 
       // Get all visible columns in order (frozen left, main, frozen right)
