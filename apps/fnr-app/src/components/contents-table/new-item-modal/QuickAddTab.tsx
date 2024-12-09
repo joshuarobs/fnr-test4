@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { KeyboardEvent } from 'react';
 import {
   Label,
   Popover,
@@ -11,14 +11,18 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  InputClearable,
+  Input,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
   RadioGroup,
   RadioGroupItem,
-  Input,
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
-import { placeholderContentsData } from '../placeholderContentsData';
 import { ItemCategory } from '../itemCategories';
 import {
   ItemStatus,
@@ -28,21 +32,23 @@ import {
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { CategoryDropdown } from '../shared/CategoryDropdown';
 import { RoomCategory } from '../roomCategories';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const labelMinWidthClass = 'min-w-[80px] text-right';
 
-// Function to get all unique rooms from placeholderContentsData
-const getAllRooms = () => {
-  const uniqueRooms = new Set<string>();
-  placeholderContentsData.forEach((item) => {
-    if (item.roomCategory) {
-      uniqueRooms.add(item.roomCategory);
-    }
-  });
-  return Array.from(uniqueRooms)
-    .sort()
-    .map((room) => ({ value: room.toLowerCase(), label: room }));
-};
+// Form schema
+const formSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  quantity: z.number().min(1, 'Quantity must be at least 1').default(1),
+  room: z.string().optional(),
+  category: z.nativeEnum(ItemCategory).nullable(),
+  status: z.nativeEnum(ItemStatus),
+  modelSerial: z.string().optional(),
+});
+
+type FormSchema = z.infer<typeof formSchema>;
 
 interface QuickAddTabProps {
   quickAddInput: string;
@@ -83,195 +89,291 @@ export function QuickAddTab({
   selectedStatus,
   setSelectedStatus,
 }: QuickAddTabProps) {
-  const [rooms, setRooms] = useState<Array<{ value: string; label: string }>>(
-    []
-  );
+  // Initialize form with default values
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: quickAddInput,
+      quantity: parseInt(quantityInput) || 1,
+      room: selectedRoom,
+      category: selectedCategory,
+      status: selectedStatus,
+      modelSerial: modelSerialInput,
+    },
+  });
 
-  useEffect(() => {
-    // Convert RoomCategory enum to options
-    const roomOptions = Object.values(RoomCategory).map((room) => ({
-      value: room.toLowerCase(),
-      label: room
-        .replace(/_/g, ' ')
-        .replace(
-          /\w\S*/g,
-          (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-        ),
-    }));
-    setRooms(roomOptions);
-  }, []);
+  // Get room options from RoomCategory enum
+  const rooms = Object.values(RoomCategory).map((room) => ({
+    value: room.toLowerCase(),
+    label: room
+      .replace(/_/g, ' ')
+      .replace(
+        /\w\S*/g,
+        (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+      ),
+  }));
 
-  // Handle quantity input to only allow numbers
+  // Handle quantity input to allow any input but default to 1 if invalid on submit
   const handleQuantityChange = (value: string) => {
-    // Remove any non-digit characters
-    const numericValue = value.replace(/[^0-9]/g, '');
-    // Ensure the value is not empty and is a positive number
-    if (numericValue === '' || parseInt(numericValue) === 0) {
-      setQuantityInput('1');
+    setQuantityInput(value);
+    const parsedValue = parseInt(value);
+    // Only update form if it's a valid number
+    if (!isNaN(parsedValue) && parsedValue > 0) {
+      form.setValue('quantity', parsedValue);
     } else {
-      setQuantityInput(numericValue);
+      form.setValue('quantity', 1);
+    }
+  };
+
+  // Handle form submission
+  const onSubmit = (data: FormSchema) => {
+    // Ensure quantity is 1 if invalid
+    if (isNaN(parseInt(quantityInput)) || parseInt(quantityInput) < 1) {
+      setQuantityInput('1');
+      form.setValue('quantity', 1);
+    }
+    // The parent component handles the actual submission via handleQuickAdd
+    if (form.formState.isValid) {
+      handleQuickAdd({ key: 'Enter' } as KeyboardEvent<HTMLInputElement>);
     }
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <Label htmlFor="name" className={labelMinWidthClass}>
-          Name
-        </Label>
-        <InputClearable
-          id="name"
-          name="item-name"
-          autoComplete="off"
-          defaultValue=""
-          placeholder="e.g. Shirt, Table, Shovel, etc..."
-          className="flex-1"
-          value={quickAddInput}
-          onChange={(e) => setQuickAddInput(e.target.value)}
-          onKeyDown={handleQuickAdd}
-          onClear={() => setQuickAddInput('')}
-          autoFocus
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Name Field */}
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel className={labelMinWidthClass}>Name</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="e.g. Shirt, Table, Shovel, etc..."
+                  className="flex-1"
+                  value={quickAddInput}
+                  onChange={(e) => {
+                    setQuickAddInput(e.target.value);
+                    field.onChange(e);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && form.formState.isValid) {
+                      handleQuickAdd(e);
+                    }
+                  }}
+                  autoComplete="off"
+                  autoFocus
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      {/* Quantity Field */}
-      <div className="flex items-center gap-4">
-        <Label htmlFor="quantity" className={labelMinWidthClass}>
-          Quantity
-        </Label>
-        <Input
-          id="quantity"
+        {/* Quantity Field */}
+        <FormField
+          control={form.control}
           name="quantity"
-          type="number"
-          min={1}
-          autoComplete="off"
-          defaultValue="1"
-          placeholder="Enter quantity..."
-          className="flex-1"
-          value={quantityInput}
-          onChange={(e) => handleQuantityChange(e.target.value)}
-          onKeyDown={handleQuickAdd}
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel className={labelMinWidthClass}>Quantity</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter quantity..."
+                  className="flex-1"
+                  value={quantityInput}
+                  onChange={(e) => {
+                    handleQuantityChange(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && form.formState.isValid) {
+                      handleQuickAdd(e);
+                    }
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <div className="flex items-center gap-4">
-        <Label htmlFor="room" className={labelMinWidthClass}>
-          Room
-        </Label>
-        <Popover open={roomOpen} onOpenChange={setRoomOpen} modal={true}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={roomOpen}
-              className="flex-1 justify-between"
-            >
-              {selectedRoom
-                ? rooms.find((room) => room.value === selectedRoom)?.label
-                : 'Select room...'}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="w-[var(--radix-popover-trigger-width)] p-0"
-            style={{
-              ['--radix-popover-trigger-width' as any]:
-                'var(--radix-popover-trigger-width)',
-            }}
-          >
-            <Command>
-              <CommandInput placeholder="Search room..." />
-              <CommandList>
-                <CommandEmpty>No room found.</CommandEmpty>
-                <CommandGroup>
-                  {rooms.map((room) => (
-                    <CommandItem
-                      key={room.value}
-                      value={room.value}
-                      onSelect={(currentValue) => {
-                        setSelectedRoom(
-                          currentValue === selectedRoom ? '' : currentValue
-                        );
-                        setRoomOpen(false);
+        {/* Room Field */}
+        <FormField
+          control={form.control}
+          name="room"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel className={labelMinWidthClass}>Room</FormLabel>
+              <FormControl>
+                <Popover
+                  open={roomOpen}
+                  onOpenChange={setRoomOpen}
+                  modal={true}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={roomOpen}
+                      className="flex-1 justify-between"
+                    >
+                      {selectedRoom
+                        ? rooms.find((room) => room.value === selectedRoom)
+                            ?.label
+                        : 'Select room...'}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[var(--radix-popover-trigger-width)] p-0"
+                    style={{
+                      ['--radix-popover-trigger-width' as any]:
+                        'var(--radix-popover-trigger-width)',
+                    }}
+                  >
+                    <Command>
+                      <CommandInput placeholder="Search room..." />
+                      <CommandList>
+                        <CommandEmpty>No room found.</CommandEmpty>
+                        <CommandGroup>
+                          {rooms.map((room) => (
+                            <CommandItem
+                              key={room.value}
+                              value={room.value}
+                              onSelect={(currentValue) => {
+                                setSelectedRoom(
+                                  currentValue === selectedRoom
+                                    ? ''
+                                    : currentValue
+                                );
+                                field.onChange(currentValue);
+                                setRoomOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  selectedRoom === room.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {room.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Category Field */}
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel className={labelMinWidthClass}>Category</FormLabel>
+              <FormControl>
+                <div className="flex-1">
+                  <CategoryDropdown
+                    selectedCategory={selectedCategory}
+                    onCategorySelect={(category) => {
+                      setSelectedCategory(category);
+                      field.onChange(category);
+                    }}
+                    onOpenChange={setCategoryOpen}
+                    className="w-full"
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Status Field */}
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel className={labelMinWidthClass}>Status</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  value={selectedStatus}
+                  onValueChange={(value) => {
+                    setSelectedStatus(value as ItemStatusType);
+                    field.onChange(value);
+                  }}
+                  className="flex gap-3 flex-1"
+                >
+                  {ORDERED_ITEM_STATUSES.map((status) => (
+                    <div
+                      key={status}
+                      className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+                      onClick={() => {
+                        setSelectedStatus(status);
+                        field.onChange(status);
                       }}
                     >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          selectedRoom === room.value
-                            ? 'opacity-100'
-                            : 'opacity-0'
-                        )}
-                      />
-                      {room.label}
-                    </CommandItem>
+                      <Label
+                        htmlFor={`status-${status}`}
+                        className="flex items-center cursor-pointer"
+                      >
+                        <RadioGroupItem
+                          value={status}
+                          id={`status-${status}`}
+                        />
+                        <span className="ml-2">
+                          <ItemStatusBadge itemStatus={status} />
+                        </span>
+                      </Label>
+                    </div>
                   ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {/* Category Section */}
-      <div className="flex items-center gap-4">
-        <Label className={labelMinWidthClass}>Category</Label>
-        <div className="flex-1">
-          <CategoryDropdown
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
-            onOpenChange={setCategoryOpen}
-            className="w-full"
-          />
-        </div>
-      </div>
-
-      {/* Status Section */}
-      <div className="flex items-center gap-4">
-        <Label className={labelMinWidthClass}>Status</Label>
-        <RadioGroup
-          value={selectedStatus}
-          onValueChange={(value) => setSelectedStatus(value as ItemStatusType)}
-          className="flex gap-3 flex-1"
-        >
-          {ORDERED_ITEM_STATUSES.map((status) => (
-            <div
-              key={status}
-              className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
-              onClick={() => setSelectedStatus(status)}
-            >
-              <Label
-                htmlFor={`status-${status}`}
-                className="flex items-center cursor-pointer"
-              >
-                <RadioGroupItem value={status} id={`status-${status}`} />
-                <span className="ml-2">
-                  <ItemStatusBadge itemStatus={status} />
-                </span>
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
-
-      {/* Model/Serial Number Section */}
-      <div className="flex items-center gap-4">
-        <Label htmlFor="modelSerial" className={labelMinWidthClass}>
-          Model/SN
-        </Label>
-        <InputClearable
-          id="modelSerial"
-          name="model-serial"
-          autoComplete="off"
-          defaultValue=""
-          placeholder="Model or Serial Number..."
-          className="flex-1"
-          value={modelSerialInput}
-          onChange={(e) => setModelSerialInput(e.target.value)}
-          onKeyDown={handleQuickAdd}
-          onClear={() => setModelSerialInput('')}
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-    </div>
+
+        {/* Model/Serial Number Field */}
+        <FormField
+          control={form.control}
+          name="modelSerial"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel className={labelMinWidthClass}>Model/SN</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Model or Serial Number..."
+                  className="flex-1"
+                  value={modelSerialInput}
+                  onChange={(e) => {
+                    setModelSerialInput(e.target.value);
+                    field.onChange(e);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && form.formState.isValid) {
+                      handleQuickAdd(e);
+                    }
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
   );
 }
