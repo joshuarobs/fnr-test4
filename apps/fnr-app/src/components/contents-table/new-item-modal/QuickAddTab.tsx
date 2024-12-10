@@ -35,6 +35,7 @@ import { RoomCategory } from '../roomCategories';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FormWarningIcon } from '../../contents-other/FormWarningIcon';
 
 const labelMinWidthClass =
   'min-w-[80px] text-right flex items-center justify-end';
@@ -139,6 +140,19 @@ export function QuickAddTab({
     }
   };
 
+  // Helper component for form error message with icon
+  const FormErrorMessage = ({ fieldName }: { fieldName: keyof FormSchema }) => {
+    const error = form.formState.errors[fieldName];
+    if (!error) return null;
+
+    return (
+      <div className="flex items-center gap-2">
+        <FormWarningIcon />
+        <FormMessage />
+      </div>
+    );
+  };
+
   return (
     <Form {...form}>
       <form
@@ -174,7 +188,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormMessage />
+                <FormErrorMessage fieldName="name" />
               </div>
             </FormItem>
           )}
@@ -205,7 +219,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormMessage />
+                <FormErrorMessage fieldName="quantity" />
               </div>
             </FormItem>
           )}
@@ -284,7 +298,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormMessage />
+                <FormErrorMessage fieldName="room" />
               </div>
             </FormItem>
           )}
@@ -313,7 +327,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormMessage />
+                <FormErrorMessage fieldName="category" />
               </div>
             </FormItem>
           )}
@@ -363,7 +377,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormMessage />
+                <FormErrorMessage fieldName="status" />
               </div>
             </FormItem>
           )}
@@ -396,7 +410,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormMessage />
+                <FormErrorMessage fieldName="modelSerial" />
               </div>
             </FormItem>
           )}
