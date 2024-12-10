@@ -143,7 +143,7 @@ export function QuickAddTab({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="[&_input]:mt-0 [&_button]:mt-0 [&_div]:mt-0"
+        className="[&_input]:mt-0 [&_button]:mt-0 [&_div]:mt-0 space-y-2"
       >
         {/* Name Field */}
         <FormField
