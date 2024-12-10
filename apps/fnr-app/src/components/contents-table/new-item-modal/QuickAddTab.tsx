@@ -36,7 +36,8 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const labelMinWidthClass = 'min-w-[80px] text-right';
+const labelMinWidthClass =
+  'min-w-[80px] text-right flex items-center justify-end';
 
 // Form schema
 const formSchema = z.object({
@@ -140,34 +141,41 @@ export function QuickAddTab({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="[&_input]:mt-0 [&_button]:mt-0 [&_div]:mt-0"
+      >
         {/* Name Field */}
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <FormLabel className={labelMinWidthClass}>Name</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="e.g. Shirt, Table, Shovel, etc..."
-                  className="flex-1"
-                  value={quickAddInput}
-                  onChange={(e) => {
-                    setQuickAddInput(e.target.value);
-                    field.onChange(e);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && form.formState.isValid) {
-                      handleQuickAdd(e);
-                    }
-                  }}
-                  autoComplete="off"
-                  autoFocus
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="flex flex-col m-0">
+              <div className="flex items-center gap-4">
+                <FormLabel className={labelMinWidthClass}>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="e.g. Shirt, Table, Shovel, etc..."
+                    className="flex-1"
+                    value={quickAddInput}
+                    onChange={(e) => {
+                      setQuickAddInput(e.target.value);
+                      field.onChange(e);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && form.formState.isValid) {
+                        handleQuickAdd(e);
+                      }
+                    }}
+                    autoComplete="off"
+                    autoFocus
+                  />
+                </FormControl>
+              </div>
+              <div className="ml-[calc(80px+1rem)]">
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />
@@ -177,24 +185,28 @@ export function QuickAddTab({
           control={form.control}
           name="quantity"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <FormLabel className={labelMinWidthClass}>Quantity</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter quantity..."
-                  className="flex-1"
-                  value={quantityInput}
-                  onChange={(e) => {
-                    handleQuantityChange(e.target.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && form.formState.isValid) {
-                      handleQuickAdd(e);
-                    }
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="flex flex-col m-0">
+              <div className="flex items-center gap-4">
+                <FormLabel className={labelMinWidthClass}>Quantity</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter quantity..."
+                    className="flex-1"
+                    value={quantityInput}
+                    onChange={(e) => {
+                      handleQuantityChange(e.target.value);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && form.formState.isValid) {
+                        handleQuickAdd(e);
+                      }
+                    }}
+                  />
+                </FormControl>
+              </div>
+              <div className="ml-[calc(80px+1rem)]">
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />
@@ -204,72 +216,76 @@ export function QuickAddTab({
           control={form.control}
           name="room"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <FormLabel className={labelMinWidthClass}>Room</FormLabel>
-              <FormControl>
-                <Popover
-                  open={roomOpen}
-                  onOpenChange={setRoomOpen}
-                  modal={true}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={roomOpen}
-                      className="flex-1 justify-between"
-                    >
-                      {selectedRoom
-                        ? rooms.find((room) => room.value === selectedRoom)
-                            ?.label
-                        : 'Select room...'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-[var(--radix-popover-trigger-width)] p-0"
-                    style={{
-                      ['--radix-popover-trigger-width' as any]:
-                        'var(--radix-popover-trigger-width)',
-                    }}
+            <FormItem className="flex flex-col m-0">
+              <div className="flex items-center gap-4">
+                <FormLabel className={labelMinWidthClass}>Room</FormLabel>
+                <FormControl>
+                  <Popover
+                    open={roomOpen}
+                    onOpenChange={setRoomOpen}
+                    modal={true}
                   >
-                    <Command>
-                      <CommandInput placeholder="Search room..." />
-                      <CommandList>
-                        <CommandEmpty>No room found.</CommandEmpty>
-                        <CommandGroup>
-                          {rooms.map((room) => (
-                            <CommandItem
-                              key={room.value}
-                              value={room.value}
-                              onSelect={(currentValue) => {
-                                setSelectedRoom(
-                                  currentValue === selectedRoom
-                                    ? ''
-                                    : currentValue
-                                );
-                                field.onChange(currentValue);
-                                setRoomOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  selectedRoom === room.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {room.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormControl>
-              <FormMessage />
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={roomOpen}
+                        className="flex-1 justify-between"
+                      >
+                        {selectedRoom
+                          ? rooms.find((room) => room.value === selectedRoom)
+                              ?.label
+                          : 'Select room...'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-[var(--radix-popover-trigger-width)] p-0"
+                      style={{
+                        ['--radix-popover-trigger-width' as any]:
+                          'var(--radix-popover-trigger-width)',
+                      }}
+                    >
+                      <Command>
+                        <CommandInput placeholder="Search room..." />
+                        <CommandList>
+                          <CommandEmpty>No room found.</CommandEmpty>
+                          <CommandGroup>
+                            {rooms.map((room) => (
+                              <CommandItem
+                                key={room.value}
+                                value={room.value}
+                                onSelect={(currentValue) => {
+                                  setSelectedRoom(
+                                    currentValue === selectedRoom
+                                      ? ''
+                                      : currentValue
+                                  );
+                                  field.onChange(currentValue);
+                                  setRoomOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    selectedRoom === room.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                                {room.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormControl>
+              </div>
+              <div className="ml-[calc(80px+1rem)]">
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />
@@ -279,22 +295,26 @@ export function QuickAddTab({
           control={form.control}
           name="category"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <FormLabel className={labelMinWidthClass}>Category</FormLabel>
-              <FormControl>
-                <div className="flex-1">
-                  <CategoryDropdown
-                    selectedCategory={selectedCategory}
-                    onCategorySelect={(category) => {
-                      setSelectedCategory(category);
-                      field.onChange(category);
-                    }}
-                    onOpenChange={setCategoryOpen}
-                    className="w-full"
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
+            <FormItem className="flex flex-col m-0">
+              <div className="flex items-center gap-4">
+                <FormLabel className={labelMinWidthClass}>Category</FormLabel>
+                <FormControl>
+                  <div className="flex-1">
+                    <CategoryDropdown
+                      selectedCategory={selectedCategory}
+                      onCategorySelect={(category) => {
+                        setSelectedCategory(category);
+                        field.onChange(category);
+                      }}
+                      onOpenChange={setCategoryOpen}
+                      className="w-full"
+                    />
+                  </div>
+                </FormControl>
+              </div>
+              <div className="ml-[calc(80px+1rem)]">
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />
@@ -304,43 +324,47 @@ export function QuickAddTab({
           control={form.control}
           name="status"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <FormLabel className={labelMinWidthClass}>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  value={selectedStatus}
-                  onValueChange={(value) => {
-                    setSelectedStatus(value as ItemStatusType);
-                    field.onChange(value);
-                  }}
-                  className="flex gap-3 flex-1"
-                >
-                  {ORDERED_ITEM_STATUSES.map((status) => (
-                    <div
-                      key={status}
-                      className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
-                      onClick={() => {
-                        setSelectedStatus(status);
-                        field.onChange(status);
-                      }}
-                    >
-                      <Label
-                        htmlFor={`status-${status}`}
-                        className="flex items-center cursor-pointer"
+            <FormItem className="flex flex-col m-0">
+              <div className="flex items-center gap-4">
+                <FormLabel className={labelMinWidthClass}>Status</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    value={selectedStatus}
+                    onValueChange={(value) => {
+                      setSelectedStatus(value as ItemStatusType);
+                      field.onChange(value);
+                    }}
+                    className="flex gap-3 flex-1"
+                  >
+                    {ORDERED_ITEM_STATUSES.map((status) => (
+                      <div
+                        key={status}
+                        className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+                        onClick={() => {
+                          setSelectedStatus(status);
+                          field.onChange(status);
+                        }}
                       >
-                        <RadioGroupItem
-                          value={status}
-                          id={`status-${status}`}
-                        />
-                        <span className="ml-2">
-                          <ItemStatusBadge itemStatus={status} />
-                        </span>
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
+                        <Label
+                          htmlFor={`status-${status}`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <RadioGroupItem
+                            value={status}
+                            id={`status-${status}`}
+                          />
+                          <span className="ml-2">
+                            <ItemStatusBadge itemStatus={status} />
+                          </span>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div className="ml-[calc(80px+1rem)]">
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />
@@ -350,26 +374,30 @@ export function QuickAddTab({
           control={form.control}
           name="modelSerial"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <FormLabel className={labelMinWidthClass}>Model/SN</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Model or Serial Number..."
-                  className="flex-1"
-                  value={modelSerialInput}
-                  onChange={(e) => {
-                    setModelSerialInput(e.target.value);
-                    field.onChange(e);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && form.formState.isValid) {
-                      handleQuickAdd(e);
-                    }
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="flex flex-col m-0">
+              <div className="flex items-center gap-4">
+                <FormLabel className={labelMinWidthClass}>Model/SN</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Model or Serial Number..."
+                    className="flex-1"
+                    value={modelSerialInput}
+                    onChange={(e) => {
+                      setModelSerialInput(e.target.value);
+                      field.onChange(e);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && form.formState.isValid) {
+                        handleQuickAdd(e);
+                      }
+                    }}
+                  />
+                </FormControl>
+              </div>
+              <div className="ml-[calc(80px+1rem)]">
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />
