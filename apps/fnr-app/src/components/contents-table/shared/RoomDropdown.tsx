@@ -27,23 +27,11 @@ export const RoomDropdown = ({
     if (room === null) {
       return <div className="text-muted-foreground italic">No room</div>;
     }
-    const Icon = roomCategoryIcons[room];
-    return (
-      <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-gray-600" />
-        <RoomCategoryBadge roomCategory={room} showTooltip={false} />
-      </div>
-    );
+    return <RoomCategoryBadge roomCategory={room} showTooltip={false} />;
   };
 
   const renderItemContent = (room: RoomCategory) => {
-    const Icon = roomCategoryIcons[room];
-    return (
-      <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-gray-600" />
-        <RoomCategoryBadge roomCategory={room} showTooltip={false} />
-      </div>
-    );
+    return <RoomCategoryBadge roomCategory={room} showTooltip={false} />;
   };
 
   const renderNoValueContent = () => (
