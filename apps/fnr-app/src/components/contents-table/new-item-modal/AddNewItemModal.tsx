@@ -82,23 +82,34 @@ const createNewItem = (
   };
 };
 
+// Default values for the form fields
+const DEFAULT_VALUES = {
+  name: '',
+  modelSerial: '',
+  quantity: '1',
+  room: '',
+  category: null as ItemCategory | null,
+  status: ItemStatus.NR as ItemStatusType,
+};
+
 export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
   const { id } = useParams<{ id: string }>();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
-  const [quickAddInput, setQuickAddInput] = useState('');
-  const [modelSerialInput, setModelSerialInput] = useState('');
-  const [quantityInput, setQuantityInput] = useState('1'); // Default quantity is 1
+  const [quickAddInput, setQuickAddInput] = useState(DEFAULT_VALUES.name);
+  const [modelSerialInput, setModelSerialInput] = useState(
+    DEFAULT_VALUES.modelSerial
+  );
+  const [quantityInput, setQuantityInput] = useState(DEFAULT_VALUES.quantity);
+  const [selectedRoom, setSelectedRoom] = useState(DEFAULT_VALUES.room);
   const [multiAddInput, setMultiAddInput] = useState('');
   const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
   const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
   const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
   const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<ItemStatusType>(
-    ItemStatus.NR
-  );
-  const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(
-    null
+  const [selectedStatus, setSelectedStatus] = useState(DEFAULT_VALUES.status);
+  const [selectedCategory, setSelectedCategory] = useState(
+    DEFAULT_VALUES.category
   );
   const [categoryOpen, setCategoryOpen] = useState(false);
 
@@ -114,9 +125,12 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
           modelSerialInput
         );
         addItem(newItem as Item);
-        setQuickAddInput('');
-        setModelSerialInput('');
-        setQuantityInput('1'); // Reset quantity to default
+        setQuickAddInput(DEFAULT_VALUES.name);
+        setModelSerialInput(DEFAULT_VALUES.modelSerial);
+        setQuantityInput(DEFAULT_VALUES.quantity);
+        setSelectedRoom(DEFAULT_VALUES.room);
+        setSelectedCategory(DEFAULT_VALUES.category);
+        setSelectedStatus(DEFAULT_VALUES.status);
         setIsOpen(false);
       } else if (e.key === 'Escape') {
         setIsOpen(false);
@@ -126,6 +140,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       quickAddInput,
       modelSerialInput,
       quantityInput,
+      selectedRoom,
       selectedStatus,
       selectedCategory,
       addItem,
@@ -157,11 +172,109 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     }
   };
 
-  // Update addItemHasMinReqs and quickAddHasChanges whenever quickAddInput changes
+  // Check if any field has changed from its default value
+  const checkQuickAddChanges = (
+    name: string,
+    modelSerial: string,
+    quantity: string,
+    room: string,
+    status: ItemStatusType,
+    category: ItemCategory | null
+  ) => {
+    return (
+      name !== DEFAULT_VALUES.name ||
+      modelSerial !== DEFAULT_VALUES.modelSerial ||
+      quantity !== DEFAULT_VALUES.quantity ||
+      room !== DEFAULT_VALUES.room ||
+      status !== DEFAULT_VALUES.status ||
+      category !== DEFAULT_VALUES.category
+    );
+  };
+
+  // Update addItemHasMinReqs and quickAddHasChanges whenever any field changes
   const handleQuickAddInputChange = (value: string) => {
     setQuickAddInput(value);
     setAddItemHasMinReqs(value.trim() !== '');
-    setQuickAddHasChanges(value.trim() !== '');
+    setQuickAddHasChanges(
+      checkQuickAddChanges(
+        value,
+        modelSerialInput,
+        quantityInput,
+        selectedRoom,
+        selectedStatus,
+        selectedCategory
+      )
+    );
+  };
+
+  const handleModelSerialInputChange = (value: string) => {
+    setModelSerialInput(value);
+    setQuickAddHasChanges(
+      checkQuickAddChanges(
+        quickAddInput,
+        value,
+        quantityInput,
+        selectedRoom,
+        selectedStatus,
+        selectedCategory
+      )
+    );
+  };
+
+  const handleQuantityInputChange = (value: string) => {
+    setQuantityInput(value);
+    setQuickAddHasChanges(
+      checkQuickAddChanges(
+        quickAddInput,
+        modelSerialInput,
+        value,
+        selectedRoom,
+        selectedStatus,
+        selectedCategory
+      )
+    );
+  };
+
+  const handleRoomChange = (value: string) => {
+    setSelectedRoom(value);
+    setQuickAddHasChanges(
+      checkQuickAddChanges(
+        quickAddInput,
+        modelSerialInput,
+        quantityInput,
+        value,
+        selectedStatus,
+        selectedCategory
+      )
+    );
+  };
+
+  const handleStatusChange = (value: ItemStatusType) => {
+    setSelectedStatus(value);
+    setQuickAddHasChanges(
+      checkQuickAddChanges(
+        quickAddInput,
+        modelSerialInput,
+        quantityInput,
+        selectedRoom,
+        value,
+        selectedCategory
+      )
+    );
+  };
+
+  const handleCategoryChange = (value: ItemCategory | null) => {
+    setSelectedCategory(value);
+    setQuickAddHasChanges(
+      checkQuickAddChanges(
+        quickAddInput,
+        modelSerialInput,
+        quantityInput,
+        selectedRoom,
+        selectedStatus,
+        value
+      )
+    );
   };
 
   // Update multiAddHasMinReqs and multiAddHasChanges whenever multiAddInput changes
@@ -173,9 +286,12 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
 
   const handleClearFields = () => {
     if (activeTab === TabType.Single) {
-      setQuickAddInput('');
-      setModelSerialInput('');
-      setQuantityInput('1'); // Reset quantity to default
+      setQuickAddInput(DEFAULT_VALUES.name);
+      setModelSerialInput(DEFAULT_VALUES.modelSerial);
+      setQuantityInput(DEFAULT_VALUES.quantity);
+      setSelectedRoom(DEFAULT_VALUES.room);
+      setSelectedCategory(DEFAULT_VALUES.category);
+      setSelectedStatus(DEFAULT_VALUES.status);
       setAddItemHasMinReqs(false);
       setQuickAddHasChanges(false);
     }
@@ -227,20 +343,20 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
               quickAddInput={quickAddInput}
               setQuickAddInput={handleQuickAddInputChange}
               modelSerialInput={modelSerialInput}
-              setModelSerialInput={setModelSerialInput}
+              setModelSerialInput={handleModelSerialInputChange}
               quantityInput={quantityInput}
-              setQuantityInput={setQuantityInput}
-              selectedRoom=""
-              setSelectedRoom={() => {}}
+              setQuantityInput={handleQuantityInputChange}
+              selectedRoom={selectedRoom}
+              setSelectedRoom={handleRoomChange}
               roomOpen={false}
               setRoomOpen={() => {}}
               handleQuickAdd={handleQuickAdd}
               selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
+              setSelectedCategory={handleCategoryChange}
               categoryOpen={categoryOpen}
               setCategoryOpen={setCategoryOpen}
               selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
+              setSelectedStatus={handleStatusChange}
             />
           ) : (
             <div className="space-y-4">
@@ -295,11 +411,11 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                                 key={category.value || 'none'}
                                 value={category.value || 'none'}
                                 onSelect={(currentValue) => {
-                                  setSelectedCategory(
+                                  const newCategory =
                                     currentValue === 'none'
                                       ? null
-                                      : (currentValue as ItemCategory)
-                                  );
+                                      : (currentValue as ItemCategory);
+                                  handleCategoryChange(newCategory);
                                   setCategoryOpen(false);
                                 }}
                               >
@@ -333,7 +449,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                 <RadioGroup
                   value={selectedStatus}
                   onValueChange={(value) =>
-                    setSelectedStatus(value as ItemStatusType)
+                    handleStatusChange(value as ItemStatusType)
                   }
                   className="flex gap-3 flex-1"
                 >
@@ -341,7 +457,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                     <div
                       key={status}
                       className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
-                      onClick={() => setSelectedStatus(status)}
+                      onClick={() => handleStatusChange(status)}
                     >
                       <Label
                         htmlFor={`status-${status}`}

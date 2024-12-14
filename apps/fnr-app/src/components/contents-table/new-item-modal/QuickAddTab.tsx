@@ -12,6 +12,7 @@ import {
   CommandItem,
   CommandList,
   Input,
+  InputClearable,
   Form,
   FormField,
   FormItem,
@@ -176,7 +177,7 @@ export function QuickAddTab({
               <div className="flex items-center gap-4">
                 <FormLabel className={labelMinWidthClass}>Name</FormLabel>
                 <FormControl>
-                  <Input
+                  <InputClearable
                     {...field}
                     placeholder="e.g. Shirt, Table, Shovel, etc..."
                     className="flex-1"
@@ -185,6 +186,10 @@ export function QuickAddTab({
                       setQuickAddInput(e.target.value);
                       field.onChange(e);
                     }}
+                    onClear={() => {
+                      setQuickAddInput('');
+                      field.onChange('');
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && form.formState.isValid) {
                         handleQuickAdd(e);
@@ -192,6 +197,7 @@ export function QuickAddTab({
                     }}
                     autoComplete="off"
                     autoFocus
+                    escapeKeyClears
                   />
                 </FormControl>
               </div>
@@ -405,7 +411,7 @@ export function QuickAddTab({
               <div className="flex items-center gap-4">
                 <FormLabel className={labelMinWidthClass}>Model/SN</FormLabel>
                 <FormControl>
-                  <Input
+                  <InputClearable
                     {...field}
                     placeholder="Model or Serial Number..."
                     className="flex-1"
@@ -414,11 +420,16 @@ export function QuickAddTab({
                       setModelSerialInput(e.target.value);
                       field.onChange(e);
                     }}
+                    onClear={() => {
+                      setModelSerialInput('');
+                      field.onChange('');
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && form.formState.isValid) {
                         handleQuickAdd(e);
                       }
                     }}
+                    escapeKeyClears
                   />
                 </FormControl>
               </div>
