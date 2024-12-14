@@ -1,17 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { Item } from '../item';
 import {
-  RoomCategory,
-  roomCategoryDisplayNames,
-  NO_ROOM_CATEGORY_VALUE,
-} from '../roomCategories';
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@react-monorepo/shared';
+import { Item } from '../item';
+import { RoomCategory } from '../roomCategories';
 import { RoomCategoryBadge } from '../RoomCategoryBadge';
-import { FilterableDropdown } from '../shared/FilterableDropdown';
-
-// Reusable component for the "Select room..." text
-const SelectRoomText = () => (
-  <span className="text-gray-500 italic">No room</span>
-);
+import { RoomDropdown } from '../shared/RoomDropdown';
 
 interface RoomCategoryCellProps {
   item: Item;
@@ -28,11 +25,11 @@ export const RoomCategoryCell = ({
     setIsEditing(true);
   }, []);
 
-  const handleCategorySelect = useCallback(
-    (newCategory: RoomCategory | null) => {
+  const handleRoomSelect = useCallback(
+    (newRoom: RoomCategory | null) => {
       setIsEditing(false);
-      if (newCategory !== item.roomCategory) {
-        updateItem({ ...item, roomCategory: newCategory });
+      if (newRoom !== item.roomCategory) {
+        updateItem({ ...item, roomCategory: newRoom });
       }
     },
     [item, updateItem]
@@ -41,9 +38,9 @@ export const RoomCategoryCell = ({
   if (isEditing) {
     return (
       <div className="relative">
-        <FilterableDropdown
-          selectedValue={item.roomCategory}
-          onValueSelect={handleCategorySelect}
+        <RoomDropdown
+          selectedRoom={item.roomCategory}
+          onRoomSelect={handleRoomSelect}
           onOpenChange={(open) => {
             if (!open) {
               setIsEditing(false);
@@ -51,36 +48,33 @@ export const RoomCategoryCell = ({
           }}
           defaultOpen
           className="w-full"
-          values={Object.values(RoomCategory)}
-          noValueOption={NO_ROOM_CATEGORY_VALUE}
-          filterPlaceholder="Filter rooms..."
-          renderTriggerContent={(category) =>
-            category ? (
-              <RoomCategoryBadge roomCategory={category} showTooltip={false} />
-            ) : (
-              <SelectRoomText />
-            )
-          }
-          renderItemContent={(category) => (
-            <RoomCategoryBadge roomCategory={category} showTooltip={false} />
-          )}
-          renderNoValueContent={() => <SelectRoomText />}
-          getFilterText={(category) => roomCategoryDisplayNames[category]}
         />
       </div>
     );
   }
 
+  // Handle null room category
+  if (item.roomCategory === null) {
+    return (
+      <div className="flex items-center w-full">
+        <div
+          onDoubleClick={handleDoubleClick}
+          className="cursor-pointer flex-grow text-muted-foreground italic ml-2"
+        >
+          No room
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      onDoubleClick={handleDoubleClick}
-      className="cursor-pointer flex-grow h-full flex items-center px-2 hover:bg-gray-50"
-    >
-      {item.roomCategory ? (
+    <div className="flex items-center w-full">
+      <div
+        onDoubleClick={handleDoubleClick}
+        className="cursor-pointer flex-grow h-full flex items-center ml-2"
+      >
         <RoomCategoryBadge roomCategory={item.roomCategory} />
-      ) : (
-        <SelectRoomText />
-      )}
+      </div>
     </div>
   );
 };
