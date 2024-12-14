@@ -32,6 +32,7 @@ import {
   ORDERED_ITEM_STATUSES,
 } from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
+import { RoomCategory } from '../roomCategories';
 import { useParams } from 'react-router-dom';
 
 interface AddNewItemModalProps {
@@ -87,7 +88,7 @@ const DEFAULT_VALUES = {
   name: '',
   modelSerial: '',
   quantity: '1',
-  room: '',
+  room: null as RoomCategory | null,
   category: null as ItemCategory | null,
   status: ItemStatus.NR as ItemStatusType,
 };
@@ -112,6 +113,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     DEFAULT_VALUES.category
   );
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [roomOpen, setRoomOpen] = useState(false);
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
@@ -177,7 +179,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     name: string,
     modelSerial: string,
     quantity: string,
-    room: string,
+    room: RoomCategory | null,
     status: ItemStatusType,
     category: ItemCategory | null
   ) => {
@@ -235,7 +237,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
     );
   };
 
-  const handleRoomChange = (value: string) => {
+  const handleRoomChange = (value: RoomCategory | null) => {
     setSelectedRoom(value);
     setQuickAddHasChanges(
       checkQuickAddChanges(
@@ -348,8 +350,8 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
               setQuantityInput={handleQuantityInputChange}
               selectedRoom={selectedRoom}
               setSelectedRoom={handleRoomChange}
-              roomOpen={false}
-              setRoomOpen={() => {}}
+              roomOpen={roomOpen}
+              setRoomOpen={setRoomOpen}
               handleQuickAdd={handleQuickAdd}
               selectedCategory={selectedCategory}
               setSelectedCategory={handleCategoryChange}
