@@ -59,6 +59,7 @@ export function App() {
         <Header
           onToggleSidebar={handleToggleSidebar}
           setIsShortcutsOpen={setIsShortcutsOpen}
+          isSidebarExpanded={!isSidebarCollapsed}
         />
         <div className="flex flex-1">
           {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
