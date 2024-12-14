@@ -7,7 +7,7 @@ import {
 import { FilterableDropdown } from './FilterableDropdown';
 import { RoomCategoryBadge } from '../RoomCategoryBadge';
 
-interface RoomDropdownProps {
+interface RoomCategoryDropdownProps {
   selectedRoom: RoomCategory | null;
   onRoomSelect: (room: RoomCategory | null) => void;
   onOpenChange?: (open: boolean) => void;
@@ -16,13 +16,13 @@ interface RoomDropdownProps {
 }
 
 // Room category specific implementation using FilterableDropdown
-export const RoomDropdown = ({
+export const RoomCategoryDropdown = ({
   selectedRoom,
   onRoomSelect,
   onOpenChange,
   defaultOpen,
   className,
-}: RoomDropdownProps) => {
+}: RoomCategoryDropdownProps) => {
   const renderTriggerContent = (room: RoomCategory | null) => {
     if (room === null) {
       return <div className="text-muted-foreground italic">No room</div>;

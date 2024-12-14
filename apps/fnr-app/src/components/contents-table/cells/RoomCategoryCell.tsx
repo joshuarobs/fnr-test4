@@ -8,7 +8,7 @@ import {
 import { Item } from '../item';
 import { RoomCategory } from '../roomCategories';
 import { RoomCategoryBadge } from '../RoomCategoryBadge';
-import { RoomDropdown } from '../shared/RoomDropdown';
+import { RoomCategoryDropdown } from '../shared/RoomCategoryDropdown';
 
 interface RoomCategoryCellProps {
   item: Item;
@@ -38,7 +38,7 @@ export const RoomCategoryCell = ({
   if (isEditing) {
     return (
       <div className="relative">
-        <RoomDropdown
+        <RoomCategoryDropdown
           selectedRoom={item.roomCategory}
           onRoomSelect={handleRoomSelect}
           onOpenChange={(open) => {

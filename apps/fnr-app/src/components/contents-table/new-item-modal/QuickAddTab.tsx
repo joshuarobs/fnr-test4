@@ -22,7 +22,7 @@ import {
 } from '../ItemStatus';
 import { ItemStatusBadge } from '../ItemStatusBadge';
 import { CategoryDropdown } from '../shared/CategoryDropdown';
-import { RoomDropdown } from '../shared/RoomDropdown';
+import { RoomCategoryDropdown } from '../shared/RoomCategoryDropdown';
 import { RoomCategory } from '../roomCategories';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
@@ -234,7 +234,7 @@ export function QuickAddTab({
                 <FormLabel className={labelMinWidthClass}>Room</FormLabel>
                 <FormControl>
                   <div className="flex-1">
-                    <RoomDropdown
+                    <RoomCategoryDropdown
                       selectedRoom={selectedRoom}
                       onRoomSelect={(room) => {
                         setSelectedRoom(room);

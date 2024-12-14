@@ -82,7 +82,7 @@ export const getRoomCategoryDetails = (
       return {
         // Custom brown color
         bgClass: 'bg-[#E7D6C4]',
-        textClass: 'text-[#8B5E3C]',
+        textClass: 'text-[#4A301D]',
         text: roomCategoryDisplayNames[RoomCategory.STORAGE],
       };
     case RoomCategory.BASEMENT:
