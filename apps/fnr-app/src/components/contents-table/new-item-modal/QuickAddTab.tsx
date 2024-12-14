@@ -368,13 +368,14 @@ export function QuickAddTab({
                       setSelectedStatus(value);
                       field.onChange(value);
                     }}
-                    className="flex gap-3 flex-1"
+                    className="flex flex-1"
+                    noGap
                   >
                     {ORDERED_ITEM_STATUSES.map((status) => (
                       <div
                         key={status}
                         className={cn(
-                          'flex items-center gap-2 cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors',
+                          'flex items-center gap-2 cursor-pointer rounded-md px-4 py-1.5 hover:bg-muted/50 transition-colors',
                           selectedStatus === status && 'bg-muted'
                         )}
                         onClick={(e) => {
@@ -429,6 +430,7 @@ export function QuickAddTab({
                       }
                     }}
                     escapeKeyClears
+                    autoComplete="off"
                   />
                 </FormControl>
               </div>

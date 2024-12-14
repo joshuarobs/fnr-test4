@@ -5,11 +5,13 @@ import { DotFilledIcon } from '@radix-ui/react-icons';
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root> & {
+    noGap?: boolean;
+  }
+>(({ className, noGap, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Root
-      className={cn('grid gap-2', className)}
+      className={cn('grid', !noGap && 'gap-2', className)}
       {...props}
       ref={ref}
     />
