@@ -363,8 +363,8 @@ export function QuickAddTab({
                 <FormControl>
                   <RadioGroup
                     value={selectedStatus}
-                    onValueChange={(value) => {
-                      setSelectedStatus(value as ItemStatusType);
+                    onValueChange={(value: ItemStatusType) => {
+                      setSelectedStatus(value);
                       field.onChange(value);
                     }}
                     className="flex gap-3 flex-1"
@@ -373,10 +373,6 @@ export function QuickAddTab({
                       <div
                         key={status}
                         className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
-                        onClick={() => {
-                          setSelectedStatus(status);
-                          field.onChange(status);
-                        }}
                       >
                         <Label
                           htmlFor={`status-${status}`}
