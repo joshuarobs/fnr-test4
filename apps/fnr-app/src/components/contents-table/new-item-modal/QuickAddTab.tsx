@@ -115,25 +115,33 @@ export function QuickAddTab({
       ),
   }));
 
-  // Handle quantity input to allow any input but default to 1 if invalid on submit
+  // Validate and update quantity value
+  // UX: Ensures even if user types a number with letters, that the number gets counted
+  // If there's no number typed, it will default to 1
+  const validateAndUpdateQuantity = (value: string) => {
+    const parsedValue = parseInt(value);
+    if (!isNaN(parsedValue) && parsedValue > 0) {
+      setQuantityInput(value);
+      form.setValue('quantity', parsedValue);
+    } else {
+      setQuantityInput('1');
+      form.setValue('quantity', 1);
+    }
+  };
+
+  // Handle quantity input to allow any input but validate on change
   const handleQuantityChange = (value: string) => {
     setQuantityInput(value);
     const parsedValue = parseInt(value);
     // Only update form if it's a valid number
     if (!isNaN(parsedValue) && parsedValue > 0) {
       form.setValue('quantity', parsedValue);
-    } else {
-      form.setValue('quantity', 1);
     }
   };
 
   // Handle form submission
   const onSubmit = (data: FormSchema) => {
-    // Ensure quantity is 1 if invalid
-    if (isNaN(parseInt(quantityInput)) || parseInt(quantityInput) < 1) {
-      setQuantityInput('1');
-      form.setValue('quantity', 1);
-    }
+    validateAndUpdateQuantity(quantityInput);
     // The parent component handles the actual submission via handleQuickAdd
     if (form.formState.isValid) {
       handleQuickAdd({ key: 'Enter' } as KeyboardEvent<HTMLInputElement>);
@@ -211,10 +219,15 @@ export function QuickAddTab({
                       handleQuantityChange(e.target.value);
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && form.formState.isValid) {
-                        handleQuickAdd(e);
+                      if (e.key === 'Enter') {
+                        validateAndUpdateQuantity(quantityInput);
+                        if (form.formState.isValid) {
+                          handleQuickAdd(e);
+                        }
                       }
                     }}
+                    onBlur={() => validateAndUpdateQuantity(quantityInput)}
+                    autoComplete="off"
                   />
                 </FormControl>
               </div>
