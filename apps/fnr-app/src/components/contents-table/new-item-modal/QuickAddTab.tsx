@@ -36,7 +36,7 @@ const labelMinWidthClass =
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   quantity: z.number().min(1, 'Quantity must be at least 1').default(1),
-  room: z.nativeEnum(RoomCategory).nullable(),
+  roomCategory: z.nativeEnum(RoomCategory).nullable(),
   category: z.nativeEnum(ItemCategory).nullable(),
   status: z.nativeEnum(ItemStatus),
   modelSerial: z.string().optional(),
@@ -89,7 +89,7 @@ export function QuickAddTab({
     defaultValues: {
       name: quickAddInput,
       quantity: parseInt(quantityInput) || 1,
-      room: selectedRoom,
+      roomCategory: selectedRoom,
       category: selectedCategory,
       status: selectedStatus,
       modelSerial: modelSerialInput,
@@ -227,7 +227,7 @@ export function QuickAddTab({
         {/* Room Field */}
         <FormField
           control={form.control}
-          name="room"
+          name="roomCategory"
           render={({ field }) => (
             <FormItem className="flex flex-col m-0">
               <div className="flex items-center gap-4">
@@ -247,7 +247,7 @@ export function QuickAddTab({
                 </FormControl>
               </div>
               <div className="ml-[calc(80px+1rem)]">
-                <FormErrorMessage fieldName="room" />
+                <FormErrorMessage fieldName="roomCategory" />
               </div>
             </FormItem>
           )}

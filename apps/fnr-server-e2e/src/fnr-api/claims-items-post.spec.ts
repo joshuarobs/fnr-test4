@@ -38,6 +38,7 @@ mockRouter.post('/:claimNumber/items', async (req, res) => {
       data: {
         name: req.body.name,
         category: req.body.category || null,
+        roomCategory: req.body.roomCategory || null,
         quantity: req.body.quantity || 1,
         claimId: claim.id,
       },
@@ -73,6 +74,7 @@ describe('Items API - POST endpoints', () => {
       id: 1,
       name: 'Test Item',
       category: 'Electronics',
+      roomCategory: 'LIVING_ROOM',
       quantity: 1,
     };
 
@@ -82,12 +84,13 @@ describe('Items API - POST endpoints', () => {
       (prisma.claim.update as jest.Mock).mockResolvedValue({ ...mockClaim });
     });
 
-    it('should create a new item for a valid claim', async () => {
+    it('should create a new item for a valid claim with room category', async () => {
       const response = await request(app)
         .post('/api/claims/CLM001/items')
         .send({
           name: 'Test Item',
           category: 'Electronics',
+          roomCategory: 'LIVING_ROOM',
           quantity: 1,
         });
 
@@ -101,6 +104,7 @@ describe('Items API - POST endpoints', () => {
         data: {
           name: 'Test Item',
           category: 'Electronics',
+          roomCategory: 'LIVING_ROOM',
           quantity: 1,
           claimId: mockClaim.id,
         },
@@ -150,6 +154,7 @@ describe('Items API - POST endpoints', () => {
         data: {
           name: 'Test Item',
           category: null,
+          roomCategory: null,
           quantity: 1,
           claimId: mockClaim.id,
         },

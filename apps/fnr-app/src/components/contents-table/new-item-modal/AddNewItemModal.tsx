@@ -72,6 +72,7 @@ const createNewItem = (
   status: ItemStatusType,
   category: ItemCategory | null,
   quantity: number,
+  roomCategory: RoomCategory | null,
   modelSerialNumber?: string
 ): Partial<Item> => {
   return {
@@ -79,6 +80,7 @@ const createNewItem = (
     category,
     itemStatus: status,
     quantity,
+    roomCategory,
     modelSerialNumber: modelSerialNumber?.trim() || null,
   };
 };
@@ -124,6 +126,7 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
           selectedStatus,
           selectedCategory,
           quantity,
+          selectedRoom,
           modelSerialInput
         );
         addItem(newItem as Item);
@@ -156,7 +159,13 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       .filter(Boolean)
       .map(
         (itemName) =>
-          createNewItem(itemName, selectedStatus, selectedCategory, 1) as Item
+          createNewItem(
+            itemName,
+            selectedStatus,
+            selectedCategory,
+            1,
+            selectedRoom
+          ) as Item
       );
 
     if (items.length > 0) {

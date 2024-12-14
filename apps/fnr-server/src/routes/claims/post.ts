@@ -50,6 +50,7 @@ router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
         data: {
           name: req.body.name,
           category: req.body.category || null,
+          roomCategory: req.body.roomCategory || null, // Added roomCategory field
           group: req.body.group || null,
           modelSerialNumber: req.body.modelSerialNumber || null,
           description: req.body.description || null,
