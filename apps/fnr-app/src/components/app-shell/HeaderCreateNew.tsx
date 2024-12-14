@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -10,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@react-monorepo/shared';
 import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
+import { HeaderButton } from './HeaderButton';
 
 // Plus icon SVG component
 const PlusIcon = () => (
@@ -47,10 +47,6 @@ const CaretDownIcon = () => (
   </svg>
 );
 
-// Component for the create new button in the header
-// Contains a button with plus and caret down icons
-// Uses dark grey icons and mid grey outline
-// Has both tooltip and dropdown functionality
 export const HeaderCreateNew = () => {
   return (
     <TooltipProvider>
@@ -58,13 +54,10 @@ export const HeaderCreateNew = () => {
         <DropdownMenu>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex items-center border border-gray-300 text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-700 px-3"
-              >
+              <HeaderButton asChild={false} className="flex items-center px-3">
                 <PlusIcon />
                 <CaretDownIcon />
-              </Button>
+              </HeaderButton>
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <DropdownMenuContent className="min-w-[200px]">

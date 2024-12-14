@@ -2,7 +2,6 @@ import React from 'react';
 import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import { Keyboard } from 'lucide-react';
 import {
-  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -13,12 +12,8 @@ import {
   DropdownMenuTrigger,
   KeyboardKeyIcon,
 } from '@react-monorepo/shared';
+import { HeaderIconButton } from './HeaderButton';
 
-// Component for the help button in the header
-// Contains a button with question mark icon and dropdown
-// Uses dark grey icons and mid grey outline
-// Has both tooltip and dropdown functionality
-// Shows keyboard shortcut using KeyboardKeyIcon for better visual style
 export const HeaderHelpButton = ({
   onOpenShortcuts,
 }: {
@@ -30,13 +25,9 @@ export const HeaderHelpButton = ({
         <DropdownMenu>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-600"
-              >
+              <HeaderIconButton asChild={false}>
                 <QuestionMarkCircledIcon className="h-5 w-5" />
-              </Button>
+              </HeaderIconButton>
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <DropdownMenuContent className="w-64">
