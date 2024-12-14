@@ -23,6 +23,7 @@ import {
   RadioGroupItem,
 } from '@react-monorepo/shared';
 import { Check, ChevronsUpDown } from 'lucide-react';
+import { DotFilledIcon } from '@radix-ui/react-icons';
 import { cn } from '../../../../../../shared/src/lib/utils';
 import { ItemCategory } from '../itemCategories';
 import {
@@ -372,20 +373,22 @@ export function QuickAddTab({
                     {ORDERED_ITEM_STATUSES.map((status) => (
                       <div
                         key={status}
-                        className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
+                        className={cn(
+                          'flex items-center gap-2 cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors',
+                          selectedStatus === status && 'bg-muted'
+                        )}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedStatus(status);
+                          field.onChange(status);
+                        }}
                       >
-                        <Label
-                          htmlFor={`status-${status}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <RadioGroupItem
-                            value={status}
-                            id={`status-${status}`}
-                          />
-                          <span className="ml-2">
-                            <ItemStatusBadge itemStatus={status} />
-                          </span>
-                        </Label>
+                        <div className="aspect-square h-4 w-4 rounded-full border border-primary text-primary">
+                          {selectedStatus === status && (
+                            <DotFilledIcon className="h-3.5 w-3.5 fill-primary" />
+                          )}
+                        </div>
+                        <ItemStatusBadge itemStatus={status} />
                       </div>
                     ))}
                   </RadioGroup>
