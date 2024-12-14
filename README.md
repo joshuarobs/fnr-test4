@@ -17,6 +17,10 @@ this field needs to be filled out, this item needs a quote, this item needs to b
   - If users still want to filter only, they can press "t"
   - Look at Github and vscode for inspiration for this.
 - Add "TBD" as a status option, since sometimes contents people need to still determine if an item is repairable or not
+- Claime page> Burger menu > Recalculate values
+  - Put text underneath "Last calculated 3 days ago"
+  - Gives context when values were last refreshed
+  - Also feedback, so when users click on it, they know it worked
 
 ---
 

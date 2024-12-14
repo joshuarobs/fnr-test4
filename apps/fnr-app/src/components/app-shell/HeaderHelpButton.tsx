@@ -8,11 +8,15 @@ import {
   TooltipTrigger,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
   KeyboardKeyIcon,
 } from '@react-monorepo/shared';
 import { HeaderIconButton } from './HeaderButton';
+import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
+import {
+  GENERAL_KEYBOARD_SHORTCUTS_MAP,
+  KeyboardShortcutId,
+} from '../../constants/keyboard-shortcuts';
 
 export const HeaderHelpButton = ({
   onOpenShortcuts,
@@ -31,13 +35,17 @@ export const HeaderHelpButton = ({
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <DropdownMenuContent className="w-64">
-            <DropdownMenuItem onClick={onOpenShortcuts}>
-              <Keyboard className="mr-1 h-4 w-4" />
-              <span>Keyboard shortcuts</span>
-              <div className="ml-auto">
-                <KeyboardKeyIcon letter="?" />
-              </div>
-            </DropdownMenuItem>
+            <DropdownMenuListItem
+              icon={<Keyboard className="h-4 w-4" />}
+              onClick={onOpenShortcuts}
+              keyboardShortcut={
+                GENERAL_KEYBOARD_SHORTCUTS_MAP[
+                  KeyboardShortcutId.VIEW_KEYBOARD_SHORTCUTS
+                ].keybinds[0]
+              }
+            >
+              Keyboard shortcuts
+            </DropdownMenuListItem>
           </DropdownMenuContent>
           <TooltipContent>
             <p>Help</p>

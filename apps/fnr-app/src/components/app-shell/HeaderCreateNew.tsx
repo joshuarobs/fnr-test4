@@ -10,6 +10,10 @@ import {
 } from '@react-monorepo/shared';
 import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
 import { HeaderButton } from './HeaderButton';
+import {
+  GENERAL_KEYBOARD_SHORTCUTS_MAP,
+  KeyboardShortcutId,
+} from '../../constants/keyboard-shortcuts';
 
 // Plus icon SVG component
 const PlusIcon = () => (
@@ -63,7 +67,11 @@ export const HeaderCreateNew = () => {
           <DropdownMenuContent className="min-w-[200px]">
             <DropdownMenuListItem
               icon={<PlusIcon />}
-              keyboardShortcut={['⌘', 'N']}
+              keyboardShortcut={
+                GENERAL_KEYBOARD_SHORTCUTS_MAP[
+                  KeyboardShortcutId.CREATE_NEW_CLAIM
+                ].keybinds[0]
+              }
             >
               New claim
             </DropdownMenuListItem>
