@@ -10,7 +10,7 @@ import {
 } from '@react-monorepo/shared';
 import { HeaderButton } from './HeaderButton';
 import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getClaimRoute } from '../../routes';
 
 // Props to control positioning from Header component
@@ -21,8 +21,11 @@ interface HeaderClaimButtonProps {
 export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
   const [claimNumber, setClaimNumber] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract claim ID from URL if we're on a claim page
+  const currentClaimId = location.pathname.match(/^\/claim\/([^/]+)/)?.[1];
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -35,7 +38,9 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
 
   const handleViewClaim = () => {
     if (claimNumber) {
-      navigate(getClaimRoute(claimNumber));
+      // Convert claim number to uppercase before navigation
+      const formattedClaimNumber = claimNumber.toUpperCase();
+      navigate(getClaimRoute(formattedClaimNumber));
       setClaimNumber(''); // Reset input after navigation
     }
   };
@@ -48,7 +53,7 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
           className="flex items-center gap-2 px-3"
           style={style}
         >
-          {id ? `Claim ${id}` : 'Claim'}
+          {currentClaimId ? `Claim (${currentClaimId})` : 'Claim'}
           <Separator orientation="vertical" className="h-4" />
           <CaretDownIcon className="h-4 w-4" />
         </HeaderButton>
