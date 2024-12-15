@@ -10,6 +10,8 @@ import {
 } from '@react-monorepo/shared';
 import { HeaderButton } from './HeaderButton';
 import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getClaimRoute } from '../../routes';
 
 // Props to control positioning from Header component
 interface HeaderClaimButtonProps {
@@ -19,6 +21,8 @@ interface HeaderClaimButtonProps {
 export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
   const [claimNumber, setClaimNumber] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -26,6 +30,13 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
+    }
+  };
+
+  const handleViewClaim = () => {
+    if (claimNumber) {
+      navigate(getClaimRoute(claimNumber));
+      setClaimNumber(''); // Reset input after navigation
     }
   };
 
@@ -37,7 +48,7 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
           className="flex items-center gap-2 px-3"
           style={style}
         >
-          Claim
+          {id ? `Claim ${id}` : 'Claim'}
           <Separator orientation="vertical" className="h-4" />
           <CaretDownIcon className="h-4 w-4" />
         </HeaderButton>
@@ -55,8 +66,18 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setClaimNumber(e.target.value)
             }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleViewClaim();
+              }
+            }}
           />
-          <Button variant="default" className="w-full" disabled={!claimNumber}>
+          <Button
+            variant="default"
+            className="w-full"
+            disabled={!claimNumber}
+            onClick={handleViewClaim}
+          >
             View claim
           </Button>
         </div>
