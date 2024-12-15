@@ -20,6 +20,7 @@ interface HeaderClaimButtonProps {
 
 export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
   const [claimNumber, setClaimNumber] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,6 +29,7 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
   const currentClaimId = location.pathname.match(/^\/claim\/([^/]+)/)?.[1];
 
   const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
     if (open) {
       // Use setTimeout to ensure the input is rendered before focusing
       setTimeout(() => {
@@ -42,11 +44,12 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
       const formattedClaimNumber = claimNumber.toUpperCase();
       navigate(getClaimRoute(formattedClaimNumber));
       setClaimNumber(''); // Reset input after navigation
+      setIsOpen(false); // Close dropdown after navigation
     }
   };
 
   return (
-    <DropdownMenu onOpenChange={handleOpenChange}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <HeaderButton
           asChild={false}
