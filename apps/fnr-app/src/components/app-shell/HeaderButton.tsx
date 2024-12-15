@@ -8,7 +8,7 @@ export const HeaderButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Button
         ref={ref}
         variant="outline"
-        className={`bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-600 ${
+        className={`bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-600 select-none ${
           className || ''
         }`}
         {...props}
@@ -25,7 +25,12 @@ export const HeaderIconButton = React.forwardRef<
   ButtonProps
 >(({ className, ...props }, ref) => {
   return (
-    <HeaderButton ref={ref} size="icon" className={className} {...props} />
+    <HeaderButton
+      ref={ref}
+      size="icon"
+      className={`select-none ${className || ''}`}
+      {...props}
+    />
   );
 });
 
