@@ -4,6 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Separator,
 } from '@react-monorepo/shared';
 import { MoreHorizontal, RefreshCw } from 'lucide-react';
 import { useParams } from 'react-router-dom';
@@ -35,7 +36,7 @@ export const ClaimHeaderMiscActions = ({
 
   // Get last update text using formatDistanceToNow
   const getLastUpdateText = () => {
-    if (!lastProgressUpdate) return 'Never calculated';
+    if (!lastProgressUpdate) return 'Never calculated before';
     return `Last calculated ${formatDistanceToNow(
       new Date(lastProgressUpdate)
     )} ago`;
@@ -48,17 +49,27 @@ export const ClaimHeaderMiscActions = ({
           <MoreHorizontal className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <div className="px-2 py-1.5 text-sm text-muted-foreground">
-          {getLastUpdateText()}
-        </div>
-        <DropdownMenuItem onClick={handleRecalculateValues}>
+      <DropdownMenuContent align="end" className="min-w-[200px]">
+        <DropdownMenuItem
+          onClick={handleRecalculateValues}
+          className="cursor-pointer"
+        >
           <RefreshCw className="mr-2 h-4 w-4" />
           Recalculate values
         </DropdownMenuItem>
-        <DropdownMenuItem>Export Items</DropdownMenuItem>
-        <DropdownMenuItem>Print View</DropdownMenuItem>
-        <DropdownMenuItem>Archive Claim</DropdownMenuItem>
+        <div className="px-2 py-1.5 text-xs text-muted-foreground">
+          {getLastUpdateText()}
+        </div>
+        <Separator className="my-1" />
+        <DropdownMenuItem className="cursor-pointer">
+          Export Items
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
+          Print View
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
+          Archive Claim
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

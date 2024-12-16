@@ -128,11 +128,11 @@ export const api = createApi({
         url: `claims/${claimNumber}/recalculate`,
         method: 'POST',
       }),
-      // Optimistically update the claim's values
+      // Optimistically update both the claims list and individual claim
       async onQueryStarted(claimNumber, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          // Update the values once we have them
+          // Update the claims list
           dispatch(
             api.util.updateQueryData('getClaims', undefined, (draft) => {
               const claim = draft.find((c) => c.claimNumber === claimNumber);
@@ -143,6 +143,17 @@ export const api = createApi({
                 claim.ourProgressPercent = data.ourProgressPercent;
                 claim.lastProgressUpdate = data.lastProgressUpdate;
               }
+            })
+          );
+
+          // Update the individual claim view
+          dispatch(
+            api.util.updateQueryData('getClaim', claimNumber, (draft) => {
+              draft.totalClaimed = data.totalClaimed;
+              draft.totalApproved = data.totalApproved;
+              draft.insuredProgressPercent = data.insuredProgressPercent;
+              draft.ourProgressPercent = data.ourProgressPercent;
+              draft.lastProgressUpdate = data.lastProgressUpdate;
             })
           );
         } catch {
