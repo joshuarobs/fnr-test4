@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CaretDownIcon } from '@radix-ui/react-icons';
+import keys from 'ctrl-keys';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,11 +8,13 @@ import {
   Separator,
   InputClearable,
   Button,
+  KeyboardKeyIcon,
 } from '@react-monorepo/shared';
 import { HeaderButton } from './HeaderButton';
 import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getClaimRoute } from '../../routes';
+import { KeyboardShortcutId } from '../../constants/keyboard-shortcuts';
 
 // Props to control positioning from Header component
 interface HeaderClaimButtonProps {
@@ -28,13 +31,55 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
   // Extract claim ID from URL if we're on a claim page
   const currentClaimId = location.pathname.match(/^\/claim\/([^/]+)/)?.[1];
 
+  const focusInput = () => {
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  };
+
+  useEffect(() => {
+    // Create a new handler instance for this component
+    const handler = keys();
+
+    // Add the binding for 'c' key
+    handler.add('c', () => {
+      // Only open if no input elements are focused
+      if (
+        document.activeElement?.tagName !== 'INPUT' &&
+        document.activeElement?.tagName !== 'TEXTAREA'
+      ) {
+        setIsOpen(true);
+        focusInput();
+      }
+    });
+
+    // Attach the handler to the window
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only prevent default if no input is focused
+      if (
+        e.key.toLowerCase() === 'c' &&
+        document.activeElement?.tagName !== 'INPUT' &&
+        document.activeElement?.tagName !== 'TEXTAREA' &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey
+      ) {
+        e.preventDefault();
+      }
+      handler.handle(e);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (open) {
-      // Use setTimeout to ensure the input is rendered before focusing
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
+      focusInput();
     }
   };
 
@@ -59,6 +104,7 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
           {currentClaimId ? `Claim (${currentClaimId})` : 'Claim'}
           <Separator orientation="vertical" className="h-4" />
           <CaretDownIcon className="h-4 w-4" />
+          <KeyboardKeyIcon letter="C" className="ml-2" />
         </HeaderButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent

@@ -19,6 +19,7 @@ export const KeyboardShortcutId = {
   FOCUS_FILTER_BAR: 'FOCUS_FILTER_BAR',
   NAVIGATE_PAGE_LEFT: 'NAVIGATE_PAGE_LEFT',
   NAVIGATE_PAGE_RIGHT: 'NAVIGATE_PAGE_RIGHT',
+  OPEN_CLAIM_POPUP: 'OPEN_CLAIM_POPUP',
 } as const;
 
 // Application keyboard shortcuts map
@@ -35,6 +36,10 @@ export const GENERAL_KEYBOARD_SHORTCUTS_MAP: Record<string, KeyboardShortcut> =
     [KeyboardShortcutId.CREATE_NEW_CLAIM]: {
       action: 'Create new claim',
       keybinds: [[KeyboardKeys.COMMAND, KeyboardKeys.N]],
+    },
+    [KeyboardShortcutId.OPEN_CLAIM_POPUP]: {
+      action: 'Open claim popup',
+      keybinds: [[KeyboardKeys.C]],
     },
   };
 
