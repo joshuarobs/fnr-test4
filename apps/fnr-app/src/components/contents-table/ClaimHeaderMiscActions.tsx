@@ -8,12 +8,19 @@ import {
 import { MoreHorizontal, RefreshCw } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { useRecalculateQuotesMutation } from '../../store/services/api';
+import { formatDistanceToNow } from 'date-fns';
+
+interface ClaimHeaderMiscActionsProps {
+  lastProgressUpdate: string | null;
+}
 
 /**
  * ClaimHeaderMiscActions - A component that provides additional actions through a three dots menu dropdown
  * This allows users to access secondary functions that don't need primary visibility in the header
  */
-export const ClaimHeaderMiscActions = () => {
+export const ClaimHeaderMiscActions = ({
+  lastProgressUpdate,
+}: ClaimHeaderMiscActionsProps) => {
   const { id } = useParams<{ id: string }>();
   const [recalculateQuotes] = useRecalculateQuotesMutation();
 
@@ -26,6 +33,14 @@ export const ClaimHeaderMiscActions = () => {
     }
   };
 
+  // Get last update text using formatDistanceToNow
+  const getLastUpdateText = () => {
+    if (!lastProgressUpdate) return 'Never calculated';
+    return `Last calculated ${formatDistanceToNow(
+      new Date(lastProgressUpdate)
+    )} ago`;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,6 +49,9 @@ export const ClaimHeaderMiscActions = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <div className="px-2 py-1.5 text-sm text-muted-foreground">
+          {getLastUpdateText()}
+        </div>
         <DropdownMenuItem onClick={handleRecalculateValues}>
           <RefreshCw className="mr-2 h-4 w-4" />
           Recalculate values

@@ -278,6 +278,7 @@ router.post('/:claimNumber/recalculate', async (req, res) => {
       ourQuotesComplete: result.ourQuotesComplete,
       insuredProgressPercent: result.insuredProgressPercent,
       ourProgressPercent: result.ourProgressPercent,
+      lastProgressUpdate: result.lastProgressUpdate, // Added this field
     });
   } catch (error) {
     console.error('Error recalculating claim values:', error);

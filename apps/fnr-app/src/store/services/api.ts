@@ -15,6 +15,7 @@ interface ClaimDetail {
   updatedAt: string;
   insuredProgressPercent: number;
   ourProgressPercent: number;
+  lastProgressUpdate: string | null; // Added this field
 }
 
 interface Message {
@@ -34,6 +35,7 @@ interface ClaimOverview {
   updatedAt: string;
   insuredProgressPercent: number;
   ourProgressPercent: number;
+  lastProgressUpdate: string | null; // Added this field
 }
 
 // Used for recently viewed claims
@@ -57,6 +59,7 @@ interface RecalculateResponse {
   totalApproved: number;
   insuredProgressPercent: number;
   ourProgressPercent: number;
+  lastProgressUpdate: string; // Added this field
 }
 
 export const api = createApi({
@@ -138,6 +141,7 @@ export const api = createApi({
                 claim.totalApproved = data.totalApproved;
                 claim.insuredProgressPercent = data.insuredProgressPercent;
                 claim.ourProgressPercent = data.ourProgressPercent;
+                claim.lastProgressUpdate = data.lastProgressUpdate;
               }
             })
           );

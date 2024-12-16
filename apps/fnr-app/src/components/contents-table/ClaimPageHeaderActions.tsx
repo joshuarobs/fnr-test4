@@ -4,16 +4,17 @@ import { ClaimHeaderMiscActions } from './ClaimHeaderMiscActions';
 
 interface ClaimPageHeaderActionsProps {
   addItem: (item: Item | Item[]) => void;
+  lastProgressUpdate: string | null;
 }
 
 export const ClaimPageHeaderActions = ({
   addItem,
+  lastProgressUpdate,
 }: ClaimPageHeaderActionsProps) => {
   return (
     <div className="flex items-center mb-2 gap-2">
-      <ClaimHeaderMiscActions />
+      <ClaimHeaderMiscActions lastProgressUpdate={lastProgressUpdate} />
       <AddNewItemModal addItem={addItem} />
-      {/* <Button onClick={handleRemoveLastItem}>Remove Last Item</Button> */}
     </div>
   );
 };

@@ -258,7 +258,10 @@ export const ClaimPage = () => {
                 maxValue={progress.maxValue}
               />
             </div>
-            <ClaimPageHeaderActions addItem={addItem} />
+            <ClaimPageHeaderActions
+              addItem={addItem}
+              lastProgressUpdate={claimData?.lastProgressUpdate || null}
+            />
           </div>
         </div>
         <div className="flex-1 min-h-0 px-4 pb-6">
