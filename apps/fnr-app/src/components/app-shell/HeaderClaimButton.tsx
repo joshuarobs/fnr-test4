@@ -8,13 +8,10 @@ import {
   Separator,
   InputClearable,
   Button,
-  KeyboardKeyIcon,
 } from '@react-monorepo/shared';
 import { HeaderButton } from './HeaderButton';
-import { DropdownMenuListItem } from '../ui/DropdownMenuListItem';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getClaimRoute } from '../../routes';
-import { KeyboardShortcutId } from '../../constants/keyboard-shortcuts';
 
 // Props to control positioning from Header component
 interface HeaderClaimButtonProps {
@@ -101,10 +98,12 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
           className="flex items-center gap-2 px-3"
           style={style}
         >
-          {currentClaimId ? `Claim (${currentClaimId})` : 'Claim'}
+          <div className="whitespace-nowrap">
+            <span className="underline">C</span>laim
+            {currentClaimId ? ` (${currentClaimId})` : ''}
+          </div>
           <Separator orientation="vertical" className="h-4" />
           <CaretDownIcon className="h-4 w-4" />
-          <KeyboardKeyIcon letter="C" className="ml-2" />
         </HeaderButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
