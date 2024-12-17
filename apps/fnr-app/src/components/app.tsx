@@ -66,7 +66,7 @@ export function App() {
           <Routes>
             <Route path={ROUTES.HOME} element={<HomePage />} />
             <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
-            <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+            <Route path={ROUTES.SETTINGS + '/*'} element={<SettingsPage />} />
             <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
             <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
             <Route path="*" element={<NotFoundPage />} />

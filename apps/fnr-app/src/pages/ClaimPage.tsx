@@ -210,6 +210,7 @@ export const ClaimPage = () => {
         <div className="text-xl font-semibold text-red-500">
           Error Loading Claim
         </div>
+        <div className="text-muted-foreground">Claim #{id}</div>
         <div className="text-muted-foreground">
           Try a different claim number
         </div>
