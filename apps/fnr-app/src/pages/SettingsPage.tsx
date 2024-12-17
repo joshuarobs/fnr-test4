@@ -1,24 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { SettingsSidebar } from '../components/settings/SettingsSidebar';
+import { AccountSettings } from '../components/settings/subpages/AccountSettings';
+import { AppearanceSettings } from '../components/settings/subpages/AppearanceSettings';
 import { ROUTES } from '../routes';
 
-const SETTINGS_SUBPAGE_CONTAINER = 'max-w-[800px] mx-8 py-6' as const;
-
-// Settings section components
-const AccountSettings = () => (
-  <div className={SETTINGS_SUBPAGE_CONTAINER}>
-    <h2 className="text-2xl font-semibold mb-4">Account Settings</h2>
-    <p>Manage your account details and preferences.</p>
-  </div>
-);
-
-const AppearanceSettings = () => (
-  <div className={SETTINGS_SUBPAGE_CONTAINER}>
-    <h2 className="text-2xl font-semibold mb-4">Appearance Settings</h2>
-    <p>Customize the look and feel of the application.</p>
-  </div>
-);
+// Common container styles for settings subpages
+export const SETTINGS_SUBPAGE_CONTAINER = 'max-w-[800px] mx-8 py-6' as const;
 
 export function SettingsPage() {
   return (
