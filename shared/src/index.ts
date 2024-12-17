@@ -24,3 +24,4 @@ export * from './components/ui/keyboard-key-icon';
 export * from './components/ui/sheet';
 export * from './components/ui/skeleton';
 export * from './components/ui/sidebar';
+export * from './components/ui/alert';

@@ -7,7 +7,11 @@ import {
   FormItem,
   FormLabel,
   FormControl,
+  Alert,
+  AlertTitle,
+  AlertDescription,
 } from '@react-monorepo/shared';
+import { ShieldAlert } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -46,6 +50,15 @@ export const AccountSettings = () => {
     <div className={SETTINGS_SUBPAGE_CONTAINER}>
       <h2 className="text-2xl font-semibold">Account Settings</h2>
       <Separator className="my-4" />
+
+      <Alert className="mb-6">
+        <ShieldAlert className="h-4 w-4" />
+        <AlertTitle>Administrator Access Required</AlertTitle>
+        <AlertDescription>
+          These fields cannot be edited since you are not an administrator.
+          Please contact your administrator for any changes.
+        </AlertDescription>
+      </Alert>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
