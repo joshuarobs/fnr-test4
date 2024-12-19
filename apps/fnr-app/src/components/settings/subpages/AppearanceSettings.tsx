@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Separator } from '@react-monorepo/shared';
-import { Theme, themeDisplayNames } from '../themes';
+import { Theme, themeDisplayNames, themePreviewComponents } from '../themes';
 import { SETTINGS_SUBPAGE_CONTAINER } from '../../../pages/SettingsPage';
-import { LightThemePreview } from '../LightThemePreview';
-import { DarkThemePreview } from '../DarkThemePreview';
 import { ThemePreviewCard } from '../ThemePreviewCard';
 
 // Component for customizing application appearance and theme settings
@@ -29,13 +27,7 @@ export const AppearanceSettings = () => {
           {Object.values(Theme).map((theme) => (
             <ThemePreviewCard
               key={theme}
-              themePreview={
-                theme === Theme.DARK ? (
-                  <DarkThemePreview />
-                ) : (
-                  <LightThemePreview />
-                )
-              }
+              themePreview={React.createElement(themePreviewComponents[theme])}
               label={themeDisplayNames[theme]}
               selected={selectedTheme === theme}
               onSelect={() => handleThemeSelect(theme)}
