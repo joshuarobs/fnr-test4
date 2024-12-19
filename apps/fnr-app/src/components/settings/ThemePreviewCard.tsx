@@ -1,13 +1,15 @@
 import React from 'react';
-import { Separator } from '@react-monorepo/shared';
+import { Separator, colors } from '@react-monorepo/shared';
 import { CustomRadioButton } from '../contents-table/shared/CustomRadioButton';
+
+import { Theme } from './themes';
 
 // Props interface for the ThemePreviewCard component
 interface ThemePreviewCardProps {
   themePreview: React.ReactNode; // The theme preview SVG component
   label: string; // Label to display in the footer
   selected?: boolean; // Whether this theme is currently selected
-  onSelect?: (value: string) => void; // Callback when this theme is selected, receives the selected value
+  onSelect?: () => void; // Callback when this theme is selected
 }
 
 // Custom card component that wraps theme preview SVGs with a consistent layout
@@ -19,12 +21,14 @@ export const ThemePreviewCard = ({
 }: ThemePreviewCardProps) => {
   // Handler for clicking anywhere on the card
   const handleCardClick = () => {
-    onSelect?.(label);
+    onSelect?.();
   };
 
   return (
     <div
-      className="w-full rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden cursor-pointer group"
+      className={`w-full rounded-lg border ${
+        selected ? `border-blue-500` : ''
+      } bg-card text-card-foreground shadow-sm overflow-hidden cursor-pointer group`}
       onClick={handleCardClick}
     >
       <div className="select-none w-full">
@@ -37,7 +41,7 @@ export const ThemePreviewCard = ({
       <CustomRadioButton
         value={label}
         selectedValue={selected ? label : ''}
-        onChange={(value) => onSelect?.(value)}
+        onChange={() => onSelect?.()}
         label={<p className="text-sm font-medium">{label}</p>}
         className="px-4 py-3"
         disableHover
