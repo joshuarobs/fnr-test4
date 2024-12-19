@@ -10,6 +10,7 @@ import {
   Alert,
   AlertTitle,
   AlertDescription,
+  Button,
 } from '@react-monorepo/shared';
 import { ShieldAlert } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -155,6 +156,10 @@ export const AccountSettings = () => {
               )}
             />
           </div>
+          <Separator className="my-4" />
+          <Button type="submit" variant="default">
+            Update details
+          </Button>
         </form>
       </Form>
     </div>
