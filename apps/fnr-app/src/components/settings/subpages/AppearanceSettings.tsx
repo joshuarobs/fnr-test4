@@ -3,6 +3,7 @@ import { Separator } from '@react-monorepo/shared';
 import { SETTINGS_SUBPAGE_CONTAINER } from '../../../pages/SettingsPage';
 import { LightThemePreview } from '../LightThemePreview';
 import { DarkThemePreview } from '../DarkThemePreview';
+import { ThemePreviewCard } from '../ThemePreviewCard';
 
 // Component for customizing application appearance and theme settings
 export const AppearanceSettings = () => (
@@ -14,8 +15,8 @@ export const AppearanceSettings = () => (
     <div className="mt-8">
       <h3 className="text-lg font-medium mb-4">Theme</h3>
       <div className="flex items-center gap-4">
-        <LightThemePreview />
-        <DarkThemePreview />
+        <ThemePreviewCard themePreview={<LightThemePreview />} label="Light" />
+        <ThemePreviewCard themePreview={<DarkThemePreview />} label="Dark" />
       </div>
     </div>
   </div>

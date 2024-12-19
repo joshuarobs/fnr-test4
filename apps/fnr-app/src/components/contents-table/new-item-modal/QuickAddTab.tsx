@@ -12,8 +12,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@react-monorepo/shared';
-import { DotFilledIcon } from '@radix-ui/react-icons';
-import { cn } from '../../../../../../shared/src/lib/utils';
+import { CustomRadioButton } from '../shared/CustomRadioButton';
 import { ItemCategory } from '../itemCategories';
 import {
   ItemStatus,
@@ -301,25 +300,16 @@ export function QuickAddTab({
                     noGap
                   >
                     {ORDERED_ITEM_STATUSES.map((status) => (
-                      <div
+                      <CustomRadioButton
                         key={status}
-                        className={cn(
-                          'flex items-center gap-2 cursor-pointer rounded-md px-4 py-1.5 hover:bg-muted/50 transition-colors',
-                          selectedStatus === status && 'bg-muted'
-                        )}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedStatus(status);
-                          field.onChange(status);
+                        value={status}
+                        selectedValue={selectedStatus}
+                        onChange={(value) => {
+                          setSelectedStatus(value as ItemStatusType);
+                          field.onChange(value);
                         }}
-                      >
-                        <div className="aspect-square h-4 w-4 rounded-full border border-primary text-primary">
-                          {selectedStatus === status && (
-                            <DotFilledIcon className="h-3.5 w-3.5 fill-primary" />
-                          )}
-                        </div>
-                        <ItemStatusBadge itemStatus={status} />
-                      </div>
+                        label={<ItemStatusBadge itemStatus={status} />}
+                      />
                     ))}
                   </RadioGroup>
                 </FormControl>

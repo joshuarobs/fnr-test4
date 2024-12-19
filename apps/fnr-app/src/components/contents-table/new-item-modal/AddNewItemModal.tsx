@@ -19,6 +19,7 @@ import {
   CommandList,
 } from '@react-monorepo/shared';
 import { PlusIcon } from '@radix-ui/react-icons';
+import { CustomRadioButton } from '../shared/CustomRadioButton';
 import { File, Files } from 'lucide-react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '../../../../../../shared/src/lib/utils';
@@ -465,24 +466,15 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
                   className="flex gap-3 flex-1"
                 >
                   {ORDERED_ITEM_STATUSES.map((status) => (
-                    <div
+                    <CustomRadioButton
                       key={status}
-                      className="flex items-center cursor-pointer rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors"
-                      onClick={() => handleStatusChange(status)}
-                    >
-                      <Label
-                        htmlFor={`status-${status}`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <RadioGroupItem
-                          value={status}
-                          id={`status-${status}`}
-                        />
-                        <span className="ml-2">
-                          <ItemStatusBadge itemStatus={status} />
-                        </span>
-                      </Label>
-                    </div>
+                      value={status}
+                      selectedValue={selectedStatus}
+                      onChange={(value) =>
+                        handleStatusChange(value as ItemStatusType)
+                      }
+                      label={<ItemStatusBadge itemStatus={status} />}
+                    />
                   ))}
                 </RadioGroup>
               </div>
