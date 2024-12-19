@@ -28,7 +28,7 @@ export const SettingsSidebar = () => {
             <Link
               key={item.title}
               to={item.to}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-100 ${
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-100 select-none ${
                 location.pathname === item.to
                   ? 'bg-gray-100 text-gray-900'
                   : 'text-gray-600'

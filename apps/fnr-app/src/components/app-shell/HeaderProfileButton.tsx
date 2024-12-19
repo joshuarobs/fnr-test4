@@ -37,11 +37,7 @@ export const HeaderProfileButton = () => {
           </div>
         </div>
         <Separator className="my-2" />
-        <DropdownMenuItem
-          className="cursor-pointer gap-2"
-          onClick={() => navigate(ROUTES.SETTINGS)}
-          asChild
-        >
+        <DropdownMenuItem className="cursor-pointer gap-2" asChild>
           <Link to={ROUTES.SETTINGS} className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
             Settings
