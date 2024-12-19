@@ -4,9 +4,9 @@ import React from 'react';
 export const LightThemePreview = () => {
   return (
     <svg
-      width="230"
-      height="120"
       viewBox="0 0 230 120"
+      preserveAspectRatio="xMidYMid meet"
+      className="w-full h-auto"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >

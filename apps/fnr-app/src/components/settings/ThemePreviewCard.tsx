@@ -1,5 +1,6 @@
 import React from 'react';
-import { RadioGroup, RadioGroupItem, Separator } from '@react-monorepo/shared';
+import { Separator } from '@react-monorepo/shared';
+import { CustomRadioButton } from '../contents-table/shared/CustomRadioButton';
 
 // Props interface for the ThemePreviewCard component
 interface ThemePreviewCardProps {
@@ -16,16 +17,31 @@ export const ThemePreviewCard = ({
   selected = false,
   onSelect,
 }: ThemePreviewCardProps) => {
+  // Handler for clicking anywhere on the card
+  const handleCardClick = () => {
+    onSelect?.(label);
+  };
+
   return (
-    <RadioGroup value={selected ? label : ''} onValueChange={onSelect}>
-      <div className="w-fit rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden cursor-pointer">
-        <div>{themePreview}</div>
-        <Separator />
-        <div className="px-4 py-3 flex items-center gap-2">
-          <RadioGroupItem value={label} id={label} className="h-4 w-4" />
-          <p className="text-sm font-medium">{label}</p>
+    <div
+      className="w-full rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden cursor-pointer group"
+      onClick={handleCardClick}
+    >
+      <div className="select-none w-full">
+        <div className="relative w-full">
+          <div className="w-full h-auto">{themePreview}</div>
+          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
         </div>
       </div>
-    </RadioGroup>
+      <Separator />
+      <CustomRadioButton
+        value={label}
+        selectedValue={selected ? label : ''}
+        onChange={(value) => onSelect?.(value)}
+        label={<p className="text-sm font-medium">{label}</p>}
+        className="px-4 py-3"
+        disableHover
+      />
+    </div>
   );
 };
