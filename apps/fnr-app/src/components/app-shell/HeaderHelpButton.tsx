@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import { Keyboard } from 'lucide-react';
 import {
@@ -23,10 +23,16 @@ export const HeaderHelpButton = ({
 }: {
   onOpenShortcuts: () => void;
 }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleOpenShortcuts = () => {
+    setIsDropdownOpen(false); // Close dropdown when opening shortcuts
+    onOpenShortcuts();
+  };
   return (
     <TooltipProvider>
       <Tooltip>
-        <DropdownMenu>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
               <HeaderIconButton asChild={false}>
@@ -37,7 +43,7 @@ export const HeaderHelpButton = ({
           <DropdownMenuContent className="w-64">
             <DropdownMenuListItem
               icon={<Keyboard className="h-4 w-4" />}
-              onClick={onOpenShortcuts}
+              onClick={handleOpenShortcuts}
               keyboardShortcut={
                 GENERAL_KEYBOARD_SHORTCUTS_MAP[
                   KeyboardShortcutId.VIEW_KEYBOARD_SHORTCUTS
