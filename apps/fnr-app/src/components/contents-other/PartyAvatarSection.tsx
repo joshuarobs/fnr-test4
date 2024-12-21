@@ -38,6 +38,8 @@ export const PartyAvatarSection = ({
                   userInitials={avatar.userInitials}
                   color={avatar.color}
                   showHeaderRing
+                  hoverable
+                  name={avatar.name}
                 />
               </div>
               {/* Display name if available, otherwise show initials */}
@@ -60,6 +62,8 @@ export const PartyAvatarSection = ({
                 userInitials={avatar.userInitials}
                 color={avatar.color}
                 showHeaderRing
+                hoverable
+                name={avatar.name}
               />
             </div>
           ))}

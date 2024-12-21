@@ -1,4 +1,4 @@
-import { CalendarDays } from 'lucide-react';
+import { Building2, MapPin } from 'lucide-react';
 import {
   HoverCard,
   HoverCardContent,
@@ -13,6 +13,8 @@ interface UserAvatarProps {
   name?: string;
   imageUrl?: string;
   userInitials?: string;
+  location?: string;
+  department?: string;
 
   // Appearance customization
   size?: 'sm' | 'md';
@@ -21,7 +23,6 @@ interface UserAvatarProps {
 
   // Behavior
   hoverable?: boolean;
-  joinDate?: string; // Optional join date for hover card
 }
 
 // Component that combines ProfileIcon and AvatarHoverCard functionality
@@ -33,7 +34,8 @@ export const UserAvatar = ({
   color = 'bg-gray-500',
   showHeaderRing = false,
   hoverable = false,
-  joinDate,
+  location = 'Australia',
+  department = 'Claims',
 }: UserAvatarProps) => {
   // Map size prop to actual dimensions
   const sizeClasses = {
@@ -46,7 +48,7 @@ export const UserAvatar = ({
     <Avatar
       className={`${sizeClasses[size]} ${
         showHeaderRing ? 'ring-1 ring-gray-300' : ''
-      }`}
+      } ${hoverable ? 'hover:cursor-pointer' : ''}`}
     >
       {imageUrl ? (
         <AvatarImage src={imageUrl} alt={name || userInitials} />
@@ -65,28 +67,27 @@ export const UserAvatar = ({
 
   // If hoverable is true, wrap the avatar in a HoverCard
   return (
-    <HoverCard>
+    <HoverCard openDelay={200}>
       <HoverCardTrigger asChild>{AvatarComponent}</HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="flex justify-between space-x-2">
-          {/* This avatar in the hover card is intentionally not hoverable */}
-          <Avatar>
-            {imageUrl ? (
-              <AvatarImage src={imageUrl} alt={name || userInitials} />
-            ) : (
-              <AvatarFallback className={color}>{userInitials}</AvatarFallback>
-            )}
-          </Avatar>
+          {AvatarComponent}
           <div className="space-y-1 flex-1">
-            <h4 className="text-sm font-semibold">{name || userInitials}</h4>
-            {joinDate && (
-              <div className="flex items-center pt-2">
-                <CalendarDays className="mr-2 h-4 w-4 opacity-70" />
-                <span className="text-xs text-muted-foreground">
-                  Joined {joinDate}
+            <h4 className="text-base font-semibold">{name || userInitials}</h4>
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center">
+                <Building2 className="mr-2 h-4 w-4 opacity-70" />
+                <span className="text-sm text-muted-foreground">
+                  {department}
                 </span>
               </div>
-            )}
+              <div className="flex items-center">
+                <MapPin className="mr-2 h-4 w-4 opacity-70" />
+                <span className="text-sm text-muted-foreground">
+                  {location}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </HoverCardContent>

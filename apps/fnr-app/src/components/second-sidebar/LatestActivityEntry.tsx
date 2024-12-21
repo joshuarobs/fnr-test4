@@ -31,7 +31,6 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
             name={activity.user.name}
             userInitials={activity.user.name[0]}
             hoverable={true}
-            joinDate={activity.timestamp.toLocaleDateString()}
           />
           <div className="flex-1">
             <p className="text-sm font-medium">{truncatedName}</p>
