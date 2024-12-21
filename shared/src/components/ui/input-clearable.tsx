@@ -110,11 +110,11 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
     };
 
     return (
-      <div className="relative w-full">
+      <div className={cn('relative', className)}>
         <Input
           value={value}
           onChange={onChange}
-          className={cn('pr-8 w-full', className)}
+          className="pr-8 w-full"
           ref={resolvedRef}
           {...props}
         />
