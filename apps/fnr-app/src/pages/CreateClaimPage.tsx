@@ -110,60 +110,8 @@ export const CreateClaimPage = () => {
 
   return (
     <div className="p-6 w-[800px] mx-auto">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center mb-4">
         <h1 className="text-2xl font-semibold">Create a new claim</h1>
-        <Button
-          variant="outline"
-          onClick={() => {
-            // Generate random values for mandatory fields
-            const randomClaimNumber = `CLM${Math.floor(
-              Math.random() * 900000 + 100000
-            )}`;
-            const randomPolicyNumber = `POL${Math.floor(
-              Math.random() * 900000 + 100000
-            )}`;
-            const randomAgent =
-              agents[Math.floor(Math.random() * agents.length)];
-            const randomDescription = `Test claim created on ${new Date().toLocaleDateString()}`;
-
-            // Generate random number of blank items
-            // 30% chance of 0, 70% chance of 1-20
-            const randomBlankItems =
-              Math.random() < 0.3 ? 0 : Math.floor(Math.random() * 20) + 1;
-
-            // Set form values
-            form.setValue('claimNumber', randomClaimNumber, {
-              shouldValidate: true,
-            });
-            form.setValue('policyNumber', randomPolicyNumber, {
-              shouldValidate: true,
-            });
-            form.setValue('assignedAgent', randomAgent, {
-              shouldValidate: true,
-            });
-            form.setValue('description', randomDescription, {
-              shouldValidate: true,
-            });
-            // Generate random date within past 2 months
-            const today = new Date();
-            const twoMonthsAgo = new Date();
-            twoMonthsAgo.setMonth(today.getMonth() - 2);
-            const randomDate = new Date(
-              twoMonthsAgo.getTime() +
-                Math.random() * (today.getTime() - twoMonthsAgo.getTime())
-            );
-            form.setValue(
-              'incidentDate',
-              randomDate.toISOString().split('T')[0],
-              { shouldValidate: true }
-            );
-            form.setValue('blankItems', randomBlankItems.toString(), {
-              shouldValidate: true,
-            });
-          }}
-        >
-          Test fill fields
-        </Button>
       </div>
       <Separator className="mb-4" />
       <p className="italic text-sm text-muted-foreground mb-6">
@@ -342,7 +290,7 @@ export const CreateClaimPage = () => {
           </div>
 
           {/* Buttons */}
-          <div className="mt-8 flex justify-between">
+          <div className="mt-8 flex justify-between items-center">
             <Button
               type="button"
               variant="ghost"
@@ -352,15 +300,81 @@ export const CreateClaimPage = () => {
             >
               Clear fields
             </Button>
-            <Button
-              type="submit"
-              disabled={!form.formState.isValid || !hasChanges}
-            >
-              Create new claim
-            </Button>
+            <div className="flex gap-2">
+              <TestFillFieldsButton agents={agents} form={form} />
+              <Button
+                type="submit"
+                disabled={!form.formState.isValid || !hasChanges}
+              >
+                Create new claim
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
     </div>
+  );
+};
+
+// Test fill fields button component
+interface TestFillFieldsButtonProps {
+  agents: string[];
+  form: any; // Using any for brevity, but you could define proper form type
+}
+
+export const TestFillFieldsButton = ({
+  agents,
+  form,
+}: TestFillFieldsButtonProps) => {
+  return (
+    <Button
+      variant="outline"
+      onClick={() => {
+        // Generate random values for mandatory fields
+        const randomClaimNumber = `CLM${Math.floor(
+          Math.random() * 900000 + 100000
+        )}`;
+        const randomPolicyNumber = `POL${Math.floor(
+          Math.random() * 900000 + 100000
+        )}`;
+        const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+        const randomDescription = `Test claim created on ${new Date().toLocaleDateString()}`;
+
+        // Generate random number of blank items
+        // 30% chance of 0, 70% chance of 1-20
+        const randomBlankItems =
+          Math.random() < 0.3 ? 0 : Math.floor(Math.random() * 20) + 1;
+
+        // Set form values
+        form.setValue('claimNumber', randomClaimNumber, {
+          shouldValidate: true,
+        });
+        form.setValue('policyNumber', randomPolicyNumber, {
+          shouldValidate: true,
+        });
+        form.setValue('assignedAgent', randomAgent, {
+          shouldValidate: true,
+        });
+        form.setValue('description', randomDescription, {
+          shouldValidate: true,
+        });
+        // Generate random date within past 2 months
+        const today = new Date();
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(today.getMonth() - 2);
+        const randomDate = new Date(
+          twoMonthsAgo.getTime() +
+            Math.random() * (today.getTime() - twoMonthsAgo.getTime())
+        );
+        form.setValue('incidentDate', randomDate.toISOString().split('T')[0], {
+          shouldValidate: true,
+        });
+        form.setValue('blankItems', randomBlankItems.toString(), {
+          shouldValidate: true,
+        });
+      }}
+    >
+      Test fill fields
+    </Button>
   );
 };
