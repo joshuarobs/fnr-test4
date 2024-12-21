@@ -322,6 +322,20 @@ interface TestFillFieldsButtonProps {
   form: any; // Using any for brevity, but you could define proper form type
 }
 
+// List of insurance claim scenarios involving damaged or lost contents
+const CLAIM_SCENARIOS = [
+  'Water damage to garage tools and equipment from burst pipe',
+  'Fire damage to living room furniture and electronics',
+  'Storm damage to basement storage items from flooding',
+  'Theft of jewelry and electronics from master bedroom',
+  'Smoke damage to clothing and furniture throughout house',
+  'Lightning strike damaged home office equipment and furniture',
+  'Vandalism damage to outdoor furniture and garden equipment',
+  'Plumbing leak damaged kitchen appliances and cabinets',
+  'Wind storm damaged patio furniture and outdoor equipment',
+  'Accidental water damage to bedroom furniture from broken AC unit',
+];
+
 export const TestFillFieldsButton = ({
   agents,
   form,
@@ -338,7 +352,9 @@ export const TestFillFieldsButton = ({
           Math.random() * 900000 + 100000
         )}`;
         const randomAgent = agents[Math.floor(Math.random() * agents.length)];
-        const randomDescription = `Test claim created on ${new Date().toLocaleDateString()}`;
+        // Get random scenario from the list
+        const randomDescription =
+          CLAIM_SCENARIOS[Math.floor(Math.random() * CLAIM_SCENARIOS.length)];
 
         // Generate random number of blank items
         // 30% chance of 0, 70% chance of 1-20
