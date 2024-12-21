@@ -14,7 +14,6 @@ export interface KeyboardShortcut {
 export const KeyboardShortcutId = {
   TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR',
   VIEW_KEYBOARD_SHORTCUTS: 'VIEW_KEYBOARD_SHORTCUTS',
-  CREATE_NEW_CLAIM: 'CREATE_NEW_CLAIM',
   EDIT_CELL: 'EDIT_CELL',
   FOCUS_FILTER_BAR: 'FOCUS_FILTER_BAR',
   NAVIGATE_PAGE_LEFT: 'NAVIGATE_PAGE_LEFT',
@@ -32,10 +31,6 @@ export const GENERAL_KEYBOARD_SHORTCUTS_MAP: Record<string, KeyboardShortcut> =
     [KeyboardShortcutId.VIEW_KEYBOARD_SHORTCUTS]: {
       action: 'View this keyboard shortcuts popup',
       keybinds: [[KeyboardKeys.QUESTION_MARK]],
-    },
-    [KeyboardShortcutId.CREATE_NEW_CLAIM]: {
-      action: 'Create new claim',
-      keybinds: [[KeyboardKeys.COMMAND, KeyboardKeys.N]],
     },
     [KeyboardShortcutId.OPEN_CLAIM_POPUP]: {
       action: 'Open claim popup',
