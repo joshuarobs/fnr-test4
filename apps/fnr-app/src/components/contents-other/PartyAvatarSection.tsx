@@ -1,5 +1,5 @@
 import { Badge } from '@react-monorepo/shared';
-import { ProfileIcon } from '../app-shell/ProfileIcon';
+import { UserAvatar } from '../app-shell/UserAvatar';
 
 interface AvatarData {
   userInitials: string;
@@ -33,7 +33,7 @@ export const PartyAvatarSection = ({
           {avatars.map((avatar, index) => (
             <div key={index} className="flex items-center gap-2">
               <div className="border-2 border-background rounded-full">
-                <ProfileIcon
+                <UserAvatar
                   size="sm"
                   userInitials={avatar.userInitials}
                   color={avatar.color}
@@ -55,7 +55,7 @@ export const PartyAvatarSection = ({
               key={index}
               className="border-2 border-background rounded-full"
             >
-              <ProfileIcon
+              <UserAvatar
                 size="sm"
                 userInitials={avatar.userInitials}
                 color={avatar.color}

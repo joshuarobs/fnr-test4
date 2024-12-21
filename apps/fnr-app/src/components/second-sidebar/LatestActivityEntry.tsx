@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from '@react-monorepo/shared';
-import { AvatarHoverCard } from './AvatarHoverCard';
+import { UserAvatar } from '../app-shell/UserAvatar';
 
 const NAME_TRUNCATION_LENGTH = 20;
 
@@ -26,9 +26,12 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
       <FileIcon className="h-4 w-4 text-muted-foreground" />
       <div className="flex-1 space-y-1">
         <div className="flex items-center gap-2">
-          <AvatarHoverCard
-            avatar={activity.user.avatar}
+          <UserAvatar
+            imageUrl={activity.user.avatar}
             name={activity.user.name}
+            userInitials={activity.user.name[0]}
+            hoverable={true}
+            joinDate={activity.timestamp.toLocaleDateString()}
           />
           <div className="flex-1">
             <p className="text-sm font-medium">{truncatedName}</p>

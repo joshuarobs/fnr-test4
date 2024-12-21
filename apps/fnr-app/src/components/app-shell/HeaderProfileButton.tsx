@@ -8,7 +8,7 @@ import {
   Separator,
 } from '@react-monorepo/shared';
 import { Settings, Bell, LogOut } from 'lucide-react';
-import { ProfileIcon } from './ProfileIcon';
+import { UserAvatar } from './UserAvatar';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 
@@ -25,12 +25,12 @@ export const HeaderProfileButton = () => {
           variant="ghost"
           className="p-0 hover:cursor-pointer hover:bg-transparent focus-visible:ring-2"
         >
-          <ProfileIcon size="sm" color={color} showHeaderRing />
+          <UserAvatar size="sm" color={color} showHeaderRing />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <div className="flex items-center justify-start gap-2 p-2">
-          <ProfileIcon size="sm" color={color} />
+          <UserAvatar size="sm" color={color} />
           <div className="flex flex-col">
             <span className="text-sm font-medium">John Doe</span>
             <span className="text-sm">AGENT (748600)</span>
