@@ -85,7 +85,10 @@ export const CreateClaimPage = () => {
   return (
     <div className="p-6 w-[800px] mx-auto">
       <h1 className="text-2xl font-semibold mb-4">Create a new claim</h1>
-      <Separator className="mb-6" />
+      <Separator className="mb-4" />
+      <p className="italic text-sm text-muted-foreground mb-6">
+        Required fields are marked with an asterisk (*)
+      </p>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -96,7 +99,7 @@ export const CreateClaimPage = () => {
               name="claimNumber"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel>Claim number</FormLabel>
+                  <FormLabel>Claim number *</FormLabel>
                   <FormControl>
                     <InputClearable
                       {...field}
@@ -121,7 +124,7 @@ export const CreateClaimPage = () => {
               name="assignedAgent"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel>Agent assigned to</FormLabel>
+                  <FormLabel>Agent assigned to *</FormLabel>
                   <FormControl>
                     <div>
                       <DropdownMenu>
