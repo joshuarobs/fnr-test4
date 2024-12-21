@@ -67,7 +67,7 @@ export const UserAvatar = ({
 
   // If hoverable is true, wrap the avatar in a HoverCard
   return (
-    <HoverCard openDelay={200}>
+    <HoverCard openDelay={500}>
       <HoverCardTrigger asChild>{AvatarComponent}</HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="flex justify-between space-x-2">
