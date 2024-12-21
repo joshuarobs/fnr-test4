@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../routes';
 import {
   Tooltip,
   TooltipContent,
@@ -65,16 +67,18 @@ export const HeaderCreateNew = () => {
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <DropdownMenuContent className="min-w-[200px]">
-            <DropdownMenuListItem
-              icon={<PlusIcon />}
-              keyboardShortcut={
-                GENERAL_KEYBOARD_SHORTCUTS_MAP[
-                  KeyboardShortcutId.CREATE_NEW_CLAIM
-                ].keybinds[0]
-              }
-            >
-              New claim
-            </DropdownMenuListItem>
+            <Link to={ROUTES.CREATE_CLAIM}>
+              <DropdownMenuListItem
+                icon={<PlusIcon />}
+                keyboardShortcut={
+                  GENERAL_KEYBOARD_SHORTCUTS_MAP[
+                    KeyboardShortcutId.CREATE_NEW_CLAIM
+                  ].keybinds[0]
+                }
+              >
+                New claim
+              </DropdownMenuListItem>
+            </Link>
           </DropdownMenuContent>
           <TooltipContent>
             <p>Create new...</p>

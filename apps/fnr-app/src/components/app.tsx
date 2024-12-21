@@ -9,6 +9,7 @@ import { SettingsPage } from '../pages/SettingsPage';
 import { FeedbackPage } from '../pages/FeedbackPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ClaimPage } from '../pages/ClaimPage';
+import { CreateClaimPage } from '../pages/CreateClaimPage';
 import { ROUTES } from '../routes';
 import KeyboardShortcutsPopup from './ui/KeyboardShortcutsPopup';
 
@@ -69,6 +70,7 @@ export function App() {
             <Route path={ROUTES.SETTINGS + '/*'} element={<SettingsPage />} />
             <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
             <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
+            <Route path={ROUTES.CREATE_CLAIM} element={<CreateClaimPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
