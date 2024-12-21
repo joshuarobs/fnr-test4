@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Item } from '../../components/contents-table/item';
+import { API_CONFIG } from '../../config';
 
 // Used when fetching a single claim with full item details
 interface ClaimDetail {
@@ -64,7 +65,7 @@ interface RecalculateResponse {
 
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3333/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: API_CONFIG.baseUrl + '/' }),
   tagTypes: ['Claim', 'Item', 'Claims', 'RecentViews'],
   endpoints: (builder) => ({
     getMessage: builder.query<Message, void>({

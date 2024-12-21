@@ -17,22 +17,10 @@ router.post('/', async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (
-      !claimNumber ||
-      !policyNumber ||
-      !description ||
-      !incidentDate ||
-      !assignedAgent
-    ) {
+    if (!claimNumber || !assignedAgent) {
       return res.status(400).json({
         error: 'Missing required fields',
-        required: [
-          'claimNumber',
-          'policyNumber',
-          'description',
-          'incidentDate',
-          'assignedAgent',
-        ],
+        required: ['claimNumber', 'assignedAgent'],
       });
     }
 

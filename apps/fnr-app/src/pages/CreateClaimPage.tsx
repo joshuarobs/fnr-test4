@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { getClaimRoute } from '../routes';
+import { getApiUrl } from '../config';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -66,7 +68,7 @@ export const CreateClaimPage = () => {
   // Handle form submission
   const onSubmit = async (values: FormValues) => {
     try {
-      const response = await fetch('http://localhost:3000/api/claims', {
+      const response = await fetch(getApiUrl('claims'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,8 +85,8 @@ export const CreateClaimPage = () => {
       }
 
       const claim = await response.json();
-      // Redirect to the claim page
-      window.location.href = `/claims/${claim.claimNumber}`;
+      // Redirect to the claim page using route helper
+      window.location.href = getClaimRoute(claim.claimNumber);
     } catch (error) {
       console.error('Error creating claim:', error);
       // TODO: Show error to user
