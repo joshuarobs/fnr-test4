@@ -22,7 +22,10 @@ import {
 // Form schema
 const formSchema = z.object({
   claimNumber: z.string().min(1, 'Claim number is required'),
+  policyNumber: z.string().min(1, 'Policy number is required'),
   assignedAgent: z.string().min(1, 'Please select an agent'),
+  description: z.string().min(1, 'Description is required'),
+  incidentDate: z.string().min(1, 'Incident date is required'),
   blankItems: z.string().refine(
     (val) => {
       if (!val) return true; // Optional field
@@ -40,7 +43,10 @@ type FormValues = z.infer<typeof formSchema>;
 // Default values for the form fields
 const DEFAULT_VALUES: FormValues = {
   claimNumber: '',
+  policyNumber: '',
   assignedAgent: '',
+  description: '',
+  incidentDate: new Date().toISOString().split('T')[0], // Today's date as default
   blankItems: '',
 };
 
@@ -58,11 +64,31 @@ export const CreateClaimPage = () => {
   });
 
   // Handle form submission
-  const onSubmit = (values: FormValues) => {
-    console.log('Form submitted:', {
-      ...values,
-      blankItems: values.blankItems ? parseInt(values.blankItems) : 0,
-    });
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/claims', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...values,
+          blankItems: values.blankItems ? parseInt(values.blankItems) : 0,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create claim');
+      }
+
+      const claim = await response.json();
+      // Redirect to the claim page
+      window.location.href = `/claims/${claim.claimNumber}`;
+    } catch (error) {
+      console.error('Error creating claim:', error);
+      // TODO: Show error to user
+    }
   };
 
   // Clear all fields
@@ -93,6 +119,31 @@ export const CreateClaimPage = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-6 max-w-2xl">
+            {/* Policy Number */}
+            <FormField
+              control={form.control}
+              name="policyNumber"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Policy number *</FormLabel>
+                  <FormControl>
+                    <InputClearable
+                      {...field}
+                      id="policyNumber"
+                      onClear={() => field.onChange('')}
+                      className="w-[200px]"
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                  {form.formState.errors.policyNumber && (
+                    <FormMessage>
+                      {form.formState.errors.policyNumber.message}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
             {/* Claim Number */}
             <FormField
               control={form.control}
@@ -152,6 +203,54 @@ export const CreateClaimPage = () => {
                   {form.formState.errors.assignedAgent && (
                     <FormMessage>
                       {form.formState.errors.assignedAgent.message}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            {/* Description */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Description *</FormLabel>
+                  <FormControl>
+                    <textarea
+                      {...field}
+                      id="description"
+                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </FormControl>
+                  {form.formState.errors.description && (
+                    <FormMessage>
+                      {form.formState.errors.description.message}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            {/* Incident Date */}
+            <FormField
+              control={form.control}
+              name="incidentDate"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Incident date *</FormLabel>
+                  <FormControl>
+                    <InputClearable
+                      {...field}
+                      id="incidentDate"
+                      type="date"
+                      onClear={() => field.onChange('')}
+                      className="w-[200px]"
+                    />
+                  </FormControl>
+                  {form.formState.errors.incidentDate && (
+                    <FormMessage>
+                      {form.formState.errors.incidentDate.message}
                     </FormMessage>
                   )}
                 </FormItem>

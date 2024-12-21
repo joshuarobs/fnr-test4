@@ -4,6 +4,67 @@ import { calculateClaimValues } from '../../lib/claimHelpers';
 
 const router: Router = express.Router();
 
+// POST /api/claims - Create a new claim
+router.post('/', async (req, res) => {
+  try {
+    const {
+      claimNumber,
+      policyNumber,
+      description,
+      incidentDate,
+      blankItems = 0,
+      assignedAgent,
+    } = req.body;
+
+    // Validate required fields
+    if (
+      !claimNumber ||
+      !policyNumber ||
+      !description ||
+      !incidentDate ||
+      !assignedAgent
+    ) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        required: [
+          'claimNumber',
+          'policyNumber',
+          'description',
+          'incidentDate',
+          'assignedAgent',
+        ],
+      });
+    }
+
+    // TODO: Get actual user IDs from auth
+    const insuredId = 1;
+    const creatorId = 1;
+    const handlerId = 1;
+
+    const claim = await prisma.claim.create({
+      data: {
+        claimNumber,
+        policyNumber,
+        description,
+        incidentDate: new Date(incidentDate),
+        insuredId,
+        creatorId,
+        handlerId,
+        totalClaimed: 0,
+        totalItems: parseInt(blankItems.toString()),
+      },
+    });
+
+    res.status(201).json(claim);
+  } catch (error) {
+    console.error('Error creating claim:', error);
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Claim number already exists' });
+    }
+    res.status(500).json({ error: 'Failed to create claim' });
+  }
+});
+
 // Validation middleware
 const validateItemRequest = (
   req: Request,
