@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { getClaimRoute } from '../routes';
@@ -54,8 +53,6 @@ const DEFAULT_VALUES: FormValues = {
 
 // Page component for creating a new claim
 export const CreateClaimPage = () => {
-  const [hasChanges, setHasChanges] = useState(false);
-
   // Mock agents data - replace with actual data source
   const agents = ['John Smith', 'Jane Doe', 'Mike Johnson'];
 
@@ -96,19 +93,7 @@ export const CreateClaimPage = () => {
   // Clear all fields
   const handleClearFields = () => {
     form.reset(DEFAULT_VALUES);
-    setHasChanges(false);
   };
-
-  // Track form changes
-  const watchAllFields = form.watch();
-  useEffect(() => {
-    const hasFormChanges = Object.keys(DEFAULT_VALUES).some(
-      (key) =>
-        watchAllFields[key as keyof FormValues] !==
-        DEFAULT_VALUES[key as keyof FormValues]
-    );
-    setHasChanges(hasFormChanges);
-  }, [watchAllFields]);
 
   return (
     <div className="p-6 w-[800px] mx-auto">
@@ -121,7 +106,18 @@ export const CreateClaimPage = () => {
       </p>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            // Only submit if the submit button was clicked
+            if (
+              (e.nativeEvent as SubmitEvent).submitter?.getAttribute('type') ===
+              'submit'
+            ) {
+              form.handleSubmit(onSubmit)(e);
+            }
+          }}
+        >
           <div className="space-y-6 max-w-2xl">
             {/* Policy Number */}
             <FormField
@@ -297,7 +293,7 @@ export const CreateClaimPage = () => {
               type="button"
               variant="ghost"
               onClick={handleClearFields}
-              disabled={!hasChanges}
+              disabled={!form.formState.isDirty}
               className="text-red-500"
             >
               Clear fields
@@ -306,7 +302,7 @@ export const CreateClaimPage = () => {
               <TestFillFieldsButton agents={agents} form={form} />
               <Button
                 type="submit"
-                disabled={!form.formState.isValid || !hasChanges}
+                disabled={!form.formState.isDirty || !form.formState.isValid}
               >
                 Create new claim
               </Button>
@@ -344,8 +340,10 @@ export const TestFillFieldsButton = ({
 }: TestFillFieldsButtonProps) => {
   return (
     <Button
+      type="button"
       variant="outline"
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault();
         // Generate random values for mandatory fields
         const randomClaimNumber = `CLM${Math.floor(
           Math.random() * 900000 + 100000
@@ -363,19 +361,6 @@ export const TestFillFieldsButton = ({
         const randomBlankItems =
           Math.random() < 0.3 ? 0 : Math.floor(Math.random() * 20) + 1;
 
-        // Set form values
-        form.setValue('claimNumber', randomClaimNumber, {
-          shouldValidate: true,
-        });
-        form.setValue('policyNumber', randomPolicyNumber, {
-          shouldValidate: true,
-        });
-        form.setValue('assignedAgent', randomAgent, {
-          shouldValidate: true,
-        });
-        form.setValue('description', randomDescription, {
-          shouldValidate: true,
-        });
         // Generate random date within past 2 months
         const today = new Date();
         const twoMonthsAgo = new Date();
@@ -384,10 +369,30 @@ export const TestFillFieldsButton = ({
           twoMonthsAgo.getTime() +
             Math.random() * (today.getTime() - twoMonthsAgo.getTime())
         );
+
+        // Set values with shouldDirty and shouldValidate options
+        form.setValue('claimNumber', randomClaimNumber, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+        form.setValue('policyNumber', randomPolicyNumber, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+        form.setValue('assignedAgent', randomAgent, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+        form.setValue('description', randomDescription, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
         form.setValue('incidentDate', randomDate.toISOString().split('T')[0], {
+          shouldDirty: true,
           shouldValidate: true,
         });
         form.setValue('blankItems', randomBlankItems.toString(), {
+          shouldDirty: true,
           shouldValidate: true,
         });
       }}
