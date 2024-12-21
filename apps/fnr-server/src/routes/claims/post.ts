@@ -29,21 +29,55 @@ router.post('/', async (req, res) => {
     const creatorId = 1;
     const handlerId = 1;
 
-    const claim = await prisma.claim.create({
-      data: {
-        claimNumber,
-        policyNumber,
-        description,
-        incidentDate: new Date(incidentDate),
-        insuredId,
-        creatorId,
-        handlerId,
-        totalClaimed: 0,
-        totalItems: parseInt(blankItems.toString()),
-      },
+    // Use transaction to create claim and blank items atomically
+    const result = await prisma.$transaction(async (tx) => {
+      const claim = await tx.claim.create({
+        data: {
+          claimNumber,
+          policyNumber,
+          description,
+          incidentDate: new Date(incidentDate),
+          insuredId,
+          creatorId,
+          handlerId,
+          totalClaimed: 0,
+          totalItems: parseInt(blankItems.toString()),
+          localItemIds: [],
+          itemOrder: [],
+        },
+      });
+
+      // Create blank items if specified
+      const numBlankItems = parseInt(blankItems.toString());
+      const itemIds = [];
+
+      for (let i = 0; i < numBlankItems; i++) {
+        const item = await tx.item.create({
+          data: {
+            name: '',
+            quantity: 1,
+            itemStatus: 'NR',
+            claimId: claim.id,
+          },
+        });
+        itemIds.push(item.id);
+      }
+
+      // Update claim with item IDs if any items were created
+      if (itemIds.length > 0) {
+        await tx.claim.update({
+          where: { id: claim.id },
+          data: {
+            localItemIds: itemIds,
+            itemOrder: itemIds,
+          },
+        });
+      }
+
+      return claim;
     });
 
-    res.status(201).json(claim);
+    res.status(201).json(result);
   } catch (error) {
     console.error('Error creating claim:', error);
     if (error.code === 'P2002') {
