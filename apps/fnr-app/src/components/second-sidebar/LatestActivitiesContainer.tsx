@@ -5,7 +5,7 @@ import { TestApi } from './TestApi';
 
 export const LatestActivitiesContainer = () => {
   return (
-    <div className="h-[600px] flex flex-col">
+    <div className="flex-1 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Latest activity</h2>
         <Button variant="outline" size="sm">
@@ -13,7 +13,7 @@ export const LatestActivitiesContainer = () => {
         </Button>
       </div>
 
-      <ScrollArea className="flex-grow">
+      <ScrollArea className="flex-1 -mr-2">
         <div>
           {placeholderLatestActivities.map((activity) => (
             <LatestActivityEntry key={activity.id} activity={activity} />

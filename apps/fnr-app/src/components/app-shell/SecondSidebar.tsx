@@ -16,9 +16,14 @@ const SidebarSeparator = () => {
 
 export const SecondSidebar = ({ className }: SecondSidebarProps) => {
   return (
-    <div className={cn('pb-12 max-w-[280px]', className)}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
+    <div
+      className={cn(
+        'max-w-[280px] h-[calc(100vh-56px)] overflow-hidden',
+        className
+      )}
+    >
+      <div className="h-full flex flex-col py-4">
+        <div className="px-3 py-2 flex flex-col flex-1">
           {/* ======================================== */}
           {/* Contributors Section */}
           {/* ======================================== */}
