@@ -1,6 +1,4 @@
 import { DotFilledIcon } from '@radix-ui/react-icons';
-import { colors } from '@react-monorepo/shared';
-
 interface CustomRadioButtonProps {
   value: string;
   selectedValue: string;
@@ -32,12 +30,14 @@ export const CustomRadioButton = ({
     >
       <div
         className={`aspect-square h-4 w-4 rounded-full border flex items-center justify-center ${
-          selectedValue === value ? `border-blue-500` : 'border-primary'
+          selectedValue === value
+            ? `border-radio-selected`
+            : 'border-radio-border'
         }`}
       >
         {selectedValue === value && (
           <DotFilledIcon
-            className={`h-[14px] w-[14px] text-blue-500 scale-150`}
+            className={`h-[14px] w-[14px] text-radio-selected scale-150`}
           />
         )}
       </div>

@@ -24,14 +24,14 @@ export const Header = ({
     : SIDEBAR_WIDTHS.MINIMIZED;
 
   return (
-    <header className="bg-gray-100 h-[56px] min-h-[56px] max-h-[56px] flex items-center px-4 border-b border-gray-200 shadow-sm">
+    <header className="bg-header-background h-[56px] min-h-[56px] max-h-[56px] flex items-center px-4 border-b border-header-border shadow-sm">
       <Button
         variant="ghost"
         size="icon"
         onClick={onToggleSidebar}
-        className="mr-4 hover:bg-gray-700"
+        className="mr-4 hover:bg-header-hover"
       >
-        <HamburgerMenuIcon className="h-5 w-5" />
+        <HamburgerMenuIcon className="h-5 w-5 text-header-icon" />
       </Button>
 
       <HeaderClaimButton

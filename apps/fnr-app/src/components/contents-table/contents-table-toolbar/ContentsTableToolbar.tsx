@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
-import { InputClearable, Button, colors, Badge } from '@react-monorepo/shared';
+import { InputClearable, Button, Badge } from '@react-monorepo/shared';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import {
   Tooltip,
@@ -119,16 +119,16 @@ const differenceOptions: OptionGroups = {
 const renderDifferenceOption = (option: FilterOption) => {
   if (option.value === 'higher') {
     return (
-      <div className={`flex items-center gap-2 ${colors.status.error}`}>
-        <CaretUpOutlined className={colors.status.error} />
+      <div className="flex items-center gap-2 text-status-error">
+        <CaretUpOutlined className="text-status-error" />
         Higher
       </div>
     );
   }
   if (option.value === 'lower') {
     return (
-      <div className={`flex items-center gap-2 ${colors.status.success}`}>
-        <CaretDownOutlined className={colors.status.success} />
+      <div className="flex items-center gap-2 text-status-success">
+        <CaretDownOutlined className="text-status-success" />
         Lower
       </div>
     );

@@ -1,5 +1,4 @@
 // Add all Shadcn components you import here
-export * from './lib/colors';
 export * from './lib/shared';
 export * from './components/ui/alert';
 export * from './components/ui/avatar';

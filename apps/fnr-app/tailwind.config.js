@@ -48,6 +48,21 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Custom semantic colors
+        status: {
+          error: "hsl(var(--status-error))",
+          success: "hsl(var(--status-success))"
+        },
+        header: {
+          background: "hsl(var(--header-background))",
+          border: "hsl(var(--header-border))",
+          hover: "hsl(var(--header-hover))",
+          icon: "hsl(var(--header-icon))"
+        },
+        radio: {
+          selected: "hsl(var(--radio-selected))",
+          border: "hsl(var(--radio-border))"
+        },
       },
       borderRadius: {
         lg: `var(--radius)`,

@@ -30,6 +30,18 @@
     --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
 
+    /* Custom semantic colors */
+    --status-error: 0 84% 60%;
+    --status-success: 142 76% 36%;
+    --header-background: 220 14% 96%;
+    --header-border: 220 13% 91%;
+    --header-hover: 220 14% 92%;
+    --header-icon: 215.4 16.3% 46.9%;
+
+    /* Radio button colors */
+    --radio-selected: 221 83% 53%;
+    --radio-border: 222.2 47.4% 11.2%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -74,6 +86,18 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom semantic colors - dark mode */
+    --status-error: 0 84% 60%;
+    --status-success: 142 76% 36%;
+    --header-background: 215 25% 12%;
+    --header-border: 215 25% 15%;
+    --header-hover: 215 25% 18%;
+    --header-icon: 215 20.2% 65.1%;
+
+    /* Radio button colors - dark mode */
+    --radio-selected: 221 83% 65%;
+    --radio-border: 213 31% 91%;
   }
 }
 

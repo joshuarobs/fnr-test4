@@ -1,5 +1,5 @@
 import React from 'react';
-import { Separator, colors } from '@react-monorepo/shared';
+import { Separator } from '@react-monorepo/shared';
 import { CustomRadioButton } from '../contents-table/shared/CustomRadioButton';
 
 import { Theme } from './themes';
