@@ -31,10 +31,12 @@ export const DropdownMenuListItem = ({
     <DropdownMenuItem
       onClick={onClick}
       className={clsx(
-        'flex items-center gap-2 justify-between cursor-pointer',
+        'flex items-center gap-2 justify-between cursor-pointer text-muted-foreground',
         {
-          'text-red-600 focus:bg-red-100 focus:text-red-600': danger,
-          'text-gray-600 focus:bg-gray-100 focus:text-gray-700': !danger,
+          'text-destructive hover:text-destructive focus:bg-destructive/10 focus:text-destructive':
+            danger,
+          'hover:text-foreground focus:bg-accent focus:text-accent-foreground':
+            !danger,
         },
         className
       )}
@@ -44,7 +46,7 @@ export const DropdownMenuListItem = ({
         {children}
       </div>
       {keyboardShortcut && (
-        <div className="ml-auto flex items-center gap-2 text-xs tracking-widest text-gray-400">
+        <div className="ml-auto flex items-center gap-2 text-xs tracking-widest text-muted-foreground">
           <span className="flex items-center gap-1">
             {keyboardShortcut.map((key, keyIndex) => (
               <KeyboardKeyIcon key={keyIndex} letter={key} />

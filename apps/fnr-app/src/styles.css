@@ -36,7 +36,7 @@
     --header-background: 220 14% 96%;
     --header-border: 220 13% 91%;
     --header-hover: 220 14% 92%;
-    --header-icon: 215.4 16.3% 46.9%;
+    --header-icon: 215.4 16.3% 30%;
 
     /* Radio button colors */
     --radio-selected: 221 83% 53%;
@@ -93,7 +93,7 @@
     --header-background: 215 25% 12%;
     --header-border: 215 25% 15%;
     --header-hover: 215 25% 18%;
-    --header-icon: 215 20.2% 65.1%;
+    --header-icon: 215 20.2% 90%;
 
     /* Radio button colors - dark mode */
     --radio-selected: 221 83% 65%;

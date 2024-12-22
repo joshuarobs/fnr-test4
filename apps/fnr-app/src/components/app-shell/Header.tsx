@@ -5,6 +5,7 @@ import { HeaderCreateNew } from './HeaderCreateNew';
 import { HeaderNotificationsButton } from './HeaderNotificationsButton';
 import { HeaderProfileButton } from './HeaderProfileButton';
 import { HeaderHelpButton } from './HeaderHelpButton';
+import { HeaderThemeButton } from './HeaderThemeButton';
 import { HeaderClaimButton } from './HeaderClaimButton';
 import { SIDEBAR_WIDTHS } from '../../constants/layout-constants';
 
@@ -42,6 +43,7 @@ export const Header = ({
       />
 
       <div className="ml-auto flex items-center gap-3 mr-3">
+        <HeaderThemeButton />
         <HeaderHelpButton onOpenShortcuts={() => setIsShortcutsOpen(true)} />
         <HeaderCreateNew />
         <HeaderNotificationsButton />

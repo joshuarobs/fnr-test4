@@ -47,7 +47,7 @@ export const UserAvatar = ({
   const AvatarComponent = (
     <Avatar
       className={`${sizeClasses[size]} ${
-        showHeaderRing ? 'ring-1 ring-gray-300' : ''
+        showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''
       } ${hoverable ? 'hover:cursor-pointer' : ''}`}
     >
       {imageUrl ? (
