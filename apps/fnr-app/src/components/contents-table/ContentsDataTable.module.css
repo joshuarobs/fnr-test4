@@ -33,7 +33,6 @@
   left: 0;
   top: 0;
   z-index: 10;
-  background-color: white;
   box-shadow: 4px 0 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -43,7 +42,6 @@
   right: 0;
   top: 0;
   z-index: 10;
-  background-color: white;
   box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -54,12 +52,10 @@
 }
 
 .frozenCell {
-  background-color: white;
   height: var(--table-cell-height) !important;
 }
 
 .frozenHeaderCell {
-  background-color: white;
   height: var(--table-cell-height) !important;
 }
 

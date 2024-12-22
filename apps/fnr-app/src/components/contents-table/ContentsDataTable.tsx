@@ -106,7 +106,10 @@ export const ContentsDataTable = <TData extends Item, TValue>({
     <div className={styles.container}>
       <div className={styles.tableContainer} ref={mainTableRef}>
         {/* Left Frozen Columns */}
-        <div className={styles.frozenColumnsWrapper} ref={frozenTableRef}>
+        <div
+          className={`${styles.frozenColumnsWrapper} bg-background`}
+          ref={frozenTableRef}
+        >
           <UITable className={styles.frozenTable}>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -137,7 +140,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                     <TableRow
                       key={row.id}
                       className={`${
-                        index % 2 === 0 ? 'bg-gray-100' : ''
+                        index % 2 === 0 ? 'table-row-even' : 'table-row-odd'
                       } min-h-[53px]!`}
                     >
                       {row
@@ -164,7 +167,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
 
         {/* Right Frozen Columns */}
         <div
-          className={styles.frozenRightColumnsWrapper}
+          className={`${styles.frozenRightColumnsWrapper} bg-background`}
           ref={frozenRightTableRef}
         >
           <UITable className={styles.frozenTable}>
@@ -178,7 +181,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                     .map((header) => (
                       <TableHead
                         key={header.id}
-                        className={`${styles.frozenHeaderCell} ${header.column.columnDef.meta?.headerClassName}`}
+                        className={`${styles.frozenHeaderCell} bg-background ${header.column.columnDef.meta?.headerClassName}`}
                       >
                         {header.isPlaceholder
                           ? null
@@ -197,7 +200,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                     <TableRow
                       key={row.id}
                       className={`${
-                        index % 2 === 0 ? 'bg-gray-100' : ''
+                        index % 2 === 0 ? 'table-row-even' : 'table-row-odd'
                       } min-h-[53px]!`}
                     >
                       {row
@@ -228,7 +231,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={header.column.columnDef.meta?.headerClassName}
+                    className={`bg-background ${header.column.columnDef.meta?.headerClassName}`}
                   >
                     {header.isPlaceholder
                       ? null
@@ -247,7 +250,7 @@ export const ContentsDataTable = <TData extends Item, TValue>({
                 <TableRow
                   key={row.id}
                   className={`${
-                    index % 2 === 0 ? 'bg-gray-100' : ''
+                    index % 2 === 0 ? 'table-row-even' : 'table-row-odd'
                   } min-h-[53px]!`}
                 >
                   {row.getVisibleCells().map((cell) => (

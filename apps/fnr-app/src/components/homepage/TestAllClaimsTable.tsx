@@ -123,7 +123,7 @@ export const TestAllClaimsTable = () => {
           {claims?.map((claim) => (
             <TableRow
               key={claim.id}
-              className="cursor-pointer hover:bg-gray-50 relative"
+              className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 relative"
               onClick={() => navigate(`/claim/${claim.claimNumber}`)}
             >
               <TableCell className="relative p-2 text-right">
@@ -139,7 +139,7 @@ export const TestAllClaimsTable = () => {
               <TableCell>{claim.claimNumber}</TableCell>
               <TableCell>{claim.description}</TableCell>
               <TableCell>
-                <span className="rounded-full px-2 py-1 text-xs font-medium capitalize bg-blue-100 text-blue-800">
+                <span className="rounded-full px-2 py-1 text-xs font-medium capitalize bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
                   {claim.status.toLowerCase().replace('_', ' ')}
                 </span>
               </TableCell>

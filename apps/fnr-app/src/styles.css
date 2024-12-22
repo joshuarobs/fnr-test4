@@ -30,6 +30,10 @@
     --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
 
+    /* Table colors */
+    --table-row-even: 210 40% 96.1%;
+    --table-row-odd: 0 0% 100%;
+
     /* Custom semantic colors */
     --status-error: 0 84% 60%;
     --status-success: 142 76% 36%;
@@ -104,6 +108,20 @@
     /* Radio button colors - dark mode */
     --radio-selected: 221 83% 65%;
     --radio-border: 213 31% 91%;
+
+    /* Table colors - dark mode */
+    --table-row-even: 215 25% 12%;
+    --table-row-odd: 224 71% 4%;
+  }
+}
+
+@layer components {
+  .table-row-even {
+    background-color: hsl(var(--table-row-even));
+  }
+
+  .table-row-odd {
+    background-color: hsl(var(--table-row-odd));
   }
 }
 

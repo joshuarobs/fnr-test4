@@ -23,36 +23,36 @@ export const getStatusDetails = (
   switch (itemStatus) {
     case ItemStatus.RS:
       return {
-        bgClass: 'bg-red-200',
-        textClass: 'text-red-800',
+        bgClass: 'bg-red-200 dark:bg-red-900',
+        textClass: 'text-red-800 dark:text-red-100',
         text: 'RS',
         tooltip: 'Restorable',
       };
     case ItemStatus.NR:
       return {
-        bgClass: 'bg-green-200',
-        textClass: 'text-green-800',
+        bgClass: 'bg-green-200 dark:bg-green-900',
+        textClass: 'text-green-800 dark:text-green-100',
         text: 'N/R',
         tooltip: 'Non-Restorable',
       };
     case ItemStatus.VPOL:
       return {
-        bgClass: 'bg-purple-200',
-        textClass: 'text-purple-800',
+        bgClass: 'bg-purple-200 dark:bg-purple-900',
+        textClass: 'text-purple-800 dark:text-purple-100',
         text: 'VPOL',
         tooltip: 'Verbal Proof of Loss',
       };
     case ItemStatus.OTHER:
       return {
-        bgClass: 'bg-blue-200',
-        textClass: 'text-blue-800',
+        bgClass: 'bg-blue-200 dark:bg-blue-900',
+        textClass: 'text-blue-800 dark:text-blue-100',
         text: 'Other',
         tooltip: 'Other Status',
       };
     default:
       return {
-        bgClass: 'bg-gray-200',
-        textClass: 'text-gray-600',
+        bgClass: 'bg-gray-200 dark:bg-gray-700',
+        textClass: 'text-gray-600 dark:text-gray-300',
         text: '?',
         tooltip: 'Unknown Status',
       };
