@@ -40,7 +40,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
   }, [recentViews]);
 
   return (
-    <div className={cn('pb-12 w-[224px] border-r', className)}>
+    <div className={cn('pb-12 w-[224px] min-w-[224px] border-r', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           {/* Main tabs */}

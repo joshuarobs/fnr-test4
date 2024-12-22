@@ -20,8 +20,8 @@ export const SettingsSidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="w-64 py-6">
-      <div className="w-60 mx-auto">
+    <aside className="w-[224px] min-w-[224px] py-6">
+      <div className="w-[200px] mx-auto">
         <h3 className="font-medium mb-4">Settings</h3>
         <nav>
           {items.map((item) => (
