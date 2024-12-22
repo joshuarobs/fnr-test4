@@ -53,7 +53,7 @@ export const UserAvatar = ({
       {imageUrl ? (
         <AvatarImage src={imageUrl} alt={name || userInitials} />
       ) : (
-        <AvatarFallback className={`${color} text-white`}>
+        <AvatarFallback className={`${color} dark:brightness-[0.9] text-white`}>
           {userInitials}
         </AvatarFallback>
       )}

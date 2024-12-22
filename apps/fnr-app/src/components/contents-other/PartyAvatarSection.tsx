@@ -31,7 +31,7 @@ export const PartyAvatarSection = ({
       {/* Title row with badge showing number of avatars */}
       <Dialog>
         <DialogTrigger asChild>
-          <div className="inline-flex items-center gap-2 mb-2 cursor-pointer hover:text-blue-600">
+          <div className="inline-flex items-center gap-2 mb-2 cursor-pointer hover:text-hover-blue">
             <span className="text-base font-medium">{title}</span>
             <Badge variant="secondary">{avatars.length}</Badge>
           </div>
@@ -48,7 +48,7 @@ export const PartyAvatarSection = ({
             <div className="flex flex-col gap-2 pr-4">
               {avatars.map((avatar, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <div className="border-2 border-background rounded-full">
+                  <div className="border-2 border-border rounded-full">
                     <UserAvatar
                       size="sm"
                       userInitials={avatar.userInitials}
@@ -74,7 +74,7 @@ export const PartyAvatarSection = ({
         <div className="flex flex-col gap-1">
           {avatars.map((avatar, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div className="border-2 border-background rounded-full">
+              <div className="border-2 border-border rounded-full">
                 <UserAvatar
                   size="sm"
                   userInitials={avatar.userInitials}
@@ -95,10 +95,7 @@ export const PartyAvatarSection = ({
         // Horizontal layout for more than 2 avatars
         <div className="flex gap-0.5">
           {avatars.map((avatar, index) => (
-            <div
-              key={index}
-              className="border-2 border-background rounded-full"
-            >
+            <div key={index} className="border-2 border-border rounded-full">
               <UserAvatar
                 size="sm"
                 userInitials={avatar.userInitials}

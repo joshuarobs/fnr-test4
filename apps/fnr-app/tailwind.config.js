@@ -59,6 +59,9 @@ module.exports = {
           hover: "hsl(var(--header-hover))",
           icon: "hsl(var(--header-icon))"
         },
+        hover: {
+          blue: "hsl(var(--hover-blue))"
+        },
         radio: {
           selected: "hsl(var(--radio-selected))",
           border: "hsl(var(--radio-border))"

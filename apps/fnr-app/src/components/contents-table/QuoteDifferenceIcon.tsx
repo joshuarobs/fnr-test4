@@ -5,7 +5,6 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  colors,
 } from '@react-monorepo/shared';
 
 interface QuoteDifferenceIconProps {
@@ -47,10 +46,10 @@ export const QuoteDifferenceIcon = ({
           <TooltipTrigger asChild>
             <div className="flex items-center">
               <CaretUpOutlined
-                className={`${colors.status.error} mr-1`}
+                className="text-status-error mr-1"
                 style={iconStyle}
               />
-              <span className={`${colors.status.error} font-semibold`}>
+              <span className="text-status-error font-semibold">
                 {formatter.format(diff)}
               </span>
             </div>
@@ -68,10 +67,10 @@ export const QuoteDifferenceIcon = ({
           <TooltipTrigger asChild>
             <div className="flex items-center">
               <CaretDownOutlined
-                className={`${colors.status.success} mr-1`}
+                className="text-status-success mr-1"
                 style={{ ...iconStyle, top: '2px' }}
               />
-              <span className={`${colors.status.success} font-semibold`}>
+              <span className="text-status-success font-semibold">
                 {formatter.format(Math.abs(diff))}
               </span>
             </div>

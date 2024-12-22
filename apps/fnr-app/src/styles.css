@@ -38,6 +38,9 @@
     --header-hover: 220 14% 92%;
     --header-icon: 215.4 16.3% 30%;
 
+    /* Custom hover colors */
+    --hover-blue: 221 83% 53%;
+
     /* Radio button colors */
     --radio-selected: 221 83% 53%;
     --radio-border: 222.2 47.4% 11.2%;
@@ -94,6 +97,9 @@
     --header-border: 215 25% 15%;
     --header-hover: 215 25% 18%;
     --header-icon: 215 20.2% 90%;
+
+    /* Custom hover colors - dark mode */
+    --hover-blue: 221 83% 65%;
 
     /* Radio button colors - dark mode */
     --radio-selected: 221 83% 65%;
