@@ -29,7 +29,7 @@ export const CategoryDropdown = ({
     const Icon = categoryIcons[category];
     return (
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-gray-600" />
+        <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
         <span>{itemCategoryDisplayNames[category]}</span>
       </div>
     );
@@ -39,7 +39,7 @@ export const CategoryDropdown = ({
     const Icon = categoryIcons[category];
     return (
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-gray-600" />
+        <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
         <span>{itemCategoryDisplayNames[category]}</span>
       </div>
     );

@@ -84,18 +84,18 @@ export const ModelSerialCell = ({
         <Tooltip open={isTooltipVisible}>
           <TooltipTrigger asChild>
             <div
-              className="bg-gray-200 rounded p-2 font-mono cursor-pointer hover:bg-gray-300 transition-colors duration-200 flex items-center gap-3 select-none whitespace-nowrap overflow-hidden"
+              className="rounded p-2 font-mono cursor-pointer transition-colors duration-200 flex items-center gap-3 select-none whitespace-nowrap overflow-hidden bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300"
               onClick={handleClick}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <span className="text-sm text-gray-900 truncate">
+              <span className="text-sm truncate">
                 {getDisplayedModelSerial(modelSerialNumber)}
               </span>
               {isCopied ? (
                 <CheckIcon className="w-4 h-4 text-green-600 stroke-4 scale-125 transform flex-shrink-0" />
               ) : (
-                <CopyIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                <CopyIcon className="w-4 h-4 flex-shrink-0 text-gray-500 dark:text-gray-400" />
               )}
             </div>
           </TooltipTrigger>
