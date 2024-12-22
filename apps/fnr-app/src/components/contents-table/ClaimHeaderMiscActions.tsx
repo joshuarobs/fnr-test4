@@ -6,7 +6,12 @@ import {
   DropdownMenuTrigger,
   Separator,
 } from '@react-monorepo/shared';
-import { MoreHorizontal, RefreshCw } from 'lucide-react';
+import {
+  Archive,
+  FileSpreadsheet,
+  MoreHorizontal,
+  RefreshCw,
+} from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { useRecalculateQuotesMutation } from '../../store/services/api';
 import { formatDistanceToNow } from 'date-fns';
@@ -62,12 +67,12 @@ export const ClaimHeaderMiscActions = ({
         </div>
         <Separator className="my-1" />
         <DropdownMenuItem className="cursor-pointer">
-          Export Items
+          <FileSpreadsheet className="mr-2 h-4 w-4" />
+          Export excel sheet
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
-          Print View
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
+        <Separator className="my-1" />
+        <DropdownMenuItem className="cursor-pointer text-destructive">
+          <Archive className="mr-2 h-4 w-4" />
           Archive Claim
         </DropdownMenuItem>
       </DropdownMenuContent>
