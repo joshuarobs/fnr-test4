@@ -7,7 +7,7 @@ interface PlaceholderImageGenericProps {
 }
 
 export const PlaceholderImageGeneric = ({
-  color = 'bg-gray-300',
+  color = 'bg-gray-300 dark:bg-gray-700',
   itemCategory,
 }: PlaceholderImageGenericProps) => {
   const Icon = itemCategory ? categoryIcons[itemCategory] : FaRegImage;
@@ -16,7 +16,7 @@ export const PlaceholderImageGeneric = ({
     <div
       className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${color}`}
     >
-      <Icon className="text-white w-4 h-4" />
+      <Icon className="text-white/90 dark:text-white/80 w-4 h-4" />
     </div>
   );
 };
