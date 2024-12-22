@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Separator } from '@react-monorepo/shared';
 import { Theme, themeDisplayNames, themePreviewComponents } from '../themes';
 import { SETTINGS_SUBPAGE_CONTAINER } from '../../../pages/SettingsPage';
 import { ThemePreviewCard } from '../ThemePreviewCard';
+import { useTheme } from '../../providers/theme-provider';
 
 // Component for customizing application appearance and theme settings
 export const AppearanceSettings = () => {
-  // State to track the currently selected theme
-  const [selectedTheme, setSelectedTheme] = useState<Theme>(Theme.LIGHT);
+  const { theme, setTheme } = useTheme();
 
   // Handler for theme selection
-  const handleThemeSelect = (theme: Theme) => {
-    setSelectedTheme(theme);
-    // TODO: Add logic to actually change the theme in the app
+  const handleThemeSelect = (newTheme: Theme) => {
+    setTheme(newTheme);
   };
 
   return (
@@ -24,13 +23,15 @@ export const AppearanceSettings = () => {
       <div className="mt-8">
         <h3 className="text-lg font-medium mb-4">Theme</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {Object.values(Theme).map((theme) => (
+          {(Object.keys(themeDisplayNames) as Theme[]).map((themeOption) => (
             <ThemePreviewCard
-              key={theme}
-              themePreview={React.createElement(themePreviewComponents[theme])}
-              label={themeDisplayNames[theme]}
-              selected={selectedTheme === theme}
-              onSelect={() => handleThemeSelect(theme)}
+              key={themeOption}
+              themePreview={React.createElement(
+                themePreviewComponents[themeOption]
+              )}
+              label={themeDisplayNames[themeOption]}
+              selected={theme === themeOption}
+              onSelect={() => handleThemeSelect(themeOption)}
             />
           ))}
         </div>
