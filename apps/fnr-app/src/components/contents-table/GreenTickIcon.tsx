@@ -14,7 +14,7 @@ export const GreenTickIcon = ({ size = 'medium' }: GreenTickIconProps) => {
     <div
       className={`inline-flex items-center justify-center ${
         isSmall ? 'w-4 h-4' : 'w-5 h-5'
-      } bg-green-500 rounded-full ml-2`}
+      } bg-green-500 dark:bg-green-600 rounded-full ml-2`}
     >
       <CheckIcon
         className={`text-white transform ${

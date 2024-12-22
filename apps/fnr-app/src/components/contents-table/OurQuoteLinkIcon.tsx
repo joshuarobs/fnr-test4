@@ -73,15 +73,17 @@ export const OurQuoteLinkIcon = ({
       variant="outline"
       className={`w-8 h-8 p-1 rounded-full ${
         prevWebsiteUrl
-          ? 'bg-blue-400 hover:bg-blue-500'
-          : 'bg-white hover:bg-gray-100'
+          ? 'bg-blue-400 hover:bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700'
+          : 'bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700'
       } flex items-center justify-center ${
         hasChanges ? 'shadow-[0_0_10px_rgba(249,115,22,1.0)]' : ''
       }`}
       aria-label="View our quote"
     >
       <Link
-        className={`w-4 h-4 ${prevWebsiteUrl ? 'text-white' : 'text-gray-500'}`}
+        className={`w-4 h-4 ${
+          prevWebsiteUrl ? 'text-white' : 'text-gray-500 dark:text-gray-400'
+        }`}
       />
     </Button>
   );

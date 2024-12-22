@@ -46,10 +46,10 @@ export const QuoteDifferenceIcon = ({
           <TooltipTrigger asChild>
             <div className="flex items-center">
               <CaretUpOutlined
-                className="text-status-error mr-1"
+                className="text-status-error dark:text-red-400 mr-1"
                 style={iconStyle}
               />
-              <span className="text-status-error font-semibold">
+              <span className="text-status-error dark:text-red-400 font-semibold">
                 {formatter.format(diff)}
               </span>
             </div>
@@ -67,10 +67,10 @@ export const QuoteDifferenceIcon = ({
           <TooltipTrigger asChild>
             <div className="flex items-center">
               <CaretDownOutlined
-                className="text-status-success mr-1"
+                className="text-status-success dark:text-green-400 mr-1"
                 style={{ ...iconStyle, top: '2px' }}
               />
-              <span className="text-status-success font-semibold">
+              <span className="text-status-success dark:text-green-400 font-semibold">
                 {formatter.format(Math.abs(diff))}
               </span>
             </div>
