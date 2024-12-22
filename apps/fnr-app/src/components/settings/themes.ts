@@ -1,6 +1,7 @@
 import React from 'react';
 import { LightThemePreview } from './LightThemePreview';
 import { DarkThemePreview } from './DarkThemePreview';
+import { SystemThemePreview } from './SystemThemePreview';
 
 // Theme options for the application
 export type Theme = 'light' | 'dark' | 'system';
@@ -16,7 +17,7 @@ export const themeDisplayNames: Record<Theme, string> = {
 export const themePreviewComponents: Record<Theme, React.FC> = {
   light: LightThemePreview,
   dark: DarkThemePreview,
-  system: LightThemePreview, // Using light preview for system
+  system: SystemThemePreview,
 };
 
 // Default theme when none is selected
