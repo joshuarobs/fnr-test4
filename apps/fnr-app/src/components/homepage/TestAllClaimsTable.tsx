@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -8,20 +9,10 @@ import {
 } from '@react-monorepo/shared';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import {
-  useGetClaimsQuery,
-  useRecalculateQuotesMutation,
-} from '../../store/services/api';
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@react-monorepo/shared';
-import { MoreHorizontal, RefreshCw } from 'lucide-react';
+import { useGetClaimsQuery } from '../../store/services/api';
 import { WarningIconTooltip } from '../contents-other/WarningIconTooltip';
 import { GreenTickIcon } from '../contents-table/GreenTickIcon';
+import { ClaimHeaderMiscActions } from '../contents-table/ClaimHeaderMiscActions';
 
 /**
  * Format a number value, with special handling for zero
@@ -30,54 +21,6 @@ const formatNumber = (value: number | null | undefined): string => {
   if (value === null || value === undefined) return '-';
   if (Math.abs(value) < 0.01) return '0';
   return value.toLocaleString();
-};
-
-/**
- * TableRowActions - A component that provides additional actions through a three dots menu dropdown
- * Modified version of ClaimHeaderMiscActions for use in the claims table
- */
-const TableRowActions = ({
-  claimId,
-  onClick,
-}: {
-  claimId: string;
-  onClick: (e: React.MouseEvent) => void;
-}) => {
-  const [recalculateQuotes] = useRecalculateQuotesMutation();
-
-  const handleRecalculateValues = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent row click event
-    try {
-      await recalculateQuotes(claimId);
-    } catch (err) {
-      console.error('Failed to recalculate values:', err);
-    }
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-        <Button variant="outline" size="icon" className="p-2">
-          <MoreHorizontal className="h-5 w-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleRecalculateValues}>
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Recalculate values
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-          Export Items
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-          Print View
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-          Archive Claim
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 };
 
 export const TestAllClaimsTable = () => {
@@ -192,10 +135,9 @@ export const TestAllClaimsTable = () => {
                   addSuffix: true,
                 })}
               </TableCell>
-              <TableCell>
-                <TableRowActions
-                  claimId={claim.claimNumber}
-                  onClick={(e) => e.stopPropagation()}
+              <TableCell onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                <ClaimHeaderMiscActions
+                  lastProgressUpdate={claim.lastProgressUpdate}
                 />
               </TableCell>
             </TableRow>
