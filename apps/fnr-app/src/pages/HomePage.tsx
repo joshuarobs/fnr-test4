@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, useToast } from '@react-monorepo/shared';
-import { TestAllClaimsTable } from '../components/homepage/TestAllClaimsTable';
+import { DetailedClaimsTable } from '../components/homepage/DetailedClaimsTable';
 import { TestTableUXStuff } from '../components/contents-table/TestTableUXStuff';
 import { TestTableUXStuffPure } from '../components/contents-table/TestTableUXStuffPure';
 
@@ -33,7 +33,7 @@ export const HomePage = () => {
         </Button>
       </div>
       <div className="mt-4">
-        <TestAllClaimsTable />
+        <DetailedClaimsTable />
       </div>
       <div className="mt-4">
         <TestTableUXStuff />
