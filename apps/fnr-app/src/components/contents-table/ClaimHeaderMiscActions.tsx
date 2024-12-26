@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
+  useToast,
 } from '@react-monorepo/shared';
 import {
   DropdownMenu,
@@ -51,12 +52,19 @@ export const ClaimHeaderMiscActions = ({
   const [archiveReason, setArchiveReason] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const { toast } = useToast();
+
   const handleRecalculateValues = async () => {
     if (!id) return;
     try {
       await recalculateQuotes(id).unwrap();
     } catch (err) {
       console.error('Failed to recalculate values:', err);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to recalculate values. Please try again.',
+      });
     }
   };
 
@@ -105,7 +113,7 @@ export const ClaimHeaderMiscActions = ({
             }}
           >
             <Archive className="mr-2 h-4 w-4" />
-            {isDeleted ? 'Reopen claim' : 'Archive Claim'}
+            {isDeleted ? 'Reopen claim' : 'Archive claim'}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -174,6 +182,13 @@ export const ClaimHeaderMiscActions = ({
                     `Failed to ${isDeleted ? 'unarchive' : 'archive'} claim:`,
                     err
                   );
+                  toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: `Failed to ${
+                      isDeleted ? 'unarchive' : 'archive'
+                    } claim. Please try again.`,
+                  });
                   // Keep dialog open if there's an error
                 }
               }}
