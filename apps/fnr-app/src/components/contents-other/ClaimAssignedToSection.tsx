@@ -1,7 +1,5 @@
 import { Badge, Button } from '@react-monorepo/shared';
-import { UserAvatar } from '../app-shell/UserAvatar';
-import { useNavigate } from 'react-router-dom';
-import { getUserRoute } from '../../routes';
+import { NavAvatar } from './NavAvatar';
 
 interface AssignedUserData {
   userInitials: string;
@@ -24,8 +22,6 @@ export const ClaimAssignedToSection = ({
   assignedUser,
   onAssignClick,
 }: ClaimAssignedToSectionProps) => {
-  const navigate = useNavigate();
-
   return (
     <div>
       {/* Title row with Assign button */}
@@ -37,27 +33,12 @@ export const ClaimAssignedToSection = ({
 
       {/* Always show full detail view since we only have one user */}
       {assignedUser ? (
-        <div
-          className="flex items-center gap-2 cursor-pointer hover:text-hover-blue"
-          onClick={() => {
-            if (assignedUser.userId) {
-              navigate(getUserRoute(assignedUser.userId));
-            }
-          }}
-        >
-          <div className="border-2 border-border rounded-full">
-            <UserAvatar
-              size="sm"
-              userInitials={assignedUser.userInitials}
-              color={assignedUser.color}
-              showHeaderRing
-              name={assignedUser.name}
-            />
-          </div>
-          <span className="text-sm text-muted-foreground">
-            {assignedUser.name || assignedUser.userInitials}
-          </span>
-        </div>
+        <NavAvatar
+          userInitials={assignedUser.userInitials}
+          color={assignedUser.color}
+          name={assignedUser.name}
+          userId={assignedUser.userId}
+        />
       ) : (
         <span className="text-sm text-muted-foreground">Not assigned</span>
       )}

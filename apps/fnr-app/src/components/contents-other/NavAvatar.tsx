@@ -2,19 +2,20 @@ import { UserAvatar } from '../app-shell/UserAvatar';
 import { Link } from 'react-router-dom';
 import { getUserRoute } from '../../routes';
 
-interface AvatarWithLabelProps {
+interface NavAvatarProps {
   userInitials: string;
   color?: string;
-  name: string;
+  name?: string; // Made optional
   userId: string;
 }
 
-export const AvatarWithLabel = ({
+// Navigation avatar component with optional name label
+export const NavAvatar = ({
   userInitials,
   color,
   name,
   userId,
-}: AvatarWithLabelProps) => {
+}: NavAvatarProps) => {
   return (
     <Link
       to={getUserRoute(userId)}
@@ -30,9 +31,11 @@ export const AvatarWithLabel = ({
           name={name}
         />
       </div>
-      <span className="text-sm text-muted-foreground group-hover:text-hover-blue">
-        {name || userInitials}
-      </span>
+      {name && (
+        <span className="text-sm text-muted-foreground group-hover:text-hover-blue">
+          {name}
+        </span>
+      )}
     </Link>
   );
 };

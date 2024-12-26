@@ -18,6 +18,7 @@ export const UserProfilePage = () => {
               name="John Doe"
               department="Claims Processing"
               location="Australia"
+              showHeaderRing
             />
             <div>
               <h2 className="text-lg font-semibold">John Doe</h2>
