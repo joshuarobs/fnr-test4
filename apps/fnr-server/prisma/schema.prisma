@@ -106,8 +106,8 @@ model Claim {
   policyNumber  String      // Reference to external policy system
   insuredId     Int
   insured       Insured     @relation(fields: [insuredId], references: [id])
-  handlerId     Int
-  handler       BaseUser    @relation("ClaimHandler", fields: [handlerId], references: [id])
+  handlerId     Int?
+  handler       BaseUser?   @relation("ClaimHandler", fields: [handlerId], references: [id])
   creatorId     Int
   creator       BaseUser    @relation("ClaimCreator", fields: [creatorId], references: [id])
   status        ClaimStatus @default(DRAFT)

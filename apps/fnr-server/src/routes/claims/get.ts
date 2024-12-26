@@ -83,6 +83,14 @@ router.get('/:claimNumber', async (req, res) => {
       where: { claimNumber },
       include: {
         items: true,
+        handler: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
       },
     });
 

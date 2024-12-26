@@ -294,15 +294,49 @@ async function main() {
         },
       ],
     },
+    {
+      claimNumber: 'CLM005',
+      policyNumber: 'POL505',
+      description: 'Single item claim',
+      items: [
+        {
+          name: 'Gaming Console',
+          category: ItemCategory.ELECTRONICS,
+          roomCategory: RoomCategory.LIVING_ROOM,
+          modelSerialNumber: 'PS5-2023',
+          description: 'PlayStation 5 console',
+          insuredsQuote: 750,
+          ourQuote: null,
+          condition: 'Good',
+          itemStatus: ItemStatus.RS,
+          insuredsEvidence: [
+            {
+              type: EvidenceType.PHOTO,
+              filename: 'console.jpg',
+              url: '/uploads/console.jpg',
+            },
+          ],
+          ourQuoteProof: null,
+        },
+      ],
+    },
   ];
 
   // Create claims and their items
-  const firstInsured = await prisma.insured.findFirst();
-  if (!firstInsured) {
-    throw new Error('No insured found to create claims for');
+  const insuredUsers = await prisma.insured.findMany({
+    orderBy: { id: 'asc' },
+  });
+  if (insuredUsers.length < 2) {
+    throw new Error('Not enough insureds found to create claims for');
   }
 
   for (const claim of claimData) {
+    // Determine which insured to assign the claim to
+    const insuredId =
+      claim.claimNumber === 'CLM001' || claim.claimNumber === 'CLM003'
+        ? insuredUsers[0].id // First insured gets claims 1 and 3
+        : insuredUsers[1].id; // Second insured gets claims 2 and 4
+
     // Create the claim first with empty arrays
     const createdClaim = await prisma.claim.create({
       data: {
@@ -315,8 +349,11 @@ async function main() {
           (sum, item) => sum + (item.insuredsQuote || 0),
           0
         ),
-        insuredId: firstInsured.id,
-        handlerId: staffMembers[0].id,
+        insuredId: insuredId,
+        // Only assign handler if not CLM005
+        ...(claim.claimNumber !== 'CLM005' && {
+          handlerId: staffMembers[0].id,
+        }),
         creatorId: staffMembers[0].id,
         itemOrder: [],
         localItemIds: [],
@@ -373,8 +410,12 @@ async function main() {
     });
   }
 
-  // Add some comments
-  const claims = await prisma.claim.findMany();
+  // Add some comments (except for CLM005 which is unassigned)
+  const claims = await prisma.claim.findMany({
+    where: {
+      claimNumber: { not: 'CLM005' },
+    },
+  });
 
   for (const claim of claims) {
     await Promise.all([
