@@ -49,6 +49,7 @@ export const ClaimHeaderMiscActions = ({
   const [unarchiveClaim] = useUnarchiveClaimMutation();
   const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [archiveReason, setArchiveReason] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleRecalculateValues = async () => {
     if (!id) return;
@@ -69,7 +70,7 @@ export const ClaimHeaderMiscActions = ({
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="p-2">
             <MoreHorizontal className="h-5 w-5" />
@@ -98,7 +99,10 @@ export const ClaimHeaderMiscActions = ({
             className={`cursor-pointer ${
               isDeleted ? 'text-primary' : 'text-destructive'
             }`}
-            onClick={() => setIsArchiveDialogOpen(true)}
+            onClick={() => {
+              setIsDropdownOpen(false);
+              setIsArchiveDialogOpen(true);
+            }}
           >
             <Archive className="mr-2 h-4 w-4" />
             {isDeleted ? 'Reopen claim' : 'Archive Claim'}
@@ -107,7 +111,15 @@ export const ClaimHeaderMiscActions = ({
       </DropdownMenu>
 
       {/* Archive Confirmation Dialog */}
-      <Dialog open={isArchiveDialogOpen} onOpenChange={setIsArchiveDialogOpen}>
+      <Dialog
+        open={isArchiveDialogOpen}
+        onOpenChange={(open) => {
+          setIsArchiveDialogOpen(open);
+          if (!open) {
+            setIsDropdownOpen(false);
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
