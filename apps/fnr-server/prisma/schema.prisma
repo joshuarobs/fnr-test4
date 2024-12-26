@@ -35,6 +35,7 @@ model BaseUser {
   // Common relations
   handledClaims Claim[]   @relation("ClaimHandler")
   createdClaims Claim[]   @relation("ClaimCreator")
+  deletedClaims Claim[]   @relation("ClaimDeleter")
   comments      Comment[]
   recentlyViewedClaims RecentlyViewedClaim[] @relation("UserRecentViews")
 
@@ -123,6 +124,9 @@ model Claim {
   recentViews   RecentlyViewedClaim[] @relation("ClaimViews")
   isDeleted     Boolean     @default(false) @map("is_deleted")
   deletedAt     DateTime?   @map("deleted_at")
+  deletedBy     Int?        @map("deleted_by")
+  deletedUser   BaseUser?   @relation("ClaimDeleter", fields: [deletedBy], references: [id])
+  deleteReason  String?     @map("delete_reason")
 
   // Progress tracking fields
   totalItems Int @default(0)

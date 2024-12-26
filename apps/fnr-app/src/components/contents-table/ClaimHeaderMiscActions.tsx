@@ -1,4 +1,13 @@
-import { Button } from '@react-monorepo/shared';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+} from '@react-monorepo/shared';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,6 +15,7 @@ import {
   DropdownMenuTrigger,
   Separator,
 } from '@react-monorepo/shared';
+import { useState } from 'react';
 import {
   Archive,
   FileSpreadsheet,
@@ -13,7 +23,10 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { useRecalculateQuotesMutation } from '../../store/services/api';
+import {
+  useArchiveClaimMutation,
+  useRecalculateQuotesMutation,
+} from '../../store/services/api';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ClaimHeaderMiscActionsProps {
@@ -29,6 +42,9 @@ export const ClaimHeaderMiscActions = ({
 }: ClaimHeaderMiscActionsProps) => {
   const { id } = useParams<{ id: string }>();
   const [recalculateQuotes] = useRecalculateQuotesMutation();
+  const [archiveClaim] = useArchiveClaimMutation();
+  const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
+  const [archiveReason, setArchiveReason] = useState('');
 
   const handleRecalculateValues = async () => {
     if (!id) return;
@@ -48,34 +64,91 @@ export const ClaimHeaderMiscActions = ({
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="p-2">
-          <MoreHorizontal className="h-5 w-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[200px]">
-        <DropdownMenuItem
-          onClick={handleRecalculateValues}
-          className="cursor-pointer"
-        >
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Recalculate values
-        </DropdownMenuItem>
-        <div className="px-2 py-1.5 text-xs text-muted-foreground">
-          {getLastUpdateText()}
-        </div>
-        <Separator className="my-1" />
-        <DropdownMenuItem className="cursor-pointer">
-          <FileSpreadsheet className="mr-2 h-4 w-4" />
-          Export excel sheet
-        </DropdownMenuItem>
-        <Separator className="my-1" />
-        <DropdownMenuItem className="cursor-pointer text-destructive">
-          <Archive className="mr-2 h-4 w-4" />
-          Archive Claim
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="icon" className="p-2">
+            <MoreHorizontal className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[200px]">
+          <DropdownMenuItem
+            onClick={handleRecalculateValues}
+            className="cursor-pointer"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            <div className="flex flex-col items-start">
+              <span>Recalculate values</span>
+              <span className="text-xs text-muted-foreground">
+                {getLastUpdateText()}
+              </span>
+            </div>
+          </DropdownMenuItem>
+          <Separator className="my-1" />
+          <DropdownMenuItem className="cursor-pointer">
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            Export excel sheet
+          </DropdownMenuItem>
+          <Separator className="my-1" />
+          <DropdownMenuItem
+            className="cursor-pointer text-destructive"
+            onClick={() => setIsArchiveDialogOpen(true)}
+          >
+            <Archive className="mr-2 h-4 w-4" />
+            Archive Claim
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Archive Confirmation Dialog */}
+      <Dialog open={isArchiveDialogOpen} onOpenChange={setIsArchiveDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Archive Claim</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to archive this claim? This action can be
+              undone by an administrator.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              placeholder="Reason for archiving"
+              value={archiveReason}
+              onChange={(e) => setArchiveReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsArchiveDialogOpen(false);
+                setArchiveReason('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!id) return;
+                try {
+                  await archiveClaim({
+                    claimNumber: id,
+                    userId: '1', // TODO: Get actual user ID
+                    reason: archiveReason,
+                  }).unwrap();
+                  setIsArchiveDialogOpen(false);
+                  setArchiveReason('');
+                } catch (err) {
+                  console.error('Failed to archive claim:', err);
+                }
+              }}
+            >
+              Archive
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

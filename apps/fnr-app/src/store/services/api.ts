@@ -66,7 +66,7 @@ interface RecalculateResponse {
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: API_CONFIG.baseUrl + '/' }),
-  tagTypes: ['Claim', 'Item', 'Claims', 'RecentViews'],
+  tagTypes: ['Claim', 'Item', 'Claims', 'RecentViews', 'ArchivedClaims'],
   endpoints: (builder) => ({
     getMessage: builder.query<Message, void>({
       query: () => '',
@@ -124,6 +124,18 @@ export const api = createApi({
       }),
       invalidatesTags: ['Claim'],
     }),
+    archiveClaim: builder.mutation<
+      { success: boolean; message: string },
+      { claimNumber: string; userId: string; reason: string }
+    >({
+      query: ({ claimNumber, userId, reason }) => ({
+        url: `claims/${claimNumber}/archive`,
+        method: 'POST',
+        body: { userId, reason },
+      }),
+      invalidatesTags: ['Claims', 'Claim', 'ArchivedClaims'],
+    }),
+
     recalculateQuotes: builder.mutation<RecalculateResponse, string>({
       query: (claimNumber) => ({
         url: `claims/${claimNumber}/recalculate`,
@@ -176,4 +188,5 @@ export const {
   useAddItemMutation,
   useRemoveItemMutation,
   useRecalculateQuotesMutation,
+  useArchiveClaimMutation,
 } = api;
