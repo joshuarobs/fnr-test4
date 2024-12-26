@@ -1,7 +1,7 @@
 export const ROUTES = {
   HOME: '/',
   ASSIGNED: '/assigned',
-  USER: '/user',
+  USER: '/user/:id',
   SETTINGS: '/settings',
   SETTINGS_ACCOUNT: '/settings/account',
   SETTINGS_APPEARANCE: '/settings/appearance',
@@ -12,3 +12,6 @@ export const ROUTES = {
 
 // Helper function to generate claim route with ID
 export const getClaimRoute = (id: string) => `/claim/${id}`;
+
+// Helper function to generate user profile route with ID
+export const getUserRoute = (id: string) => `/user/${id}`;

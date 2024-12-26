@@ -17,7 +17,7 @@ interface UserAvatarProps {
   department?: string;
 
   // Appearance customization
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   color?: string;
   showHeaderRing?: boolean;
 
@@ -41,12 +41,13 @@ export const UserAvatar = ({
   const sizeClasses = {
     sm: 'h-8 w-8',
     md: 'h-10 w-10',
+    lg: 'h-16 w-16',
   };
 
-  // Base avatar component that's used in both hoverable and non-hoverable modes
-  const AvatarComponent = (
+  // Create avatar component with configurable size
+  const createAvatarComponent = (avatarSize: 'sm' | 'md' | 'lg') => (
     <Avatar
-      className={`${sizeClasses[size]} ${
+      className={`${sizeClasses[avatarSize]} ${
         showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''
       } ${hoverable ? 'hover:cursor-pointer' : ''}`}
     >
@@ -60,18 +61,21 @@ export const UserAvatar = ({
     </Avatar>
   );
 
-  // If hoverable is false, just return the avatar component
+  // Create base avatar with given size
+  const baseAvatarComponent = createAvatarComponent(size);
+
+  // If hoverable is false, just return the base avatar component
   if (!hoverable) {
-    return AvatarComponent;
+    return baseAvatarComponent;
   }
 
-  // If hoverable is true, wrap the avatar in a HoverCard
+  // If hoverable is true, wrap the avatar in a HoverCard with medium-sized popup avatar
   return (
     <HoverCard openDelay={500}>
-      <HoverCardTrigger asChild>{AvatarComponent}</HoverCardTrigger>
+      <HoverCardTrigger asChild>{baseAvatarComponent}</HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="flex justify-between space-x-2">
-          {AvatarComponent}
+          {createAvatarComponent('md')}
           <div className="space-y-1 flex-1">
             <h4 className="text-base font-semibold">{name || userInitials}</h4>
             <div className="space-y-2 pt-2">

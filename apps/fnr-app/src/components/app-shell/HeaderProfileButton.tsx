@@ -10,13 +10,14 @@ import {
 import { Settings, Bell, LogOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
 import { useNavigate, Link } from 'react-router-dom';
-import { ROUTES } from '../../routes';
+import { ROUTES, getUserRoute } from '../../routes';
 
 // Component for displaying profile dropdown in the header
 // Uses ProfileIcon component for avatar display and contains menu items for various actions
 export const HeaderProfileButton = () => {
   const color = 'bg-blue-600';
   const navigate = useNavigate();
+  const userId = '748600'; // TODO: Get this from user auth context when implemented
 
   return (
     <DropdownMenu>
@@ -29,15 +30,17 @@ export const HeaderProfileButton = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <Link to={ROUTES.USER} className="block hover:bg-accent">
-          <div className="flex items-center justify-start gap-2 p-2">
-            <UserAvatar size="sm" color={color} />
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">John Doe</span>
-              <span className="text-sm">AGENT (748600)</span>
+        <DropdownMenuItem className="cursor-pointer p-0" asChild>
+          <Link to={getUserRoute(userId)} className="flex w-full p-2">
+            <div className="flex items-center justify-start gap-2">
+              <UserAvatar size="sm" color={color} />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">John Doe</span>
+                <span className="text-sm">AGENT (748600)</span>
+              </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </DropdownMenuItem>
         <Separator className="my-2" />
         <DropdownMenuItem className="cursor-pointer gap-2" asChild>
           <Link to={ROUTES.SETTINGS} className="flex items-center gap-2">
