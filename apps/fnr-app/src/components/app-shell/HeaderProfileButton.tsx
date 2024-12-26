@@ -10,14 +10,14 @@ import {
 import { Settings, Bell, LogOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
 import { useNavigate, Link } from 'react-router-dom';
-import { ROUTES, getUserRoute } from '../../routes';
+import { ROUTES, getStaffRoute } from '../../routes';
 
-// Component for displaying profile dropdown in the header
-// Uses ProfileIcon component for avatar display and contains menu items for various actions
+// Component for displaying staff profile dropdown in the header
+// Uses UserAvatar component for avatar display and contains menu items for various actions
 export const HeaderProfileButton = () => {
   const color = 'bg-blue-600';
   const navigate = useNavigate();
-  const userId = '748600'; // TODO: Get this from user auth context when implemented
+  const employeeId = '748600'; // TODO: Get this from auth context when implemented
 
   return (
     <DropdownMenu>
@@ -31,7 +31,7 @@ export const HeaderProfileButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem className="cursor-pointer p-0" asChild>
-          <Link to={getUserRoute(userId)} className="flex w-full p-2">
+          <Link to={getStaffRoute(employeeId)} className="flex w-full p-2">
             <div className="flex items-center justify-start gap-2">
               <UserAvatar size="sm" color={color} />
               <div className="flex flex-col">

@@ -18,6 +18,7 @@ interface ClaimDetail {
   ourProgressPercent: number;
   lastProgressUpdate: string | null;
   isDeleted: boolean;
+  insuredId: number;
   handler?: {
     id: number;
     firstName: string;
@@ -26,12 +27,27 @@ interface ClaimDetail {
     staff: {
       id: number;
       employeeId: string;
+      department: string;
+      position: string;
     };
   };
 }
 
 interface Message {
   message: string;
+}
+
+interface StaffDetail {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  role: string;
+  staff: {
+    department: string;
+    employeeId: string;
+    position: string;
+  };
 }
 
 // Used when fetching the list of claims for the overview table
@@ -77,10 +93,21 @@ interface RecalculateResponse {
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: API_CONFIG.baseUrl + '/' }),
-  tagTypes: ['Claim', 'Item', 'Claims', 'RecentViews', 'ArchivedClaims'],
+  tagTypes: [
+    'Claim',
+    'Item',
+    'Claims',
+    'RecentViews',
+    'ArchivedClaims',
+    'User',
+  ],
   endpoints: (builder) => ({
     getMessage: builder.query<Message, void>({
       query: () => '',
+    }),
+    getStaff: builder.query<StaffDetail, string>({
+      query: (employeeId) => `staff/${employeeId}`,
+      providesTags: ['User'],
     }),
     getClaims: builder.query<ClaimOverview[], void>({
       query: () => 'claims?limit=10',
@@ -213,4 +240,5 @@ export const {
   useRecalculateQuotesMutation,
   useArchiveClaimMutation,
   useUnarchiveClaimMutation,
+  useGetStaffQuery,
 } = api;

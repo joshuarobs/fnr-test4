@@ -7,6 +7,8 @@ import express from 'express';
 import * as path from 'path';
 import cors from 'cors';
 import claimsRouter from './routes/claims/index';
+import usersRouter from './routes/users/index';
+import staffRouter from './routes/staff/index';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
 
@@ -38,12 +40,16 @@ app.get('/api', (req, res) => {
     message: 'Welcome to fnr-server!',
     endpoints: {
       claims: '/api/claims',
+      users: '/api/users',
+      staff: '/api/staff',
     },
   });
 });
 
 // Routes
 app.use('/api/claims', claimsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/staff', staffRouter);
 
 const server = app.listen(SERVER_CONFIG.port, () => {
   console.log(`Listening at ${getServerBaseUrl()}/api`);

@@ -93,6 +93,8 @@ router.get('/:claimNumber', async (req, res) => {
               select: {
                 id: true,
                 employeeId: true,
+                department: true,
+                position: true,
               },
             },
           },
