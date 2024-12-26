@@ -20,6 +20,7 @@ import { useState } from 'react';
 import {
   Archive,
   FileSpreadsheet,
+  File,
   MoreHorizontal,
   RefreshCw,
 } from 'lucide-react';
@@ -100,7 +101,11 @@ export const ClaimHeaderMiscActions = ({
           <Separator className="my-1" />
           <DropdownMenuItem className="cursor-pointer">
             <FileSpreadsheet className="mr-2 h-4 w-4" />
-            Export excel sheet
+            Export to excel sheet
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            <File className="mr-2 h-4 w-4" />
+            Export to PDF
           </DropdownMenuItem>
           <Separator className="my-1" />
           <DropdownMenuItem
