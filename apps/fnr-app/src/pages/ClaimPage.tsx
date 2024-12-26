@@ -266,7 +266,17 @@ export const ClaimPage = () => {
           />
         </div>
       </div>
-      <SecondSidebar />
+      <SecondSidebar
+        assignedUser={
+          claimData?.handler
+            ? {
+                userInitials: `${claimData.handler.firstName[0]}${claimData.handler.lastName[0]}`,
+                name: `${claimData.handler.firstName} ${claimData.handler.lastName}`,
+                userId: claimData.handler.id.toString(),
+              }
+            : undefined
+        }
+      />
     </main>
   );
 };

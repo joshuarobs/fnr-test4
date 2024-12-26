@@ -5,7 +5,7 @@ import { API_CONFIG } from '../../config';
 // Used when fetching a single claim with full item details
 interface ClaimDetail {
   id: number;
-  claimNumber: string; // Added this field
+  claimNumber: string;
   items: Item[];
   localItemIds: number[];
   description: string;
@@ -16,8 +16,14 @@ interface ClaimDetail {
   updatedAt: string;
   insuredProgressPercent: number;
   ourProgressPercent: number;
-  lastProgressUpdate: string | null; // Added this field
+  lastProgressUpdate: string | null;
   isDeleted: boolean;
+  handler?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
 interface Message {

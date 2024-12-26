@@ -5,7 +5,14 @@ import { LatestActivitiesContainer } from '../second-sidebar/LatestActivitiesCon
 import { PartyAvatarSection } from '../contents-other/PartyAvatarSection';
 import { ClaimAssignedToSection } from '../contents-other/ClaimAssignedToSection';
 
-interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  assignedUser?: {
+    userInitials: string;
+    color?: string;
+    name: string;
+    userId: string;
+  };
+}
 
 const SidebarSeparator = () => {
   return (
@@ -15,7 +22,10 @@ const SidebarSeparator = () => {
   );
 };
 
-export const SecondSidebar = ({ className }: SecondSidebarProps) => {
+export const SecondSidebar = ({
+  className,
+  assignedUser,
+}: SecondSidebarProps) => {
   return (
     <div
       className={cn(
@@ -29,12 +39,7 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
           {/* Assigned To Section */}
           {/* ======================================== */}
           <ClaimAssignedToSection
-            assignedUser={{
-              userInitials: 'JD',
-              color: 'bg-blue-600',
-              name: 'John Doe',
-              userId: 'JD123',
-            }}
+            assignedUser={assignedUser}
             onAssignClick={() => {
               // TODO: Implement assign click handler
               console.log('Assign clicked');
