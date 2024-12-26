@@ -1,14 +1,7 @@
-import {
-  PrismaClient,
-  UserRole,
-  EvidenceType,
-  ItemStatus,
-  ClaimStatus,
-  RoomCategory,
-  ItemCategory,
-} from '@prisma/client';
+import { PrismaClient, UserRole, ClaimStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { clm003Items } from './seedData/clm003Items';
+import { admin, staffMembers, suppliers, insureds } from './seedData/userData';
+import { claimData } from './seedData/claimData';
 
 const prisma = new PrismaClient();
 
@@ -52,290 +45,86 @@ async function main() {
   await cleanDatabase();
 
   // Create Admin
-  const admin = await createUser({
-    email: 'admin@example.com',
-    password: 'admin123',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'ADMIN',
-  });
-
+  const createdAdmin = await createUser(admin.user);
   await prisma.staff.create({
     data: {
-      baseUserId: admin.id,
-      department: 'Administration',
-      employeeId: 'ADM001',
-      position: 'System Administrator',
-      permissions: ['ALL'],
+      baseUserId: createdAdmin.id,
+      ...admin.staff,
     },
   });
 
   // Create Staff Members
-  const staffMembers = await Promise.all([
-    createUser({
-      email: 'claims@example.com',
-      password: 'staff123',
-      firstName: 'Sarah',
-      lastName: 'Johnson',
-      role: 'STAFF',
-    }),
-    createUser({
-      email: 'valuations@example.com',
-      password: 'staff123',
-      firstName: 'Mike',
-      lastName: 'Williams',
-      role: 'STAFF',
-    }),
-  ]);
-
-  await Promise.all(
-    staffMembers.map((staff, index) =>
-      prisma.staff.create({
+  const createdStaffMembers = await Promise.all(
+    staffMembers.map(async (staffMember) => {
+      const user = await createUser(staffMember.user);
+      await prisma.staff.create({
         data: {
-          baseUserId: staff.id,
-          department: 'Claims',
-          employeeId: `STF00${index + 1}`,
-          position: 'Claims Handler',
-          permissions: ['CREATE_CLAIM', 'UPDATE_CLAIM', 'VIEW_CLAIM'],
+          baseUserId: user.id,
+          ...staffMember.staff,
         },
-      })
-    )
+      });
+      return user;
+    })
   );
 
   // Create Suppliers
-  const suppliers = await Promise.all([
-    createUser({
-      email: 'electronics@supplier.com',
-      password: 'supplier123',
-      firstName: 'Tech',
-      lastName: 'Solutions',
-      role: 'SUPPLIER',
-    }),
-    createUser({
-      email: 'appliances@supplier.com',
-      password: 'supplier123',
-      firstName: 'Home',
-      lastName: 'Appliances',
-      role: 'SUPPLIER',
-    }),
-  ]);
-
-  await Promise.all(
-    suppliers.map((supplier, index) =>
-      prisma.supplier.create({
+  const createdSuppliers = await Promise.all(
+    suppliers.map(async (supplier) => {
+      const user = await createUser(supplier.user);
+      await prisma.supplier.create({
         data: {
-          baseUserId: supplier.id,
-          company: index === 0 ? 'Tech Solutions Ltd' : 'Home Appliances Co',
-          serviceType:
-            index === 0
-              ? ['Electronics', 'Computers', 'Phones']
-              : ['Appliances', 'White Goods', 'Kitchen'],
-          areas: ['North', 'South', 'East', 'West'],
-          ratings: 4.5,
+          baseUserId: user.id,
+          ...supplier.supplier,
         },
-      })
-    )
+      });
+      return user;
+    })
   );
 
   // Create Insureds
-  const insureds = await Promise.all([
-    createUser({
-      email: 'john@example.com',
-      password: 'insured123',
-      firstName: 'John',
-      lastName: 'Smith',
-      role: 'INSURED',
-    }),
-    createUser({
-      email: 'jane@example.com',
-      password: 'insured123',
-      firstName: 'Jane',
-      lastName: 'Brown',
-      role: 'INSURED',
-    }),
-  ]);
-
-  await Promise.all(
-    insureds.map((insured, index) =>
-      prisma.insured.create({
+  const createdInsureds = await Promise.all(
+    insureds.map(async (insured) => {
+      const user = await createUser(insured.user);
+      await prisma.insured.create({
         data: {
-          baseUserId: insured.id,
-          address: `${index + 1}23 Main Street, City`,
+          baseUserId: user.id,
+          ...insured.insured,
         },
-      })
-    )
+      });
+      return user;
+    })
   );
 
-  // Create Claims with Items
-  const claimData = [
-    {
-      claimNumber: 'CLM001',
-      policyNumber: 'POL123',
-      description: 'Water damage from flooding',
-      items: [
-        {
-          name: 'MacBook Pro',
-          category: ItemCategory.ELECTRONICS,
-          roomCategory: RoomCategory.OFFICE_STUDY, // Keep - key office item
-          modelSerialNumber: 'MP2023ABC',
-          description: 'Water damaged laptop',
-          insuredsQuote: 2499.99,
-          ourQuote: 2499.99,
-          condition: 'Damaged - water exposure',
-          itemStatus: ItemStatus.NR,
-          insuredsEvidence: [
-            {
-              type: EvidenceType.PHOTO,
-              filename: 'laptop1.jpg',
-              url: '/uploads/laptop1.jpg',
-            },
-            {
-              type: EvidenceType.RECEIPT,
-              filename: 'receipt.pdf',
-              url: '/uploads/receipt.pdf',
-            },
-          ],
-          ourQuoteProof: null,
-        },
-        {
-          name: 'iPhone 14',
-          category: ItemCategory.ELECTRONICS,
-          modelSerialNumber: 'IP14XYZ',
-          description: 'Water damaged phone',
-          insuredsQuote: 999.99,
-          ourQuote: null,
-          condition: 'Damaged - water exposure',
-          itemStatus: ItemStatus.RS,
-          insuredsEvidence: [
-            {
-              type: EvidenceType.PHOTO,
-              filename: 'phone1.jpg',
-              url: '/uploads/phone1.jpg',
-            },
-          ],
-          ourQuoteProof: null,
-        },
-      ],
-    },
-    {
-      claimNumber: 'CLM002',
-      policyNumber: 'POL456',
-      description: 'Fire damage in kitchen',
-      items: [
-        {
-          name: 'Samsung Refrigerator',
-          category: ItemCategory.APPLIANCES,
-          roomCategory: RoomCategory.KITCHEN_DINING, // Keep - key kitchen item
-          modelSerialNumber: 'RF123ABC',
-          description: 'Fire damaged fridge',
-          insuredsQuote: 3499.99,
-          ourQuote: 2000,
-          condition: 'Damaged - fire exposure',
-          itemStatus: ItemStatus.VPOL,
-          insuredsEvidence: [
-            {
-              type: EvidenceType.PHOTO,
-              filename: 'fridge1.jpg',
-              url: '/uploads/fridge1.jpg',
-            },
-          ],
-          ourQuoteProof: null,
-        },
-      ],
-    },
-    {
-      claimNumber: 'CLM003',
-      policyNumber: 'POL789',
-      description: 'Large household contents claim',
-      items: clm003Items,
-    },
-    {
-      claimNumber: 'CLM004',
-      policyNumber: 'POL101',
-      description: 'Electronics and appliances claim',
-      items: [
-        {
-          name: 'Television',
-          category: ItemCategory.ELECTRONICS,
-          roomCategory: RoomCategory.LIVING_ROOM, // Keep - key living room item
-          modelSerialNumber: 'TV-2023-4K',
-          description: '4K Television',
-          insuredsQuote: 2000,
-          ourQuote: 1995,
-          condition: 'Good',
-          itemStatus: ItemStatus.NR,
-          insuredsEvidence: [
-            {
-              type: EvidenceType.RECEIPT,
-              filename: 'television.jpg',
-              url: 'https://example.com/receipts/television.jpg',
-            },
-          ],
-          ourQuoteProof:
-            'https://www.thegoodguys.com.au/lg-55-inches-oled-b4-4k-smart-tv-24-oled55b4psa',
-        },
-        {
-          name: 'Vacuum Cleaner',
-          category: ItemCategory.APPLIANCES,
-          modelSerialNumber: 'VC-2023-ROBOT',
-          description: 'Robot vacuum cleaner',
-          insuredsQuote: null,
-          ourQuote: null,
-          condition: 'Good',
-          itemStatus: ItemStatus.RS,
-          insuredsEvidence: [
-            {
-              type: EvidenceType.RECEIPT,
-              filename: 'vacuum.jpg',
-              url: 'https://example.com/receipts/vacuum.jpg',
-            },
-          ],
-          ourQuoteProof: null,
-        },
-      ],
-    },
-    {
-      claimNumber: 'CLM005',
-      policyNumber: 'POL505',
-      description: 'Single item claim',
-      items: [
-        {
-          name: 'Gaming Console',
-          category: ItemCategory.ELECTRONICS,
-          roomCategory: RoomCategory.LIVING_ROOM,
-          modelSerialNumber: 'PS5-2023',
-          description: 'PlayStation 5 console',
-          insuredsQuote: 750,
-          ourQuote: null,
-          condition: 'Good',
-          itemStatus: ItemStatus.RS,
-          insuredsEvidence: [
-            {
-              type: EvidenceType.PHOTO,
-              filename: 'console.jpg',
-              url: '/uploads/console.jpg',
-            },
-          ],
-          ourQuoteProof: null,
-        },
-      ],
-    },
-  ];
-
-  // Create claims and their items
+  // Get created insured users
   const insuredUsers = await prisma.insured.findMany({
     orderBy: { id: 'asc' },
   });
-  if (insuredUsers.length < 2) {
-    throw new Error('Not enough insureds found to create claims for');
-  }
 
+  // Map claim numbers to handlers and insureds
+  const handlerMap = {
+    CLM001: createdAdmin.id,
+    CLM002: createdStaffMembers[0].id,
+    CLM003: createdStaffMembers[1].id,
+    CLM004: createdStaffMembers[0].id,
+    CLM006: createdStaffMembers[2].id, // Staff member 3 (David Thompson)
+    CLM007: createdStaffMembers[3].id, // Staff member 4 (Lisa Anderson)
+  };
+
+  const insuredMap = {
+    CLM001: insuredUsers[0].id, // John Smith
+    CLM002: insuredUsers[3].id, // Jane Brown
+    CLM003: insuredUsers[1].id, // John Smith
+    CLM004: insuredUsers[2].id, // Jane Brown
+    CLM006: insuredUsers[0].id, // Robert Wilson
+    CLM007: insuredUsers[2].id, // Emma Davis
+  };
+
+  // Create claims and their items
   for (const claim of claimData) {
-    // Determine which insured to assign the claim to
+    const handlerId = handlerMap[claim.claimNumber as keyof typeof handlerMap];
     const insuredId =
-      claim.claimNumber === 'CLM001' || claim.claimNumber === 'CLM003'
-        ? insuredUsers[0].id // First insured gets claims 1 and 3
-        : insuredUsers[1].id; // Second insured gets claims 2 and 4
+      insuredMap[claim.claimNumber as keyof typeof insuredMap] ||
+      insuredUsers[0].id; // Default to first insured if not mapped
 
     // Create the claim first with empty arrays
     const createdClaim = await prisma.claim.create({
@@ -350,11 +139,8 @@ async function main() {
           0
         ),
         insuredId: insuredId,
-        // Only assign handler if not CLM005
-        ...(claim.claimNumber !== 'CLM005' && {
-          handlerId: staffMembers[0].id,
-        }),
-        creatorId: staffMembers[0].id,
+        handlerId: handlerId,
+        creatorId: createdStaffMembers[0].id,
         itemOrder: [],
         localItemIds: [],
       },
@@ -422,7 +208,7 @@ async function main() {
       prisma.comment.create({
         data: {
           claimId: claim.id,
-          userId: staffMembers[0].id,
+          userId: createdStaffMembers[0].id,
           content: 'Initial assessment completed',
           isInternal: true,
         },
@@ -430,7 +216,7 @@ async function main() {
       prisma.comment.create({
         data: {
           claimId: claim.id,
-          userId: staffMembers[0].id,
+          userId: createdStaffMembers[0].id,
           content: 'Awaiting additional documentation',
           isInternal: false,
         },
