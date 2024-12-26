@@ -37,11 +37,11 @@ export const UserAvatar = ({
   location = 'Australia',
   department = 'Claims',
 }: UserAvatarProps) => {
-  // Map size prop to actual dimensions
+  // Map size prop to actual dimensions and text sizes
   const sizeClasses = {
-    sm: 'h-8 w-8',
-    md: 'h-10 w-10',
-    lg: 'h-16 w-16',
+    sm: 'h-8 w-8 text-xs',
+    md: 'h-10 w-10 text-sm',
+    lg: 'h-16 w-16 text-xl',
   };
 
   // Create avatar component with configurable size

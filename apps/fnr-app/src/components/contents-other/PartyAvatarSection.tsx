@@ -14,6 +14,7 @@ interface AvatarData {
   userInitials: string;
   color?: string;
   name: string; // Name field for displaying next to avatar (mandatory)
+  userId: string; // User ID for navigation
 }
 
 interface PartyAvatarSectionProps {
@@ -53,6 +54,7 @@ export const PartyAvatarSection = ({
                   userInitials={avatar.userInitials}
                   color={avatar.color}
                   name={avatar.name}
+                  userId={avatar.userId}
                 />
               ))}
             </div>
@@ -70,6 +72,7 @@ export const PartyAvatarSection = ({
               userInitials={avatar.userInitials}
               color={avatar.color}
               name={avatar.name}
+              userId={avatar.userId}
             />
           ))}
         </div>

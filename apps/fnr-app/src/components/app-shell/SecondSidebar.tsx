@@ -33,6 +33,7 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
               userInitials: 'JD',
               color: 'bg-blue-600',
               name: 'John Doe',
+              userId: 'JD123',
             }}
             onAssignClick={() => {
               // TODO: Implement assign click handler
@@ -48,16 +49,23 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
             <PartyAvatarSection
               title="Contributors"
               avatars={[
-                { userInitials: 'P1', color: 'bg-blue-600', name: 'Person 1' },
+                {
+                  userInitials: 'P1',
+                  color: 'bg-blue-600',
+                  name: 'Person 1',
+                  userId: 'P1123',
+                },
                 {
                   userInitials: 'P2',
                   color: 'bg-purple-600',
                   name: 'Person 2',
+                  userId: 'P2123',
                 },
                 {
                   userInitials: 'P3',
                   color: 'bg-orange-600',
                   name: 'Person 3',
+                  userId: 'P3123',
                 },
               ]}
             />
@@ -71,11 +79,13 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
                   userInitials: 'S1',
                   color: 'bg-emerald-600',
                   name: 'Supplier 1',
+                  userId: 'S1123',
                 },
                 {
                   userInitials: 'S2',
                   color: 'bg-rose-600',
                   name: 'Supplier 2',
+                  userId: 'S2123',
                 },
               ]}
             />
