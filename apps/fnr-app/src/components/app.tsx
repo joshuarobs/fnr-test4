@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from '@react-monorepo/shared';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
@@ -56,6 +57,7 @@ export function App() {
 
   return (
     <BrowserRouter>
+      <Toaster />
       <div className="flex flex-col h-screen">
         <Header
           onToggleSidebar={handleToggleSidebar}

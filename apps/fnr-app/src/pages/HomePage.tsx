@@ -1,12 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@react-monorepo/shared';
+import { Button, useToast } from '@react-monorepo/shared';
 import { TestAllClaimsTable } from '../components/homepage/TestAllClaimsTable';
 import { TestTableUXStuff } from '../components/contents-table/TestTableUXStuff';
 import { TestTableUXStuffPure } from '../components/contents-table/TestTableUXStuffPure';
 
 export const HomePage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   return (
     <div className="flex-1 min-w-0 flex flex-col gap-4 p-4">
@@ -19,6 +20,16 @@ export const HomePage = () => {
         </Button>
         <Button onClick={() => navigate(`/404`)} variant="outline">
           Go to 404 page
+        </Button>
+        <Button
+          onClick={() =>
+            toast({
+              title: 'Test Notification',
+              description: new Date().toLocaleTimeString(),
+            })
+          }
+        >
+          Test Toast
         </Button>
       </div>
       <div className="mt-4">
