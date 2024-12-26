@@ -252,8 +252,18 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
         data: updateData,
       });
 
-      // Recalculate claim values
-      const values = calculateClaimValues(claim.items);
+      // Get all items with the updated item for recalculation
+      const allItems = await tx.item.findMany({
+        where: { claimId: claim.id },
+        select: {
+          insuredsQuote: true,
+          ourQuote: true,
+          quantity: true,
+        },
+      });
+
+      // Recalculate claim values with updated items
+      const values = calculateClaimValues(allItems);
 
       // Update claim with calculated values
       await tx.claim.update({

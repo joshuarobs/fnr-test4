@@ -35,6 +35,7 @@ import { formatDistanceToNow } from 'date-fns';
 interface ClaimHeaderMiscActionsProps {
   lastProgressUpdate: string | null;
   isDeleted?: boolean;
+  claimNumber: string;
 }
 
 /**
@@ -44,8 +45,8 @@ interface ClaimHeaderMiscActionsProps {
 export const ClaimHeaderMiscActions = ({
   lastProgressUpdate,
   isDeleted = false,
+  claimNumber,
 }: ClaimHeaderMiscActionsProps) => {
-  const { id } = useParams<{ id: string }>();
   const [recalculateQuotes] = useRecalculateQuotesMutation();
   const [archiveClaim] = useArchiveClaimMutation();
   const [unarchiveClaim] = useUnarchiveClaimMutation();
@@ -56,9 +57,9 @@ export const ClaimHeaderMiscActions = ({
   const { toast } = useToast();
 
   const handleRecalculateValues = async () => {
-    if (!id) return;
+    if (!claimNumber) return;
     try {
-      await recalculateQuotes(id).unwrap();
+      await recalculateQuotes(claimNumber).unwrap();
     } catch (err) {
       console.error('Failed to recalculate values:', err);
       toast({
@@ -166,16 +167,15 @@ export const ClaimHeaderMiscActions = ({
             <Button
               variant={isDeleted ? 'default' : 'destructive'}
               onClick={async () => {
-                if (!id) return;
                 try {
                   if (isDeleted) {
                     await unarchiveClaim({
-                      claimNumber: id,
+                      claimNumber: claimNumber,
                       userId: 1, // TODO: Get actual user ID
                     }).unwrap();
                   } else {
                     await archiveClaim({
-                      claimNumber: id,
+                      claimNumber: claimNumber,
                       userId: 1, // TODO: Get actual user ID
                       reason: archiveReason,
                     }).unwrap();

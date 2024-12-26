@@ -250,6 +250,7 @@ export const ClaimPage = () => {
                 addItem={addItem}
                 lastProgressUpdate={claimData?.lastProgressUpdate || null}
                 isDeleted={claimData?.isDeleted}
+                claimNumber={id}
               />
             </div>
           </div>

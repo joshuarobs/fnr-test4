@@ -267,6 +267,7 @@ export const DetailedClaimsTable = () => {
                   >
                     <ClaimHeaderMiscActions
                       lastProgressUpdate={claim.lastProgressUpdate}
+                      claimNumber={claim.claimNumber}
                     />
                   </TableCell>
                 </TableRow>
