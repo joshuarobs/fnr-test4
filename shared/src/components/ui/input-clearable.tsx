@@ -143,7 +143,7 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
             </Tooltip>
           </TooltipProvider>
         ) : focusKeyboardKey ? (
-          <div className="absolute right-2 top-1/2 -translate-y-1/2">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
             <KeyboardKeyIcon letter={focusKeyboardKey} />
           </div>
         ) : null}
