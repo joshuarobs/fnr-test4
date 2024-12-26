@@ -134,13 +134,14 @@ export const ClaimHeaderMiscActions = ({
                 try {
                   await archiveClaim({
                     claimNumber: id,
-                    userId: '1', // TODO: Get actual user ID
+                    userId: 1, // TODO: Get actual user ID
                     reason: archiveReason,
                   }).unwrap();
                   setIsArchiveDialogOpen(false);
                   setArchiveReason('');
                 } catch (err) {
                   console.error('Failed to archive claim:', err);
+                  // Keep dialog open if there's an error
                 }
               }}
             >

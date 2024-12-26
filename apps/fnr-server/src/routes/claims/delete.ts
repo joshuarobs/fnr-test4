@@ -78,6 +78,11 @@ router.post('/:claimNumber/archive', async (req, res) => {
   try {
     const { claimNumber } = req.params;
     const { userId, reason } = req.body;
+    const parsedUserId = parseInt(userId);
+
+    if (isNaN(parsedUserId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
 
     const claim = await prisma.claim.findUnique({
       where: { claimNumber },
@@ -92,7 +97,7 @@ router.post('/:claimNumber/archive', async (req, res) => {
       data: {
         isDeleted: true,
         deletedAt: new Date(),
-        deletedBy: userId,
+        deletedBy: parsedUserId,
         deleteReason: reason,
       },
     });

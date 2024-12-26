@@ -127,7 +127,7 @@ export const api = createApi({
     }),
     archiveClaim: builder.mutation<
       { success: boolean; message: string },
-      { claimNumber: string; userId: string; reason: string }
+      { claimNumber: string; userId: number; reason: string }
     >({
       query: ({ claimNumber, userId, reason }) => ({
         url: `claims/${claimNumber}/archive`,

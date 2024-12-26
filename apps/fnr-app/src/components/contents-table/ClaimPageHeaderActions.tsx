@@ -12,7 +12,7 @@ export const ClaimPageHeaderActions = ({
   lastProgressUpdate,
 }: ClaimPageHeaderActionsProps) => {
   return (
-    <div className="flex items-center mb-2 gap-2">
+    <div className="flex items-center gap-2">
       <ClaimHeaderMiscActions lastProgressUpdate={lastProgressUpdate} />
       <AddNewItemModal addItem={addItem} />
     </div>
