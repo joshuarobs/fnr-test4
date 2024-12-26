@@ -17,6 +17,7 @@ interface ClaimDetail {
   insuredProgressPercent: number;
   ourProgressPercent: number;
   lastProgressUpdate: string | null; // Added this field
+  isDeleted: boolean;
 }
 
 interface Message {

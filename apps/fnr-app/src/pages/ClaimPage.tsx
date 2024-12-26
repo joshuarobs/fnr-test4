@@ -22,6 +22,8 @@ import {
 } from '../store/services/api';
 import { Input } from '@react-monorepo/shared';
 import { ContentsDataTableSection } from '../components/contents-table/ContentsDataTableSection';
+import { ArchivedLabel } from '../components/contents-table/ArchivedLabel';
+import { ClaimNotFoundErrorSection } from '../components/claims/ClaimNotFoundErrorSection';
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -206,29 +208,12 @@ export const ClaimPage = () => {
 
   if (error) {
     return (
-      <div className="flex-1 min-w-0 p-4 flex flex-col items-center justify-center gap-4">
-        <div className="text-xl font-semibold text-red-500">
-          Error Loading Claim
-        </div>
-        <div className="text-muted-foreground">Claim #{id}</div>
-        <div className="text-muted-foreground">
-          Try a different claim number
-        </div>
-        <div className="flex gap-2">
-          <Input
-            value={claimInput}
-            onChange={(e) => setClaimInput(e.target.value)}
-            placeholder="Enter claim number"
-            className="w-64"
-          />
-          <button
-            onClick={() => navigate(`/claims/${claimInput}`)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-          >
-            Go
-          </button>
-        </div>
-      </div>
+      <ClaimNotFoundErrorSection
+        claimId={id}
+        claimInput={claimInput}
+        setClaimInput={setClaimInput}
+        onNavigate={(claimNumber) => navigate(`/claims/${claimNumber}`)}
+      />
     );
   }
 
@@ -259,10 +244,13 @@ export const ClaimPage = () => {
                 maxValue={progress.maxValue}
               />
             </div>
-            <ClaimPageHeaderActions
-              addItem={addItem}
-              lastProgressUpdate={claimData?.lastProgressUpdate || null}
-            />
+            <div className="flex items-center gap-4">
+              {claimData?.isDeleted && <ArchivedLabel />}
+              <ClaimPageHeaderActions
+                addItem={addItem}
+                lastProgressUpdate={claimData?.lastProgressUpdate || null}
+              />
+            </div>
           </div>
         </div>
         <div className="flex-1 min-h-0 px-4 pb-6">
