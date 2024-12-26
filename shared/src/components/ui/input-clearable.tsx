@@ -17,6 +17,7 @@ export interface InputClearableProps
   focusKeyboardKey?: string;
   escapeKeyClears?: boolean; // Controls if escape key can clear input
   canPressFocusKeybind?: boolean; // Controls if focus keyboard shortcut should be processed
+  leftIcon?: React.ReactNode; // Optional icon to show on the left side of the input
 }
 
 const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
@@ -29,6 +30,7 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
       focusKeyboardKey,
       escapeKeyClears = false,
       canPressFocusKeybind = true, // Default to true to maintain backward compatibility
+      leftIcon,
       ...props
     },
     ref
@@ -114,10 +116,15 @@ const InputClearable = React.forwardRef<HTMLInputElement, InputClearableProps>(
         <Input
           value={value}
           onChange={onChange}
-          className="pr-8 w-full"
+          className={cn('pr-8 w-full', leftIcon && 'pl-8')}
           ref={resolvedRef}
           {...props}
         />
+        {leftIcon && (
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none">
+            {leftIcon}
+          </div>
+        )}
         {value ? (
           <TooltipProvider>
             <Tooltip>

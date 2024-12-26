@@ -175,16 +175,15 @@ export function ContentsTableToolbar<TData extends Item>({
 
   return (
     <div className="flex items-center py-4">
-      <div className="relative w-[320px] flex-none">
-        <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+      <div className="w-[320px] flex-none">
         <InputClearable
           placeholder="Filter items..."
           value={(table.getState().globalFilter as string) ?? ''}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
           onClear={() => table.setGlobalFilter('')}
-          className="pl-8"
           focusKeyboardKey="/"
           escapeKeyClears
+          leftIcon={<Search className="h-4 w-4 text-gray-500" />}
         />
       </div>
       <div className="ml-4 flex-1 overflow-x-auto">
