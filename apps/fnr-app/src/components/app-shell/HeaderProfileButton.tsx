@@ -29,13 +29,15 @@ export const HeaderProfileButton = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <div className="flex items-center justify-start gap-2 p-2">
-          <UserAvatar size="sm" color={color} />
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">John Doe</span>
-            <span className="text-sm">AGENT (748600)</span>
+        <Link to={ROUTES.USER} className="block hover:bg-accent">
+          <div className="flex items-center justify-start gap-2 p-2">
+            <UserAvatar size="sm" color={color} />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">John Doe</span>
+              <span className="text-sm">AGENT (748600)</span>
+            </div>
           </div>
-        </div>
+        </Link>
         <Separator className="my-2" />
         <DropdownMenuItem className="cursor-pointer gap-2" asChild>
           <Link to={ROUTES.SETTINGS} className="flex items-center gap-2">

@@ -3,6 +3,7 @@ import { cn } from '../../../../../shared/src/lib/utils';
 import { Separator } from '@react-monorepo/shared';
 import { LatestActivitiesContainer } from '../second-sidebar/LatestActivitiesContainer';
 import { PartyAvatarSection } from '../contents-other/PartyAvatarSection';
+import { ClaimAssignedToSection } from '../contents-other/ClaimAssignedToSection';
 
 interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -24,6 +25,22 @@ export const SecondSidebar = ({ className }: SecondSidebarProps) => {
     >
       <div className="h-full flex flex-col py-4">
         <div className="px-3 py-2 flex flex-col flex-1">
+          {/* ======================================== */}
+          {/* Assigned To Section */}
+          {/* ======================================== */}
+          <ClaimAssignedToSection
+            assignedUser={{
+              userInitials: 'JD',
+              color: 'bg-blue-600',
+              name: 'John Doe',
+            }}
+            onAssignClick={() => {
+              // TODO: Implement assign click handler
+              console.log('Assign clicked');
+            }}
+          />
+          <SidebarSeparator />
+
           {/* ======================================== */}
           {/* Contributors Section */}
           {/* ======================================== */}

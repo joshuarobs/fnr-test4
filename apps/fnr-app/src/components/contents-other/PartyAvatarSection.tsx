@@ -7,6 +7,7 @@ import {
   DialogTrigger,
   ScrollArea,
 } from '@react-monorepo/shared';
+import { AvatarWithLabel } from './AvatarWithLabel';
 import { UserAvatar } from '../app-shell/UserAvatar';
 
 interface AvatarData {
@@ -47,21 +48,12 @@ export const PartyAvatarSection = ({
           <ScrollArea className="h-[160px] mt-4">
             <div className="flex flex-col gap-2 pr-4">
               {avatars.map((avatar, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="border-2 border-border rounded-full">
-                    <UserAvatar
-                      size="sm"
-                      userInitials={avatar.userInitials}
-                      color={avatar.color}
-                      showHeaderRing
-                      hoverable
-                      name={avatar.name}
-                    />
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {avatar.name || avatar.userInitials}
-                  </span>
-                </div>
+                <AvatarWithLabel
+                  key={index}
+                  userInitials={avatar.userInitials}
+                  color={avatar.color}
+                  name={avatar.name}
+                />
               ))}
             </div>
           </ScrollArea>
@@ -73,22 +65,12 @@ export const PartyAvatarSection = ({
         // Vertical layout with names for 2 or fewer avatars
         <div className="flex flex-col gap-1">
           {avatars.map((avatar, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <div className="border-2 border-border rounded-full">
-                <UserAvatar
-                  size="sm"
-                  userInitials={avatar.userInitials}
-                  color={avatar.color}
-                  showHeaderRing
-                  hoverable
-                  name={avatar.name}
-                />
-              </div>
-              {/* Display name if available, otherwise show initials */}
-              <span className="text-sm text-muted-foreground">
-                {avatar.name || avatar.userInitials}
-              </span>
-            </div>
+            <AvatarWithLabel
+              key={index}
+              userInitials={avatar.userInitials}
+              color={avatar.color}
+              name={avatar.name}
+            />
           ))}
         </div>
       ) : (

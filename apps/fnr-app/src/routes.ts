@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: '/',
   ASSIGNED: '/assigned',
+  USER: '/user',
   SETTINGS: '/settings',
   SETTINGS_ACCOUNT: '/settings/account',
   SETTINGS_APPEARANCE: '/settings/appearance',
