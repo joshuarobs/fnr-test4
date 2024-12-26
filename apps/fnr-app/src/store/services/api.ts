@@ -23,6 +23,10 @@ interface ClaimDetail {
     firstName: string;
     lastName: string;
     email: string;
+    staff: {
+      id: number;
+      employeeId: string;
+    };
   };
 }
 
