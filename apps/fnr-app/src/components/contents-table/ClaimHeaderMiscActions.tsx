@@ -26,11 +26,13 @@ import { useParams } from 'react-router-dom';
 import {
   useArchiveClaimMutation,
   useRecalculateQuotesMutation,
+  useUnarchiveClaimMutation,
 } from '../../store/services/api';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ClaimHeaderMiscActionsProps {
   lastProgressUpdate: string | null;
+  isDeleted?: boolean;
 }
 
 /**
@@ -39,10 +41,12 @@ interface ClaimHeaderMiscActionsProps {
  */
 export const ClaimHeaderMiscActions = ({
   lastProgressUpdate,
+  isDeleted = false,
 }: ClaimHeaderMiscActionsProps) => {
   const { id } = useParams<{ id: string }>();
   const [recalculateQuotes] = useRecalculateQuotesMutation();
   const [archiveClaim] = useArchiveClaimMutation();
+  const [unarchiveClaim] = useUnarchiveClaimMutation();
   const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [archiveReason, setArchiveReason] = useState('');
 
@@ -91,11 +95,13 @@ export const ClaimHeaderMiscActions = ({
           </DropdownMenuItem>
           <Separator className="my-1" />
           <DropdownMenuItem
-            className="cursor-pointer text-destructive"
+            className={`cursor-pointer ${
+              isDeleted ? 'text-primary' : 'text-destructive'
+            }`}
             onClick={() => setIsArchiveDialogOpen(true)}
           >
             <Archive className="mr-2 h-4 w-4" />
-            Archive Claim
+            {isDeleted ? 'Reopen claim' : 'Archive Claim'}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -104,19 +110,24 @@ export const ClaimHeaderMiscActions = ({
       <Dialog open={isArchiveDialogOpen} onOpenChange={setIsArchiveDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Archive Claim</DialogTitle>
+            <DialogTitle>
+              {isDeleted ? 'Reopen Claim' : 'Archive Claim'}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to archive this claim? This action can be
-              undone by an administrator.
+              {isDeleted
+                ? 'Are you sure you want to reopen this claim?'
+                : 'Are you sure you want to archive this claim? This action can be undone by an administrator.'}
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Input
-              placeholder="Reason for archiving"
-              value={archiveReason}
-              onChange={(e) => setArchiveReason(e.target.value)}
-            />
-          </div>
+          {!isDeleted && (
+            <div className="py-4">
+              <Input
+                placeholder="Reason for archiving"
+                value={archiveReason}
+                onChange={(e) => setArchiveReason(e.target.value)}
+              />
+            </div>
+          )}
           <DialogFooter>
             <Button
               variant="outline"
@@ -128,24 +139,34 @@ export const ClaimHeaderMiscActions = ({
               Cancel
             </Button>
             <Button
-              variant="destructive"
+              variant={isDeleted ? 'default' : 'destructive'}
               onClick={async () => {
                 if (!id) return;
                 try {
-                  await archiveClaim({
-                    claimNumber: id,
-                    userId: 1, // TODO: Get actual user ID
-                    reason: archiveReason,
-                  }).unwrap();
+                  if (isDeleted) {
+                    await unarchiveClaim({
+                      claimNumber: id,
+                      userId: 1, // TODO: Get actual user ID
+                    }).unwrap();
+                  } else {
+                    await archiveClaim({
+                      claimNumber: id,
+                      userId: 1, // TODO: Get actual user ID
+                      reason: archiveReason,
+                    }).unwrap();
+                  }
                   setIsArchiveDialogOpen(false);
                   setArchiveReason('');
                 } catch (err) {
-                  console.error('Failed to archive claim:', err);
+                  console.error(
+                    `Failed to ${isDeleted ? 'unarchive' : 'archive'} claim:`,
+                    err
+                  );
                   // Keep dialog open if there's an error
                 }
               }}
             >
-              Archive
+              {isDeleted ? 'Reopen' : 'Archive'}
             </Button>
           </DialogFooter>
         </DialogContent>

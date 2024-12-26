@@ -109,4 +109,45 @@ router.post('/:claimNumber/archive', async (req, res) => {
   }
 });
 
+// Unarchive claim
+// POST /api/claims/:claimNumber/unarchive
+router.post('/:claimNumber/unarchive', async (req, res) => {
+  try {
+    const { claimNumber } = req.params;
+    const { userId } = req.body;
+    const parsedUserId = parseInt(userId);
+
+    if (isNaN(parsedUserId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    const claim = await prisma.claim.findUnique({
+      where: { claimNumber },
+    });
+
+    if (!claim) {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+
+    const updatedClaim = await prisma.claim.update({
+      where: { claimNumber },
+      data: {
+        isDeleted: false,
+        deletedAt: null,
+        deletedBy: null,
+        deleteReason: null,
+      },
+    });
+
+    res.json({
+      success: true,
+      message: 'Claim unarchived',
+      claim: updatedClaim,
+    });
+  } catch (error) {
+    console.error('Error unarchiving claim:', error);
+    res.status(500).json({ error: 'Failed to unarchive claim' });
+  }
+});
+
 export default router;

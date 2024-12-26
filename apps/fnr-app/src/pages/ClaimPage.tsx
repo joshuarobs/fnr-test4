@@ -249,6 +249,7 @@ export const ClaimPage = () => {
               <ClaimPageHeaderActions
                 addItem={addItem}
                 lastProgressUpdate={claimData?.lastProgressUpdate || null}
+                isDeleted={claimData?.isDeleted}
               />
             </div>
           </div>

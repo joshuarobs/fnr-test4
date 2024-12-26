@@ -137,6 +137,18 @@ export const api = createApi({
       invalidatesTags: ['Claims', 'Claim', 'ArchivedClaims'],
     }),
 
+    unarchiveClaim: builder.mutation<
+      { success: boolean; message: string },
+      { claimNumber: string; userId: number }
+    >({
+      query: ({ claimNumber, userId }) => ({
+        url: `claims/${claimNumber}/unarchive`,
+        method: 'POST',
+        body: { userId },
+      }),
+      invalidatesTags: ['Claims', 'Claim', 'ArchivedClaims'],
+    }),
+
     recalculateQuotes: builder.mutation<RecalculateResponse, string>({
       query: (claimNumber) => ({
         url: `claims/${claimNumber}/recalculate`,
@@ -190,4 +202,5 @@ export const {
   useRemoveItemMutation,
   useRecalculateQuotesMutation,
   useArchiveClaimMutation,
+  useUnarchiveClaimMutation,
 } = api;
