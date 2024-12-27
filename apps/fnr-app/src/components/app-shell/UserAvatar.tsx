@@ -31,7 +31,7 @@ export const UserAvatar = ({
   imageUrl,
   userInitials = 'JD',
   size = 'sm',
-  color = 'bg-gray-500',
+  color = '#6B7280', // Default gray-500 hex color
   showHeaderRing = false,
   hoverable = false,
   location = 'Australia',
@@ -54,7 +54,10 @@ export const UserAvatar = ({
       {imageUrl ? (
         <AvatarImage src={imageUrl} alt={name || userInitials} />
       ) : (
-        <AvatarFallback className={`${color} dark:brightness-[0.9] text-white`}>
+        <AvatarFallback
+          className="dark:brightness-[0.9] text-white"
+          style={{ backgroundColor: color }}
+        >
           {userInitials}
         </AvatarFallback>
       )}

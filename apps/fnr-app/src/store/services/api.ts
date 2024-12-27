@@ -24,6 +24,7 @@ interface ClaimDetail {
     firstName: string;
     lastName: string;
     email: string;
+    avatarColour: string;
     staff: {
       id: number;
       employeeId: string;

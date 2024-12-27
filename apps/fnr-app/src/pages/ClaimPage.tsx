@@ -273,6 +273,7 @@ export const ClaimPage = () => {
                 userInitials: `${claimData.handler.firstName[0]}${claimData.handler.lastName[0]}`,
                 name: `${claimData.handler.firstName} ${claimData.handler.lastName}`,
                 userId: claimData.handler.staff.employeeId,
+                color: claimData.handler.avatarColour,
               }
             : undefined
         }

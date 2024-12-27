@@ -89,6 +89,7 @@ router.get('/:claimNumber', async (req, res) => {
             firstName: true,
             lastName: true,
             email: true,
+            avatarColour: true,
             staff: {
               select: {
                 id: true,

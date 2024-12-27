@@ -19,6 +19,7 @@ model BaseUser {
   middleName    String?
   lastName      String
   phone         String?
+  avatarColour  String?   // Hex code for avatar background color
   role          UserRole
   isActive      Boolean   @default(true)
   lastLogin     DateTime?
