@@ -26,6 +26,21 @@ router.get('/', async (req, res) => {
         updatedAt: true,
         insuredProgressPercent: true,
         ourProgressPercent: true,
+        handler: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatarColour: true,
+            staff: {
+              select: {
+                employeeId: true,
+                department: true,
+                position: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',

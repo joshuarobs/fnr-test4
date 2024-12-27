@@ -5,8 +5,9 @@ import { getStaffRoute } from '../../routes';
 interface NavAvatarProps {
   userInitials: string;
   color?: string;
-  name?: string; // Made optional
+  name?: string;
   userId: string;
+  department?: string;
 }
 
 // Navigation avatar component with optional name label
@@ -15,6 +16,7 @@ export const NavAvatar = ({
   color,
   name,
   userId,
+  department,
 }: NavAvatarProps) => {
   return (
     <Link
@@ -29,6 +31,7 @@ export const NavAvatar = ({
           showHeaderRing
           hoverable
           name={name}
+          department={department}
         />
       </div>
       {name && (

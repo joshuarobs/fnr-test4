@@ -64,7 +64,18 @@ interface ClaimOverview {
   updatedAt: string;
   insuredProgressPercent: number;
   ourProgressPercent: number;
-  lastProgressUpdate: string | null; // Added this field
+  lastProgressUpdate: string | null;
+  handler?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    avatarColour: string;
+    staff: {
+      employeeId: string;
+      department: string;
+      position: string;
+    };
+  };
 }
 
 // Used for recently viewed claims

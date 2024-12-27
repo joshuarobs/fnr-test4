@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@react-monorepo/shared';
+import { NavAvatar } from '../contents-other/NavAvatar';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -47,6 +48,17 @@ interface ClaimOverview {
   insuredProgressPercent: number;
   ourProgressPercent: number;
   lastProgressUpdate: string | null;
+  handler?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    avatarColour: string;
+    staff: {
+      employeeId: string;
+      department: string;
+      position: string;
+    };
+  };
 }
 
 /**
@@ -72,6 +84,24 @@ export const DetailedClaimsTable = () => {
         id: 'id',
         header: 'ID',
         accessorFn: (row) => row.id,
+      },
+      {
+        id: 'user',
+        header: 'User',
+        accessorFn: (row) => row.handler,
+        cell: ({ getValue }) => {
+          const handler = getValue() as ClaimOverview['handler'];
+          if (!handler) return null;
+          return (
+            <NavAvatar
+              userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
+              color={handler.avatarColour}
+              userId={handler.staff.employeeId}
+              name={`${handler.firstName} ${handler.lastName}`}
+              department={handler.staff.department}
+            />
+          );
+        },
       },
       {
         id: 'claimNumber',
@@ -167,6 +197,7 @@ export const DetailedClaimsTable = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="text-right">ID</TableHead>
+              <TableHead>User</TableHead>
               <TableHead>Claim #</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
@@ -202,6 +233,17 @@ export const DetailedClaimsTable = () => {
                       {claim.claimNumber}
                     </a>
                     {claim.id}
+                  </TableCell>
+                  <TableCell>
+                    {claim.handler && (
+                      <NavAvatar
+                        userInitials={`${claim.handler.firstName[0]}${claim.handler.lastName[0]}`}
+                        color={claim.handler.avatarColour}
+                        userId={claim.handler.staff.employeeId}
+                        name={`${claim.handler.firstName} ${claim.handler.lastName}`}
+                        department={claim.handler.staff.department}
+                      />
+                    )}
                   </TableCell>
                   <TableCell>{claim.claimNumber}</TableCell>
                   <TableCell>{claim.description}</TableCell>
