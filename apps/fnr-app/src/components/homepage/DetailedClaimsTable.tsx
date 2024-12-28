@@ -133,17 +133,6 @@ export const DetailedClaimsTable = () => {
         id: 'archived',
         header: 'Archived',
         accessorFn: (row) => row.status === 'ARCHIVED',
-        cell: ({ getValue }) => {
-          const isArchived = getValue();
-          if (!isArchived) return null;
-          return (
-            <div className="flex justify-center">
-              <div className="rounded-full bg-red-900 p-1.5">
-                <ArchiveIcon className="h-4 w-4 text-white" />
-              </div>
-            </div>
-          );
-        },
       },
       {
         id: 'actions',
@@ -315,7 +304,10 @@ export const DetailedClaimsTable = () => {
                   <TableCell>
                     {claim.isDeleted && (
                       <div className="flex justify-center">
-                        <div className="rounded-full bg-red-900 p-1.5">
+                        <div
+                          className="rounded-full bg-red-500 p-1.5"
+                          style={{ filter: 'saturate(0.8)' }}
+                        >
                           <ArchiveIcon className="h-4 w-4 text-white" />
                         </div>
                       </div>

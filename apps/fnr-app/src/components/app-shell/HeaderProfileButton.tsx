@@ -1,4 +1,5 @@
 import React from 'react';
+import { useGetStaffQuery } from '../../store/services/api';
 import {
   Button,
   DropdownMenu,
@@ -9,15 +10,27 @@ import {
 } from '@react-monorepo/shared';
 import { Settings, Bell, LogOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ROUTES, getStaffRoute } from '../../routes';
 
 // Component for displaying staff profile dropdown in the header
 // Uses UserAvatar component for avatar display and contains menu items for various actions
 export const HeaderProfileButton = () => {
-  const color = 'bg-blue-600';
-  const navigate = useNavigate();
-  const employeeId = '748600'; // TODO: Get this from auth context when implemented
+  const employeeId = 'ADM001'; // Admin user from seed data. TODO: Get this from auth context when implemented
+  const { data: staffData, isLoading } = useGetStaffQuery(employeeId);
+
+  // Common props for UserAvatar to avoid duplication
+  const avatarProps = {
+    size: 'sm' as const,
+    color: staffData?.avatarColour || 'bg-blue-600',
+    name: staffData
+      ? `${staffData.firstName} ${staffData.lastName}`
+      : undefined,
+    userInitials: staffData
+      ? `${staffData.firstName[0]}${staffData.lastName[0]}`
+      : 'JD',
+    department: staffData?.staff.department,
+  };
 
   return (
     <DropdownMenu>
@@ -26,17 +39,30 @@ export const HeaderProfileButton = () => {
           variant="ghost"
           className="p-0 hover:cursor-pointer hover:bg-transparent focus-visible:ring-2"
         >
-          <UserAvatar size="sm" color={color} showHeaderRing />
+          <UserAvatar {...avatarProps} showHeaderRing />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem className="cursor-pointer p-0" asChild>
           <Link to={getStaffRoute(employeeId)} className="flex w-full p-2">
             <div className="flex items-center justify-start gap-2">
-              <UserAvatar size="sm" color={color} />
+              <UserAvatar {...avatarProps} hoverable />
               <div className="flex flex-col">
-                <span className="text-sm font-medium">John Doe</span>
-                <span className="text-sm">AGENT (748600)</span>
+                {isLoading ? (
+                  <span className="text-sm font-medium">Loading...</span>
+                ) : (
+                  <>
+                    <span className="text-sm font-medium">
+                      {`${staffData?.firstName} ${staffData?.lastName}`}
+                    </span>
+                    <span className="text-sm truncate max-w-[160px]">
+                      {staffData?.staff.position.toUpperCase()}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {staffData?.staff.employeeId}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           </Link>
