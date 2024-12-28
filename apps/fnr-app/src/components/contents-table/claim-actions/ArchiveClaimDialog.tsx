@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Archive } from 'lucide-react';
 import {
   Button,
   Dialog,
@@ -80,7 +81,8 @@ export const ArchiveClaimDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Archive className="h-4 w-4" />
             {isDeleted ? 'Reopen Claim' : 'Archive Claim'}
           </DialogTitle>
           <DialogDescription>

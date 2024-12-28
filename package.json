@@ -48,6 +48,7 @@
     "ctrl-keys": "^1.0.3",
     "date-fns": "^2.30.0",
     "express": "^4.18.1",
+    "font-color-contrast": "^11.1.0",
     "is-mobile": "^5.0.0",
     "lucide-react": "^0.453.0",
     "primereact": "^10.8.5",

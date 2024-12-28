@@ -1,4 +1,5 @@
 import { Building2, MapPin } from 'lucide-react';
+import fontColorContrast from 'font-color-contrast';
 import {
   HoverCard,
   HoverCardContent,
@@ -55,8 +56,8 @@ export const UserAvatar = ({
         <AvatarImage src={imageUrl} alt={name || userInitials} />
       ) : (
         <AvatarFallback
-          className="dark:brightness-[0.9] text-white"
-          style={{ backgroundColor: color }}
+          className="dark:brightness-[0.9] font-medium"
+          style={{ backgroundColor: color, color: fontColorContrast(color) }}
         >
           {userInitials}
         </AvatarFallback>
