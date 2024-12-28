@@ -197,7 +197,7 @@ export const DetailedClaimsTable = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="text-right">ID</TableHead>
-              <TableHead>User</TableHead>
+              <TableHead>Assigned to</TableHead>
               <TableHead>Claim #</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>

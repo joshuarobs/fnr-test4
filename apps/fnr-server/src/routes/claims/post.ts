@@ -332,6 +332,59 @@ router.post('/:claimNumber/view', async (req, res) => {
 });
 
 // POST /api/claims/:claimNumber/recalculate
+// POST /api/claims/:claimNumber/reassign
+router.post('/:claimNumber/reassign', async (req, res) => {
+  try {
+    const { claimNumber } = req.params;
+    const { employeeId } = req.body;
+
+    if (!employeeId) {
+      return res.status(400).json({ error: 'Employee ID is required' });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      // Find the staff member by employee ID
+      const staff = await tx.staff.findUnique({
+        where: { employeeId },
+        include: { baseUser: true },
+      });
+
+      if (!staff) {
+        throw new Error('Staff member not found');
+      }
+
+      // Update the claim with the new handler
+      const updatedClaim = await tx.claim.update({
+        where: { claimNumber },
+        data: { handlerId: staff.baseUserId },
+        include: {
+          handler: {
+            include: {
+              staff: true,
+            },
+          },
+        },
+      });
+
+      return updatedClaim;
+    });
+
+    res.json({
+      success: true,
+      handler: result.handler,
+    });
+  } catch (error) {
+    console.error('Error reassigning claim:', error);
+    if (error.message === 'Staff member not found') {
+      return res.status(404).json({ error: 'Staff member not found' });
+    }
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Claim not found' });
+    }
+    res.status(500).json({ error: 'Failed to reassign claim' });
+  }
+});
+
 router.post('/:claimNumber/recalculate', async (req, res) => {
   try {
     const { claimNumber } = req.params;

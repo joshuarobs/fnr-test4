@@ -251,6 +251,7 @@ export const ClaimPage = () => {
                 lastProgressUpdate={claimData?.lastProgressUpdate || null}
                 isDeleted={claimData?.isDeleted}
                 claimNumber={id}
+                handler={claimData?.handler}
               />
             </div>
           </div>

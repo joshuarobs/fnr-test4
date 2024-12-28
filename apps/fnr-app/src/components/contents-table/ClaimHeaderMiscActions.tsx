@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Input,
   useToast,
+  Label,
 } from '@react-monorepo/shared';
 import {
   DropdownMenu,
@@ -23,8 +24,9 @@ import {
   File,
   MoreHorizontal,
   RefreshCw,
+  UserCog,
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { NavAvatar } from '../contents-other/NavAvatar';
 import {
   useArchiveClaimMutation,
   useRecalculateQuotesMutation,
@@ -36,6 +38,19 @@ interface ClaimHeaderMiscActionsProps {
   lastProgressUpdate: string | null;
   isDeleted?: boolean;
   claimNumber: string;
+  handler?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatarColour: string;
+    staff: {
+      id: number;
+      employeeId: string;
+      department: string;
+      position: string;
+    };
+  };
 }
 
 /**
@@ -46,6 +61,7 @@ export const ClaimHeaderMiscActions = ({
   lastProgressUpdate,
   isDeleted = false,
   claimNumber,
+  handler,
 }: ClaimHeaderMiscActionsProps) => {
   const [recalculateQuotes] = useRecalculateQuotesMutation();
   const [archiveClaim] = useArchiveClaimMutation();
@@ -53,6 +69,8 @@ export const ClaimHeaderMiscActions = ({
   const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [archiveReason, setArchiveReason] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isReassignDialogOpen, setIsReassignDialogOpen] = useState(false);
+  const [newAssignee, setNewAssignee] = useState('');
 
   const { toast } = useToast();
 
@@ -107,6 +125,17 @@ export const ClaimHeaderMiscActions = ({
           <DropdownMenuItem className="cursor-pointer">
             <File className="mr-2 h-4 w-4" />
             Export to PDF
+          </DropdownMenuItem>
+          <Separator className="my-1" />
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => {
+              setIsDropdownOpen(false);
+              setIsReassignDialogOpen(true);
+            }}
+          >
+            <UserCog className="mr-2 h-4 w-4" />
+            Re-assign claim
           </DropdownMenuItem>
           <Separator className="my-1" />
           <DropdownMenuItem
@@ -199,6 +228,73 @@ export const ClaimHeaderMiscActions = ({
               }}
             >
               {isDeleted ? 'Reopen' : 'Archive'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassign Dialog */}
+      <Dialog
+        open={isReassignDialogOpen}
+        onOpenChange={(open) => {
+          setIsReassignDialogOpen(open);
+          if (!open) {
+            setIsDropdownOpen(false);
+            setNewAssignee('');
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Re-assign Claim</DialogTitle>
+            <DialogDescription>
+              Change the handler assigned to this claim
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label>Currently assigned to</Label>
+              {handler ? (
+                <NavAvatar
+                  userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
+                  color={handler.avatarColour}
+                  name={`${handler.firstName} ${handler.lastName}`}
+                  userId={handler.staff.employeeId}
+                  department={handler.staff.department}
+                />
+              ) : (
+                <span className="text-sm text-muted-foreground">
+                  Unassigned
+                </span>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Assign to</Label>
+              <Input
+                placeholder="Enter staff ID"
+                value={newAssignee}
+                onChange={(e) => setNewAssignee(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsReassignDialogOpen(false);
+                setNewAssignee('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                // TODO: Implement reassignment
+                setIsReassignDialogOpen(false);
+                setNewAssignee('');
+              }}
+            >
+              Reassign
             </Button>
           </DialogFooter>
         </DialogContent>

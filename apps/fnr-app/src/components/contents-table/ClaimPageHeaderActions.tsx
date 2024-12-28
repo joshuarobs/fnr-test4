@@ -7,6 +7,19 @@ interface ClaimPageHeaderActionsProps {
   lastProgressUpdate: string | null;
   isDeleted?: boolean;
   claimNumber: string;
+  handler?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatarColour: string;
+    staff: {
+      id: number;
+      employeeId: string;
+      department: string;
+      position: string;
+    };
+  };
 }
 
 export const ClaimPageHeaderActions = ({
@@ -14,6 +27,7 @@ export const ClaimPageHeaderActions = ({
   lastProgressUpdate,
   isDeleted = false,
   claimNumber,
+  handler,
 }: ClaimPageHeaderActionsProps) => {
   return (
     <div className="flex items-center gap-2">
@@ -21,6 +35,7 @@ export const ClaimPageHeaderActions = ({
         lastProgressUpdate={lastProgressUpdate}
         isDeleted={isDeleted}
         claimNumber={claimNumber}
+        handler={handler}
       />
       <AddNewItemModal addItem={addItem} />
     </div>
