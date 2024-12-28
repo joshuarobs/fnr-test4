@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
         claimNumber: true,
         description: true,
         status: true,
+        isDeleted: true,
         items: {
           select: {
             id: true,
@@ -26,14 +27,17 @@ router.get('/', async (req, res) => {
         updatedAt: true,
         insuredProgressPercent: true,
         ourProgressPercent: true,
+        lastProgressUpdate: true,
         handler: {
           select: {
             id: true,
             firstName: true,
             lastName: true,
             avatarColour: true,
+            email: true,
             staff: {
               select: {
+                id: true,
                 employeeId: true,
                 department: true,
                 position: true,

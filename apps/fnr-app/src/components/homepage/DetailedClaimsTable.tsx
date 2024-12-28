@@ -24,44 +24,18 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { useGetClaimsQuery } from '../../store/services/api';
+import type { ClaimOverview } from '../../store/services/api';
 import type { FilterFn } from '@tanstack/react-table';
 import { WarningIconTooltip } from '../contents-other/WarningIconTooltip';
 import { GreenTickIcon } from '../contents-table/GreenTickIcon';
 import { ClaimHeaderMiscActions } from '../contents-table/claim-actions/ClaimHeaderMiscActions';
+import { ArchiveIcon } from '../icons/ArchiveIcon';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from '@radix-ui/react-icons';
-
-interface ClaimOverview {
-  id: number;
-  claimNumber: string;
-  description: string;
-  status: string;
-  items: { id: number }[];
-  totalClaimed: number;
-  totalApproved: number | null;
-  createdAt: string;
-  updatedAt: string;
-  insuredProgressPercent: number;
-  ourProgressPercent: number;
-  lastProgressUpdate: string | null;
-  handler?: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    avatarColour: string;
-    staff: {
-      id: number;
-      employeeId: string;
-      department: string;
-      position: string;
-    };
-  };
-}
 
 /**
  * Format a number value, with special handling for zero
@@ -156,9 +130,34 @@ export const DetailedClaimsTable = () => {
         accessorFn: (row) => row.updatedAt,
       },
       {
+        id: 'archived',
+        header: 'Archived',
+        accessorFn: (row) => row.status === 'ARCHIVED',
+        cell: ({ getValue }) => {
+          const isArchived = getValue();
+          if (!isArchived) return null;
+          return (
+            <div className="flex justify-center">
+              <div className="rounded-full bg-red-900 p-1.5">
+                <ArchiveIcon className="h-4 w-4 text-white" />
+              </div>
+            </div>
+          );
+        },
+      },
+      {
         id: 'actions',
         header: 'Actions',
         accessorFn: (row) => row.lastProgressUpdate,
+        cell: ({ row }) => (
+          <div onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+            <ClaimHeaderMiscActions
+              lastProgressUpdate={row.original.lastProgressUpdate}
+              claimNumber={row.original.claimNumber}
+              handler={row.original.handler}
+            />
+          </div>
+        ),
       },
     ],
     []
@@ -214,6 +213,7 @@ export const DetailedClaimsTable = () => {
               </TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Last Updated</TableHead>
+              <TableHead>Archived</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -250,7 +250,13 @@ export const DetailedClaimsTable = () => {
                   <TableCell>{claim.claimNumber}</TableCell>
                   <TableCell>{claim.description}</TableCell>
                   <TableCell>
-                    <span className="rounded-full px-2 py-1 text-xs font-medium capitalize bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium capitalize ${
+                        claim.status === 'ARCHIVED'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100'
+                      }`}
+                    >
                       {claim.status.toLowerCase().replace('_', ' ')}
                     </span>
                   </TableCell>
@@ -306,14 +312,23 @@ export const DetailedClaimsTable = () => {
                       addSuffix: true,
                     })}
                   </TableCell>
-                  <TableCell
-                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                  >
-                    <ClaimHeaderMiscActions
-                      lastProgressUpdate={claim.lastProgressUpdate}
-                      claimNumber={claim.claimNumber}
-                      handler={claim.handler}
-                    />
+                  <TableCell>
+                    {claim.isDeleted && (
+                      <div className="flex justify-center">
+                        <div className="rounded-full bg-red-900 p-1.5">
+                          <ArchiveIcon className="h-4 w-4 text-white" />
+                        </div>
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {flexRender(
+                      row.getVisibleCells()[row.getVisibleCells().length - 1]
+                        .column.columnDef.cell,
+                      row
+                        .getVisibleCells()
+                        [row.getVisibleCells().length - 1].getContext()
+                    )}
                   </TableCell>
                 </TableRow>
               );

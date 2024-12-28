@@ -28,10 +28,8 @@ interface ClaimHeaderMiscActionsProps {
     id: number;
     firstName: string;
     lastName: string;
-    email: string;
     avatarColour: string;
     staff: {
-      id: number;
       employeeId: string;
       department: string;
       position: string;

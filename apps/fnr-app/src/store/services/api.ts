@@ -53,7 +53,7 @@ interface StaffDetail {
 }
 
 // Used when fetching the list of claims for the overview table
-interface ClaimOverview {
+export interface ClaimOverview {
   id: number;
   claimNumber: string;
   description: string;
@@ -66,12 +66,15 @@ interface ClaimOverview {
   insuredProgressPercent: number;
   ourProgressPercent: number;
   lastProgressUpdate: string | null;
+  isDeleted: boolean;
   handler?: {
     id: number;
     firstName: string;
     lastName: string;
+    email: string;
     avatarColour: string;
     staff: {
+      id: number;
       employeeId: string;
       department: string;
       position: string;
