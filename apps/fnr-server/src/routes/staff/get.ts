@@ -18,6 +18,7 @@ router.get('/:employeeId', async (req, res) => {
             lastName: true,
             phone: true,
             role: true,
+            avatarColour: true,
           },
         },
       },

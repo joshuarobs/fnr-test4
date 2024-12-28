@@ -31,8 +31,8 @@ export const StaffProfilePage = () => {
     );
   }
 
-  const color = 'bg-blue-600';
   const name = `${user.firstName} ${user.lastName}`;
+  const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
   const department = user.staff.department;
   const location = 'Australia'; // Default location for staff
 
@@ -44,8 +44,9 @@ export const StaffProfilePage = () => {
           <div className="flex items-start gap-4">
             <UserAvatar
               size="lg"
-              color={color}
+              color={user.avatarColour || '#6B7280'} // Fallback to default gray if no color
               name={name}
+              userInitials={initials}
               department={department}
               location={location}
               showHeaderRing

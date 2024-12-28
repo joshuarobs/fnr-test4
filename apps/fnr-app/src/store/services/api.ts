@@ -44,6 +44,7 @@ interface StaffDetail {
   lastName: string;
   phone: string | null;
   role: string;
+  avatarColour: string | null;
   staff: {
     department: string;
     employeeId: string;
