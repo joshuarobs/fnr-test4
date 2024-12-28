@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Archive } from 'lucide-react';
+import { ArchiveIcon } from '../../icons/ArchiveIcon';
 import {
   Button,
   Dialog,
@@ -82,7 +82,7 @@ export const ArchiveClaimDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Archive className="h-4 w-4" />
+            <ArchiveIcon className="h-4 w-4" />
             {isDeleted ? 'Reopen Claim' : 'Archive Claim'}
           </DialogTitle>
           <DialogDescription>

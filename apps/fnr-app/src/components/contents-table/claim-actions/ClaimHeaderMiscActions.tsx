@@ -10,14 +10,9 @@ import {
 import { ArchiveClaimDialog } from './ArchiveClaimDialog';
 import { ReassignClaimDialog } from './ReassignClaimDialog';
 import { useState } from 'react';
-import {
-  Archive,
-  FileSpreadsheet,
-  File,
-  MoreHorizontal,
-  RefreshCw,
-  UserCog,
-} from 'lucide-react';
+import { FileSpreadsheet, File, MoreHorizontal, RefreshCw } from 'lucide-react';
+import { ArchiveIcon } from '../../icons/ArchiveIcon';
+import { ReassignClaimIcon } from '../../icons/ReassignClaimIcon';
 import {
   useArchiveClaimMutation,
   useRecalculateQuotesMutation,
@@ -121,7 +116,7 @@ export const ClaimHeaderMiscActions = ({
               setIsReassignDialogOpen(true);
             }}
           >
-            <UserCog className="mr-2 h-4 w-4" />
+            <ReassignClaimIcon className="mr-2 h-4 w-4" />
             Re-assign claim
           </DropdownMenuItem>
           <Separator className="my-1" />
@@ -134,7 +129,7 @@ export const ClaimHeaderMiscActions = ({
               setIsArchiveDialogOpen(true);
             }}
           >
-            <Archive className="mr-2 h-4 w-4" />
+            <ArchiveIcon className="mr-2 h-4 w-4" />
             {isDeleted ? 'Reopen claim' : 'Archive claim'}
           </DropdownMenuItem>
         </DropdownMenuContent>

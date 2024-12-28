@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ReassignClaimIcon } from '../../icons/ReassignClaimIcon';
 import {
   Button,
   Dialog,
@@ -53,7 +54,10 @@ export const ReassignClaimDialog = ({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Re-assign Claim</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <ReassignClaimIcon className="h-4 w-4" />
+            Re-assign Claim
+          </DialogTitle>
           <DialogDescription>
             Change the handler assigned to this claim
           </DialogDescription>
