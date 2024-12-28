@@ -52,8 +52,10 @@ interface ClaimOverview {
     id: number;
     firstName: string;
     lastName: string;
+    email: string;
     avatarColour: string;
     staff: {
+      id: number;
       employeeId: string;
       department: string;
       position: string;
@@ -310,6 +312,7 @@ export const DetailedClaimsTable = () => {
                     <ClaimHeaderMiscActions
                       lastProgressUpdate={claim.lastProgressUpdate}
                       claimNumber={claim.claimNumber}
+                      handler={claim.handler}
                     />
                   </TableCell>
                 </TableRow>
