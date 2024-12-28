@@ -8,6 +8,8 @@ interface NavAvatarProps {
   name?: string;
   userId: string;
   department?: string;
+  /** Whether this avatar represents the currently logged in user */
+  isUser?: boolean;
 }
 
 // Navigation avatar component with optional name label
@@ -17,6 +19,7 @@ export const NavAvatar = ({
   name,
   userId,
   department,
+  isUser,
 }: NavAvatarProps) => {
   return (
     <Link
@@ -36,7 +39,7 @@ export const NavAvatar = ({
       </div>
       {name && (
         <span className="text-sm text-muted-foreground group-hover:text-hover-blue">
-          {name}
+          {isUser ? `You (${name})` : name}
         </span>
       )}
     </Link>

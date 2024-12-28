@@ -1,5 +1,6 @@
 import { Badge, Button } from '@react-monorepo/shared';
 import { NavAvatar } from './NavAvatar';
+import { useGetStaffQuery } from '../../store/services/api';
 
 interface AssignedUserData {
   userInitials: string;
@@ -22,6 +23,8 @@ export const ClaimAssignedToSection = ({
   assignedUser,
   onAssignClick,
 }: ClaimAssignedToSectionProps) => {
+  // Get current user info - using ADM001 as default user from seed data
+  const { data: currentUser } = useGetStaffQuery('ADM001');
   return (
     <div>
       {/* Title row with Assign button */}
@@ -38,6 +41,7 @@ export const ClaimAssignedToSection = ({
           color={assignedUser.color}
           name={assignedUser.name}
           userId={assignedUser.userId}
+          isUser={currentUser?.staff.employeeId === assignedUser.userId}
         />
       ) : (
         <span className="text-sm text-muted-foreground">Not assigned</span>
