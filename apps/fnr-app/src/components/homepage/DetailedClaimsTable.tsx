@@ -27,7 +27,7 @@ import { useGetClaimsQuery } from '../../store/services/api';
 import type { FilterFn } from '@tanstack/react-table';
 import { WarningIconTooltip } from '../contents-other/WarningIconTooltip';
 import { GreenTickIcon } from '../contents-table/GreenTickIcon';
-import { ClaimHeaderMiscActions } from '../contents-table/ClaimHeaderMiscActions';
+import { ClaimHeaderMiscActions } from '../contents-table/claim-actions/ClaimHeaderMiscActions';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

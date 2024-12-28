@@ -1,6 +1,6 @@
 import { AddNewItemModal } from './new-item-modal/AddNewItemModal';
 import { Item } from './item';
-import { ClaimHeaderMiscActions } from './ClaimHeaderMiscActions';
+import { ClaimHeaderMiscActions } from './claim-actions/ClaimHeaderMiscActions';
 
 interface ClaimPageHeaderActionsProps {
   addItem: (item: Item | Item[]) => void;
