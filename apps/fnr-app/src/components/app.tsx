@@ -61,7 +61,10 @@ export function App() {
     <UserProvider>
       <BrowserRouter>
         <Toaster />
-        <div className="flex flex-col h-screen">
+        <div
+          className="flex flex-col h-screen"
+          onClick={(e) => e.stopPropagation()}
+        >
           <Header
             onToggleSidebar={handleToggleSidebar}
             setIsShortcutsOpen={setIsShortcutsOpen}

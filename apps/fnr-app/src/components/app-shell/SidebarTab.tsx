@@ -20,29 +20,24 @@ export const SidebarTab = ({
     <div className="mr-2 h-4 w-4 flex items-center justify-center">{icon}</div>
   );
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (to) {
-      navigate(to);
-    }
-  };
-
+  // Use anchor tag for hover preview but handle navigation through React Router
   const button = (
-    <Button
-      variant={variant}
-      className="w-full justify-start"
-      onClick={handleClick}
-    >
-      {wrappedIcon}
-      {label}
+    <Button variant={variant} className="w-full justify-start" asChild>
+      <a
+        href={to}
+        onClick={(e) => {
+          e.preventDefault();
+          if (to) {
+            // Use replace instead of push to avoid duplicate history entries
+            navigate(to, { replace: true });
+          }
+        }}
+      >
+        {wrappedIcon}
+        {label}
+      </a>
     </Button>
   );
 
-  if (!to) return button;
-
-  return (
-    <a href={to} onClick={handleClick} className="block">
-      {button}
-    </a>
-  );
+  return button;
 };

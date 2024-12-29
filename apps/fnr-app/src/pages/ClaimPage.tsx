@@ -89,12 +89,17 @@ export const ClaimPage = () => {
     }
   }, [id, isLoading, error, recordView, recentViews]);
 
-  // Invalidate recent views on unmount to update UI when leaving the page
+  // Update recent views when navigating away, but not during history navigation
   React.useEffect(() => {
-    return () => {
+    const handleBeforeUnload = () => {
       if (!error) {
         dispatch(api.util.invalidateTags(['RecentViews']));
       }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [dispatch, error]);
 

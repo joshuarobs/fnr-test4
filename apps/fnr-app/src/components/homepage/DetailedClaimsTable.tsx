@@ -209,19 +209,14 @@ export const DetailedClaimsTable = ({
               return (
                 <TableRow
                   key={claim.id}
-                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 relative"
-                  onClick={() => navigate(`/claim/${claim.claimNumber}`)}
+                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/claim/${claim.claimNumber}`, { replace: true });
+                  }}
                 >
-                  <TableCell className="relative p-2 text-right">
-                    <a
-                      href={`/claim/${claim.claimNumber}`}
-                      onClick={(e) => e.preventDefault()}
-                      className="absolute inset-0 z-10 opacity-0"
-                    >
-                      {claim.claimNumber}
-                    </a>
-                    {claim.id}
-                  </TableCell>
+                  <TableCell className="p-2 text-right">{claim.id}</TableCell>
                   <TableCell>
                     {claim.handler && (
                       <NavAvatar
