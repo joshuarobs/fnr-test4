@@ -14,6 +14,7 @@ import {
   GearIcon,
   MagicWandIcon,
 } from '@radix-ui/react-icons';
+import { History } from 'lucide-react';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -65,6 +66,11 @@ export const Sidebar = ({ className }: SidebarProps) => {
               icon={<StarIcon />}
               label="Assigned"
               to={ROUTES.ASSIGNED}
+            />
+            <SidebarTab
+              icon={<History className="w-4 h-4" />}
+              label="History"
+              to={ROUTES.HISTORY}
             />
           </div>
 
