@@ -129,6 +129,10 @@ export const api = createApi({
       query: () => 'claims?limit=10',
       providesTags: ['Claims'],
     }),
+    getAssignedClaims: builder.query<ClaimOverview[], string>({
+      query: (employeeId) => `claims/assigned/${employeeId}`,
+      providesTags: ['Claims'],
+    }),
     getClaim: builder.query<ClaimDetail, string>({
       query: (id) => `claims/${id}`,
       providesTags: ['Claim'],
@@ -260,6 +264,7 @@ export const {
   useGetMessageQuery,
   useGetClaimsQuery,
   useGetClaimQuery,
+  useGetAssignedClaimsQuery,
   useGetRecentlyViewedClaimsQuery,
   useRecordClaimViewMutation,
   useUpdateItemMutation,

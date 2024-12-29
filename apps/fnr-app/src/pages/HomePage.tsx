@@ -2,12 +2,26 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, useToast } from '@react-monorepo/shared';
 import { DetailedClaimsTable } from '../components/homepage/DetailedClaimsTable';
+import { useGetClaimsQuery } from '../store/services/api';
 import { TestTableUXStuff } from '../components/contents-table/TestTableUXStuff';
 import { TestTableUXStuffPure } from '../components/contents-table/TestTableUXStuffPure';
 
 export const HomePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { data: claims, isLoading, error } = useGetClaimsQuery();
+
+  if (isLoading) {
+    return <div className="p-4">Loading claims...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-500">
+        {error instanceof Error ? error.message : 'An error occurred'}
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 min-w-0 flex flex-col gap-4 p-4">
@@ -33,7 +47,7 @@ export const HomePage = () => {
         </Button>
       </div>
       <div className="mt-4">
-        <DetailedClaimsTable />
+        <DetailedClaimsTable claims={claims} />
       </div>
       <div className="mt-4">
         <TestTableUXStuff />

@@ -3,6 +3,67 @@ import prisma from '../../lib/prisma';
 
 const router: Router = express.Router();
 
+// GET /api/claims/assigned/:employeeId
+router.get('/assigned/:employeeId', async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    const claims = await prisma.claim.findMany({
+      where: {
+        handler: {
+          staff: {
+            employeeId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        claimNumber: true,
+        description: true,
+        status: true,
+        isDeleted: true,
+        items: {
+          select: {
+            id: true,
+          },
+        },
+        totalClaimed: true,
+        totalApproved: true,
+        createdAt: true,
+        updatedAt: true,
+        insuredProgressPercent: true,
+        ourProgressPercent: true,
+        lastProgressUpdate: true,
+        handler: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatarColour: true,
+            email: true,
+            staff: {
+              select: {
+                id: true,
+                employeeId: true,
+                department: true,
+                position: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.json(claims);
+  } catch (error) {
+    console.error('Error fetching assigned claims:', error);
+    res.status(500).json({ error: 'Failed to fetch assigned claims' });
+  }
+});
+
 // GET /api/claims
 router.get('/', async (req, res) => {
   try {

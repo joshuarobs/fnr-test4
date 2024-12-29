@@ -50,9 +50,18 @@ const formatNumber = (value: number | null | undefined): string => {
  * DetailedClaimsTable displays a paginated table of all claims with detailed information
  * including status, progress, and financial data
  */
-export const DetailedClaimsTable = () => {
+interface DetailedClaimsTableProps {
+  claims?: ClaimOverview[];
+}
+
+/**
+ * DetailedClaimsTable displays a paginated table of claims with detailed information
+ * including status, progress, and financial data
+ */
+export const DetailedClaimsTable = ({
+  claims = [],
+}: DetailedClaimsTableProps) => {
   const navigate = useNavigate();
-  const { data: claims, isLoading, error } = useGetClaimsQuery();
 
   const columns = React.useMemo<ColumnDef<ClaimOverview>[]>(
     () => [
@@ -167,18 +176,6 @@ export const DetailedClaimsTable = () => {
       faceted: (() => true) as FilterFn<ClaimOverview>,
     },
   });
-
-  if (isLoading) {
-    return <div className="p-4">Loading claims...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 text-red-500">
-        {error instanceof Error ? error.message : 'An error occurred'}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-4">
