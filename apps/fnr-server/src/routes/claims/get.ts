@@ -7,8 +7,12 @@ const router: Router = express.Router();
 router.get('/assigned/:employeeId', async (req, res) => {
   try {
     const { employeeId } = req.params;
+    const limit = req.query.limit
+      ? parseInt(req.query.limit as string)
+      : undefined;
 
     const claims = await prisma.claim.findMany({
+      ...(limit ? { take: limit } : {}),
       where: {
         handler: {
           staff: {

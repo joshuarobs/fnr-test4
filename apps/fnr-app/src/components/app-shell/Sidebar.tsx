@@ -4,6 +4,7 @@ import { SidebarTab } from './SidebarTab';
 import { Separator } from '@react-monorepo/shared';
 import { ROUTES, getClaimRoute } from '../../routes';
 import { useGetRecentlyViewedClaimsQuery } from '../../store/services/api';
+import { RecentAssignedClaims } from './RecentAssignedClaims';
 
 import {
   HomeIcon,
@@ -54,27 +55,11 @@ export const Sidebar = ({ className }: SidebarProps) => {
           </div>
 
           <SidebarSeparator />
-          {/* Assigned */}
+          {/* Recent Assigned Claims */}
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Assigned
           </h2>
-          <div>
-            <SidebarTab
-              icon={<FileTextIcon />}
-              label="NRA245279610"
-              to={getClaimRoute('NRA245279610')}
-            />
-            <SidebarTab
-              icon={<FileTextIcon />}
-              label="NRA245279611"
-              to={getClaimRoute('NRA245279611')}
-            />
-            <SidebarTab
-              icon={<FileTextIcon />}
-              label="NRA245279612"
-              to={getClaimRoute('NRA245279612')}
-            />
-          </div>
+          <RecentAssignedClaims />
 
           <SidebarSeparator />
           {/* Recently Viewed Claims */}

@@ -129,8 +129,12 @@ export const api = createApi({
       query: () => 'claims?limit=10',
       providesTags: ['Claims'],
     }),
-    getAssignedClaims: builder.query<ClaimOverview[], string>({
-      query: (employeeId) => `claims/assigned/${employeeId}`,
+    getAssignedClaims: builder.query<
+      ClaimOverview[],
+      { employeeId: string; limit?: number }
+    >({
+      query: ({ employeeId, limit }) =>
+        `claims/assigned/${employeeId}${limit ? `?limit=${limit}` : ''}`,
       providesTags: ['Claims'],
     }),
     getClaim: builder.query<ClaimDetail, string>({

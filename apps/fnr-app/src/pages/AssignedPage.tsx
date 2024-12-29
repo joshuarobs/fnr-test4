@@ -12,7 +12,7 @@ export const AssignedPage = () => {
     data: claims,
     isLoading,
     error,
-  } = useGetAssignedClaimsQuery(user.employeeId);
+  } = useGetAssignedClaimsQuery({ employeeId: user.employeeId });
 
   if (isLoading) {
     return <div className="p-4">Loading assigned claims...</div>;
