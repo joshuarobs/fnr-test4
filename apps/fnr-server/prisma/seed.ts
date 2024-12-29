@@ -103,20 +103,28 @@ async function main() {
   // Map claim numbers to handlers and insureds
   const handlerMap = {
     CLM001: createdAdmin.id,
+    CLM002: createdAdmin.id,
+    CLM003: createdStaffMembers[1].id, // Mike Williams
+    CLM004: createdAdmin.id,
     CLM005: createdStaffMembers[0].id,
     CLM006: createdStaffMembers[1].id,
     CLM007: createdStaffMembers[0].id,
     CLM009: createdStaffMembers[2].id, // Staff member 3 (David Thompson)
     CLM010: createdStaffMembers[3].id, // Staff member 4 (Lisa Anderson)
+    CLM011: createdAdmin.id,
   };
 
   const insuredMap = {
     CLM001: insuredUsers[0].id, // John Smith
+    CLM002: insuredUsers[1].id, // Another insured
+    CLM003: insuredUsers[2].id, // Another insured
+    CLM004: insuredUsers[3].id, // Another insured
     CLM005: insuredUsers[3].id, // Jane Brown
     CLM006: insuredUsers[1].id, // John Smith
     CLM007: insuredUsers[2].id, // Jane Brown
     CLM009: insuredUsers[0].id, // Robert Wilson
     CLM010: insuredUsers[2].id, // Emma Davis
+    CLM011: createdAdmin.id, // Admin
   };
 
   // Create claims and their items

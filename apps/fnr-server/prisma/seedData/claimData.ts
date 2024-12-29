@@ -9,6 +9,86 @@ import { clm006Items } from './clm006Items';
 
 export const claimData = [
   {
+    claimNumber: 'CLM002',
+    policyNumber: 'POL202',
+    description: 'Single electronics item claim',
+    handlerId: null, // Will be set in seed.ts
+    items: [
+      {
+        name: 'Smart Watch',
+        category: ItemCategory.ELECTRONICS,
+        roomCategory: RoomCategory.BEDROOM_1,
+        modelSerialNumber: 'SW2023ABC',
+        description: 'Damaged smart watch',
+        insuredsQuote: 399.99,
+        ourQuote: null,
+        condition: 'Damaged - screen cracked',
+        itemStatus: ItemStatus.RS,
+        insuredsEvidence: [
+          {
+            type: EvidenceType.PHOTO,
+            filename: 'watch1.jpg',
+            url: '/uploads/watch1.jpg',
+          },
+        ],
+        ourQuoteProof: null,
+      },
+    ],
+  },
+  {
+    claimNumber: 'CLM003',
+    policyNumber: 'POL303',
+    description: 'Empty claim for testing',
+    handlerId: null, // Will be set in seed.ts
+    items: [],
+  },
+  {
+    claimNumber: 'CLM004',
+    policyNumber: 'POL404',
+    description: 'Two item furniture claim',
+    handlerId: null, // Will be set in seed.ts
+    items: [
+      {
+        name: 'Dining Table',
+        category: ItemCategory.FURNITURE,
+        roomCategory: RoomCategory.KITCHEN_DINING,
+        modelSerialNumber: 'DT2023XYZ',
+        description: 'Damaged dining table',
+        insuredsQuote: 899.99,
+        ourQuote: 850,
+        condition: 'Damaged - water stains',
+        itemStatus: ItemStatus.NR,
+        insuredsEvidence: [
+          {
+            type: EvidenceType.PHOTO,
+            filename: 'table1.jpg',
+            url: '/uploads/table1.jpg',
+          },
+        ],
+        ourQuoteProof: null,
+      },
+      {
+        name: 'Dining Chairs Set',
+        category: ItemCategory.FURNITURE,
+        roomCategory: RoomCategory.KITCHEN_DINING,
+        modelSerialNumber: 'DC2023SET',
+        description: 'Damaged dining chairs (set of 6)',
+        insuredsQuote: 1200,
+        ourQuote: 1100,
+        condition: 'Damaged - water stains',
+        itemStatus: ItemStatus.NR,
+        insuredsEvidence: [
+          {
+            type: EvidenceType.PHOTO,
+            filename: 'chairs1.jpg',
+            url: '/uploads/chairs1.jpg',
+          },
+        ],
+        ourQuoteProof: null,
+      },
+    ],
+  },
+  {
     claimNumber: 'CLM001',
     policyNumber: 'POL123',
     description: 'Water damage from flooding',
@@ -279,5 +359,12 @@ export const claimData = [
         ourQuoteProof: null,
       },
     ],
+  },
+  {
+    claimNumber: 'CLM011',
+    policyNumber: 'POL808',
+    description: 'Empty claim for testing',
+    handlerId: null, // Will be set in seed.ts
+    items: [],
   },
 ];
