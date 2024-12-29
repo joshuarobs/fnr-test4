@@ -179,6 +179,39 @@ All accounts use the password: `12345`
 4. Ensure that all the imports are done properly. Reference the `button.tsx` in case there's anything wrong, as that file works properly.
 5. Add the export into `shared/src/index.ts` e.g. `export * from './components/ui/button';` or else you can't import it
 
+### Recently Viewed Claims Implementation
+
+The recently viewed claims feature follows these key principles:
+
+1. **Server Updates (ClaimPage.tsx)**
+   ```typescript
+   // Always record the view when visiting a claim page
+   const [recordView] = useRecordClaimViewMutation();
+   
+   React.useEffect(() => {
+     if (id) {
+       recordView(id);
+     }
+   }, [id, recordView]);
+   ```
+
+2. **UI Updates (Sidebar.tsx)**
+   ```typescript
+   // Only refetch the recently viewed list when NOT on a claim page
+   const { data: recentViews, refetch } = useGetRecentlyViewedClaimsQuery();
+
+   React.useEffect(() => {
+     if (!isOnClaimPage) {
+       refetch();
+     }
+   }, [isOnClaimPage, refetch]);
+   ```
+
+Key points to remember:
+- The server ALWAYS gets updated when visiting a claim page
+- The sidebar's recently viewed section only updates when navigating to non-claim pages
+- Do NOT use invalidatesTags in the recordClaimView mutation as this would cause unwanted refreshes
+- Use useEffect with refetch() for controlled updates based on the current page
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 

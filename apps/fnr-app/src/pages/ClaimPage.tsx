@@ -61,6 +61,14 @@ export const ClaimPage = () => {
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
+  const [recordView] = useRecordClaimViewMutation();
+
+  // Record view when claim page is loaded
+  React.useEffect(() => {
+    if (id) {
+      recordView(id);
+    }
+  }, [id, recordView]);
 
   // Initialize table state once when component mounts
   React.useEffect(() => {

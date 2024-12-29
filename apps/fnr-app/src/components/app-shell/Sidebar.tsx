@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { cn } from '../../../../../shared/src/lib/utils';
 import { SidebarTab } from './SidebarTab';
 import { Separator } from '@react-monorepo/shared';
@@ -25,8 +26,21 @@ const SidebarSeparator = () => {
 };
 
 export const Sidebar = ({ className }: SidebarProps) => {
+  const location = useLocation();
+  const isOnClaimPage = location.pathname.startsWith('/claim/');
+
+  console.error('Current path:', location.pathname);
+  console.error('Is on claim page:', isOnClaimPage);
+
   // Fetch recently viewed claims
-  const { data: recentViews } = useGetRecentlyViewedClaimsQuery();
+  const { data: recentViews, refetch } = useGetRecentlyViewedClaimsQuery();
+
+  // Refetch when navigating to a non-claim page
+  React.useEffect(() => {
+    if (!isOnClaimPage) {
+      refetch();
+    }
+  }, [isOnClaimPage, refetch]);
 
   // Get the 5 most recent claims
   const recentClaims = React.useMemo(() => {
