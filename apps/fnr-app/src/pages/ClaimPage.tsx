@@ -58,50 +58,14 @@ export const ClaimPage = () => {
   }
 
   const { data: claimData, isLoading, error } = useGetClaimQuery(id);
-  const { data: recentViews } = useGetRecentlyViewedClaimsQuery();
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
-  const [recordView] = useRecordClaimViewMutation();
 
-  // Reset selected cell and filters when entering claim page or when claim ID changes
+  // Initialize table state once when component mounts
   React.useEffect(() => {
     dispatch(setSelectedCell({ rowId: '1', columnId: ITEM_KEYS.LOCAL_ID }));
-    // Reset filters if table reference exists
-    if (tableRef.current?.table) {
-      tableRef.current.table.getAllColumns().forEach((column: any) => {
-        if (column.getCanFilter()) {
-          column.setFilterValue(undefined);
-        }
-      });
-      // Reset global filter
-      tableRef.current.table.setGlobalFilter('');
-    }
-  }, [dispatch, id]);
-
-  // Record view when claim is loaded, but only if it's not the most recent view
-  React.useEffect(() => {
-    if (!isLoading && !error && recentViews) {
-      const mostRecentView = recentViews[0];
-      if (!mostRecentView || mostRecentView.claim.claimNumber !== id) {
-        recordView(id);
-      }
-    }
-  }, [id, isLoading, error, recordView, recentViews]);
-
-  // Update recent views when navigating away, but not during history navigation
-  React.useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (!error) {
-        dispatch(api.util.invalidateTags(['RecentViews']));
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [dispatch, error]);
+  }, [dispatch]);
 
   // Transform API data to match our Item interface
   const tableData: Item[] = React.useMemo(() => {

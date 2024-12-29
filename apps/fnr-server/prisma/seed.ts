@@ -2,6 +2,7 @@ import { PrismaClient, UserRole, ClaimStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { admin, staffMembers, suppliers, insureds } from './seedData/userData';
 import { claimData } from './seedData/claimData';
+import { recalculateClaimValues } from '../src/lib/claimHelpers';
 
 const prisma = new PrismaClient();
 
@@ -230,6 +231,17 @@ async function main() {
         },
       }),
     ]);
+  }
+
+  console.log('Calculating claim values...');
+
+  // Recalculate values for all claims except CLM003 and CLM004
+  const claimsToCalculate = claims.filter(
+    (claim) => claim.claimNumber !== 'CLM003' && claim.claimNumber !== 'CLM004'
+  );
+
+  for (const claim of claimsToCalculate) {
+    await recalculateClaimValues(claim.id);
   }
 
   console.log('Seed completed successfully');
