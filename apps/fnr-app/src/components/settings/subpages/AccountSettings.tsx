@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Separator,
   Input,
@@ -12,25 +12,38 @@ import {
   AlertDescription,
   Button,
 } from '@react-monorepo/shared';
+import { UserAvatar } from '../../app-shell/UserAvatar';
 import { ShieldAlert } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SETTINGS_SUBPAGE_CONTAINER } from '../../../pages/SettingsPage';
+import { useUser } from '../../providers/UserContext';
+import { useUpdateUserDetailsMutation } from '../../../store/services/api';
+import { useToast } from '@react-monorepo/shared';
 
-// Form schema
+import {
+  ColorPaletteSelector,
+  avatarColors,
+  type AvatarColor,
+} from './ColorPaletteSelector';
+
 const accountFormSchema = z.object({
   title: z.string(),
   firstName: z.string(),
   surname: z.string(),
   department: z.string(),
   location: z.string(),
+  avatarColor: z.string(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 // Account settings component for managing user profile information
 export const AccountSettings = () => {
+  const user = useUser();
+  const [selectedColor, setSelectedColor] = useState<AvatarColor>('blue');
+
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
@@ -39,13 +52,62 @@ export const AccountSettings = () => {
       surname: '',
       department: '',
       location: '',
+      avatarColor: avatarColors.blue,
     },
   });
 
-  const onSubmit = (data: AccountFormValues) => {
-    console.log(data);
-    // Handle form submission
-  };
+  // Pre-populate form with user data
+  useEffect(() => {
+    if (user) {
+      // Find the color name from hex value
+      const colorName = Object.entries(avatarColors).find(
+        ([_, hex]) => hex === user.avatarColour
+      )?.[0] as AvatarColor;
+
+      if (colorName) {
+        setSelectedColor(colorName);
+      }
+
+      form.reset({
+        title: '', // Add these fields when available in the API
+        firstName: user.firstName,
+        surname: user.lastName,
+        department: user.department,
+        location: '', // Add when available in the API
+        avatarColor: user.avatarColour,
+      });
+    }
+  }, [user, form]);
+
+  const [updateUserDetails, { isLoading }] = useUpdateUserDetailsMutation();
+  const { toast } = useToast();
+
+  const onSubmit = useCallback(
+    async (data: AccountFormValues) => {
+      try {
+        await updateUserDetails({
+          employeeId: user.employeeId,
+          firstName: data.firstName,
+          lastName: data.surname,
+          department: data.department,
+          avatarColour: avatarColors[selectedColor],
+        }).unwrap();
+
+        toast({
+          title: 'Success',
+          description: 'Your profile has been updated successfully.',
+        });
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to update profile. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    },
+    [updateUserDetails, selectedColor, toast]
+  );
 
   return (
     <div className={SETTINGS_SUBPAGE_CONTAINER}>
@@ -157,7 +219,40 @@ export const AccountSettings = () => {
             />
           </div>
           <Separator className="my-4" />
-          <Button type="submit" variant="default">
+
+          {/* Avatar Color Selection */}
+          <div className="space-y-4">
+            <div className="flex gap-12 items-start">
+              <div className="space-y-4">
+                <FormLabel>Avatar Colour</FormLabel>
+                <ColorPaletteSelector
+                  selectedColor={selectedColor}
+                  onColorSelect={(color) => {
+                    setSelectedColor(color);
+                    form.setValue('avatarColor', avatarColors[color]);
+                  }}
+                />
+              </div>
+              {/* Avatar Preview */}
+              <div className="space-y-4">
+                <FormLabel>Preview</FormLabel>
+                <UserAvatar
+                  size="lg"
+                  userInitials={
+                    (form.watch('firstName')?.[0]?.toUpperCase() || '') +
+                    (form.watch('surname')?.[0]?.toUpperCase() || '')
+                  }
+                  color={avatarColors[selectedColor]}
+                  name={`${form.watch('firstName')} ${form.watch('surname')}`}
+                  department={form.watch('department')}
+                  showHeaderRing
+                />
+              </div>
+            </div>
+          </div>
+
+          <Separator className="my-4" />
+          <Button type="submit" variant="default" disabled={isLoading}>
             Update details
           </Button>
         </form>

@@ -106,6 +106,14 @@ interface RecalculateResponse {
   lastProgressUpdate: string; // Added this field
 }
 
+// Add the interface for update user details request
+export interface UpdateUserDetailsRequest {
+  firstName: string;
+  lastName: string;
+  department: string;
+  avatarColour: string;
+}
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: API_CONFIG.baseUrl + '/' }),
@@ -116,8 +124,20 @@ export const api = createApi({
     'RecentViews',
     'ArchivedClaims',
     'User',
+    'Staff',
   ],
   endpoints: (builder) => ({
+    updateUserDetails: builder.mutation<
+      StaffDetail,
+      UpdateUserDetailsRequest & { employeeId: string }
+    >({
+      query: ({ employeeId, ...details }) => ({
+        url: `staff/${employeeId}`,
+        method: 'PATCH',
+        body: details,
+      }),
+      invalidatesTags: ['Staff', 'User'],
+    }),
     getMessage: builder.query<Message, void>({
       query: () => '',
     }),
@@ -279,4 +299,5 @@ export const {
   useUnarchiveClaimMutation,
   useGetStaffQuery,
   useReassignClaimMutation,
+  useUpdateUserDetailsMutation,
 } = api;
