@@ -1,6 +1,9 @@
 import express, { Router, Request, Response, NextFunction } from 'express';
 import prisma from '../../lib/prisma';
-import { calculateClaimValues } from '../../lib/claimHelpers';
+import {
+  calculateClaimValues,
+  recalculateClaimValues,
+} from '../../lib/claimHelpers';
 
 const router: Router = express.Router();
 
@@ -31,6 +34,7 @@ router.post('/', async (req, res) => {
 
     // Use transaction to create claim and blank items atomically
     const result = await prisma.$transaction(async (tx) => {
+      // Create initial claim with required fields
       const claim = await tx.claim.create({
         data: {
           claimNumber,
@@ -40,12 +44,21 @@ router.post('/', async (req, res) => {
           insuredId,
           creatorId,
           handlerId,
-          totalClaimed: 0,
           totalItems: parseInt(blankItems.toString()),
           localItemIds: [],
           itemOrder: [],
+          // Required fields with initial values
+          totalClaimed: 0,
+          insuredQuotesComplete: 0,
+          insuredProgressPercent: 0,
+          ourQuotesComplete: 0,
+          ourProgressPercent: 0,
+          lastProgressUpdate: new Date(),
         },
       });
+
+      // Recalculate claim values to ensure consistency
+      await recalculateClaimValues(claim.id, tx);
 
       // Create blank items if specified
       const numBlankItems = parseInt(blankItems.toString());
