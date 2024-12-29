@@ -28,8 +28,7 @@ export const SidebarTab = ({
         onClick={(e) => {
           e.preventDefault();
           if (to) {
-            // Use replace instead of push to avoid duplicate history entries
-            navigate(to, { replace: true });
+            navigate(to);
           }
         }}
       >

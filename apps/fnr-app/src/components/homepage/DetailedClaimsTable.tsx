@@ -213,7 +213,7 @@ export const DetailedClaimsTable = ({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    navigate(`/claim/${claim.claimNumber}`, { replace: true });
+                    navigate(`/claim/${claim.claimNumber}`);
                   }}
                 >
                   <TableCell className="p-2 text-right">{claim.id}</TableCell>
