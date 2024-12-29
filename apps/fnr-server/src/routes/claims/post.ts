@@ -317,6 +317,43 @@ router.post('/:claimNumber/view', async (req, res) => {
         throw new Error('Claim not found');
       }
 
+      // Get current count of user's recently viewed claims
+      const viewCount = await tx.recentlyViewedClaim.count({
+        where: {
+          userId,
+          isDeleted: false,
+        },
+      });
+
+      // If at or above limit, delete oldest view(s)
+      if (viewCount >= 50) {
+        const oldestViews = await tx.recentlyViewedClaim.findMany({
+          where: {
+            userId,
+            isDeleted: false,
+          },
+          orderBy: {
+            viewedAt: 'asc',
+          },
+          take: viewCount - 49, // Delete enough to get down to 49 (making room for new one)
+        });
+
+        if (oldestViews.length > 0) {
+          await tx.recentlyViewedClaim.updateMany({
+            where: {
+              id: {
+                in: oldestViews.map((view) => view.id),
+              },
+            },
+            data: {
+              isDeleted: true,
+              deletedAt: new Date(),
+            },
+          });
+        }
+      }
+
+      // Create or update the view
       return tx.recentlyViewedClaim.upsert({
         where: {
           userId_claimId: {
@@ -326,6 +363,8 @@ router.post('/:claimNumber/view', async (req, res) => {
         },
         update: {
           viewedAt: new Date(),
+          isDeleted: false,
+          deletedAt: null,
         },
         create: {
           userId,
