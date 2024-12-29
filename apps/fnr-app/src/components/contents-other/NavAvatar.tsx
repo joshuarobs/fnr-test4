@@ -1,6 +1,7 @@
 import { UserAvatar } from '../app-shell/UserAvatar';
 import { Link } from 'react-router-dom';
 import { getStaffRoute } from '../../routes';
+import { useUser } from '../providers/UserContext';
 
 interface NavAvatarProps {
   userInitials: string;
@@ -8,8 +9,6 @@ interface NavAvatarProps {
   name?: string;
   userId: string;
   department?: string;
-  /** Whether this avatar represents the currently logged in user */
-  isUser?: boolean;
 }
 
 // Navigation avatar component with optional name label
@@ -19,8 +18,9 @@ export const NavAvatar = ({
   name,
   userId,
   department,
-  isUser,
 }: NavAvatarProps) => {
+  const currentUser = useUser();
+  const isCurrentUser = userId === currentUser.employeeId;
   return (
     <Link
       to={getStaffRoute(userId)}
@@ -39,7 +39,7 @@ export const NavAvatar = ({
       </div>
       {name && (
         <span className="text-sm text-muted-foreground group-hover:text-hover-blue">
-          {isUser ? `You (${name})` : name}
+          {isCurrentUser ? `You (${name})` : name}
         </span>
       )}
     </Link>

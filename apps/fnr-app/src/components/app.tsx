@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@react-monorepo/shared';
+import { UserProvider } from './providers/UserContext';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
@@ -57,33 +58,35 @@ export function App() {
   }, []); // Empty dependency array since handleKeyDown uses no props/state
 
   return (
-    <BrowserRouter>
-      <Toaster />
-      <div className="flex flex-col h-screen">
-        <Header
-          onToggleSidebar={handleToggleSidebar}
-          setIsShortcutsOpen={setIsShortcutsOpen}
-          isSidebarExpanded={!isSidebarCollapsed}
-        />
-        <div className="flex flex-1">
-          {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
-          <Routes>
-            <Route path={ROUTES.HOME} element={<HomePage />} />
-            <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
-            <Route path={ROUTES.SETTINGS + '/*'} element={<SettingsPage />} />
-            <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
-            <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
-            <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
-            <Route path={ROUTES.CREATE_CLAIM} element={<CreateClaimPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+    <UserProvider>
+      <BrowserRouter>
+        <Toaster />
+        <div className="flex flex-col h-screen">
+          <Header
+            onToggleSidebar={handleToggleSidebar}
+            setIsShortcutsOpen={setIsShortcutsOpen}
+            isSidebarExpanded={!isSidebarCollapsed}
+          />
+          <div className="flex flex-1">
+            {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
+            <Routes>
+              <Route path={ROUTES.HOME} element={<HomePage />} />
+              <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
+              <Route path={ROUTES.SETTINGS + '/*'} element={<SettingsPage />} />
+              <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
+              <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
+              <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
+              <Route path={ROUTES.CREATE_CLAIM} element={<CreateClaimPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </div>
+          <KeyboardShortcutsPopup
+            isOpen={isShortcutsOpen}
+            onClose={() => setIsShortcutsOpen(false)}
+          />
         </div>
-        <KeyboardShortcutsPopup
-          isOpen={isShortcutsOpen}
-          onClose={() => setIsShortcutsOpen(false)}
-        />
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 
