@@ -5,7 +5,7 @@ import {
   ItemCategory,
 } from '@prisma/client';
 
-export const clm003Items = [
+export const clm006Items = [
   {
     name: 'Laptop',
     category: ItemCategory.ELECTRONICS,

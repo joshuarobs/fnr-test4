@@ -5,7 +5,7 @@ import {
   ItemCategory,
   RoomCategory,
 } from '@prisma/client';
-import { clm003Items } from './clm003Items';
+import { clm006Items } from './clm006Items';
 
 export const claimData = [
   {
@@ -59,7 +59,7 @@ export const claimData = [
     ],
   },
   {
-    claimNumber: 'CLM002',
+    claimNumber: 'CLM005',
     policyNumber: 'POL456',
     description: 'Fire damage in kitchen',
     handlerId: null, // Will be set in seed.ts
@@ -86,14 +86,14 @@ export const claimData = [
     ],
   },
   {
-    claimNumber: 'CLM003',
+    claimNumber: 'CLM006',
     policyNumber: 'POL789',
     description: 'Large household contents claim',
     handlerId: null, // Will be set in seed.ts
-    items: clm003Items,
+    items: clm006Items,
   },
   {
-    claimNumber: 'CLM004',
+    claimNumber: 'CLM007',
     policyNumber: 'POL101',
     description: 'Electronics and appliances claim',
     handlerId: null, // Will be set in seed.ts
@@ -139,7 +139,7 @@ export const claimData = [
     ],
   },
   {
-    claimNumber: 'CLM005',
+    claimNumber: 'CLM008',
     policyNumber: 'POL505',
     description: 'Single item claim',
     items: [
@@ -165,7 +165,7 @@ export const claimData = [
     ],
   },
   {
-    claimNumber: 'CLM006',
+    claimNumber: 'CLM009',
     policyNumber: 'POL606',
     description: 'Living room furniture damage',
     handlerId: null, // Will be set in seed.ts for Robert Wilson
@@ -216,7 +216,7 @@ export const claimData = [
     ],
   },
   {
-    claimNumber: 'CLM007',
+    claimNumber: 'CLM010',
     policyNumber: 'POL707',
     description: 'Kitchen appliances and electronics',
     handlerId: null, // Will be set in seed.ts for Emma Davis

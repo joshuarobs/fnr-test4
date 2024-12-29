@@ -103,20 +103,20 @@ async function main() {
   // Map claim numbers to handlers and insureds
   const handlerMap = {
     CLM001: createdAdmin.id,
-    CLM002: createdStaffMembers[0].id,
-    CLM003: createdStaffMembers[1].id,
-    CLM004: createdStaffMembers[0].id,
-    CLM006: createdStaffMembers[2].id, // Staff member 3 (David Thompson)
-    CLM007: createdStaffMembers[3].id, // Staff member 4 (Lisa Anderson)
+    CLM005: createdStaffMembers[0].id,
+    CLM006: createdStaffMembers[1].id,
+    CLM007: createdStaffMembers[0].id,
+    CLM009: createdStaffMembers[2].id, // Staff member 3 (David Thompson)
+    CLM010: createdStaffMembers[3].id, // Staff member 4 (Lisa Anderson)
   };
 
   const insuredMap = {
     CLM001: insuredUsers[0].id, // John Smith
-    CLM002: insuredUsers[3].id, // Jane Brown
-    CLM003: insuredUsers[1].id, // John Smith
-    CLM004: insuredUsers[2].id, // Jane Brown
-    CLM006: insuredUsers[0].id, // Robert Wilson
-    CLM007: insuredUsers[2].id, // Emma Davis
+    CLM005: insuredUsers[3].id, // Jane Brown
+    CLM006: insuredUsers[1].id, // John Smith
+    CLM007: insuredUsers[2].id, // Jane Brown
+    CLM009: insuredUsers[0].id, // Robert Wilson
+    CLM010: insuredUsers[2].id, // Emma Davis
   };
 
   // Create claims and their items
@@ -199,7 +199,7 @@ async function main() {
   // Add some comments (except for CLM005 which is unassigned)
   const claims = await prisma.claim.findMany({
     where: {
-      claimNumber: { not: 'CLM005' },
+      claimNumber: { not: 'CLM008' },
     },
   });
 
