@@ -6,13 +6,13 @@ import { SidebarTab } from './SidebarTab';
 import { getClaimRoute } from '../../routes';
 
 /**
- * Displays the 3 most recent claims assigned to the current user
+ * Displays the 5 most recent claims assigned to the current user
  */
 const RecentAssignedClaims = () => {
   const user = useUser();
   const { data: claims, isLoading } = useGetAssignedClaimsQuery({
     employeeId: user.employeeId,
-    limit: 3,
+    limit: 5,
   });
 
   if (isLoading) {
