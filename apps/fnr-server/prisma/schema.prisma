@@ -38,6 +38,7 @@ model BaseUser {
   createdClaims Claim[]   @relation("ClaimCreator")
   deletedClaims Claim[]   @relation("ClaimDeleter")
   comments      Comment[]
+  // @limit 50 claims - This limit must be enforced in application logic
   recentlyViewedClaims RecentlyViewedClaim[] @relation("UserRecentViews")
 
   @@index([email])
