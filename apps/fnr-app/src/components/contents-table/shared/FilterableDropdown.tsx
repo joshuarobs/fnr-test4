@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Button,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
   InputClearable,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   ScrollArea,
   Separator,
 } from '@react-monorepo/shared';
@@ -42,56 +46,55 @@ export const FilterableDropdown = <T extends string>({
 }: FilterableDropdownProps<T>) => {
   const [searchText, setSearchText] = useState('');
 
-  const handleInputKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
-  };
-
-  const handleValueSelect = (value: string) => {
-    const newValue = value === noValueOption ? null : (value as T);
-    onValueSelect(newValue);
-  };
-
   const filteredValues = values.filter((value) =>
     getFilterText(value).toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
-    <Select
-      value={selectedValue === null ? noValueOption : selectedValue}
-      onValueChange={handleValueSelect}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
-    >
-      <SelectTrigger className={className}>
-        <SelectValue>{renderTriggerContent(selectedValue)}</SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <div className="p-1">
-          <InputClearable
-            placeholder={filterPlaceholder}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onClear={() => setSearchText('')}
-            className="h-8"
-            onKeyDown={handleInputKeyDown}
-          />
-        </div>
-        <ScrollArea className="h-[200px]">
-          <SelectItem value={noValueOption} className="hover:cursor-pointer">
-            {renderNoValueContent()}
-          </SelectItem>
-          <Separator className="my-2" />
-          {filteredValues.map((value) => (
-            <SelectItem
-              key={value}
-              value={value}
-              className="hover:cursor-pointer"
-            >
-              {renderItemContent(value)}
-            </SelectItem>
-          ))}
-        </ScrollArea>
-      </SelectContent>
-    </Select>
+    <Popover defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" role="combobox" className={className}>
+          {renderTriggerContent(selectedValue)}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0" align="start">
+        <Command>
+          <div className="p-2">
+            <InputClearable
+              placeholder={filterPlaceholder}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onClear={() => setSearchText('')}
+              className="h-8"
+            />
+          </div>
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <ScrollArea className="h-[200px]">
+              <CommandGroup>
+                <CommandItem
+                  value={noValueOption}
+                  onSelect={() => onValueSelect(null)}
+                  className="cursor-pointer"
+                >
+                  {renderNoValueContent()}
+                </CommandItem>
+                <Separator className="my-1" />
+                {filteredValues.map((value) => (
+                  <CommandItem
+                    key={value}
+                    value={value}
+                    onSelect={() => onValueSelect(value)}
+                    className="cursor-pointer"
+                  >
+                    {renderItemContent(value)}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </ScrollArea>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };
