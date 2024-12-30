@@ -143,6 +143,23 @@ router.get('/recent-views', async (req, res) => {
             totalApproved: true,
             createdAt: true,
             updatedAt: true,
+            handler: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                avatarColour: true,
+                email: true,
+                staff: {
+                  select: {
+                    id: true,
+                    employeeId: true,
+                    department: true,
+                    position: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
