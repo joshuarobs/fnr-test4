@@ -13,7 +13,6 @@ import {
   ScrollArea,
   Separator,
 } from '@react-monorepo/shared';
-
 interface FilterableDropdownProps<T> {
   selectedValue: T | null;
   onValueSelect: (value: T | null) => void;
@@ -53,7 +52,11 @@ export const FilterableDropdown = <T extends string>({
   return (
     <Popover defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" className={className}>
+        <Button
+          variant="outline"
+          role="combobox"
+          className={`justify-start ${className || ''}`}
+        >
           {renderTriggerContent(selectedValue)}
         </Button>
       </PopoverTrigger>
@@ -75,7 +78,7 @@ export const FilterableDropdown = <T extends string>({
                 <CommandItem
                   value={noValueOption}
                   onSelect={() => onValueSelect(null)}
-                  className="cursor-pointer"
+                  className="cursor-pointer justify-start"
                 >
                   {renderNoValueContent()}
                 </CommandItem>
@@ -85,7 +88,7 @@ export const FilterableDropdown = <T extends string>({
                     key={value}
                     value={value}
                     onSelect={() => onValueSelect(value)}
-                    className="cursor-pointer"
+                    className="cursor-pointer justify-start"
                   >
                     {renderItemContent(value)}
                   </CommandItem>

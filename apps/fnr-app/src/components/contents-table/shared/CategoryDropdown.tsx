@@ -24,7 +24,11 @@ export const CategoryDropdown = ({
 }: CategoryDropdownProps) => {
   const renderTriggerContent = (category: ItemCategory | null) => {
     if (category === null) {
-      return <div className="text-muted-foreground italic">No category</div>;
+      return (
+        <div className="text-muted-foreground italic font-normal">
+          No category
+        </div>
+      );
     }
     const Icon = categoryIcons[category];
     return (
@@ -46,7 +50,7 @@ export const CategoryDropdown = ({
   };
 
   const renderNoValueContent = () => (
-    <div className="flex items-center gap-2 text-muted-foreground italic">
+    <div className="flex items-center gap-2 text-muted-foreground italic font-normal">
       No category
     </div>
   );

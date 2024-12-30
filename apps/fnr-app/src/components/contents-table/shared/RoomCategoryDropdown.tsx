@@ -25,7 +25,9 @@ export const RoomCategoryDropdown = ({
 }: RoomCategoryDropdownProps) => {
   const renderTriggerContent = (room: RoomCategory | null) => {
     if (room === null) {
-      return <div className="text-muted-foreground italic">No room</div>;
+      return (
+        <div className="text-muted-foreground italic font-normal">No room</div>
+      );
     }
     return <RoomCategoryBadge roomCategory={room} showTooltip={false} />;
   };
@@ -35,7 +37,7 @@ export const RoomCategoryDropdown = ({
   };
 
   const renderNoValueContent = () => (
-    <div className="flex items-center gap-2 text-muted-foreground italic">
+    <div className="flex items-center gap-2 text-muted-foreground italic font-normal">
       No room
     </div>
   );

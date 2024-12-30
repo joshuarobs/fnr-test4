@@ -232,7 +232,7 @@ export function QuickAddTab({
               <div className="flex items-center gap-4">
                 <FormLabel className={labelMinWidthClass}>Room</FormLabel>
                 <FormControl>
-                  <div className="flex-1">
+                  <div className="flex-1 max-w-[200px]">
                     <RoomCategoryDropdown
                       selectedRoom={selectedRoom}
                       onRoomSelect={(room) => {
@@ -261,7 +261,7 @@ export function QuickAddTab({
               <div className="flex items-center gap-4">
                 <FormLabel className={labelMinWidthClass}>Category</FormLabel>
                 <FormControl>
-                  <div className="flex-1">
+                  <div className="flex-1 max-w-[200px]">
                     <CategoryDropdown
                       selectedCategory={selectedCategory}
                       onCategorySelect={(category) => {
