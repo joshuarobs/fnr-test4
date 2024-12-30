@@ -49,8 +49,20 @@ export const FilterableDropdown = <T extends string>({
     getFilterText(value).toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const [open, setOpen] = useState(defaultOpen || false);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    onOpenChange?.(newOpen);
+  };
+
+  const handleSelect = (value: T | null) => {
+    onValueSelect(value);
+    handleOpenChange(false);
+  };
+
   return (
-    <Popover defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -77,20 +89,20 @@ export const FilterableDropdown = <T extends string>({
               <CommandGroup>
                 <CommandItem
                   value={noValueOption}
-                  onSelect={() => onValueSelect(null)}
+                  onSelect={() => handleSelect(null)}
                   className="cursor-pointer justify-start"
                 >
-                  {renderNoValueContent()}
+                  <div className="flex-1">{renderNoValueContent()}</div>
                 </CommandItem>
                 <Separator className="my-1" />
                 {filteredValues.map((value) => (
                   <CommandItem
                     key={value}
                     value={value}
-                    onSelect={() => onValueSelect(value)}
+                    onSelect={() => handleSelect(value)}
                     className="cursor-pointer justify-start"
                   >
-                    {renderItemContent(value)}
+                    <div className="flex-1">{renderItemContent(value)}</div>
                   </CommandItem>
                 ))}
               </CommandGroup>

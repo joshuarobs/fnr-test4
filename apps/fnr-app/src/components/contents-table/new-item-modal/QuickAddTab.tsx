@@ -238,6 +238,7 @@ export function QuickAddTab({
                       onRoomSelect={(room) => {
                         setSelectedRoom(room);
                         field.onChange(room);
+                        setRoomOpen(false);
                       }}
                       onOpenChange={setRoomOpen}
                       className="w-full"
@@ -267,6 +268,7 @@ export function QuickAddTab({
                       onCategorySelect={(category) => {
                         setSelectedCategory(category);
                         field.onChange(category);
+                        setCategoryOpen(false);
                       }}
                       onOpenChange={setCategoryOpen}
                       className="w-full"
