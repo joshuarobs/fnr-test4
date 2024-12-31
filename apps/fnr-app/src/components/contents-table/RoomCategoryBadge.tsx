@@ -124,21 +124,25 @@ export const RoomCategoryBadge = ({
   const categoryDetails: RoomCategoryDetails =
     getRoomCategoryDetails(roomCategory);
 
+  const badge = (
+    <span
+      className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${categoryDetails.bgClass} ${categoryDetails.textClass}`}
+    >
+      {categoryDetails.text}
+    </span>
+  );
+
+  if (!showTooltip) {
+    return badge;
+  }
+
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>
-          <span
-            className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${categoryDetails.bgClass} ${categoryDetails.textClass}`}
-          >
-            {categoryDetails.text}
-          </span>
-        </TooltipTrigger>
-        {showTooltip && (
-          <TooltipContent>
-            <p>{categoryDetails.text}</p>
-          </TooltipContent>
-        )}
+        <TooltipTrigger>{badge}</TooltipTrigger>
+        <TooltipContent>
+          <p>{categoryDetails.text}</p>
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
