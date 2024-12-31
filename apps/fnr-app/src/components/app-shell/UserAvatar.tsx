@@ -51,16 +51,16 @@ export const UserAvatar = ({
   const createAvatarComponent = (avatarSize: 'sm' | 'md' | 'lg') => (
     <Avatar
       className={`${sizeClasses[avatarSize]} ${
-        showHeaderRing || isEmptyUser
-          ? 'ring-1 ring-gray-300 dark:ring-gray-600'
-          : ''
+        showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''
       } ${hoverable ? 'hover:cursor-pointer' : ''} ${
-        isEmptyUser ? 'ring-dashed bg-transparent' : ''
+        isEmptyUser
+          ? 'border border-dashed border-gray-300 dark:border-gray-600 bg-transparent'
+          : ''
       }`}
     >
       {isEmptyUser ? (
         <AvatarFallback className="bg-transparent">
-          <UserRound className="h-5 w-5 text-gray-300 dark:text-gray-600" />
+          <UserRound className="h-5 w-5 text-gray-400 dark:text-gray-500" />
         </AvatarFallback>
       ) : imageUrl ? (
         <AvatarImage src={imageUrl} alt={name || userInitials} />

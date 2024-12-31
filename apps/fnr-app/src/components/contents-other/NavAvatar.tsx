@@ -10,6 +10,7 @@ interface NavAvatarProps {
   userId?: string;
   department?: string;
   disableNavigation?: boolean; // Add prop to control navigation behavior
+  showHeaderRing?: boolean; // Controls header ring visibility
 }
 
 // Navigation avatar component with optional name label
@@ -20,6 +21,7 @@ export const NavAvatar = ({
   userId,
   department,
   disableNavigation,
+  showHeaderRing,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
@@ -35,6 +37,7 @@ export const NavAvatar = ({
           name={name}
           department={department}
           isEmptyUser={isEmptyUser}
+          showHeaderRing={showHeaderRing || !isEmptyUser}
         />
       </div>
       {(name || isEmptyUser) && (
