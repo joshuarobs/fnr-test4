@@ -109,6 +109,7 @@ export const ReassignClaimDialog = ({
             onUserSelect={setSelectedUser}
             users={users}
             showChevron
+            className="min-w-[240px]"
           />
         </div>
         <DialogFooter>
