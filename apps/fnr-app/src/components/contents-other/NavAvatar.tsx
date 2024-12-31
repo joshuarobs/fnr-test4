@@ -26,7 +26,7 @@ export const NavAvatar = ({
 
   const content = (
     <div className="w-fit flex items-center gap-2 cursor-pointer pr-1 group">
-      <div className="border-2 border-border rounded-full">
+      <div className="rounded-full p-0.5">
         <UserAvatar
           size="sm"
           userInitials={userInitials}
@@ -49,5 +49,12 @@ export const NavAvatar = ({
     return content;
   }
 
-  return <Link to={getStaffRoute(userId)}>{content}</Link>;
+  return (
+    <Link
+      className="focus:outline-none focus-visible:ring-0"
+      to={getStaffRoute(userId)}
+    >
+      {content}
+    </Link>
+  );
 };
