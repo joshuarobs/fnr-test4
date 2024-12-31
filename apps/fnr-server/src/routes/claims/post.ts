@@ -390,12 +390,24 @@ router.post('/:claimNumber/reassign', async (req, res) => {
     const { claimNumber } = req.params;
     const { employeeId } = req.body;
 
-    if (!employeeId) {
-      return res.status(400).json({ error: 'Employee ID is required' });
-    }
-
     const result = await prisma.$transaction(async (tx) => {
-      // Find the staff member by employee ID
+      // If employeeId is null, unassign the claim
+      if (!employeeId) {
+        const updatedClaim = await tx.claim.update({
+          where: { claimNumber },
+          data: { handlerId: null },
+          include: {
+            handler: {
+              include: {
+                staff: true,
+              },
+            },
+          },
+        });
+        return updatedClaim;
+      }
+
+      // Otherwise find the staff member and assign them
       const staff = await tx.staff.findUnique({
         where: { employeeId },
         include: { baseUser: true },

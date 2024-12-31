@@ -249,7 +249,7 @@ export const api = createApi({
 
     reassignClaim: builder.mutation<
       { success: boolean; handler: ClaimDetail['handler'] },
-      { claimNumber: string; employeeId: string }
+      { claimNumber: string; employeeId: string | null }
     >({
       query: ({ claimNumber, employeeId }) => ({
         url: `claims/${claimNumber}/reassign`,

@@ -119,11 +119,11 @@ export const ReassignClaimDialog = ({
           </Button>
           <Button
             onClick={async () => {
-              if (!selectedUser || !claimNumber) return;
+              if (!claimNumber) return;
               try {
                 await reassignClaim({
                   claimNumber,
-                  employeeId: selectedUser.id,
+                  employeeId: selectedUser?.id || null,
                 }).unwrap();
                 onOpenChange(false);
                 setSelectedUser(null);
@@ -136,7 +136,8 @@ export const ReassignClaimDialog = ({
                 });
               }
             }}
-            disabled={!selectedUser}
+            // Disable if selected user is the same as current handler
+            disabled={selectedUser?.id === handler?.staff?.employeeId}
           >
             Reassign
           </Button>
