@@ -9,6 +9,7 @@ interface NavAvatarProps {
   name?: string;
   userId: string;
   department?: string;
+  disableNavigation?: boolean; // Add prop to control navigation behavior
 }
 
 // Navigation avatar component with optional name label
@@ -18,14 +19,13 @@ export const NavAvatar = ({
   name,
   userId,
   department,
+  disableNavigation,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId === currentUser.employeeId;
-  return (
-    <Link
-      to={getStaffRoute(userId)}
-      className="w-fit flex items-center gap-2 cursor-pointer pr-1 group"
-    >
+
+  const content = (
+    <div className="w-fit flex items-center gap-2 cursor-pointer pr-1 group">
       <div className="border-2 border-border rounded-full">
         <UserAvatar
           size="sm"
@@ -42,6 +42,12 @@ export const NavAvatar = ({
           {isCurrentUser ? `You (${name})` : name}
         </span>
       )}
-    </Link>
+    </div>
   );
+
+  if (disableNavigation) {
+    return content;
+  }
+
+  return <Link to={getStaffRoute(userId)}>{content}</Link>;
 };

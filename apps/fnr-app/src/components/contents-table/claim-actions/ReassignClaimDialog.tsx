@@ -93,15 +93,15 @@ export const ReassignClaimDialog = ({
               <span className="text-sm text-muted-foreground">Unassigned</span>
             )}
           </div>
-          <div className="space-y-2">
+          <div>
             <Label>Assign to</Label>
-            <UserSearchDropdown
-              selectedUser={selectedUser}
-              onUserSelect={setSelectedUser}
-              users={users}
-              showChevron
-            />
           </div>
+          <UserSearchDropdown
+            selectedUser={selectedUser}
+            onUserSelect={setSelectedUser}
+            users={users}
+            showChevron
+          />
         </div>
         <DialogFooter>
           <Button

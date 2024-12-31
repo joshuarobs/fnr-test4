@@ -52,6 +52,7 @@ export const UserSearchDropdown = ({
         userId={user.id}
         department={user.department}
         color={user.avatarColour}
+        disableNavigation
       />
     );
   };
@@ -65,6 +66,7 @@ export const UserSearchDropdown = ({
         userId={user.id}
         department={user.department}
         color={user.avatarColour}
+        disableNavigation
       />
     );
   };
