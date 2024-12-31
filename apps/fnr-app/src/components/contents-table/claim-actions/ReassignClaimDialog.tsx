@@ -83,19 +83,23 @@ export const ReassignClaimDialog = ({
         <div className="py-2 space-y-4">
           <div className="space-y-2">
             <Label>Currently assigned to</Label>
-            {handler ? (
-              <div className="w-fit">
-                <NavAvatar
-                  userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
-                  color={handler.avatarColour}
-                  name={`${handler.firstName} ${handler.lastName}`}
-                  userId={handler.staff.employeeId}
-                  department={handler.staff.department}
-                />
-              </div>
-            ) : (
-              <span className="text-sm text-muted-foreground">Unassigned</span>
-            )}
+            <div className="w-fit">
+              <NavAvatar
+                userInitials={
+                  handler
+                    ? `${handler.firstName[0]}${handler.lastName[0]}`
+                    : undefined
+                }
+                color={handler?.avatarColour}
+                name={
+                  handler
+                    ? `${handler.firstName} ${handler.lastName}`
+                    : undefined
+                }
+                userId={handler?.staff?.employeeId}
+                department={handler?.staff?.department}
+              />
+            </div>
           </div>
           <div>
             <Label>Assign to</Label>

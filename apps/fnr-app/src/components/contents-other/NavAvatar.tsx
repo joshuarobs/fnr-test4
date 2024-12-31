@@ -11,6 +11,7 @@ interface NavAvatarProps {
   department?: string;
   disableNavigation?: boolean; // Add prop to control navigation behavior
   showHeaderRing?: boolean; // Controls header ring visibility
+  overrideClickFunc?: () => void; // Optional click handler function
 }
 
 // Navigation avatar component with optional name label
@@ -22,13 +23,21 @@ export const NavAvatar = ({
   department,
   disableNavigation,
   showHeaderRing,
+  overrideClickFunc,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
   const isEmptyUser = !userId;
 
   const content = (
-    <div className="w-fit flex items-center gap-2 cursor-pointer pr-1 group">
+    <div
+      onClick={overrideClickFunc}
+      className={`w-fit flex items-center gap-2 cursor-pointer pr-1 group ${
+        isEmptyUser && overrideClickFunc
+          ? 'border border-dashed border-gray-300 dark:border-gray-600 rounded-md p-1 pr-2'
+          : ''
+      }`}
+    >
       <div className="rounded-full p-0.5">
         <UserAvatar
           size="sm"
