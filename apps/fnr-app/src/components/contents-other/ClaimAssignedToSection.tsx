@@ -34,16 +34,12 @@ export const ClaimAssignedToSection = ({
       </div>
 
       {/* Always show full detail view since we only have one user */}
-      {assignedUser ? (
-        <NavAvatar
-          userInitials={assignedUser.userInitials}
-          color={assignedUser.color}
-          name={assignedUser.name}
-          userId={assignedUser.userId}
-        />
-      ) : (
-        <span className="text-sm text-muted-foreground">Not assigned</span>
-      )}
+      <NavAvatar
+        userInitials={assignedUser?.userInitials}
+        color={assignedUser?.color}
+        name={assignedUser?.name}
+        userId={assignedUser?.userId}
+      />
     </div>
   );
 };

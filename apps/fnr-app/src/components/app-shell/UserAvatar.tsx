@@ -1,4 +1,4 @@
-import { Building2, MapPin } from 'lucide-react';
+import { Building2, MapPin, UserRound } from 'lucide-react';
 import fontColorContrast from 'font-color-contrast';
 import {
   HoverCard,
@@ -21,6 +21,7 @@ interface UserAvatarProps {
   size?: 'sm' | 'md' | 'lg';
   color?: string;
   showHeaderRing?: boolean;
+  isEmptyUser?: boolean;
 
   // Behavior
   hoverable?: boolean;
@@ -37,6 +38,7 @@ export const UserAvatar = ({
   hoverable = false,
   location = 'Australia',
   department = 'Claims',
+  isEmptyUser = false,
 }: UserAvatarProps) => {
   // Map size prop to actual dimensions and text sizes
   const sizeClasses = {
@@ -49,10 +51,18 @@ export const UserAvatar = ({
   const createAvatarComponent = (avatarSize: 'sm' | 'md' | 'lg') => (
     <Avatar
       className={`${sizeClasses[avatarSize]} ${
-        showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''
-      } ${hoverable ? 'hover:cursor-pointer' : ''}`}
+        showHeaderRing || isEmptyUser
+          ? 'ring-1 ring-gray-300 dark:ring-gray-600'
+          : ''
+      } ${hoverable ? 'hover:cursor-pointer' : ''} ${
+        isEmptyUser ? 'ring-dashed bg-transparent' : ''
+      }`}
     >
-      {imageUrl ? (
+      {isEmptyUser ? (
+        <AvatarFallback className="bg-transparent">
+          <UserRound className="h-5 w-5 text-gray-300 dark:text-gray-600" />
+        </AvatarFallback>
+      ) : imageUrl ? (
         <AvatarImage src={imageUrl} alt={name || userInitials} />
       ) : (
         <AvatarFallback

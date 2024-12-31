@@ -4,10 +4,10 @@ import { getStaffRoute } from '../../routes';
 import { useUser } from '../providers/UserContext';
 
 interface NavAvatarProps {
-  userInitials: string;
+  userInitials?: string;
   color?: string;
   name?: string;
-  userId: string;
+  userId?: string;
   department?: string;
   disableNavigation?: boolean; // Add prop to control navigation behavior
 }
@@ -22,39 +22,45 @@ export const NavAvatar = ({
   disableNavigation,
 }: NavAvatarProps) => {
   const currentUser = useUser();
-  const isCurrentUser = userId === currentUser.employeeId;
+  const isCurrentUser = userId ? userId === currentUser.employeeId : false;
+  const isEmptyUser = !userId;
 
   const content = (
     <div className="w-fit flex items-center gap-2 cursor-pointer pr-1 group">
       <div className="rounded-full p-0.5">
         <UserAvatar
           size="sm"
-          userInitials={userInitials}
+          userInitials={userInitials || ''}
           color={color}
-          showHeaderRing
-          hoverable
           name={name}
           department={department}
+          isEmptyUser={isEmptyUser}
         />
       </div>
-      {name && (
+      {(name || isEmptyUser) && (
         <span className="text-sm text-muted-foreground group-hover:text-hover-blue">
-          {isCurrentUser ? `You (${name})` : name}
+          {isEmptyUser
+            ? 'No user assigned'
+            : isCurrentUser
+            ? `You (${name})`
+            : name}
         </span>
       )}
     </div>
   );
 
-  if (disableNavigation) {
+  if (disableNavigation || isEmptyUser) {
     return content;
   }
 
-  return (
+  return userId ? (
     <Link
       className="focus:outline-none focus-visible:ring-0"
       to={getStaffRoute(userId)}
     >
       {content}
     </Link>
+  ) : (
+    content
   );
 };
