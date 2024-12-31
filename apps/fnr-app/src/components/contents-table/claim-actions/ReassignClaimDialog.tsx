@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   Label,
+  Separator,
   useToast,
 } from '@react-monorepo/shared';
 import { NavAvatar } from '../../contents-other/NavAvatar';
@@ -74,21 +75,24 @@ export const ReassignClaimDialog = ({
             <ReassignClaimIcon className="h-4 w-4" />
             Re-assign Claim
           </DialogTitle>
+          <Separator className="mt-2" />
           <DialogDescription>
             Change the handler assigned to this claim
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4 space-y-4">
+        <div className="py-2 space-y-4">
           <div className="space-y-2">
             <Label>Currently assigned to</Label>
             {handler ? (
-              <NavAvatar
-                userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
-                color={handler.avatarColour}
-                name={`${handler.firstName} ${handler.lastName}`}
-                userId={handler.staff.employeeId}
-                department={handler.staff.department}
-              />
+              <div className="w-fit">
+                <NavAvatar
+                  userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
+                  color={handler.avatarColour}
+                  name={`${handler.firstName} ${handler.lastName}`}
+                  userId={handler.staff.employeeId}
+                  department={handler.staff.department}
+                />
+              </div>
             ) : (
               <span className="text-sm text-muted-foreground">Unassigned</span>
             )}
