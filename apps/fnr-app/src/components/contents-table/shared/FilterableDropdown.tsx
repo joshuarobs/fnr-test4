@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronsUpDown } from 'lucide-react';
 import {
   Button,
   Command,
@@ -14,6 +15,7 @@ import {
   Separator,
 } from '@react-monorepo/shared';
 interface FilterableDropdownProps<T> {
+  showChevron?: boolean;
   selectedValue: T | null;
   onValueSelect: (value: T | null) => void;
   onOpenChange?: (open: boolean) => void;
@@ -42,6 +44,7 @@ export const FilterableDropdown = <T extends string>({
   renderItemContent,
   renderNoValueContent,
   getFilterText,
+  showChevron = false,
 }: FilterableDropdownProps<T>) => {
   const [searchText, setSearchText] = useState('');
 
@@ -69,7 +72,12 @@ export const FilterableDropdown = <T extends string>({
           role="combobox"
           className={`justify-start ${className || ''}`}
         >
-          {renderTriggerContent(selectedValue)}
+          <div className="flex items-center justify-between w-full">
+            {renderTriggerContent(selectedValue)}
+            {showChevron && (
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            )}
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">

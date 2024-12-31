@@ -7,6 +7,7 @@ import {
 import { FilterableDropdown } from './FilterableDropdown';
 
 interface CategoryDropdownProps {
+  showChevron?: boolean;
   selectedCategory: ItemCategory | null;
   onCategorySelect: (category: ItemCategory | null) => void;
   onOpenChange?: (open: boolean) => void;
@@ -21,6 +22,7 @@ export const CategoryDropdown = ({
   onOpenChange,
   defaultOpen,
   className,
+  showChevron,
 }: CategoryDropdownProps) => {
   const renderTriggerContent = (category: ItemCategory | null) => {
     if (category === null) {
@@ -69,6 +71,7 @@ export const CategoryDropdown = ({
       renderItemContent={renderItemContent}
       renderNoValueContent={renderNoValueContent}
       getFilterText={(category) => itemCategoryDisplayNames[category]}
+      showChevron={showChevron}
     />
   );
 };

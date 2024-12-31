@@ -8,6 +8,7 @@ import { FilterableDropdown } from './FilterableDropdown';
 import { RoomCategoryBadge } from '../RoomCategoryBadge';
 
 interface RoomCategoryDropdownProps {
+  showChevron?: boolean;
   selectedRoom: RoomCategory | null;
   onRoomSelect: (room: RoomCategory | null) => void;
   onOpenChange?: (open: boolean) => void;
@@ -22,6 +23,7 @@ export const RoomCategoryDropdown = ({
   onOpenChange,
   defaultOpen,
   className,
+  showChevron,
 }: RoomCategoryDropdownProps) => {
   const renderTriggerContent = (room: RoomCategory | null) => {
     if (room === null) {
@@ -56,6 +58,7 @@ export const RoomCategoryDropdown = ({
       renderItemContent={renderItemContent}
       renderNoValueContent={renderNoValueContent}
       getFilterText={(room) => roomCategoryDisplayNames[room]}
+      showChevron={showChevron}
     />
   );
 };

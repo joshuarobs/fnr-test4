@@ -242,6 +242,7 @@ export function QuickAddTab({
                       }}
                       onOpenChange={setRoomOpen}
                       className="w-full"
+                      showChevron={true}
                     />
                   </div>
                 </FormControl>
@@ -272,6 +273,7 @@ export function QuickAddTab({
                       }}
                       onOpenChange={setCategoryOpen}
                       className="w-full"
+                      showChevron={true}
                     />
                   </div>
                 </FormControl>
