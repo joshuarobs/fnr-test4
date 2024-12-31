@@ -17,6 +17,7 @@ import {
   useArchiveClaimMutation,
   useRecalculateQuotesMutation,
   useUnarchiveClaimMutation,
+  useGetAllStaffQuery,
 } from '../../../store/services/api';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -51,6 +52,7 @@ export const ClaimHeaderMiscActions = ({
   const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isReassignDialogOpen, setIsReassignDialogOpen] = useState(false);
+  const { data: staff = [] } = useGetAllStaffQuery(20); // Fetch up to 20 staff members
 
   const { toast } = useToast();
 
@@ -154,6 +156,14 @@ export const ClaimHeaderMiscActions = ({
           }
         }}
         handler={handler}
+        claimNumber={claimNumber}
+        users={staff.map((s) => ({
+          id: s.staff.employeeId,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          department: s.staff.department,
+          avatarColour: s.avatarColour || undefined,
+        }))}
       />
     </>
   );

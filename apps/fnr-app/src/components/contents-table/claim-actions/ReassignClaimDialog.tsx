@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useReassignClaimMutation } from '../../../store/services/api';
 import { ReassignClaimIcon } from '../../icons/ReassignClaimIcon';
 import {
   Button,
@@ -8,37 +9,54 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
   Label,
+  useToast,
 } from '@react-monorepo/shared';
 import { NavAvatar } from '../../contents-other/NavAvatar';
+import { UserSearchDropdown } from '../../claims/UserSearchDropdown';
+
+interface Handler {
+  id: number;
+  firstName: string;
+  lastName: string;
+  avatarColour: string;
+  staff: {
+    employeeId: string;
+    department: string;
+    position: string;
+  };
+}
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  department?: string;
+  avatarColour?: string;
+}
 
 interface ReassignClaimDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  handler?: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    avatarColour: string;
-    staff: {
-      employeeId: string;
-      department: string;
-      position: string;
-    };
-  };
+  handler?: Handler;
+  users: User[];
+  claimNumber: string;
 }
 
 /**
  * ReassignClaimDialog - A dialog component for reassigning claims to different handlers
- * Displays current handler and allows input of new handler's staff ID
+ * Displays current handler and allows searching/selecting a new handler
  */
 export const ReassignClaimDialog = ({
   isOpen,
   onOpenChange,
   handler,
+  users,
+  claimNumber,
 }: ReassignClaimDialogProps) => {
-  const [newAssignee, setNewAssignee] = useState('');
+  const { toast } = useToast();
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [reassignClaim] = useReassignClaimMutation();
 
   return (
     <Dialog
@@ -46,7 +64,7 @@ export const ReassignClaimDialog = ({
       onOpenChange={(open) => {
         onOpenChange(open);
         if (!open) {
-          setNewAssignee('');
+          setSelectedUser(null);
         }
       }}
     >
@@ -77,12 +95,11 @@ export const ReassignClaimDialog = ({
           </div>
           <div className="space-y-2">
             <Label>Assign to</Label>
-            <Input
-              placeholder="Enter staff ID"
-              value={newAssignee}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setNewAssignee(e.target.value)
-              }
+            <UserSearchDropdown
+              selectedUser={selectedUser}
+              onUserSelect={setSelectedUser}
+              users={users}
+              showChevron
             />
           </div>
         </div>
@@ -91,17 +108,31 @@ export const ReassignClaimDialog = ({
             variant="outline"
             onClick={() => {
               onOpenChange(false);
-              setNewAssignee('');
+              setSelectedUser(null);
             }}
           >
             Cancel
           </Button>
           <Button
             onClick={async () => {
-              // TODO: Implement reassignment
-              onOpenChange(false);
-              setNewAssignee('');
+              if (!selectedUser || !claimNumber) return;
+              try {
+                await reassignClaim({
+                  claimNumber,
+                  employeeId: selectedUser.id,
+                }).unwrap();
+                onOpenChange(false);
+                setSelectedUser(null);
+              } catch (err) {
+                console.error('Failed to reassign claim:', err);
+                toast({
+                  variant: 'destructive',
+                  title: 'Error',
+                  description: 'Failed to reassign claim. Please try again.',
+                });
+              }
             }}
+            disabled={!selectedUser}
           >
             Reassign
           </Button>

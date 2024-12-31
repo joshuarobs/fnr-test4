@@ -158,6 +158,10 @@ export const api = createApi({
       query: (employeeId) => `staff/${employeeId}`,
       providesTags: ['User'],
     }),
+    getAllStaff: builder.query<StaffDetail[], number | void>({
+      query: (limit = 10) => `staff?limit=${limit}`,
+      providesTags: ['Staff'],
+    }),
     getClaims: builder.query<ClaimOverview[], void>({
       query: () => 'claims?limit=10',
       providesTags: ['Claims'],
@@ -313,4 +317,5 @@ export const {
   useGetStaffQuery,
   useReassignClaimMutation,
   useUpdateUserDetailsMutation,
+  useGetAllStaffQuery,
 } = api;
