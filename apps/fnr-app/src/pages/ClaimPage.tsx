@@ -255,6 +255,14 @@ export const ClaimPage = () => {
               }
             : undefined
         }
+        contributors={
+          claimData?.contributors?.map((contributor) => ({
+            userInitials: `${contributor.firstName[0]}${contributor.lastName[0]}`,
+            name: `${contributor.firstName} ${contributor.lastName}`,
+            userId: contributor.staff.employeeId,
+            color: contributor.avatarColour,
+          })) || []
+        }
       />
     </main>
   );

@@ -12,6 +12,12 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     name: string;
     userId: string;
   };
+  contributors?: {
+    userInitials: string;
+    color?: string;
+    name: string;
+    userId: string;
+  }[];
 }
 
 const SidebarSeparator = () => {
@@ -25,6 +31,7 @@ const SidebarSeparator = () => {
 export const SecondSidebar = ({
   className,
   assignedUser,
+  contributors = [],
 }: SecondSidebarProps) => {
   return (
     <div
@@ -51,29 +58,7 @@ export const SecondSidebar = ({
           {/* Contributors Section */}
           {/* ======================================== */}
           <div className="flex flex-col gap-4">
-            <PartyAvatarSection
-              title="Contributors"
-              avatars={[
-                {
-                  userInitials: 'P1',
-                  color: '#2563EB', // blue-600
-                  name: 'Person 1',
-                  userId: 'P1123',
-                },
-                {
-                  userInitials: 'P2',
-                  color: '#9333EA', // purple-600
-                  name: 'Person 2',
-                  userId: 'P2123',
-                },
-                {
-                  userInitials: 'P3',
-                  color: '#EA580C', // orange-600
-                  name: 'Person 3',
-                  userId: 'P3123',
-                },
-              ]}
-            />
+            <PartyAvatarSection title="Contributors" avatars={contributors} />
             {/* ======================================== */}
             {/* Suppliers Section */}
             {/* ======================================== */}
