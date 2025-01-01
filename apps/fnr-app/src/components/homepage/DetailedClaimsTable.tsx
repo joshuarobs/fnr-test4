@@ -76,8 +76,7 @@ export const DetailedClaimsTable = ({
         accessorFn: (row) => row.handler,
         cell: ({ getValue }) => {
           const handler = getValue() as ClaimOverview['handler'];
-          if (!handler) return null;
-          return (
+          return handler ? (
             <NavAvatar
               userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
               color={handler.avatarColour}
@@ -85,6 +84,8 @@ export const DetailedClaimsTable = ({
               name={`${handler.firstName} ${handler.lastName}`}
               department={handler.staff.department}
             />
+          ) : (
+            <NavAvatar />
           );
         },
       },
@@ -218,7 +219,7 @@ export const DetailedClaimsTable = ({
                 >
                   <TableCell className="p-2 text-right">{claim.id}</TableCell>
                   <TableCell>
-                    {claim.handler && (
+                    {claim.handler ? (
                       <NavAvatar
                         userInitials={`${claim.handler.firstName[0]}${claim.handler.lastName[0]}`}
                         color={claim.handler.avatarColour}
@@ -226,6 +227,8 @@ export const DetailedClaimsTable = ({
                         name={`${claim.handler.firstName} ${claim.handler.lastName}`}
                         department={claim.handler.staff.department}
                       />
+                    ) : (
+                      <NavAvatar />
                     )}
                   </TableCell>
                   <TableCell>{claim.claimNumber}</TableCell>
