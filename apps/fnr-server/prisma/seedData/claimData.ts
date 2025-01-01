@@ -7,12 +7,22 @@ import {
 } from '@prisma/client';
 import { clm006Items } from './clm006Items';
 
-export const claimData = [
+export interface ClaimSeedData {
+  claimNumber: string;
+  policyNumber: string;
+  description: string;
+  handlerId?: string | null;
+  items: any[];
+  contributorIds?: number[]; // Array of BaseUser IDs
+}
+
+export const claimData: ClaimSeedData[] = [
   {
     claimNumber: 'CLM002',
     policyNumber: 'POL202',
     description: 'Single electronics item claim',
     handlerId: null, // Will be set in seed.ts
+    contributorIds: [], // Will be set to handler + David Thompson
     items: [
       {
         name: 'Smart Watch',
@@ -170,6 +180,7 @@ export const claimData = [
     policyNumber: 'POL789',
     description: 'Large household contents claim',
     handlerId: null, // Will be set in seed.ts
+    contributorIds: [], // Will be set to handler + Lisa Anderson
     items: clm006Items,
   },
   {
@@ -177,6 +188,7 @@ export const claimData = [
     policyNumber: 'POL101',
     description: 'Electronics and appliances claim',
     handlerId: null, // Will be set in seed.ts
+    contributorIds: [], // Will be set to handler + Mike Williams
     items: [
       {
         name: 'Television',
@@ -249,6 +261,7 @@ export const claimData = [
     policyNumber: 'POL606',
     description: 'Living room furniture damage',
     handlerId: null, // Will be set in seed.ts for Robert Wilson
+    contributorIds: [], // Will be set to handler + admin + Sarah Johnson + Mike Williams
     items: [
       {
         name: 'Leather Sofa',

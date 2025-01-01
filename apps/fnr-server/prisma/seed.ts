@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { admin, staffMembers, suppliers, insureds } from './seedData/userData';
 import { claimData } from './seedData/claimData';
 import { recalculateClaimValues } from '../src/lib/claimHelpers';
+import { seedContributors } from './seedData/seedContributors';
 
 const prisma = new PrismaClient();
 
@@ -203,6 +204,15 @@ async function main() {
         localItemIds: itemIds,
       },
     });
+
+    // Add contributors
+    await seedContributors(
+      prisma,
+      createdClaim,
+      handlerId,
+      createdAdmin,
+      createdStaffMembers
+    );
   }
 
   // Add some comments (except for CLM005 which is unassigned)
