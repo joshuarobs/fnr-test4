@@ -246,22 +246,25 @@ export const ClaimPage = () => {
       </div>
       <SecondSidebar
         assignedUser={
-          claimData?.handler
-            ? {
-                userInitials: `${claimData.handler.firstName[0]}${claimData.handler.lastName[0]}`,
-                name: `${claimData.handler.firstName} ${claimData.handler.lastName}`,
-                userId: claimData.handler.staff.employeeId,
-                color: claimData.handler.avatarColour,
-              }
-            : undefined
+          claimData?.handler && {
+            userInitials: `${claimData.handler.firstName[0]}${claimData.handler.lastName[0]}`,
+            name: `${claimData.handler.firstName} ${claimData.handler.lastName}`,
+            userId:
+              claimData.handler.staff?.employeeId ||
+              `user-${claimData.handler.id}`,
+            color: claimData.handler.avatarColour,
+          }
         }
         contributors={
-          claimData?.contributors?.map((contributor) => ({
-            userInitials: `${contributor.firstName[0]}${contributor.lastName[0]}`,
-            name: `${contributor.firstName} ${contributor.lastName}`,
-            userId: contributor.staff.employeeId,
-            color: contributor.avatarColour,
-          })) || []
+          claimData?.contributors?.map((contributor) => {
+            const { user } = contributor;
+            return {
+              userInitials: `${user.firstName[0]}${user.lastName[0]}`,
+              name: `${user.firstName} ${user.lastName}`,
+              userId: user.staff?.employeeId || `user-${user.id}`,
+              color: user.avatarColour,
+            };
+          }) || []
         }
       />
     </main>

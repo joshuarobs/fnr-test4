@@ -97,9 +97,12 @@ async function main() {
     })
   );
 
-  // Get created insured users
+  // Get created insured users with their BaseUser IDs
   const insuredUsers = await prisma.insured.findMany({
     orderBy: { id: 'asc' },
+    include: {
+      baseUser: true,
+    },
   });
 
   // Map claim numbers to handlers and insureds
@@ -116,6 +119,11 @@ async function main() {
     CLM011: createdAdmin.id,
   };
 
+  // Create a map of BaseUser IDs to Insured IDs
+  const baseUserToInsuredMap = new Map(
+    insuredUsers.map((insured) => [insured.baseUser.id, insured.id])
+  );
+
   const insuredMap = {
     CLM001: insuredUsers[0].id, // John Smith
     CLM002: insuredUsers[1].id, // Another insured
@@ -126,7 +134,7 @@ async function main() {
     CLM007: insuredUsers[2].id, // Jane Brown
     CLM009: insuredUsers[0].id, // Robert Wilson
     CLM010: insuredUsers[2].id, // Emma Davis
-    CLM011: createdAdmin.id, // Admin
+    CLM011: baseUserToInsuredMap.get(createdAdmin.id) || insuredUsers[0].id, // Admin or default to first insured
   };
 
   // Create claims and their items

@@ -203,17 +203,21 @@ router.get('/:claimNumber', async (req, res) => {
         },
         contributors: {
           select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            avatarColour: true,
-            staff: {
+            user: {
               select: {
                 id: true,
-                employeeId: true,
-                department: true,
-                position: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                avatarColour: true,
+                staff: {
+                  select: {
+                    id: true,
+                    employeeId: true,
+                    department: true,
+                    position: true,
+                  },
+                },
               },
             },
           },

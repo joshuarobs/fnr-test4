@@ -40,7 +40,7 @@ model BaseUser {
   comments      Comment[]
   // @limit 50 claims - This limit must be enforced in application logic
   recentlyViewedClaims RecentlyViewedClaim[] @relation("UserRecentViews")
-  contributedClaims Claim[] // Claims this user has contributed to
+  contributedClaims ClaimContributor[]
 
   @@index([email])
   @@index([isDeleted])
@@ -132,7 +132,7 @@ model Claim {
   deleteReason  String?     @map("delete_reason")
   
   // Track users who have contributed to this claim
-  contributors BaseUser[] // Users who have contributed to this claim
+  contributors ClaimContributor[]
 
   // Progress tracking fields
   totalItems Int @default(0)
@@ -151,6 +151,20 @@ model Claim {
   @@index([isDeleted])
   @@index([status, isDeleted])
   @@index([insuredId, status])
+}
+
+/// Join table for claim contributors with unique constraint
+model ClaimContributor {
+  id        Int      @id @default(autoincrement())
+  claimId   Int
+  claim     Claim    @relation(fields: [claimId], references: [id])
+  userId    Int
+  user      BaseUser @relation(fields: [userId], references: [id])
+  addedAt   DateTime @default(now())
+
+  @@unique([claimId, userId])
+  @@index([claimId])
+  @@index([userId])
 }
 
 enum ClaimStatus {

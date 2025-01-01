@@ -33,16 +33,18 @@ interface ClaimDetail {
     };
   };
   contributors: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    avatarColour: string;
-    staff: {
+    user: {
       id: number;
-      employeeId: string;
-      department: string;
-      position: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      avatarColour: string;
+      staff?: {
+        id: number;
+        employeeId: string;
+        department: string;
+        position: string;
+      };
     };
   }[];
 }
