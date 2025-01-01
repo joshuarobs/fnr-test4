@@ -21,6 +21,7 @@ interface FilterableDropdownProps<T> {
   onOpenChange?: (open: boolean) => void;
   defaultOpen?: boolean;
   className?: string;
+  dropdownWidth?: string; // Width of the dropdown popup
   values: T[];
   noValueOption: string;
   filterPlaceholder?: string;
@@ -45,6 +46,7 @@ export const FilterableDropdown = <T extends string>({
   renderNoValueContent,
   getFilterText,
   showChevron = false,
+  dropdownWidth = 'w-[200px]',
 }: FilterableDropdownProps<T>) => {
   const [searchText, setSearchText] = useState('');
 
@@ -80,7 +82,7 @@ export const FilterableDropdown = <T extends string>({
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="start">
+      <PopoverContent className={`${dropdownWidth} p-0`} align="start">
         <Command>
           <div className="p-2">
             <InputClearable

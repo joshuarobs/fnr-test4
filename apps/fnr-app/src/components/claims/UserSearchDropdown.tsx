@@ -17,6 +17,7 @@ interface UserSearchDropdownProps {
   onOpenChange?: (open: boolean) => void;
   defaultOpen?: boolean;
   className?: string;
+  dropdownWidth?: string;
   users: User[];
 }
 
@@ -29,6 +30,7 @@ export const UserSearchDropdown = ({
   className,
   showChevron,
   users,
+  dropdownWidth,
 }: UserSearchDropdownProps) => {
   // Create a mapping of user IDs to user objects for quick lookup
   const userMap = useMemo(
@@ -95,6 +97,7 @@ export const UserSearchDropdown = ({
         return `${user.firstName} ${user.lastName}`;
       }}
       showChevron={showChevron}
+      dropdownWidth={dropdownWidth}
     />
   );
 };

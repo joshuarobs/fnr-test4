@@ -80,7 +80,7 @@ export const ReassignClaimDialog = ({
             Change the handler assigned to this claim
           </DialogDescription>
         </DialogHeader>
-        <div className="py-2 space-y-4">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label>Currently assigned to</Label>
             <div className="w-fit">
@@ -101,16 +101,19 @@ export const ReassignClaimDialog = ({
               />
             </div>
           </div>
-          <div>
+          <div className="space-y-2">
             <Label>Assign to</Label>
+            <div>
+              <UserSearchDropdown
+                selectedUser={selectedUser}
+                onUserSelect={setSelectedUser}
+                users={users}
+                showChevron
+                className="min-w-[240px] min-h-[48px]"
+                dropdownWidth="w-[240px]"
+              />
+            </div>
           </div>
-          <UserSearchDropdown
-            selectedUser={selectedUser}
-            onUserSelect={setSelectedUser}
-            users={users}
-            showChevron
-            className="min-w-[240px]"
-          />
         </div>
         <DialogFooter>
           <Button
