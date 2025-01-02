@@ -1,5 +1,13 @@
 export const ROUTES = {
-  ADMIN_PORTAL: '/admin/portal',
+  // Admin routes
+  ADMIN_PORTAL: '/admin',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_CUSTOMERS: '/admin/customers',
+  ADMIN_SUPPLIERS: '/admin/suppliers',
+  ADMIN_ANALYTICS: '/admin/analytics',
+  ADMIN_SETTINGS: '/admin/settings',
+
+  // Auth routes
   LOGIN: '/login',
   SIGN_UP: '/signup',
   HOME: '/',

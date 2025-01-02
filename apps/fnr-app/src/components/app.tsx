@@ -19,6 +19,11 @@ import { CreateClaimPage } from '../pages/CreateClaimPage';
 import { StaffProfilePage } from '../pages/StaffProfilePage';
 import { HistoryPage } from '../pages/HistoryPage';
 import { AdminPortalPage } from '../pages/AdminPortalPage';
+import { AdminUsersPage } from '../pages/AdminUsersPage';
+import { AdminCustomersPage } from '../pages/AdminCustomersPage';
+import { AdminSuppliersPage } from '../pages/AdminSuppliersPage';
+import { AdminAnalyticsPage } from '../pages/AdminAnalyticsPage';
+import { AdminSettingsPage } from '../pages/AdminSettingsPage';
 import { ROUTES } from '../routes';
 import KeyboardShortcutsPopup from './ui/KeyboardShortcutsPopup';
 
@@ -107,9 +112,30 @@ const AppContent = () => {
                     path={ROUTES.CREATE_CLAIM}
                     element={<CreateClaimPage />}
                   />
+                  {/* Admin routes */}
                   <Route
                     path={ROUTES.ADMIN_PORTAL}
                     element={<AdminPortalPage />}
+                  />
+                  <Route
+                    path={ROUTES.ADMIN_USERS}
+                    element={<AdminUsersPage />}
+                  />
+                  <Route
+                    path={ROUTES.ADMIN_CUSTOMERS}
+                    element={<AdminCustomersPage />}
+                  />
+                  <Route
+                    path={ROUTES.ADMIN_SUPPLIERS}
+                    element={<AdminSuppliersPage />}
+                  />
+                  <Route
+                    path={ROUTES.ADMIN_ANALYTICS}
+                    element={<AdminAnalyticsPage />}
+                  />
+                  <Route
+                    path={ROUTES.ADMIN_SETTINGS}
+                    element={<AdminSettingsPage />}
                   />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
