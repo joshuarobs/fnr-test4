@@ -53,6 +53,25 @@ interface Message {
   message: string;
 }
 
+// Sign up request interface
+interface SignUpRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  phone?: string;
+  role: 'STAFF' | 'ADMIN' | 'SUPPLIER' | 'INSURED';
+}
+
+interface SignUpResponse {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
 interface StaffDetail {
   email: string;
   firstName: string;
@@ -155,6 +174,13 @@ export const api = createApi({
     'Staff',
   ],
   endpoints: (builder) => ({
+    signUp: builder.mutation<SignUpResponse, SignUpRequest>({
+      query: (credentials) => ({
+        url: 'auth/signup',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
     updateUserDetails: builder.mutation<
       StaffDetail,
       UpdateUserDetailsRequest & { employeeId: string }
@@ -317,6 +343,7 @@ export const api = createApi({
 });
 
 export const {
+  useSignUpMutation,
   useGetMessageQuery,
   useGetClaimsQuery,
   useGetClaimQuery,

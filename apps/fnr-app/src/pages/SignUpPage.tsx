@@ -1,5 +1,5 @@
 import { GalleryVerticalEnd } from 'lucide-react';
-import { SignUpForm } from '../components/auth/SignUpForm';
+import { StaffSignupForm } from '../components/auth/StaffSignupForm';
 
 // Sign up page component with branding and form
 export const SignUpPage = () => {
@@ -10,9 +10,9 @@ export const SignUpPage = () => {
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GalleryVerticalEnd className="size-4" />
           </div>
-          Insurance Inc.
+          Staff Portal
         </a>
-        <SignUpForm />
+        <StaffSignupForm />
       </div>
     </div>
   );

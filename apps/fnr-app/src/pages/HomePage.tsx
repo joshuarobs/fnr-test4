@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, useToast } from '@react-monorepo/shared';
+import { ROUTES } from '../routes';
 import { DetailedClaimsTable } from '../components/homepage/DetailedClaimsTable';
 import { useGetClaimsQuery } from '../store/services/api';
 import { TestTableUXStuff } from '../components/contents-table/TestTableUXStuff';
@@ -34,6 +35,12 @@ export const HomePage = () => {
         </Button>
         <Button onClick={() => navigate(`/404`)} variant="outline">
           Go to 404 page
+        </Button>
+        <Button onClick={() => navigate(ROUTES.LOGIN)} variant="outline">
+          Login
+        </Button>
+        <Button onClick={() => navigate(ROUTES.SIGN_UP)} variant="outline">
+          Sign Up
         </Button>
         <Button
           onClick={() =>
