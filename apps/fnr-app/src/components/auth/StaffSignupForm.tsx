@@ -26,13 +26,7 @@ const POSITIONS = ['Agent', 'Team Leader', 'QA'] as const;
 // Form validation schema
 const staffSignUpSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-    ),
+  password: z.string().min(1, 'Password is required'),
   firstName: z.string().min(1, 'First name is required'),
   middleName: z.string().optional(),
   lastName: z.string().min(1, 'Last name is required'),
@@ -179,7 +173,7 @@ export const StaffSignupForm = () => {
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full min-w-[200px]">
+                    <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
                       {DEPARTMENTS.map((dept) => (
                         <DropdownMenuItem
                           key={dept}
@@ -216,7 +210,7 @@ export const StaffSignupForm = () => {
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full min-w-[200px]">
+                    <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
                       {POSITIONS.map((pos) => (
                         <DropdownMenuItem
                           key={pos}
@@ -234,7 +228,7 @@ export const StaffSignupForm = () => {
             )}
           />
 
-          <Button type="submit" className="mt-2" disabled={isLoading}>
+          <Button type="submit" className="mt-6" disabled={isLoading}>
             {isLoading ? 'Creating account...' : 'Create staff account'}
           </Button>
         </form>
