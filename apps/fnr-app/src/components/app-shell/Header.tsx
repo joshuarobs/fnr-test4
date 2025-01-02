@@ -1,4 +1,6 @@
 import React from 'react';
+import { useIsAdminRoute } from '../../hooks/useIsAdminRoute';
+import { HeaderClaimPortalButton } from './HeaderClaimPortalButton';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 import { Button } from '@react-monorepo/shared';
 import { HeaderCreateNew } from './HeaderCreateNew';
@@ -44,7 +46,11 @@ export const Header = ({
       />
 
       <div className="ml-auto flex items-center gap-3 mr-3">
-        <HeaderAdminButton />
+        {useIsAdminRoute() ? (
+          <HeaderClaimPortalButton />
+        ) : (
+          <HeaderAdminButton />
+        )}
         <HeaderThemeButton />
         <HeaderHelpButton onOpenShortcuts={() => setIsShortcutsOpen(true)} />
         <HeaderCreateNew />

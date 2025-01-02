@@ -12,6 +12,7 @@ import {
 import { HeaderButton } from './HeaderButton';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getClaimRoute } from '../../routes';
+import { useIsAdminRoute } from '../../hooks/useIsAdminRoute';
 
 // Props to control positioning from Header component
 interface HeaderClaimButtonProps {
@@ -24,6 +25,7 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const isAdminRoute = useIsAdminRoute();
 
   // Extract claim ID from URL if we're on a claim page
   const currentClaimId = location.pathname.match(/^\/claim\/([^/]+)/)?.[1];
@@ -89,6 +91,11 @@ export const HeaderClaimButton = ({ style }: HeaderClaimButtonProps) => {
       setIsOpen(false); // Close dropdown after navigation
     }
   };
+
+  // Don't render the button in admin routes
+  if (isAdminRoute) {
+    return null;
+  }
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
