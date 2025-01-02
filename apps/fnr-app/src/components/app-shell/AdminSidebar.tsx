@@ -2,6 +2,7 @@ import React from 'react';
 import { cn } from '../../../../../shared/src/lib/utils';
 import { SidebarTab } from './SidebarTab';
 import { Separator } from '@react-monorepo/shared';
+import { HeaderPortalToggleButton } from './HeaderPortalToggleButton';
 import {
   DashboardIcon,
   PersonIcon,
@@ -26,6 +27,13 @@ export const AdminSidebar = ({ className }: AdminSidebarProps) => {
     <div className={cn('pb-12 w-[224px] min-w-[224px] border-r', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
+          {/* ======================================== */}
+          {/* Portal Toggle */}
+          {/* ======================================== */}
+          <div className="mb-4">
+            <HeaderPortalToggleButton fullWidth />
+          </div>
+
           {/* Main tabs */}
           <div>
             <SidebarTab

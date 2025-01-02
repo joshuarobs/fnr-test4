@@ -6,6 +6,7 @@ import { Separator } from '@react-monorepo/shared';
 import { ROUTES, getClaimRoute } from '../../routes';
 import { useGetRecentlyViewedClaimsQuery } from '../../store/services/api';
 import { RecentAssignedClaims } from './RecentAssignedClaims';
+import { HeaderPortalToggleButton } from './HeaderPortalToggleButton';
 
 import {
   HomeIcon,
@@ -59,6 +60,13 @@ export const Sidebar = ({ className }: SidebarProps) => {
     <div className={cn('pb-12 w-[224px] min-w-[224px] border-r', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
+          {/* ======================================== */}
+          {/* Portal Toggle */}
+          {/* ======================================== */}
+          <div className="mb-4">
+            <HeaderPortalToggleButton fullWidth />
+          </div>
+
           {/* Main tabs */}
           <div>
             <SidebarTab icon={<HomeIcon />} label="Homepage" to={ROUTES.HOME} />

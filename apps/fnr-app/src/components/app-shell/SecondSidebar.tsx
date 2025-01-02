@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../../../../../shared/src/lib/utils';
 import { Separator } from '@react-monorepo/shared';
+import { HeaderPortalToggleButton } from './HeaderPortalToggleButton';
 import { LatestActivitiesContainer } from '../second-sidebar/LatestActivitiesContainer';
 import { PartyAvatarSection } from '../contents-other/PartyAvatarSection';
 import { ClaimAssignedToSection } from '../contents-other/ClaimAssignedToSection';
