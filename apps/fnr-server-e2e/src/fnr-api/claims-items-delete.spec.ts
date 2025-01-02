@@ -1,63 +1,37 @@
-import { expect, test } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { jest } from '@jest/globals';
 
-// Mock data store
-let mockItems = [];
-let mockClaims = [];
-let mockEvidence = [];
-
+// Mock prisma with proper typing
 const prisma = {
+  $transaction: jest.fn(),
   evidence: {
-    deleteMany: jest.fn().mockImplementation(() => {
-      mockEvidence = [];
-      return Promise.resolve({ count: 0 });
-    }),
+    deleteMany: jest.fn(() => Promise.resolve({ count: 0 })),
   },
   item: {
-    delete: jest.fn().mockImplementation((data) => {
-      const itemId = data.where.id;
-      const itemIndex = mockItems.findIndex((i) => i.id === itemId);
-      if (itemIndex === -1) return Promise.reject(new Error('Item not found'));
-      const deletedItem = mockItems.splice(itemIndex, 1)[0];
-      return Promise.resolve(deletedItem);
-    }),
-    update: jest.fn().mockImplementation((data) => {
-      const itemId = data.where.id;
-      const itemIndex = mockItems.findIndex((i) => i.id === itemId);
-      if (itemIndex === -1) return Promise.reject(new Error('Item not found'));
-      mockItems[itemIndex] = { ...mockItems[itemIndex], ...data.data };
-      return Promise.resolve(mockItems[itemIndex]);
-    }),
-    findUnique: jest.fn().mockImplementation((query) => {
-      const item = mockItems.find((i) => i.id === query.where.id);
-      return Promise.resolve(item || null);
-    }),
+    delete: jest.fn(() => Promise.resolve({ id: 1, name: 'Test Item' })),
+    update: jest.fn(() =>
+      Promise.resolve({
+        id: 1,
+        name: 'Test Item',
+        isDeleted: true,
+        deletedAt: new Date(),
+      })
+    ),
+    findUnique: jest.fn(() =>
+      Promise.resolve({ id: 1, name: 'Test Item', claimId: 1 })
+    ),
   },
   claim: {
-    findUnique: jest.fn().mockImplementation((query) => {
-      const claim = mockClaims.find(
-        (c) => c.claimNumber === query.where.claimNumber
-      );
-      if (!claim) return Promise.resolve(null);
-
-      if (query.include?.items) {
-        const items = mockItems.filter((i) => i.claimId === claim.id);
-        return Promise.resolve({ ...claim, items });
-      }
-
-      return Promise.resolve(claim);
-    }),
-    update: jest.fn().mockImplementation((data) => {
-      const claimId = data.where.id;
-      const claimIndex = mockClaims.findIndex((c) => c.id === claimId);
-      if (claimIndex === -1)
-        return Promise.reject(new Error('Claim not found'));
-      mockClaims[claimIndex] = { ...mockClaims[claimIndex], ...data.data };
-      return Promise.resolve(mockClaims[claimIndex]);
-    }),
+    findUnique: jest.fn(() =>
+      Promise.resolve({
+        id: 1,
+        claimNumber: 'TEST-DELETE-001',
+        items: [{ id: 1, name: 'Test Item' }],
+      })
+    ),
   },
 } as unknown as PrismaClient;
 
@@ -144,87 +118,98 @@ mockRouter.delete('/:claimNumber/items/:itemId', async (req, res) => {
 
 describe('Claims Items Delete API', () => {
   let app: express.Application;
-  let testClaimNumber: string;
-  let testItemId: number;
 
   beforeEach(() => {
     app = express();
     app.use(express.json());
     app.use('/api/claims', mockRouter);
     jest.clearAllMocks();
-
-    // Reset mock data
-    mockItems = [];
-    mockClaims = [];
-    mockEvidence = [];
-
-    // Set up test data
-    const claim = {
-      id: 1,
-      claimNumber: 'TEST-DELETE-001',
-      localItemIds: [1],
-      itemOrder: [1],
-    };
-    mockClaims.push(claim);
-
-    const item = {
-      id: 1,
-      claimId: claim.id,
-      name: 'Test Item',
-      quantity: 1,
-    };
-    mockItems.push(item);
-
-    testClaimNumber = claim.claimNumber;
-    testItemId = item.id;
   });
 
-  test('should soft delete an item', async () => {
-    const response = await request(app)
-      .post(`/api/claims/${testClaimNumber}/items/${testItemId}/soft-delete`)
-      .expect(200);
+  describe('POST /api/claims/:claimNumber/items/:itemId/soft-delete', () => {
+    it('should soft delete an item', async () => {
+      const response = await request(app)
+        .post('/api/claims/TEST-DELETE-001/items/1/soft-delete')
+        .expect(200);
 
-    expect(response.body.success).toBe(true);
-    expect(response.body.message).toBe('Item soft deleted');
-
-    // Verify the item is soft deleted
-    const item = await prisma.item.findUnique({
-      where: { id: testItemId },
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('Item soft deleted');
+      expect(prisma.item.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: expect.objectContaining({
+          isDeleted: true,
+          deletedAt: expect.any(Date),
+        }),
+      });
     });
 
-    expect(item?.isDeleted).toBe(true);
-    expect(item?.deletedAt).toBeTruthy();
-  });
+    it('should return 404 for non-existent claim', async () => {
+      (prisma.claim.findUnique as jest.Mock).mockImplementationOnce(() =>
+        Promise.resolve(null)
+      );
 
-  test('should hard delete an item', async () => {
-    const response = await request(app)
-      .delete(`/api/claims/${testClaimNumber}/items/${testItemId}`)
-      .expect(200);
+      const response = await request(app)
+        .post('/api/claims/NONEXISTENT/items/1/soft-delete')
+        .expect(404);
 
-    expect(response.body.success).toBe(true);
-    expect(response.body.message).toBe('Item permanently deleted');
-
-    // Verify the item is completely deleted
-    const item = await prisma.item.findUnique({
-      where: { id: testItemId },
+      expect(response.body.error).toBe('Claim not found');
     });
 
-    expect(item).toBeNull();
+    it('should return 404 for non-existent item', async () => {
+      (prisma.item.findUnique as jest.Mock).mockImplementationOnce(() =>
+        Promise.resolve(null)
+      );
+
+      const response = await request(app)
+        .post('/api/claims/TEST-DELETE-001/items/999/soft-delete')
+        .expect(404);
+
+      expect(response.body.error).toBe('Item not found in claim');
+    });
   });
 
-  test('should return 404 for non-existent claim', async () => {
-    const response = await request(app)
-      .post(`/api/claims/NONEXISTENT/items/1/soft-delete`)
-      .expect(404);
+  describe('DELETE /api/claims/:claimNumber/items/:itemId', () => {
+    it('should hard delete an item', async () => {
+      const response = await request(app)
+        .delete('/api/claims/TEST-DELETE-001/items/1')
+        .expect(200);
 
-    expect(response.body.error).toBe('Claim not found');
-  });
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('Item permanently deleted');
+      expect(prisma.evidence.deleteMany).toHaveBeenCalledWith({
+        where: { itemId: 1 },
+      });
+      expect(prisma.item.delete).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
+    });
 
-  test('should return 404 for non-existent item', async () => {
-    const response = await request(app)
-      .post(`/api/claims/${testClaimNumber}/items/999999/soft-delete`)
-      .expect(404);
+    it('should return 404 for non-existent claim', async () => {
+      (prisma.claim.findUnique as jest.Mock).mockImplementationOnce(() =>
+        Promise.resolve(null)
+      );
 
-    expect(response.body.error).toBe('Item not found in claim');
+      const response = await request(app)
+        .delete('/api/claims/NONEXISTENT/items/1')
+        .expect(404);
+
+      expect(response.body.error).toBe('Claim not found');
+    });
+
+    it('should return 404 for non-existent item', async () => {
+      (prisma.claim.findUnique as jest.Mock).mockImplementationOnce(() =>
+        Promise.resolve({
+          id: 1,
+          claimNumber: 'TEST-DELETE-001',
+          items: [],
+        })
+      );
+
+      const response = await request(app)
+        .delete('/api/claims/TEST-DELETE-001/items/999')
+        .expect(404);
+
+      expect(response.body.error).toBe('Item not found in claim');
+    });
   });
 });
