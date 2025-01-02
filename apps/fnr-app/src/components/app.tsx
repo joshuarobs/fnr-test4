@@ -7,6 +7,7 @@ import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
+import { SignUpPage } from '../pages/SignUpPage';
 import { AssignedPage } from '../pages/AssignedPage';
 import { SettingsPage } from '../pages/SettingsPage';
 import { FeedbackPage } from '../pages/FeedbackPage';
@@ -65,6 +66,7 @@ export function App() {
         <Toaster />
         <Routes>
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
           <Route
             path="*"
             element={

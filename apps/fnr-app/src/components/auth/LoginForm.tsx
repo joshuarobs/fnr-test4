@@ -8,6 +8,8 @@ import {
   Input,
   Label,
 } from '@react-monorepo/shared';
+import { NavLink } from 'react-router-dom';
+import { ROUTES } from '../../routes';
 
 // Login form component with social login options and email/password fields
 export const LoginForm = ({
@@ -50,11 +52,16 @@ export const LoginForm = ({
                   Login
                 </Button>
               </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{' '}
-                <a href="#" className="underline underline-offset-4">
-                  Sign up
-                </a>
+              <div className="flex justify-center">
+                <NavLink
+                  to={ROUTES.SIGN_UP}
+                  className="inline-flex px-2 py-1 text-sm hover:text-primary"
+                >
+                  Don't have an account?
+                  <span className="ml-1 underline underline-offset-4">
+                    Sign up
+                  </span>
+                </NavLink>
               </div>
             </div>
           </form>
