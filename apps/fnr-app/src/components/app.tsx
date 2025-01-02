@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from '@react-monorepo/shared';
 import { UserProvider } from './providers/UserContext';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
+import { AdminSidebar } from './app-shell/AdminSidebar';
+import { useIsAdminRoute } from '../hooks/useIsAdminRoute';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { SignUpPage } from '../pages/SignUpPage';
@@ -20,9 +22,12 @@ import { AdminPortalPage } from '../pages/AdminPortalPage';
 import { ROUTES } from '../routes';
 import KeyboardShortcutsPopup from './ui/KeyboardShortcutsPopup';
 
-export function App() {
+// Inner component that has access to router context
+const AppContent = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   const handleToggleSidebar = () => {
     setIsSidebarCollapsed((prev) => !prev);
@@ -62,56 +67,71 @@ export function App() {
   }, []); // Empty dependency array since handleKeyDown uses no props/state
 
   return (
+    <>
+      <Toaster />
+      <Routes>
+        <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+        <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
+        <Route
+          path="*"
+          element={
+            <div
+              className="flex flex-col h-screen"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Header
+                onToggleSidebar={handleToggleSidebar}
+                setIsShortcutsOpen={setIsShortcutsOpen}
+                isSidebarExpanded={!isSidebarCollapsed}
+              />
+              <div className="flex flex-1">
+                {isAdminRoute ? (
+                  <AdminSidebar />
+                ) : isSidebarCollapsed ? (
+                  <ThinSidebar />
+                ) : (
+                  <Sidebar />
+                )}
+                <Routes>
+                  <Route path={ROUTES.HOME} element={<HomePage />} />
+                  <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
+                  <Route
+                    path={ROUTES.SETTINGS + '/*'}
+                    element={<SettingsPage />}
+                  />
+                  <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
+                  <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
+                  <Route path={ROUTES.HISTORY} element={<HistoryPage />} />
+                  <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
+                  <Route
+                    path={ROUTES.CREATE_CLAIM}
+                    element={<CreateClaimPage />}
+                  />
+                  <Route
+                    path={ROUTES.ADMIN_PORTAL}
+                    element={<AdminPortalPage />}
+                  />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </div>
+              <KeyboardShortcutsPopup
+                isOpen={isShortcutsOpen}
+                onClose={() => setIsShortcutsOpen(false)}
+              />
+            </div>
+          }
+        />
+      </Routes>
+    </>
+  );
+};
+
+// Wrapper component that provides router context
+export function App() {
+  return (
     <UserProvider>
       <BrowserRouter>
-        <Toaster />
-        <Routes>
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-          <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
-          <Route
-            path="*"
-            element={
-              <div
-                className="flex flex-col h-screen"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Header
-                  onToggleSidebar={handleToggleSidebar}
-                  setIsShortcutsOpen={setIsShortcutsOpen}
-                  isSidebarExpanded={!isSidebarCollapsed}
-                />
-                <div className="flex flex-1">
-                  {isSidebarCollapsed ? <ThinSidebar /> : <Sidebar />}
-                  <Routes>
-                    <Route path={ROUTES.HOME} element={<HomePage />} />
-                    <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
-                    <Route
-                      path={ROUTES.SETTINGS + '/*'}
-                      element={<SettingsPage />}
-                    />
-                    <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
-                    <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
-                    <Route path={ROUTES.HISTORY} element={<HistoryPage />} />
-                    <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
-                    <Route
-                      path={ROUTES.CREATE_CLAIM}
-                      element={<CreateClaimPage />}
-                    />
-                    <Route
-                      path={ROUTES.ADMIN_PORTAL}
-                      element={<AdminPortalPage />}
-                    />
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Routes>
-                </div>
-                <KeyboardShortcutsPopup
-                  isOpen={isShortcutsOpen}
-                  onClose={() => setIsShortcutsOpen(false)}
-                />
-              </div>
-            }
-          />
-        </Routes>
+        <AppContent />
       </BrowserRouter>
     </UserProvider>
   );
