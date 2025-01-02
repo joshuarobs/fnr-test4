@@ -60,8 +60,8 @@ export const ClaimsThisMonthChart = () => {
         <CardDescription>By Department</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square">
-          <PieChart>
+        <ChartContainer config={chartConfig} className="mx-auto max-h-[200px]">
+          <PieChart width={500} height={200}>
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}

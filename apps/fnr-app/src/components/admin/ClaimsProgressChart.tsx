@@ -54,10 +54,12 @@ export const ClaimsProgressChart = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="max-h-[200px]">
           <AreaChart
             accessibilityLayer
             data={chartData}
+            width={500}
+            height={200}
             margin={{
               left: 12,
               right: 12,
