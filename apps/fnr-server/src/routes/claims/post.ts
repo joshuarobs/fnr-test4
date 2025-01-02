@@ -87,6 +87,14 @@ router.post('/', async (req, res) => {
         });
       }
 
+      // Add creator as first contributor
+      await tx.claimContributor.create({
+        data: {
+          claimId: claim.id,
+          userId: creatorId,
+        },
+      });
+
       return claim;
     });
 
@@ -186,6 +194,16 @@ router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
         },
       });
 
+      // Add user as contributor when they add an item
+      // TODO: Get actual user ID from auth
+      const userId = 1;
+      await tx.claimContributor.create({
+        data: {
+          claimId: claim.id,
+          userId,
+        },
+      });
+
       return newItem;
     });
 
@@ -282,6 +300,16 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
       await tx.claim.update({
         where: { id: claim.id },
         data: values,
+      });
+
+      // Add user as contributor when they update an item
+      // TODO: Get actual user ID from auth
+      const userId = 1;
+      await tx.claimContributor.create({
+        data: {
+          claimId: claim.id,
+          userId,
+        },
       });
 
       return updatedItem;
@@ -427,6 +455,16 @@ router.post('/:claimNumber/reassign', async (req, res) => {
               staff: true,
             },
           },
+        },
+      });
+
+      // Add user as contributor when they reassign a claim
+      // TODO: Get actual user ID from auth
+      const userId = 1;
+      await tx.claimContributor.create({
+        data: {
+          claimId: result.id,
+          userId,
         },
       });
 

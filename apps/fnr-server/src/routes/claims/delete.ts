@@ -38,6 +38,16 @@ router.post('/:claimNumber/items/:itemId/soft-delete', async (req, res) => {
         },
       });
 
+      // Add user as contributor when they soft delete an item
+      // TODO: Get actual user ID from auth
+      const userId = 1;
+      await tx.claimContributor.create({
+        data: {
+          claimId: claim.id,
+          userId,
+        },
+      });
+
       return { success: true, message: 'Item soft deleted' };
     });
 
@@ -79,12 +89,17 @@ router.delete('/:claimNumber/items/:itemId', async (req, res) => {
         throw new Error('Item not found in claim');
       }
 
+      // Delete any associated evidence first
+      await tx.evidence.deleteMany({
+        where: { itemId: parseInt(itemId) },
+      });
+
       // Hard delete the item
       await tx.item.delete({
         where: { id: parseInt(itemId) },
       });
 
-      // Update claim's localItemIds and itemOrder arrays
+      // Update claim's arrays and recalculate values
       await tx.claim.update({
         where: { id: claim.id },
         data: {
@@ -97,13 +112,17 @@ router.delete('/:claimNumber/items/:itemId', async (req, res) => {
         },
       });
 
-      // Recalculate claim values
-      const values = calculateClaimValues(claim.items);
+      // Recalculate claim values using the helper function
+      await recalculateClaimValues(claim.id, tx);
 
-      // Update claim with calculated values
-      await tx.claim.update({
-        where: { id: claim.id },
-        data: values,
+      // Add user as contributor when they hard delete an item
+      // TODO: Get actual user ID from auth
+      const userId = 1;
+      await tx.claimContributor.create({
+        data: {
+          claimId: claim.id,
+          userId,
+        },
       });
 
       return { success: true, message: 'Item permanently deleted' };
@@ -142,17 +161,29 @@ router.post('/:claimNumber/archive', async (req, res) => {
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    const updatedClaim = await prisma.claim.update({
-      where: { claimNumber },
-      data: {
-        isDeleted: true,
-        deletedAt: new Date(),
-        deletedBy: parsedUserId,
-        deleteReason: reason,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedClaim = await tx.claim.update({
+        where: { claimNumber },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
+          deletedBy: parsedUserId,
+          deleteReason: reason,
+        },
+      });
+
+      // Add user as contributor when they archive a claim
+      await tx.claimContributor.create({
+        data: {
+          claimId: updatedClaim.id,
+          userId: parsedUserId,
+        },
+      });
+
+      return updatedClaim;
     });
 
-    res.json({ success: true, message: 'Claim archived', claim: updatedClaim });
+    res.json({ success: true, message: 'Claim archived', claim: result });
   } catch (error) {
     console.error('Error archiving claim:', error);
     res.status(500).json({ error: 'Failed to archive claim' });
@@ -179,20 +210,32 @@ router.post('/:claimNumber/unarchive', async (req, res) => {
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    const updatedClaim = await prisma.claim.update({
-      where: { claimNumber },
-      data: {
-        isDeleted: false,
-        deletedAt: null,
-        deletedBy: null,
-        deleteReason: null,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedClaim = await tx.claim.update({
+        where: { claimNumber },
+        data: {
+          isDeleted: false,
+          deletedAt: null,
+          deletedBy: null,
+          deleteReason: null,
+        },
+      });
+
+      // Add user as contributor when they unarchive a claim
+      await tx.claimContributor.create({
+        data: {
+          claimId: updatedClaim.id,
+          userId: parsedUserId,
+        },
+      });
+
+      return updatedClaim;
     });
 
     res.json({
       success: true,
       message: 'Claim unarchived',
-      claim: updatedClaim,
+      claim: result,
     });
   } catch (error) {
     console.error('Error unarchiving claim:', error);
