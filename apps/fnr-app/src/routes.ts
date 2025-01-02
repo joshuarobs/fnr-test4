@@ -1,4 +1,5 @@
 export const ROUTES = {
+  ADMIN_PORTAL: '/admin/portal',
   LOGIN: '/login',
   SIGN_UP: '/signup',
   HOME: '/',

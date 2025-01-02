@@ -7,6 +7,7 @@ import { HeaderProfileButton } from './HeaderProfileButton';
 import { HeaderHelpButton } from './HeaderHelpButton';
 import { HeaderThemeButton } from './HeaderThemeButton';
 import { HeaderClaimButton } from './HeaderClaimButton';
+import { HeaderAdminButton } from './HeaderAdminButton';
 import { SIDEBAR_WIDTHS } from '../../constants/layout-constants';
 
 interface HeaderProps {
@@ -43,6 +44,7 @@ export const Header = ({
       />
 
       <div className="ml-auto flex items-center gap-3 mr-3">
+        <HeaderAdminButton />
         <HeaderThemeButton />
         <HeaderHelpButton onOpenShortcuts={() => setIsShortcutsOpen(true)} />
         <HeaderCreateNew />

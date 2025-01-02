@@ -16,6 +16,7 @@ import { ClaimPage } from '../pages/ClaimPage';
 import { CreateClaimPage } from '../pages/CreateClaimPage';
 import { StaffProfilePage } from '../pages/StaffProfilePage';
 import { HistoryPage } from '../pages/HistoryPage';
+import { AdminPortalPage } from '../pages/AdminPortalPage';
 import { ROUTES } from '../routes';
 import KeyboardShortcutsPopup from './ui/KeyboardShortcutsPopup';
 
@@ -95,6 +96,10 @@ export function App() {
                     <Route
                       path={ROUTES.CREATE_CLAIM}
                       element={<CreateClaimPage />}
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_PORTAL}
+                      element={<AdminPortalPage />}
                     />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
