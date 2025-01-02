@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
-import { calculateClaimValues } from '../../lib/claimHelpers';
+import { recalculateClaimValues } from '../../lib/claimHelpers';
 
 const router: Router = express.Router();
 
