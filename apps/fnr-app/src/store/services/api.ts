@@ -172,6 +172,11 @@ export interface User {
   lastLogin: string | null;
   createdAt: string;
   avatarColour?: string;
+  staff?: {
+    employeeId: string;
+  };
+  handledClaims: any[];
+  contributedClaims: any[];
 }
 
 export const api = createApi({

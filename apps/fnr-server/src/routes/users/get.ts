@@ -21,6 +21,23 @@ router.get('/staff', async (req, res) => {
         lastLogin: true,
         createdAt: true,
         avatarColour: true,
+        staff: {
+          select: {
+            employeeId: true,
+          },
+        },
+        handledClaims: {
+          where: {
+            isDeleted: false,
+          },
+        },
+        contributedClaims: {
+          where: {
+            claim: {
+              isDeleted: false,
+            },
+          },
+        },
       },
       orderBy: {
         id: 'asc',

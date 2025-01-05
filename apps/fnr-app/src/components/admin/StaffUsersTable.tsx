@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import {
   Table,
@@ -44,12 +45,20 @@ interface StaffUsersTableProps {
  * StaffUsersTable component that shows staff user information in a paginated table format
  */
 export const StaffUsersTable = ({ users = [] }: StaffUsersTableProps) => {
+  const navigate = useNavigate();
+  const tableCellClass = 'px-4';
+
   const columns = React.useMemo<ColumnDef<User>[]>(
     () => [
       {
         id: 'id',
         header: 'ID',
         accessorFn: (row) => row.id,
+      },
+      {
+        id: 'employeeId',
+        header: 'Employee ID',
+        accessorFn: (row) => row.staff?.employeeId || '-',
       },
       {
         id: 'user',
@@ -107,6 +116,16 @@ export const StaffUsersTable = ({ users = [] }: StaffUsersTableProps) => {
         },
       },
       {
+        id: 'handledClaims',
+        header: 'Handled Claims',
+        accessorFn: (row) => row.handledClaims?.length || 0,
+      },
+      {
+        id: 'contributedClaims',
+        header: 'Contributed Claims',
+        accessorFn: (row) => row.contributedClaims?.length || 0,
+      },
+      {
         id: 'createdAt',
         header: 'Created',
         accessorFn: (row) => row.createdAt,
@@ -141,59 +160,92 @@ export const StaffUsersTable = ({ users = [] }: StaffUsersTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-right">ID</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Login</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead className={`text-right ${tableCellClass}`}>
+                ID
+              </TableHead>
+              <TableHead className={`text-right ${tableCellClass}`}>
+                Employee ID
+              </TableHead>
+              <TableHead className={tableCellClass}>User</TableHead>
+              <TableHead className={tableCellClass}>Email</TableHead>
+              <TableHead className={tableCellClass}>Role</TableHead>
+              <TableHead className={tableCellClass}>Status</TableHead>
+              <TableHead className={tableCellClass}>Last Login</TableHead>
+              <TableHead className={`text-right ${tableCellClass}`}>
+                Handled Claims
+              </TableHead>
+              <TableHead className={`text-right ${tableCellClass}`}>
+                Contributed Claims
+              </TableHead>
+              <TableHead className={tableCellClass}>Created</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.map((row) => (
               <TableRow
                 key={row.original.id}
-                className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group"
               >
-                <TableCell className="text-right">{row.original.id}</TableCell>
-                <TableCell>
-                  <NavAvatar
-                    userInitials={`${row.original.firstName[0]}${row.original.lastName[0]}`}
-                    color={row.original.avatarColour}
-                    name={`${row.original.firstName} ${row.original.lastName}`}
-                    userId={row.original.id.toString()}
-                  />
-                </TableCell>
-                <TableCell>{row.original.email}</TableCell>
-                <TableCell>
-                  <span className="rounded-full px-2 py-1 text-xs font-medium capitalize bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
-                    {row.original.role.toLowerCase()}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs font-medium ${
-                      row.original.isActive
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                    }`}
-                  >
-                    {row.original.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {row.original.lastLogin
-                    ? formatDistanceToNow(new Date(row.original.lastLogin), {
-                        addSuffix: true,
-                      })
-                    : 'Never'}
-                </TableCell>
-                <TableCell>
-                  {formatDistanceToNow(new Date(row.original.createdAt), {
-                    addSuffix: true,
-                  })}
-                </TableCell>
+                <a
+                  href={`/staff/${row.original.staff?.employeeId}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/staff/${row.original.staff?.employeeId}`);
+                  }}
+                  className="contents"
+                >
+                  <TableCell className={`text-right ${tableCellClass}`}>
+                    {row.original.id}
+                  </TableCell>
+                  <TableCell className={`text-right ${tableCellClass}`}>
+                    {row.original.staff?.employeeId || '-'}
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    <NavAvatar
+                      userInitials={`${row.original.firstName[0]}${row.original.lastName[0]}`}
+                      color={row.original.avatarColour}
+                      name={`${row.original.firstName} ${row.original.lastName}`}
+                      userId={row.original.id.toString()}
+                    />
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    {row.original.email}
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    <span className="rounded-full px-2 py-1 text-xs font-medium capitalize bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                      {row.original.role.toLowerCase()}
+                    </span>
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${
+                        row.original.isActive
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                      }`}
+                    >
+                      {row.original.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    {row.original.lastLogin
+                      ? formatDistanceToNow(new Date(row.original.lastLogin), {
+                          addSuffix: true,
+                        })
+                      : 'Never'}
+                  </TableCell>
+                  <TableCell className={`text-right ${tableCellClass}`}>
+                    {row.original.handledClaims?.length || 0}
+                  </TableCell>
+                  <TableCell className={`text-right ${tableCellClass}`}>
+                    {row.original.contributedClaims?.length || 0}
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    {formatDistanceToNow(new Date(row.original.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </TableCell>
+                </a>
               </TableRow>
             ))}
           </TableBody>
