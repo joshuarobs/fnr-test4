@@ -17,13 +17,15 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from '@react-monorepo/shared';
 
 // Sample data - replace with actual data from API
 const chartData = [
-  { department: 'bau', claims: 275, fill: 'hsl(var(--chart-1))' },
+  { department: 'bau', claims: 173, fill: 'hsl(var(--chart-1))' },
   { department: 'storm', claims: 200, fill: 'hsl(var(--chart-2))' },
-  { department: 'motor', claims: 287, fill: 'hsl(var(--chart-3))' },
+  { department: 'motor', claims: 48, fill: 'hsl(var(--chart-3))' },
 ];
 
 const chartConfig = {
@@ -60,8 +62,8 @@ export const ClaimsThisMonthChart = () => {
         <CardDescription>By Department</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig} className="mx-auto max-h-[200px]">
-          <PieChart width={500} height={200}>
+        <ChartContainer config={chartConfig} className="mx-auto max-h-[250px]">
+          <PieChart width={500} height={300}>
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
@@ -103,6 +105,10 @@ export const ClaimsThisMonthChart = () => {
                 }}
               />
             </Pie>
+            <ChartLegend
+              content={<ChartLegendContent nameKey="department" />}
+              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+            />
           </PieChart>
         </ChartContainer>
       </CardContent>
