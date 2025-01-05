@@ -150,7 +150,7 @@ interface RecalculateResponse {
   totalApproved: number;
   insuredProgressPercent: number;
   ourProgressPercent: number;
-  lastProgressUpdate: string; // Added this field
+  lastProgressUpdate: string;
 }
 
 // Add the interface for update user details request
@@ -159,6 +159,19 @@ export interface UpdateUserDetailsRequest {
   lastName: string;
   department: string;
   avatarColour: string;
+}
+
+// User interface for the users table
+export interface User {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: 'STAFF' | 'ADMIN' | 'SUPPLIER' | 'INSURED';
+  isActive: boolean;
+  lastLogin: string | null;
+  createdAt: string;
+  avatarColour?: string;
 }
 
 export const api = createApi({
@@ -172,6 +185,7 @@ export const api = createApi({
     'ArchivedClaims',
     'User',
     'Staff',
+    'Users',
   ],
   endpoints: (builder) => ({
     signUp: builder.mutation<SignUpResponse, SignUpRequest>({
@@ -275,7 +289,6 @@ export const api = createApi({
       }),
       invalidatesTags: ['Claims', 'Claim', 'ArchivedClaims'],
     }),
-
     unarchiveClaim: builder.mutation<
       { success: boolean; message: string },
       { claimNumber: string; userId: number }
@@ -287,7 +300,6 @@ export const api = createApi({
       }),
       invalidatesTags: ['Claims', 'Claim', 'ArchivedClaims'],
     }),
-
     reassignClaim: builder.mutation<
       { success: boolean; handler: ClaimDetail['handler'] },
       { claimNumber: string; employeeId: string | null }
@@ -299,17 +311,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Claim', 'Claims'],
     }),
-
     recalculateQuotes: builder.mutation<RecalculateResponse, string>({
       query: (claimNumber) => ({
         url: `claims/${claimNumber}/recalculate`,
         method: 'POST',
       }),
-      // Optimistically update both the claims list and individual claim
       async onQueryStarted(claimNumber, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          // Update the claims list
           dispatch(
             api.util.updateQueryData('getClaims', undefined, (draft) => {
               const claim = draft.find((c) => c.claimNumber === claimNumber);
@@ -322,8 +331,6 @@ export const api = createApi({
               }
             })
           );
-
-          // Update the individual claim view
           dispatch(
             api.util.updateQueryData('getClaim', claimNumber, (draft) => {
               draft.totalClaimed = data.totalClaimed;
@@ -334,10 +341,13 @@ export const api = createApi({
             })
           );
         } catch {
-          // If the mutation fails, the cache will remain unchanged
           console.error('Failed to recalculate quotes');
         }
       },
+    }),
+    getUsers: builder.query<User[], void>({
+      query: () => 'users',
+      providesTags: ['Users'],
     }),
   }),
 });
@@ -360,4 +370,5 @@ export const {
   useReassignClaimMutation,
   useUpdateUserDetailsMutation,
   useGetAllStaffQuery,
+  useGetUsersQuery,
 } = api;

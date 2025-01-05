@@ -3,6 +3,36 @@ import prisma from '../../lib/prisma';
 
 const router: Router = express.Router();
 
+// GET /api/users - Get all users
+router.get('/', async (req, res) => {
+  try {
+    const users = await prisma.baseUser.findMany({
+      where: {
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        isActive: true,
+        lastLogin: true,
+        createdAt: true,
+        avatarColour: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 // GET /api/users/:id
 router.get('/:id', async (req, res) => {
   try {
