@@ -1,10 +1,10 @@
 import React from 'react';
-import { UsersTable } from '../components/admin/UsersTable';
-import { useGetUsersQuery } from '../store/services/api';
+import { StaffUsersTable } from '../components/admin/StaffUsersTable';
+import { useGetStaffUsersQuery } from '../store/services/api';
 
 // Admin Users Page - Displays user management interface
 export const AdminUsersPage = () => {
-  const { data: users, isLoading } = useGetUsersQuery();
+  const { data: staffUsers, isLoading } = useGetStaffUsersQuery();
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -16,7 +16,7 @@ export const AdminUsersPage = () => {
           <p className="text-muted-foreground">Loading users...</p>
         </div>
       ) : (
-        <UsersTable users={users} />
+        <StaffUsersTable users={staffUsers} />
       )}
     </div>
   );

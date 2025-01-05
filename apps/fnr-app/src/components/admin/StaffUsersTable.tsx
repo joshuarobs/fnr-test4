@@ -30,42 +30,26 @@ import {
 } from '@radix-ui/react-icons';
 
 // Define the User type based on what we need from BaseUser
-interface User {
-  id: number;
-  stringId: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: 'STAFF' | 'ADMIN' | 'SUPPLIER' | 'INSURED';
-  isActive: boolean;
-  lastLogin: string | null;
-  createdAt: string;
-  avatarColour?: string;
-}
+import { User } from '../../store/services/api';
 
 /**
- * UsersTable displays a paginated table of all users with their details
+ * StaffUsersTable displays a paginated table of staff users with their details
  * including role, status, and activity information
  */
-interface UsersTableProps {
+interface StaffUsersTableProps {
   users?: User[];
 }
 
 /**
- * UsersTable component that shows user information in a paginated table format
+ * StaffUsersTable component that shows staff user information in a paginated table format
  */
-export const UsersTable = ({ users = [] }: UsersTableProps) => {
+export const StaffUsersTable = ({ users = [] }: StaffUsersTableProps) => {
   const columns = React.useMemo<ColumnDef<User>[]>(
     () => [
       {
         id: 'id',
         header: 'ID',
         accessorFn: (row) => row.id,
-      },
-      {
-        id: 'stringId',
-        header: 'String ID',
-        accessorFn: (row) => row.stringId,
       },
       {
         id: 'user',
@@ -158,7 +142,6 @@ export const UsersTable = ({ users = [] }: UsersTableProps) => {
           <TableHeader>
             <TableRow>
               <TableHead className="text-right">ID</TableHead>
-              <TableHead>String ID</TableHead>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
@@ -174,7 +157,6 @@ export const UsersTable = ({ users = [] }: UsersTableProps) => {
                 className="hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 <TableCell className="text-right">{row.original.id}</TableCell>
-                <TableCell>{row.original.stringId}</TableCell>
                 <TableCell>
                   <NavAvatar
                     userInitials={`${row.original.firstName[0]}${row.original.lastName[0]}`}

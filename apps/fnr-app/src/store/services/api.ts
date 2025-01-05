@@ -349,10 +349,15 @@ export const api = createApi({
       query: () => 'users',
       providesTags: ['Users'],
     }),
+    getStaffUsers: builder.query<User[], void>({
+      query: () => 'users/staff',
+      providesTags: ['Users'],
+    }),
   }),
 });
 
 export const {
+  useGetStaffUsersQuery,
   useSignUpMutation,
   useGetMessageQuery,
   useGetClaimsQuery,
