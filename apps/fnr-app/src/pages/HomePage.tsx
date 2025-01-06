@@ -30,9 +30,6 @@ export const HomePage = () => {
         Welcome to the Claims Management System
       </h1>
       <div className="flex gap-4">
-        <Button onClick={() => navigate(`/claim/NRA245279610`)}>
-          Go to Claim NRA245279610
-        </Button>
         <Button onClick={() => navigate(`/404`)} variant="outline">
           Go to 404 page
         </Button>

@@ -3,8 +3,15 @@ import { Button } from '@react-monorepo/shared';
 
 // Test fill fields button component
 interface TestFillFieldsButtonProps {
-  agents: string[];
+  agents: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    department?: string;
+    avatarColour?: string;
+  }[];
   form: any; // Using any for brevity, but you could define proper form type
+  onUserSelect: (user: any) => void;
 }
 
 // List of insurance claim scenarios involving damaged or lost contents
@@ -24,6 +31,7 @@ const CLAIM_SCENARIOS = [
 export const TestFillFieldsButton = ({
   agents,
   form,
+  onUserSelect,
 }: TestFillFieldsButtonProps) => {
   return (
     <Button
@@ -38,7 +46,9 @@ export const TestFillFieldsButton = ({
         const randomPolicyNumber = `POL${Math.floor(
           Math.random() * 900000 + 100000
         )}`;
+        // Randomly select an agent
         const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+        onUserSelect(randomAgent); // Update the selected user in the dropdown
         // Get random scenario from the list
         const randomDescription =
           CLAIM_SCENARIOS[Math.floor(Math.random() * CLAIM_SCENARIOS.length)];
@@ -67,6 +77,7 @@ export const TestFillFieldsButton = ({
           shouldValidate: true,
         });
         form.setValue('assignedAgent', randomAgent, {
+          // Pass the full user object
           shouldDirty: true,
           shouldValidate: true,
         });

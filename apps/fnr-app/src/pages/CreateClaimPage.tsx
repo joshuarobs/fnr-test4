@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TestFillFieldsButton } from '../components/test-utils/TestFillFieldsButton';
 import { useForm } from 'react-hook-form';
 import { getClaimRoute } from '../routes';
@@ -9,23 +9,38 @@ import {
   Button,
   Separator,
   InputClearable,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  Skeleton,
 } from '@react-monorepo/shared';
+import { UserSearchDropdown } from '../components/claims/UserSearchDropdown';
+import { useGetStaffUsersQuery } from '../store/services/api';
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  department?: string;
+  avatarColour?: string;
+}
 
 // Form schema
 const formSchema = z.object({
   claimNumber: z.string().min(1, 'Claim number is required'),
   policyNumber: z.string().optional(),
-  assignedAgent: z.string().min(1, 'Please select an agent'),
+  assignedAgent: z
+    .object({
+      id: z.string(),
+      firstName: z.string(),
+      lastName: z.string(),
+      department: z.string().optional(),
+      avatarColour: z.string().optional(),
+    })
+    .nullable(),
   description: z.string().optional(),
   incidentDate: z.string().optional(),
   blankItems: z.string().refine(
@@ -46,7 +61,7 @@ type FormValues = z.infer<typeof formSchema>;
 const DEFAULT_VALUES: FormValues = {
   claimNumber: '',
   policyNumber: '',
-  assignedAgent: '',
+  assignedAgent: null,
   description: '',
   incidentDate: new Date().toISOString().split('T')[0], // Today's date as default
   blankItems: '',
@@ -54,8 +69,18 @@ const DEFAULT_VALUES: FormValues = {
 
 // Page component for creating a new claim
 export const CreateClaimPage = () => {
-  // Mock agents data - replace with actual data source
-  const agents = ['John Smith', 'Jane Doe', 'Mike Johnson'];
+  const { data: staffUsers, isLoading, error } = useGetStaffUsersQuery();
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  // Transform staff users to match UserSearchDropdown interface
+  const users =
+    staffUsers?.map((user) => ({
+      id: user.staff?.employeeId || String(user.id),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      department: user.staff?.employeeId ? undefined : 'Staff',
+      avatarColour: user.avatarColour || undefined,
+    })) || [];
 
   // Form setup
   const form = useForm<FormValues>({
@@ -129,26 +154,23 @@ export const CreateClaimPage = () => {
                   <FormLabel>Agent assigned to *</FormLabel>
                   <FormControl>
                     <div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-[200px] justify-start"
-                          >
-                            {field.value || 'Select an agent'}
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-[200px]">
-                          {agents.map((agent) => (
-                            <DropdownMenuItem
-                              key={agent}
-                              onClick={() => field.onChange(agent)}
-                            >
-                              {agent}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      {isLoading ? (
+                        <Skeleton className="h-[48px] w-[240px]" />
+                      ) : error ? (
+                        <div className="text-red-500">Error loading users</div>
+                      ) : (
+                        <UserSearchDropdown
+                          selectedUser={selectedUser}
+                          onUserSelect={(user) => {
+                            setSelectedUser(user);
+                            field.onChange(user);
+                          }}
+                          users={users}
+                          showChevron
+                          className="min-w-[240px] min-h-[48px]"
+                          dropdownWidth="w-[240px]"
+                        />
+                      )}
                     </div>
                   </FormControl>
                   {form.formState.errors.assignedAgent && (
@@ -300,7 +322,11 @@ export const CreateClaimPage = () => {
               Clear fields
             </Button>
             <div className="flex gap-2">
-              <TestFillFieldsButton agents={agents} form={form} />
+              <TestFillFieldsButton
+                agents={users}
+                form={form}
+                onUserSelect={setSelectedUser}
+              />
               <Button
                 type="submit"
                 disabled={!form.formState.isDirty || !form.formState.isValid}
