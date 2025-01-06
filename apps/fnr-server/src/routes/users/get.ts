@@ -3,6 +3,48 @@ import prisma from '../../lib/prisma';
 
 const router: Router = express.Router();
 
+// GET /api/users/customers - Get all customer users
+router.get('/customers', async (req, res) => {
+  try {
+    const customers = await prisma.baseUser.findMany({
+      where: {
+        isDeleted: false,
+        role: 'INSURED',
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        role: true,
+        isActive: true,
+        lastLogin: true,
+        createdAt: true,
+        avatarColour: true,
+        insured: {
+          select: {
+            address: true,
+            claims: {
+              where: {
+                isDeleted: false,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    res.json(customers);
+  } catch (error) {
+    console.error('Error fetching customers:', error);
+    res.status(500).json({ error: 'Failed to fetch customers' });
+  }
+});
+
 // GET /api/users/staff - Get all staff users
 router.get('/staff', async (req, res) => {
   try {

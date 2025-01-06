@@ -359,6 +359,10 @@ export const api = createApi({
       query: () => 'users/staff',
       providesTags: ['Users'],
     }),
+    getCustomers: builder.query<User[], void>({
+      query: () => 'users/customers',
+      providesTags: ['Users'],
+    }),
     getSuppliers: builder.query<Supplier[], void>({
       query: () => 'suppliers',
       providesTags: ['Suppliers'],
@@ -403,4 +407,5 @@ export const {
   useGetAllStaffQuery,
   useGetUsersQuery,
   useGetSuppliersQuery,
+  useGetCustomersQuery,
 } = api;
