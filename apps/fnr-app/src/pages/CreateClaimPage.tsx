@@ -98,6 +98,7 @@ export const CreateClaimPage = () => {
         },
         body: JSON.stringify({
           ...values,
+          assignedAgent: values.assignedAgent?.id, // Just send the ID as assignedAgent
           blankItems: values.blankItems ? parseInt(values.blankItems) : 0,
         }),
       });

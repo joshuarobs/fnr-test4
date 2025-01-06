@@ -30,7 +30,16 @@ router.post('/', async (req, res) => {
     // TODO: Get actual user IDs from auth
     const insuredId = 1;
     const creatorId = 1;
-    const handlerId = 1;
+
+    // Find the staff member by employee ID
+    const staff = await prisma.staff.findUnique({
+      where: { employeeId: assignedAgent },
+      include: { baseUser: true },
+    });
+
+    if (!staff) {
+      return res.status(404).json({ error: 'Staff member not found' });
+    }
 
     // Use transaction to create claim and blank items atomically
     const result = await prisma.$transaction(async (tx) => {
@@ -43,7 +52,7 @@ router.post('/', async (req, res) => {
           incidentDate: new Date(incidentDate),
           insuredId,
           creatorId,
-          handlerId,
+          handlerId: staff.baseUserId,
           totalItems: parseInt(blankItems.toString()),
           localItemIds: [],
           itemOrder: [],
