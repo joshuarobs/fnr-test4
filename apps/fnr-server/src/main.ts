@@ -9,6 +9,7 @@ import cors from 'cors';
 import claimsRouter from './routes/claims/index';
 import usersRouter from './routes/users/index';
 import staffRouter from './routes/staff/index';
+import suppliersRouter from './routes/suppliers/index';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
 
@@ -42,6 +43,7 @@ app.get('/api', (req, res) => {
       claims: '/api/claims',
       users: '/api/users',
       staff: '/api/staff',
+      suppliers: '/api/suppliers',
     },
   });
 });
@@ -50,6 +52,7 @@ app.get('/api', (req, res) => {
 app.use('/api/claims', claimsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/staff', staffRouter);
+app.use('/api/suppliers', suppliersRouter);
 
 const server = app.listen(SERVER_CONFIG.port, () => {
   console.log(`Listening at ${getServerBaseUrl()}/api`);

@@ -191,6 +191,7 @@ export const api = createApi({
     'User',
     'Staff',
     'Users',
+    'Suppliers',
   ],
   endpoints: (builder) => ({
     signUp: builder.mutation<SignUpResponse, SignUpRequest>({
@@ -358,8 +359,29 @@ export const api = createApi({
       query: () => 'users/staff',
       providesTags: ['Users'],
     }),
+    getSuppliers: builder.query<Supplier[], void>({
+      query: () => 'suppliers',
+      providesTags: ['Suppliers'],
+    }),
   }),
 });
+
+// Supplier interface
+export interface Supplier {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  isActive: boolean;
+  avatarColour?: string;
+  supplier: {
+    company: string;
+    serviceType: string[];
+    areas: string[];
+    ratings?: number;
+  };
+}
 
 export const {
   useGetStaffUsersQuery,
@@ -381,4 +403,5 @@ export const {
   useUpdateUserDetailsMutation,
   useGetAllStaffQuery,
   useGetUsersQuery,
+  useGetSuppliersQuery,
 } = api;
