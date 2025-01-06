@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, PaginationState } from '@tanstack/react-table';
 import {
   Table,
   TableBody,
@@ -16,11 +16,10 @@ import {
 } from '@react-monorepo/shared';
 import { NavAvatar } from '../contents-other/NavAvatar';
 import { formatDistanceToNow } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table';
 import { useGetClaimsQuery } from '../../store/services/api';
@@ -62,6 +61,27 @@ export const DetailedClaimsTable = ({
   claims = [],
 }: DetailedClaimsTableProps) => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Initialize pagination state from URL parameters (convert from 1-based to 0-based)
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: Math.max(0, Number(searchParams.get('page') || '1') - 1),
+    pageSize: Number(searchParams.get('pageSize') || '10'),
+  });
+
+  // Update pagination when URL changes (convert from 1-based to 0-based)
+  React.useEffect(() => {
+    const pageFromUrl = Math.max(
+      0,
+      Number(searchParams.get('page') || '1') - 1
+    );
+    const pageSizeFromUrl = Number(searchParams.get('pageSize') || '10');
+
+    setPagination({
+      pageIndex: pageFromUrl,
+      pageSize: pageSizeFromUrl,
+    });
+  }, [searchParams]);
 
   const columns = React.useMemo<ColumnDef<ClaimOverview>[]>(
     () => [
@@ -163,15 +183,31 @@ export const DetailedClaimsTable = ({
   );
 
   const table = useReactTable<ClaimOverview>({
-    data: claims || [],
+    data: (claims || []).slice(
+      pagination.pageIndex * pagination.pageSize,
+      (pagination.pageIndex + 1) * pagination.pageSize
+    ),
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
+    state: {
+      pagination,
     },
+    onPaginationChange: (updater) => {
+      // Handle both function and value updates
+      const newPagination =
+        typeof updater === 'function' ? updater(pagination) : updater;
+
+      // Update URL params first
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('page', (newPagination.pageIndex + 1).toString());
+      newParams.set('pageSize', newPagination.pageSize.toString());
+      setSearchParams(newParams);
+
+      // Then update local state
+      setPagination(newPagination);
+    },
+    manualPagination: true,
+    pageCount: Math.ceil((claims || []).length / pagination.pageSize),
     filterFns: {
       fuzzy: (() => true) as FilterFn<ClaimOverview>,
       faceted: (() => true) as FilterFn<ClaimOverview>,
@@ -332,7 +368,8 @@ export const DetailedClaimsTable = ({
             <Select
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => {
-                table.setPageSize(Number(value));
+                const newSize = Number(value);
+                table.setPageSize(newSize);
               }}
             >
               <SelectTrigger className="h-8 w-[70px]">
