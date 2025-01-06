@@ -73,7 +73,7 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
         accessorFn: (row) => row.supplier.company,
         cell: ({ row }) => (
           <NavAvatar
-            company={row.original.supplier.company}
+            companyName={row.original.supplier.company}
             color={row.original.avatarColour}
             name={row.original.supplier.company}
             userId={row.original.id.toString()}
@@ -164,7 +164,7 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
                 </TableCell>
                 <TableCell className={tableCellClass}>
                   <NavAvatar
-                    company={row.original.supplier.company}
+                    companyName={row.original.supplier.company}
                     color={row.original.avatarColour}
                     name={row.original.supplier.company}
                     userId={row.original.id.toString()}

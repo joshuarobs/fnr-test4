@@ -22,7 +22,7 @@ interface NavAvatarProps {
   showHeaderRing?: boolean; // Controls header ring visibility
   overrideClickFunc?: () => void; // Optional click handler function
   disableHover?: boolean; // Controls whether text changes color on hover
-  company?: string; // Optional company name to generate initials from
+  companyName?: string; // Optional company name to generate initials from
 }
 
 // Navigation avatar component with optional name label
@@ -36,7 +36,7 @@ export const NavAvatar = ({
   showHeaderRing,
   overrideClickFunc,
   disableHover,
-  company,
+  companyName: company,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
