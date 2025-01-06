@@ -103,9 +103,6 @@ router.get('/:id', async (req, res) => {
         supplier: {
           select: {
             company: true,
-            serviceType: true,
-            areas: true,
-            ratings: true,
           },
         },
       },

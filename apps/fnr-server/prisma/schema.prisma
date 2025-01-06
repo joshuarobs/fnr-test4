@@ -85,21 +85,35 @@ model Insured {
   @@index([isDeleted])
 }
 
-/// Supplier/vendor information and ratings
+/// Supplier/vendor information
 model Supplier {
   id            Int       @id @default(autoincrement())
+  supplierId    String    @unique // Unique string identifier
   baseUserId    Int       @unique  // One-to-one with BaseUser
   baseUser      BaseUser  @relation(fields: [baseUserId], references: [id])
   company       String
-  serviceType   String[]  // Types of services provided
-  areas         String[]  // Service areas
-  ratings       Float?
   isDeleted     Boolean   @default(false) @map("is_deleted")
   deletedAt     DateTime? @map("deleted_at")
+  // Relation to allocated claims
+  allocatedClaims AllocatedSupplier[]
 
+  @@index([supplierId])
   @@index([company])
-  @@index([ratings])
   @@index([isDeleted])
+}
+
+/// Join table for suppliers allocated to claims
+model AllocatedSupplier {
+  id          Int      @id @default(autoincrement())
+  claimId     Int
+  claim       Claim    @relation(fields: [claimId], references: [id])
+  supplierId  Int
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  allocatedAt DateTime @default(now())
+
+  @@unique([claimId, supplierId])
+  @@index([claimId])
+  @@index([supplierId])
 }
 
 /// Insurance claim information and tracking
@@ -133,6 +147,8 @@ model Claim {
   
   // Track users who have contributed to this claim
   contributors ClaimContributor[]
+  // Track suppliers allocated to this claim
+  allocatedSuppliers AllocatedSupplier[]
 
   // Progress tracking fields
   totalItems Int @default(0)

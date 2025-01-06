@@ -28,6 +28,7 @@ router.get('/', async (req, res) => {
             avatarColour: true,
           },
         },
+        allocatedClaims: true,
       },
     });
 
@@ -45,10 +46,9 @@ router.get('/', async (req, res) => {
       isActive: s.baseUser.isActive,
       avatarColour: s.baseUser.avatarColour,
       supplier: {
+        supplierId: s.supplierId,
         company: s.company,
-        serviceType: s.serviceType,
-        areas: s.areas,
-        ratings: s.ratings,
+        allocatedClaims: s.allocatedClaims.length,
       },
     }));
 
@@ -94,10 +94,8 @@ router.get('/:id', async (req, res) => {
     const response = {
       ...supplier.baseUser,
       supplier: {
+        supplierId: supplier.supplierId,
         company: supplier.company,
-        serviceType: supplier.serviceType,
-        areas: supplier.areas,
-        ratings: supplier.ratings,
       },
     };
 

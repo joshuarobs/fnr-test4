@@ -376,10 +376,9 @@ export interface Supplier {
   isActive: boolean;
   avatarColour?: string;
   supplier: {
+    supplierId: string;
     company: string;
-    serviceType: string[];
-    areas: string[];
-    ratings?: number;
+    allocatedClaims: number;
   };
 }
 

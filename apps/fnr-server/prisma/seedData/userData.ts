@@ -97,10 +97,8 @@ export const suppliers = [
       role: UserRole.SUPPLIER,
     },
     supplier: {
+      supplierId: 'SUP001',
       company: 'Tech Solutions Ltd',
-      serviceType: ['Electronics', 'Computers', 'Phones'],
-      areas: ['North', 'South', 'East', 'West'],
-      ratings: 4.5,
     },
   },
   {
@@ -112,10 +110,8 @@ export const suppliers = [
       role: UserRole.SUPPLIER,
     },
     supplier: {
+      supplierId: 'SUP002',
       company: 'Home Appliances Co',
-      serviceType: ['Appliances', 'White Goods', 'Kitchen'],
-      areas: ['North', 'South', 'East', 'West'],
-      ratings: 4.5,
     },
   },
 ];
