@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 import { getStaffRoute } from '../../routes';
 import { useUser } from '../providers/UserContext';
 
+// Helper function to get initials from company name
+const getCompanyInitials = (company?: string): string => {
+  if (!company) return '??';
+  const words = company.trim().split(' ').filter(Boolean);
+  if (words.length === 0) return '??';
+  if (words.length === 1) return (words[0][0] || '').toUpperCase();
+  return ((words[0][0] || '') + (words[1][0] || '')).toUpperCase();
+};
+
 interface NavAvatarProps {
   userInitials?: string;
   color?: string;
@@ -13,6 +22,7 @@ interface NavAvatarProps {
   showHeaderRing?: boolean; // Controls header ring visibility
   overrideClickFunc?: () => void; // Optional click handler function
   disableHover?: boolean; // Controls whether text changes color on hover
+  company?: string; // Optional company name to generate initials from
 }
 
 // Navigation avatar component with optional name label
@@ -26,6 +36,7 @@ export const NavAvatar = ({
   showHeaderRing,
   overrideClickFunc,
   disableHover,
+  company,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
@@ -43,7 +54,9 @@ export const NavAvatar = ({
       <div className="rounded-full p-0.5">
         <UserAvatar
           size="sm"
-          userInitials={userInitials || ''}
+          userInitials={
+            company ? getCompanyInitials(company) : userInitials || ''
+          }
           color={color}
           name={name}
           department={department}

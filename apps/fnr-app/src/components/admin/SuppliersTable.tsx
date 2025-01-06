@@ -68,14 +68,14 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
         accessorFn: (row) => row.supplier.supplierId,
       },
       {
-        id: 'user',
-        header: 'User',
-        accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+        id: 'company',
+        header: 'Company',
+        accessorFn: (row) => row.supplier.company,
         cell: ({ row }) => (
           <NavAvatar
-            userInitials={`${row.original.firstName[0]}${row.original.lastName[0]}`}
+            company={row.original.supplier.company}
             color={row.original.avatarColour}
-            name={`${row.original.firstName} ${row.original.lastName}`}
+            name={row.original.supplier.company}
             userId={row.original.id.toString()}
             disableNavigation={true}
             disableHover
@@ -142,7 +142,7 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
               <TableHead className={`text-right ${tableCellClass}`}>
                 ID
               </TableHead>
-              <TableHead className={tableCellClass}>User</TableHead>
+              <TableHead className={tableCellClass}>Company</TableHead>
               <TableHead className={tableCellClass}>Email</TableHead>
               <TableHead className={tableCellClass}>Phone</TableHead>
               <TableHead className={tableCellClass}>Status</TableHead>
@@ -164,9 +164,9 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
                 </TableCell>
                 <TableCell className={tableCellClass}>
                   <NavAvatar
-                    userInitials={`${row.original.firstName[0]}${row.original.lastName[0]}`}
+                    company={row.original.supplier.company}
                     color={row.original.avatarColour}
-                    name={`${row.original.firstName} ${row.original.lastName}`}
+                    name={row.original.supplier.company}
                     userId={row.original.id.toString()}
                     disableNavigation={true}
                     disableHover
