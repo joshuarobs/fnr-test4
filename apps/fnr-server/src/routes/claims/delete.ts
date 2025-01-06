@@ -41,11 +41,18 @@ router.post('/:claimNumber/items/:itemId/soft-delete', async (req, res) => {
       // Add user as contributor when they soft delete an item
       // TODO: Get actual user ID from auth
       const userId = 1;
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: claim.id,
+            userId,
+          },
+        },
+        create: {
           claimId: claim.id,
           userId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return { success: true, message: 'Item soft deleted' };
@@ -118,11 +125,18 @@ router.delete('/:claimNumber/items/:itemId', async (req, res) => {
       // Add user as contributor when they hard delete an item
       // TODO: Get actual user ID from auth
       const userId = 1;
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: claim.id,
+            userId,
+          },
+        },
+        create: {
           claimId: claim.id,
           userId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return { success: true, message: 'Item permanently deleted' };
@@ -173,11 +187,18 @@ router.post('/:claimNumber/archive', async (req, res) => {
       });
 
       // Add user as contributor when they archive a claim
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: updatedClaim.id,
+            userId: parsedUserId,
+          },
+        },
+        create: {
           claimId: updatedClaim.id,
           userId: parsedUserId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return updatedClaim;
@@ -222,11 +243,18 @@ router.post('/:claimNumber/unarchive', async (req, res) => {
       });
 
       // Add user as contributor when they unarchive a claim
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: updatedClaim.id,
+            userId: parsedUserId,
+          },
+        },
+        create: {
           claimId: updatedClaim.id,
           userId: parsedUserId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return updatedClaim;

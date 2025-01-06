@@ -206,11 +206,18 @@ router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
       // Add user as contributor when they add an item
       // TODO: Get actual user ID from auth
       const userId = 1;
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: claim.id,
+            userId,
+          },
+        },
+        create: {
           claimId: claim.id,
           userId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return newItem;
@@ -314,11 +321,18 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
       // Add user as contributor when they update an item
       // TODO: Get actual user ID from auth
       const userId = 1;
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: claim.id,
+            userId,
+          },
+        },
+        create: {
           claimId: claim.id,
           userId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return updatedItem;
@@ -470,11 +484,18 @@ router.post('/:claimNumber/reassign', async (req, res) => {
       // Add user as contributor when they reassign a claim
       // TODO: Get actual user ID from auth
       const userId = 1;
-      await tx.claimContributor.create({
-        data: {
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: result.id,
+            userId,
+          },
+        },
+        create: {
           claimId: result.id,
           userId,
         },
+        update: {}, // No update needed since we just want to ensure it exists
       });
 
       return updatedClaim;
