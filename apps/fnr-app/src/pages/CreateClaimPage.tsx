@@ -120,6 +120,7 @@ export const CreateClaimPage = () => {
   // Clear all fields
   const handleClearFields = () => {
     form.reset(DEFAULT_VALUES);
+    setSelectedUser(null); // Clear the selected user state
   };
 
   return (
