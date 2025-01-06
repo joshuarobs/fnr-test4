@@ -12,6 +12,7 @@ interface NavAvatarProps {
   disableNavigation?: boolean; // Add prop to control navigation behavior
   showHeaderRing?: boolean; // Controls header ring visibility
   overrideClickFunc?: () => void; // Optional click handler function
+  disableHover?: boolean; // Controls whether text changes color on hover
 }
 
 // Navigation avatar component with optional name label
@@ -24,6 +25,7 @@ export const NavAvatar = ({
   disableNavigation,
   showHeaderRing,
   overrideClickFunc,
+  disableHover,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
@@ -50,7 +52,11 @@ export const NavAvatar = ({
         />
       </div>
       {(name || isEmptyUser) && (
-        <span className="text-sm text-muted-foreground group-hover:text-hover-blue">
+        <span
+          className={`text-sm text-muted-foreground ${
+            !disableHover && 'group-hover:text-hover-blue'
+          }`}
+        >
           {isEmptyUser
             ? 'No user assigned'
             : isCurrentUser

@@ -57,7 +57,9 @@ export const SuppliersTable = ({ suppliers }: SuppliersTableProps) => {
                   userInitials={`${supplier.firstName[0]}${supplier.lastName[0]}`}
                   name={`${supplier.firstName} ${supplier.lastName}`}
                   color={supplier.avatarColour}
+                  userId={supplier.id.toString()}
                   disableNavigation
+                  disableHover
                 />
                 <span>
                   {supplier.firstName} {supplier.lastName}
