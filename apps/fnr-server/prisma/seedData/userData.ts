@@ -92,8 +92,6 @@ export const suppliers = [
     user: {
       email: 'electronics@supplier.com',
       password: 'supplier123',
-      firstName: 'Tech',
-      lastName: 'Solutions',
       role: UserRole.SUPPLIER,
     },
     supplier: {
@@ -105,8 +103,6 @@ export const suppliers = [
     user: {
       email: 'appliances@supplier.com',
       password: 'supplier123',
-      firstName: 'Home',
-      lastName: 'Appliances',
       role: UserRole.SUPPLIER,
     },
     supplier: {
