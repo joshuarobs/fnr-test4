@@ -95,7 +95,7 @@ export const suppliers = [
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
-      avatarColour: '#2563eb', // blue
+      avatarColour: '#c4b5fd', // pastel purple - representing technology/electronics
     },
     supplier: {
       supplierId: 'SUP001',
@@ -109,7 +109,7 @@ export const suppliers = [
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
-      avatarColour: '#16a34a', // green
+      avatarColour: '#cbd5e1', // pastel gray - representing metallic appliances
     },
     supplier: {
       supplierId: 'SUP002',
@@ -123,7 +123,7 @@ export const suppliers = [
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
-      avatarColour: '#ec4899', // pink
+      avatarColour: '#d4a373', // pastel brown - representing furniture/wood
     },
     supplier: {
       supplierId: 'SUP003',
@@ -137,7 +137,7 @@ export const suppliers = [
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
-      avatarColour: '#fcd34d', // yellow
+      avatarColour: '#86efac', // pastel green - representing garden/plants
     },
     supplier: {
       supplierId: 'SUP004',
