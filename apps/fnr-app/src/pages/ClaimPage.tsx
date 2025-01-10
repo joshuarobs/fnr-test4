@@ -266,6 +266,15 @@ export const ClaimPage = () => {
             };
           }) || []
         }
+        suppliers={claimData?.allocatedSuppliers?.map((allocated) => {
+          const { supplier } = allocated;
+          return {
+            companyName: supplier.company,
+            name: supplier.company,
+            userId: supplier.supplierId,
+            color: supplier.baseUser.avatarColour,
+          };
+        })}
       />
     </main>
   );

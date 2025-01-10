@@ -10,7 +10,8 @@ import {
 import { NavAvatar } from './NavAvatar';
 
 interface AvatarData {
-  userInitials: string;
+  userInitials?: string;
+  companyName?: string;
   color?: string;
   name: string; // Name field for displaying next to avatar (mandatory)
   userId: string; // User ID for navigation
@@ -52,9 +53,12 @@ export const PartyAvatarSection = ({
                   <NavAvatar
                     key={index}
                     userInitials={avatar.userInitials}
+                    companyName={avatar.companyName}
                     color={avatar.color}
                     name={avatar.name}
                     userId={avatar.userId}
+                    disableNavigation={!!avatar.companyName}
+                    disableHover={!!avatar.companyName}
                   />
                 ))}
               </div>
@@ -71,9 +75,12 @@ export const PartyAvatarSection = ({
             <NavAvatar
               key={index}
               userInitials={avatar.userInitials}
+              companyName={avatar.companyName}
               color={avatar.color}
               name={avatar.name}
               userId={avatar.userId}
+              disableNavigation={!!avatar.companyName}
+              disableHover={!!avatar.companyName}
             />
           ))}
         </div>
@@ -84,8 +91,11 @@ export const PartyAvatarSection = ({
             <NavAvatar
               key={index}
               userInitials={avatar.userInitials}
+              companyName={avatar.companyName}
               color={avatar.color}
               userId={avatar.userId}
+              disableNavigation={!!avatar.companyName}
+              disableHover={!!avatar.companyName}
             />
           ))}
         </div>

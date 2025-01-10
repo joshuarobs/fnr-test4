@@ -19,6 +19,12 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     name: string;
     userId: string;
   }[];
+  suppliers?: {
+    companyName: string;
+    color?: string;
+    name: string;
+    userId: string;
+  }[];
 }
 
 const SidebarSeparator = () => {
@@ -33,6 +39,7 @@ export const SecondSidebar = ({
   className,
   assignedUser,
   contributors = [],
+  suppliers = [],
 }: SecondSidebarProps) => {
   return (
     <div
@@ -63,23 +70,7 @@ export const SecondSidebar = ({
             {/* ======================================== */}
             {/* Suppliers Section */}
             {/* ======================================== */}
-            <PartyAvatarSection
-              title="Suppliers"
-              avatars={[
-                {
-                  userInitials: 'S1',
-                  color: '#059669', // emerald-600
-                  name: 'Supplier 1',
-                  userId: 'S1123',
-                },
-                {
-                  userInitials: 'S2',
-                  color: '#E11D48', // rose-600
-                  name: 'Supplier 2',
-                  userId: 'S2123',
-                },
-              ]}
-            />
+            <PartyAvatarSection title="Suppliers" avatars={suppliers} />
           </div>
           <SidebarSeparator />
           {/* ======================================== */}

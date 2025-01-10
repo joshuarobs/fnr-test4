@@ -222,6 +222,24 @@ router.get('/:claimNumber', async (req, res) => {
             },
           },
         },
+        allocatedSuppliers: {
+          select: {
+            supplier: {
+              select: {
+                id: true,
+                supplierId: true,
+                company: true,
+                baseUser: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    avatarColour: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 

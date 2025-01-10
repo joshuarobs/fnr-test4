@@ -47,6 +47,18 @@ interface ClaimDetail {
       };
     };
   }[];
+  allocatedSuppliers: {
+    supplier: {
+      id: number;
+      supplierId: string;
+      company: string;
+      baseUser: {
+        firstName: string;
+        lastName: string;
+        avatarColour: string;
+      };
+    };
+  }[];
 }
 
 interface Message {
