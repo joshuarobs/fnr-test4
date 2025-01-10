@@ -92,7 +92,10 @@ export const suppliers = [
     user: {
       email: 'electronics@supplier.com',
       password: 'supplier123',
+      firstName: '',
+      lastName: '',
       role: UserRole.SUPPLIER,
+      avatarColour: '#2563eb', // blue
     },
     supplier: {
       supplierId: 'SUP001',
@@ -103,11 +106,42 @@ export const suppliers = [
     user: {
       email: 'appliances@supplier.com',
       password: 'supplier123',
+      firstName: '',
+      lastName: '',
       role: UserRole.SUPPLIER,
+      avatarColour: '#16a34a', // green
     },
     supplier: {
       supplierId: 'SUP002',
       company: 'Home Appliances Co',
+    },
+  },
+  {
+    user: {
+      email: 'furniture@supplier.com',
+      password: 'supplier123',
+      firstName: '',
+      lastName: '',
+      role: UserRole.SUPPLIER,
+      avatarColour: '#ec4899', // pink
+    },
+    supplier: {
+      supplierId: 'SUP003',
+      company: 'Modern Furniture Inc',
+    },
+  },
+  {
+    user: {
+      email: 'garden@supplier.com',
+      password: 'supplier123',
+      firstName: '',
+      lastName: '',
+      role: UserRole.SUPPLIER,
+      avatarColour: '#fcd34d', // yellow
+    },
+    supplier: {
+      supplierId: 'SUP004',
+      company: 'Garden & Outdoor Living',
     },
   },
 ];

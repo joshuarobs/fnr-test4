@@ -251,6 +251,52 @@ async function main() {
     ]);
   }
 
+  // Add supplier allocations
+  console.log('Adding supplier allocations...');
+
+  // Get all suppliers
+  const allSuppliers = await prisma.supplier.findMany();
+
+  // Get all claims
+  const allClaims = await prisma.claim.findMany();
+
+  for (const claim of allClaims) {
+    let suppliersToAllocate: typeof allSuppliers = [];
+
+    switch (claim.claimNumber) {
+      case 'CLM010': // 2 suppliers
+        suppliersToAllocate = allSuppliers.slice(0, 2); // First 2 suppliers
+        break;
+      case 'CLM007': // 2 suppliers
+        suppliersToAllocate = allSuppliers.slice(1, 3); // Suppliers 2 and 3
+        break;
+      case 'CLM006': // 3 suppliers
+        suppliersToAllocate = allSuppliers.slice(0, 3); // First 3 suppliers
+        break;
+      case 'CLM008': // 0 suppliers
+      case 'CLM004': // 0 suppliers
+        break;
+      default: // 1 random supplier for all other claims
+        const randomSupplier =
+          allSuppliers[Math.floor(Math.random() * allSuppliers.length)];
+        suppliersToAllocate = [randomSupplier];
+    }
+
+    // Create allocations
+    if (suppliersToAllocate.length > 0) {
+      await Promise.all(
+        suppliersToAllocate.map((supplier) =>
+          prisma.allocatedSupplier.create({
+            data: {
+              claimId: claim.id,
+              supplierId: supplier.id,
+            },
+          })
+        )
+      );
+    }
+  }
+
   console.log('Calculating claim values...');
 
   // Recalculate values for all claims except CLM003 and CLM004
