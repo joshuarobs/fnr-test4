@@ -69,8 +69,8 @@ export const NavAvatar = ({
       </div>
       {(name || isEmptyUser) && (
         <span
-          className={`text-sm text-muted-foreground ${
-            !disableHoverText && 'group-hover:text-hover-blue'
+          className={`text-sm ${isEmptyUser ? 'text-muted-foreground' : ''} ${
+            !disableHoverText ? 'group-hover:text-hover-blue' : ''
           }`}
         >
           {isEmptyUser
