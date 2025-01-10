@@ -21,8 +21,9 @@ interface NavAvatarProps {
   disableNavigation?: boolean; // Add prop to control navigation behavior
   showHeaderRing?: boolean; // Controls header ring visibility
   overrideClickFunc?: () => void; // Optional click handler function
-  disableHover?: boolean; // Controls whether text changes color on hover
+  disableHoverText?: boolean; // Controls whether text changes color on hover
   companyName?: string; // Optional company name to generate initials from
+  disableHoverCard?: boolean; // Controls whether the hover card is shown
 }
 
 // Navigation avatar component with optional name label
@@ -35,8 +36,9 @@ export const NavAvatar = ({
   disableNavigation,
   showHeaderRing,
   overrideClickFunc,
-  disableHover,
+  disableHoverText,
   companyName: company,
+  disableHoverCard,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
@@ -62,12 +64,13 @@ export const NavAvatar = ({
           department={department}
           isEmptyUser={isEmptyUser}
           showHeaderRing={showHeaderRing || !isEmptyUser}
+          hoverable={!disableHoverCard}
         />
       </div>
       {(name || isEmptyUser) && (
         <span
           className={`text-sm text-muted-foreground ${
-            !disableHover && 'group-hover:text-hover-blue'
+            !disableHoverText && 'group-hover:text-hover-blue'
           }`}
         >
           {isEmptyUser

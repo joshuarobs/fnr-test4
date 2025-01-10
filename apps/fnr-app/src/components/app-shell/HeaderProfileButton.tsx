@@ -39,14 +39,14 @@ export const HeaderProfileButton = () => {
           variant="ghost"
           className="p-0 hover:cursor-pointer hover:bg-transparent focus-visible:ring-2"
         >
-          <UserAvatar {...avatarProps} showHeaderRing />
+          <UserAvatar {...avatarProps} showHeaderRing hoverable={false} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem className="cursor-pointer p-0" asChild>
           <Link to={getStaffRoute(employeeId)} className="flex w-full p-2">
             <div className="flex items-center justify-start gap-2">
-              <UserAvatar {...avatarProps} hoverable />
+              <UserAvatar {...avatarProps} hoverable={false} />
               <div className="flex flex-col">
                 {isLoading ? (
                   <span className="text-sm font-medium">Loading...</span>

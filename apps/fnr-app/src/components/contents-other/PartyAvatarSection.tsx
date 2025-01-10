@@ -58,7 +58,7 @@ export const PartyAvatarSection = ({
                     name={avatar.name}
                     userId={avatar.userId}
                     disableNavigation={!!avatar.companyName}
-                    disableHover={!!avatar.companyName}
+                    disableHoverText={!!avatar.companyName}
                   />
                 ))}
               </div>
@@ -80,7 +80,7 @@ export const PartyAvatarSection = ({
               name={avatar.name}
               userId={avatar.userId}
               disableNavigation={!!avatar.companyName}
-              disableHover={!!avatar.companyName}
+              disableHoverText={!!avatar.companyName}
             />
           ))}
         </div>
@@ -95,7 +95,7 @@ export const PartyAvatarSection = ({
               color={avatar.color}
               userId={avatar.userId}
               disableNavigation={!!avatar.companyName}
-              disableHover={!!avatar.companyName}
+              disableHoverText={!!avatar.companyName}
             />
           ))}
         </div>
