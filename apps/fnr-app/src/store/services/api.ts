@@ -379,6 +379,10 @@ export const api = createApi({
       query: () => 'suppliers',
       providesTags: ['Suppliers'],
     }),
+    getSupplier: builder.query<Supplier, string>({
+      query: (supplierId) => `suppliers/${supplierId}`,
+      providesTags: ['Suppliers'],
+    }),
   }),
 });
 
@@ -391,6 +395,7 @@ export interface Supplier {
   phone?: string;
   isActive: boolean;
   avatarColour?: string;
+  role: string;
   supplier: {
     supplierId: string;
     company: string;
@@ -419,5 +424,6 @@ export const {
   useGetAllStaffQuery,
   useGetUsersQuery,
   useGetSuppliersQuery,
+  useGetSupplierQuery,
   useGetCustomersQuery,
 } = api;

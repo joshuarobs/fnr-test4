@@ -45,6 +45,7 @@ router.get('/', async (req, res) => {
       phone: s.baseUser.phone,
       isActive: s.baseUser.isActive,
       avatarColour: s.baseUser.avatarColour,
+      role: s.baseUser.role,
       supplier: {
         supplierId: s.supplierId,
         company: s.company,
@@ -66,7 +67,7 @@ router.get('/:id', async (req, res) => {
 
     const supplier = await prisma.supplier.findFirst({
       where: {
-        id: parseInt(id),
+        supplierId: id,
         baseUser: {
           isActive: true,
         },
@@ -74,6 +75,7 @@ router.get('/:id', async (req, res) => {
       include: {
         baseUser: {
           select: {
+            id: true,
             email: true,
             firstName: true,
             lastName: true,
@@ -83,6 +85,7 @@ router.get('/:id', async (req, res) => {
             avatarColour: true,
           },
         },
+        allocatedClaims: true,
       },
     });
 
@@ -92,10 +95,18 @@ router.get('/:id', async (req, res) => {
 
     // Format response to match existing structure
     const response = {
-      ...supplier.baseUser,
+      id: supplier.id,
+      firstName: supplier.baseUser.firstName,
+      lastName: supplier.baseUser.lastName,
+      email: supplier.baseUser.email,
+      phone: supplier.baseUser.phone,
+      isActive: supplier.baseUser.isActive,
+      avatarColour: supplier.baseUser.avatarColour,
+      role: supplier.baseUser.role,
       supplier: {
         supplierId: supplier.supplierId,
         company: supplier.company,
+        allocatedClaims: supplier.allocatedClaims.length,
       },
     };
 

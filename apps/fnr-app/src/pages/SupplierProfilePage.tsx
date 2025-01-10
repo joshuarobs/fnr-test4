@@ -1,7 +1,7 @@
 import { Card } from '@react-monorepo/shared';
 import { Navigate, useParams } from 'react-router-dom';
 import { UserAvatar } from '../components/app-shell/UserAvatar';
-import { useGetSuppliersQuery } from '../store/services/api';
+import { useGetSupplierQuery } from '../store/services/api';
 import { getUserInitials } from '../lib/avatar-utils';
 
 // Supplier profile page component that displays supplier information
@@ -13,15 +13,12 @@ export const SupplierProfilePage = () => {
   }
 
   const {
-    data: suppliers,
-    isLoading: suppliersLoading,
-    error: suppliersError,
-  } = useGetSuppliersQuery();
+    data: supplier,
+    isLoading: supplierLoading,
+    error: supplierError,
+  } = useGetSupplierQuery(supplierId);
 
-  // Find the specific supplier
-  const supplier = suppliers?.find((s) => s.supplier.supplierId === supplierId);
-
-  if (suppliersLoading) {
+  if (supplierLoading) {
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Supplier Profile</h1>
@@ -30,7 +27,7 @@ export const SupplierProfilePage = () => {
     );
   }
 
-  if (suppliersError || !supplier) {
+  if (supplierError || !supplier) {
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Supplier Profile</h1>
@@ -55,17 +52,18 @@ export const SupplierProfilePage = () => {
               color={supplier.avatarColour || '#6B7280'} // Fallback to default gray if no color
               name={name}
               userInitials={initials}
-              department={company} // Use department prop to show company name
+              department={company}
               location={location}
               showHeaderRing
             />
             <div>
-              <h2 className="text-lg font-semibold">{name}</h2>
-              <p className="text-sm text-muted-foreground">
-                Supplier at {company}
-              </p>
+              <h2 className="text-lg font-semibold">
+                {supplier.supplier.company}
+              </h2>
+              <p className="text-sm text-muted-foreground">{supplier.role}</p>
             </div>
           </div>
+
           <div className="space-y-4">
             <div>
               <h3 className="text-md font-semibold mb-2">
@@ -84,13 +82,13 @@ export const SupplierProfilePage = () => {
                 Supplier Information
               </h3>
               <div className="space-y-2">
-                <p className="text-sm">Company: {supplier.supplier.company}</p>
                 <p className="text-sm">
                   Supplier ID: {supplier.supplier.supplierId}
                 </p>
                 <p className="text-sm">
                   Allocated Claims: {supplier.supplier.allocatedClaims || 0}
                 </p>
+                <p className="text-sm">Location: {location}</p>
                 <p className="text-sm">Status: Active</p>
               </div>
             </div>
