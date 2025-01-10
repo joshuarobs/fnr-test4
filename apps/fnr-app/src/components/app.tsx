@@ -17,6 +17,7 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 import { ClaimPage } from '../pages/ClaimPage';
 import { CreateClaimPage } from '../pages/CreateClaimPage';
 import { StaffProfilePage } from '../pages/StaffProfilePage';
+import { SupplierProfilePage } from '../pages/SupplierProfilePage';
 import { HistoryPage } from '../pages/HistoryPage';
 import { AdminPortalPage } from '../pages/AdminPortalPage';
 import { AdminUsersPage } from '../pages/AdminUsersPage';
@@ -106,6 +107,10 @@ const AppContent = () => {
                   />
                   <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
                   <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
+                  <Route
+                    path={ROUTES.SUPPLIER}
+                    element={<SupplierProfilePage />}
+                  />
                   <Route path={ROUTES.HISTORY} element={<HistoryPage />} />
                   <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
                   <Route

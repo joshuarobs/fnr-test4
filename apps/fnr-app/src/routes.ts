@@ -14,6 +14,7 @@ export const ROUTES = {
   ASSIGNED: '/assigned',
   HISTORY: '/history',
   STAFF: '/staff/:employeeId',
+  SUPPLIER: '/supplier/:supplierId',
   SETTINGS: '/settings',
   SETTINGS_ACCOUNT: '/settings/account',
   SETTINGS_APPEARANCE: '/settings/appearance',
@@ -27,3 +28,7 @@ export const getClaimRoute = (id: string) => `/claim/${id}`;
 
 // Helper function to generate staff profile route with employee ID
 export const getStaffRoute = (employeeId: string) => `/staff/${employeeId}`;
+
+// Helper function to generate supplier profile route with supplier ID
+export const getSupplierRoute = (supplierId: string) =>
+  `/supplier/${supplierId}`;

@@ -1,6 +1,6 @@
 import { UserAvatar } from '../app-shell/UserAvatar';
 import { Link } from 'react-router-dom';
-import { getStaffRoute } from '../../routes';
+import { getStaffRoute, getSupplierRoute } from '../../routes';
 import { useUser } from '../providers/UserContext';
 
 // Helper function to get initials from company name
@@ -24,6 +24,7 @@ interface NavAvatarProps {
   disableHoverText?: boolean; // Controls whether text changes color on hover
   companyName?: string; // Optional company name to generate initials from
   disableHoverCard?: boolean; // Controls whether the hover card is shown
+  isSupplier?: boolean; // Flag to determine if the user is a supplier
 }
 
 // Navigation avatar component with optional name label
@@ -39,6 +40,7 @@ export const NavAvatar = ({
   disableHoverText,
   companyName: company,
   disableHoverCard,
+  isSupplier,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.employeeId : false;
@@ -90,7 +92,7 @@ export const NavAvatar = ({
   return userId ? (
     <Link
       className="focus:outline-none focus-visible:ring-0"
-      to={getStaffRoute(userId)}
+      to={isSupplier ? getSupplierRoute(userId) : getStaffRoute(userId)}
     >
       {content}
     </Link>

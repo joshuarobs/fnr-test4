@@ -273,6 +273,7 @@ export const ClaimPage = () => {
             name: supplier.company,
             userId: supplier.supplierId,
             color: supplier.baseUser.avatarColour,
+            isSupplier: true,
           };
         })}
       />

@@ -15,6 +15,7 @@ interface AvatarData {
   color?: string;
   name: string; // Name field for displaying next to avatar (mandatory)
   userId: string; // User ID for navigation
+  isSupplier?: boolean; // Flag to determine if the user is a supplier
 }
 
 interface PartyAvatarSectionProps {
@@ -59,6 +60,7 @@ export const PartyAvatarSection = ({
                     userId={avatar.userId}
                     disableNavigation={!!avatar.companyName}
                     disableHoverText={!!avatar.companyName}
+                    isSupplier={avatar.isSupplier}
                   />
                 ))}
               </div>
@@ -81,6 +83,7 @@ export const PartyAvatarSection = ({
               userId={avatar.userId}
               disableNavigation={!!avatar.companyName}
               disableHoverText={!!avatar.companyName}
+              isSupplier={avatar.isSupplier}
             />
           ))}
         </div>
@@ -96,6 +99,7 @@ export const PartyAvatarSection = ({
               userId={avatar.userId}
               disableNavigation={!!avatar.companyName}
               disableHoverText={!!avatar.companyName}
+              isSupplier={avatar.isSupplier}
             />
           ))}
         </div>

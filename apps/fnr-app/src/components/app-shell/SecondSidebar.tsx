@@ -24,6 +24,7 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     color?: string;
     name: string;
     userId: string;
+    isSupplier?: boolean;
   }[];
 }
 
@@ -70,7 +71,13 @@ export const SecondSidebar = ({
             {/* ======================================== */}
             {/* Suppliers Section */}
             {/* ======================================== */}
-            <PartyAvatarSection title="Suppliers" avatars={suppliers} />
+            <PartyAvatarSection
+              title="Suppliers"
+              avatars={suppliers.map((supplier) => ({
+                ...supplier,
+                isSupplier: true,
+              }))}
+            />
           </div>
           <SidebarSeparator />
           {/* ======================================== */}
