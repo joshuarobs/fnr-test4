@@ -6,6 +6,7 @@ import {
   useGetStaffQuery,
   useGetAssignedClaimsQuery,
 } from '../store/services/api';
+import { getUserInitials } from '../lib/avatar-utils';
 
 // Staff profile page component that displays staff information
 export const StaffProfilePage = () => {
@@ -45,7 +46,7 @@ export const StaffProfilePage = () => {
   }
 
   const name = `${user.firstName} ${user.lastName}`;
-  const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+  const initials = getUserInitials(user.firstName, user.lastName);
   const department = user.staff.department;
   const location = 'Australia'; // Default location for staff
 

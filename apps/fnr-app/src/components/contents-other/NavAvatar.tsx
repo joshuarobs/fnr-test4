@@ -2,15 +2,7 @@ import { UserAvatar } from '../app-shell/UserAvatar';
 import { Link } from 'react-router-dom';
 import { getStaffRoute, getSupplierRoute } from '../../routes';
 import { useUser } from '../providers/UserContext';
-
-// Helper function to get initials from company name
-const getCompanyInitials = (company?: string): string => {
-  if (!company) return '??';
-  const words = company.trim().split(' ').filter(Boolean);
-  if (words.length === 0) return '??';
-  if (words.length === 1) return (words[0][0] || '').toUpperCase();
-  return ((words[0][0] || '') + (words[1][0] || '')).toUpperCase();
-};
+import { getCompanyInitials } from '../../lib/avatar-utils';
 
 interface NavAvatarProps {
   userInitials?: string;
