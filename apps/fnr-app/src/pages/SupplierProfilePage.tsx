@@ -2,7 +2,7 @@ import { Card } from '@react-monorepo/shared';
 import { Navigate, useParams } from 'react-router-dom';
 import { UserAvatar } from '../components/app-shell/UserAvatar';
 import { useGetSupplierQuery } from '../store/services/api';
-import { getUserInitials } from '../lib/avatar-utils';
+import { getCompanyInitials } from '../lib/avatar-utils';
 
 // Supplier profile page component that displays supplier information
 export const SupplierProfilePage = () => {
@@ -36,9 +36,8 @@ export const SupplierProfilePage = () => {
     );
   }
 
-  const name = `${supplier.firstName} ${supplier.lastName}`;
-  const initials = getUserInitials(supplier.firstName, supplier.lastName);
   const company = supplier.supplier.company;
+  const initials = getCompanyInitials(company);
   const location = 'Australia'; // Default location for suppliers
 
   return (
@@ -50,7 +49,7 @@ export const SupplierProfilePage = () => {
             <UserAvatar
               size="lg"
               color={supplier.avatarColour || '#6B7280'} // Fallback to default gray if no color
-              name={name}
+              name={company}
               userInitials={initials}
               department={company}
               location={location}
