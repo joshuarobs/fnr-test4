@@ -1,7 +1,11 @@
 import { Card } from '@react-monorepo/shared';
 import { Navigate, useParams } from 'react-router-dom';
 import { UserAvatar } from '../components/app-shell/UserAvatar';
-import { useGetSupplierQuery } from '../store/services/api';
+import { DetailedClaimsTable } from '../components/homepage/DetailedClaimsTable';
+import {
+  useGetSupplierQuery,
+  useGetSupplierClaimsQuery,
+} from '../store/services/api';
 import { getCompanyInitials } from '../lib/avatar-utils';
 
 // Supplier profile page component that displays supplier information
@@ -17,8 +21,13 @@ export const SupplierProfilePage = () => {
     isLoading: supplierLoading,
     error: supplierError,
   } = useGetSupplierQuery(supplierId);
+  const {
+    data: claims,
+    isLoading: claimsLoading,
+    error: claimsError,
+  } = useGetSupplierClaimsQuery(supplierId);
 
-  if (supplierLoading) {
+  if (supplierLoading || claimsLoading) {
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Supplier Profile</h1>
@@ -27,7 +36,7 @@ export const SupplierProfilePage = () => {
     );
   }
 
-  if (supplierError || !supplier) {
+  if (supplierError || !supplier || claimsError) {
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Supplier Profile</h1>
@@ -94,6 +103,12 @@ export const SupplierProfilePage = () => {
           </div>
         </div>
       </Card>
+
+      {/* Claims Table Section */}
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-4">Allocated Claims</h2>
+        <DetailedClaimsTable claims={claims} />
+      </div>
     </div>
   );
 };

@@ -383,6 +383,10 @@ export const api = createApi({
       query: (supplierId) => `suppliers/${supplierId}`,
       providesTags: ['Suppliers'],
     }),
+    getSupplierClaims: builder.query<ClaimOverview[], string>({
+      query: (supplierId) => `suppliers/${supplierId}/claims`,
+      providesTags: ['Claims'],
+    }),
   }),
 });
 
@@ -425,5 +429,6 @@ export const {
   useGetUsersQuery,
   useGetSuppliersQuery,
   useGetSupplierQuery,
+  useGetSupplierClaimsQuery,
   useGetCustomersQuery,
 } = api;

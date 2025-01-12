@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
+import { ClaimStatus } from '@prisma/client';
 
 const router: Router = express.Router();
 
@@ -114,6 +115,73 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     console.error('Error fetching supplier:', error);
     res.status(500).json({ error: 'Failed to fetch supplier' });
+  }
+});
+
+/**
+ * GET /api/suppliers/:id/claims
+ * Retrieves all claims where the specified supplier is allocated as a supplier.
+ * This endpoint returns claims that the supplier is responsible for handling,
+ * including claim details, items, and handler information.
+ *
+ * @param id - The supplier's ID to fetch claims for
+ * @param limit - Optional query parameter to limit number of returned claims (default: 10, max: 50)
+ * @returns Array of claims with their associated items and handler details
+ */
+router.get('/:id/claims', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
+
+    const claims = await prisma.claim.findMany({
+      where: {
+        allocatedSuppliers: {
+          some: {
+            supplier: {
+              supplierId: id,
+            },
+          },
+        },
+        isDeleted: false,
+      },
+      take: limit,
+      include: {
+        items: {
+          select: {
+            id: true,
+          },
+        },
+        handler: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            avatarColour: true,
+            staff: {
+              select: {
+                id: true,
+                employeeId: true,
+                department: true,
+                position: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+
+    if (!claims) {
+      return res.status(404).json({ error: 'No claims found' });
+    }
+
+    res.json(claims);
+  } catch (error) {
+    console.error('Error fetching supplier claims:', error);
+    res.status(500).json({ error: 'Failed to fetch supplier claims' });
   }
 });
 
