@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getSupplierRoute } from '../../routes';
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import {
   Table,
@@ -76,9 +77,10 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
             companyName={row.original.supplier.company}
             color={row.original.avatarColour}
             name={row.original.supplier.company}
-            userId={row.original.id.toString()}
+            userId={row.original.supplier.supplierId}
             disableNavigation={true}
-            disableHover
+            disableHoverText
+            isSupplier={true}
           />
         ),
       },
@@ -156,6 +158,9 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
               <TableRow
                 key={row.original.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group"
+                onClick={() =>
+                  navigate(getSupplierRoute(row.original.supplier.supplierId))
+                }
               >
                 <TableCell className={`text-right ${tableCellClass}`}>
                   <span className="font-mono text-sm">
@@ -167,9 +172,10 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
                     companyName={row.original.supplier.company}
                     color={row.original.avatarColour}
                     name={row.original.supplier.company}
-                    userId={row.original.id.toString()}
+                    userId={row.original.supplier.supplierId}
                     disableNavigation={true}
-                    disableHover
+                    disableHoverText
+                    isSupplier={true}
                   />
                 </TableCell>
                 <TableCell className={tableCellClass}>
