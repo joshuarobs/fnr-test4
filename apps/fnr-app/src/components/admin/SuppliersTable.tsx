@@ -78,8 +78,6 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
             color={row.original.avatarColour}
             name={row.original.supplier.company}
             userId={row.original.supplier.supplierId}
-            disableNavigation={true}
-            disableHoverText
             isSupplier={true}
           />
         ),
@@ -158,48 +156,56 @@ export const SuppliersTable = ({ suppliers = [] }: SuppliersTableProps) => {
               <TableRow
                 key={row.original.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group"
-                onClick={() =>
-                  navigate(getSupplierRoute(row.original.supplier.supplierId))
-                }
               >
-                <TableCell className={`text-right ${tableCellClass}`}>
-                  <span className="font-mono text-sm">
-                    {row.original.supplier.supplierId}
-                  </span>
-                </TableCell>
-                <TableCell className={tableCellClass}>
-                  <NavAvatar
-                    companyName={row.original.supplier.company}
-                    color={row.original.avatarColour}
-                    name={row.original.supplier.company}
-                    userId={row.original.supplier.supplierId}
-                    disableNavigation={true}
-                    disableHoverText
-                    isSupplier={true}
-                  />
-                </TableCell>
-                <TableCell className={tableCellClass}>
-                  {row.original.email}
-                </TableCell>
-                <TableCell className={tableCellClass}>
-                  {row.original.phone || '-'}
-                </TableCell>
-                <TableCell className={tableCellClass}>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs font-medium ${
-                      row.original.isActive
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                    }`}
-                  >
-                    {row.original.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </TableCell>
-                <TableCell className={`text-right ${tableCellClass}`}>
-                  <span className="font-mono">
-                    {row.original.supplier.allocatedClaims}
-                  </span>
-                </TableCell>
+                <a
+                  href={getSupplierRoute(row.original.supplier.supplierId)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(
+                      getSupplierRoute(row.original.supplier.supplierId)
+                    );
+                  }}
+                  className="contents"
+                >
+                  <TableCell className={`text-right ${tableCellClass}`}>
+                    <span className="font-mono text-sm">
+                      {row.original.supplier.supplierId}
+                    </span>
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    <NavAvatar
+                      companyName={row.original.supplier.company}
+                      color={row.original.avatarColour}
+                      name={row.original.supplier.company}
+                      userId={row.original.supplier.supplierId}
+                      isSupplier={true}
+                      disableNavigation={true}
+                      disableHoverText
+                    />
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    {row.original.email}
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    {row.original.phone || '-'}
+                  </TableCell>
+                  <TableCell className={tableCellClass}>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${
+                        row.original.isActive
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                      }`}
+                    >
+                      {row.original.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </TableCell>
+                  <TableCell className={`text-right ${tableCellClass}`}>
+                    <span className="font-mono">
+                      {row.original.supplier.allocatedClaims}
+                    </span>
+                  </TableCell>
+                </a>
               </TableRow>
             ))}
           </TableBody>
