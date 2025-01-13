@@ -210,7 +210,7 @@ export const StaffUsersTable = ({ users = [] }: StaffUsersTableProps) => {
                         name={`${row.original.firstName} ${row.original.lastName}`}
                         userId={row.original.id.toString()}
                         disableNavigation={true}
-                        disableHover
+                        disableHoverText
                       />
                     </TableCell>
                     <TableCell className={tableCellClass}>

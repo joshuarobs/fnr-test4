@@ -103,6 +103,7 @@ export const DetailedClaimsTable = ({
               userId={handler.staff.employeeId}
               name={`${handler.firstName} ${handler.lastName}`}
               department={handler.staff.department}
+              disableHoverText
             />
           ) : (
             <NavAvatar />
@@ -246,104 +247,108 @@ export const DetailedClaimsTable = ({
               return (
                 <TableRow
                   key={claim.id}
-                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigate(`/claim/${claim.claimNumber}`);
-                  }}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group"
                 >
-                  <TableCell className="p-2 text-right">{claim.id}</TableCell>
-                  <TableCell>
-                    {claim.handler ? (
-                      <NavAvatar
-                        userInitials={`${claim.handler.firstName[0]}${claim.handler.lastName[0]}`}
-                        color={claim.handler.avatarColour}
-                        userId={claim.handler.staff.employeeId}
-                        name={`${claim.handler.firstName} ${claim.handler.lastName}`}
-                        department={claim.handler.staff.department}
-                      />
-                    ) : (
-                      <NavAvatar />
-                    )}
-                  </TableCell>
-                  <TableCell>{claim.claimNumber}</TableCell>
-                  <TableCell>{claim.description}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium capitalize ${
-                        claim.status === 'ARCHIVED'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100'
-                      }`}
-                    >
-                      {claim.status.toLowerCase().replace('_', ' ')}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {claim.items.length}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      {formatNumber(claim.totalClaimed)}
-                      {claim.insuredProgressPercent !== 100 && (
-                        <WarningIconTooltip warningString="Total claimed amount may not be final as insureds progress is not complete" />
+                  <a
+                    href={`/claim/${claim.claimNumber}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/claim/${claim.claimNumber}`);
+                    }}
+                    className="contents"
+                  >
+                    <TableCell className="p-2 text-right">{claim.id}</TableCell>
+                    <TableCell>
+                      {claim.handler ? (
+                        <NavAvatar
+                          userInitials={`${claim.handler.firstName[0]}${claim.handler.lastName[0]}`}
+                          color={claim.handler.avatarColour}
+                          userId={claim.handler.staff.employeeId}
+                          name={`${claim.handler.firstName} ${claim.handler.lastName}`}
+                          department={claim.handler.staff.department}
+                        />
+                      ) : (
+                        <NavAvatar />
                       )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      {formatNumber(claim.totalApproved)}
-                      {claim.ourProgressPercent !== 100 &&
-                        claim.totalApproved && (
-                          <WarningIconTooltip warningString="Total approved amount may not be final as our progress is not complete" />
+                    </TableCell>
+                    <TableCell>{claim.claimNumber}</TableCell>
+                    <TableCell>{claim.description}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-medium capitalize ${
+                          claim.status === 'ARCHIVED'
+                            ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100'
+                        }`}
+                      >
+                        {claim.status.toLowerCase().replace('_', ' ')}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {claim.items.length}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {formatNumber(claim.totalClaimed)}
+                        {claim.insuredProgressPercent !== 100 && (
+                          <WarningIconTooltip warningString="Total claimed amount may not be final as insureds progress is not complete" />
                         )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-right">
-                    <div className="flex items-center justify-end">
-                      {claim.items.length > 0
-                        ? `${Math.round(claim.insuredProgressPercent)}%`
-                        : '-'}
-                      {claim.items.length > 0 &&
-                        claim.insuredProgressPercent === 100 && (
-                          <GreenTickIcon size="small" />
-                        )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-right pr-4">
-                    <div className="flex items-center justify-end">
-                      {claim.items.length > 0
-                        ? `${Math.round(claim.ourProgressPercent)}%`
-                        : '-'}
-                      {claim.items.length > 0 &&
-                        claim.ourProgressPercent === 100 && (
-                          <GreenTickIcon size="small" />
-                        )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNow(new Date(claim.createdAt), {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNow(new Date(claim.updatedAt), {
-                      addSuffix: true,
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    {claim.isDeleted && (
-                      <div className="flex justify-center">
-                        <div
-                          className="rounded-full bg-red-500 p-1.5"
-                          style={{ filter: 'saturate(0.8)' }}
-                        >
-                          <ArchiveIcon className="h-4 w-4 text-white" />
-                        </div>
                       </div>
-                    )}
-                  </TableCell>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {formatNumber(claim.totalApproved)}
+                        {claim.ourProgressPercent !== 100 &&
+                          claim.totalApproved && (
+                            <WarningIconTooltip warningString="Total approved amount may not be final as our progress is not complete" />
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-right">
+                      <div className="flex items-center justify-end">
+                        {claim.items.length > 0
+                          ? `${Math.round(claim.insuredProgressPercent)}%`
+                          : '-'}
+                        {claim.items.length > 0 &&
+                          claim.insuredProgressPercent === 100 && (
+                            <GreenTickIcon size="small" />
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-right pr-4">
+                      <div className="flex items-center justify-end">
+                        {claim.items.length > 0
+                          ? `${Math.round(claim.ourProgressPercent)}%`
+                          : '-'}
+                        {claim.items.length > 0 &&
+                          claim.ourProgressPercent === 100 && (
+                            <GreenTickIcon size="small" />
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {formatDistanceToNow(new Date(claim.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {formatDistanceToNow(new Date(claim.updatedAt), {
+                        addSuffix: true,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {claim.isDeleted && (
+                        <div className="flex justify-center">
+                          <div
+                            className="rounded-full bg-red-500 p-1.5"
+                            style={{ filter: 'saturate(0.8)' }}
+                          >
+                            <ArchiveIcon className="h-4 w-4 text-white" />
+                          </div>
+                        </div>
+                      )}
+                    </TableCell>
+                  </a>
                   <TableCell>
                     {flexRender(
                       row.getVisibleCells()[row.getVisibleCells().length - 1]
