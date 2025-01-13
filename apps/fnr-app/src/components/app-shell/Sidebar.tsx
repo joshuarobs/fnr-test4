@@ -51,8 +51,8 @@ export const Sidebar = ({ className }: SidebarProps) => {
   }, [recentViewsData]);
 
   return (
-    <div className={cn('pb-12 w-[224px] min-w-[224px] border-r', className)}>
-      <div className="space-y-4 py-4">
+    <div className={cn('w-[224px] min-w-[224px] border-r h-full', className)}>
+      <div className="space-y-4 py-4 h-full overflow-y-auto">
         <div className="px-3 py-2">
           {/* ======================================== */}
           {/* Portal Toggle */}
