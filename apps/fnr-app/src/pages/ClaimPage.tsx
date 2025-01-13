@@ -20,10 +20,11 @@ import {
   useGetRecentlyViewedClaimsQuery,
   api,
 } from '../store/services/api';
-import { Input } from '@react-monorepo/shared';
+import { Input, Separator } from '@react-monorepo/shared';
 import { ContentsDataTableSection } from '../components/contents-table/ContentsDataTableSection';
 import { ArchivedLabel } from '../components/contents-table/ArchivedLabel';
 import { ClaimNotFoundErrorSection } from '../components/claims/ClaimNotFoundErrorSection';
+import { ClaimPageDescription } from '../components/claims/ClaimPageDescription';
 
 export const ClaimPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -219,6 +220,10 @@ export const ClaimPage = () => {
               <TotalProgressBar
                 value={progress.value}
                 maxValue={progress.maxValue}
+              />
+              <Separator orientation="vertical" className="h-8" />
+              <ClaimPageDescription
+                description={claimData?.description || ''}
               />
             </div>
             <div className="flex items-center gap-4">
