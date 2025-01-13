@@ -95,7 +95,7 @@ export const ContentsTableWithToolbar = forwardRef<
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', (pagination.pageIndex + 1).toString());
     newParams.set('pageSize', pagination.pageSize.toString());
-    setSearchParams(newParams);
+    setSearchParams(newParams, { replace: true });
   }, [pagination, setSearchParams]);
 
   // Update pagination when URL changes (convert from 1-based to 0-based)

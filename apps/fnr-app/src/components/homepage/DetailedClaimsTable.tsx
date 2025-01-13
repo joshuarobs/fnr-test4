@@ -202,7 +202,7 @@ export const DetailedClaimsTable = ({
       const newParams = new URLSearchParams(searchParams);
       newParams.set('page', (newPagination.pageIndex + 1).toString());
       newParams.set('pageSize', newPagination.pageSize.toString());
-      setSearchParams(newParams);
+      setSearchParams(newParams, { replace: true });
 
       // Then update local state
       setPagination(newPagination);
