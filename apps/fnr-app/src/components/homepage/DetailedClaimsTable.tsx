@@ -49,17 +49,11 @@ const formatNumber = (value: number | null | undefined): string => {
  * DetailedClaimsTable displays a paginated table of all claims with detailed information
  * including status, progress, and financial data
  */
-interface DetailedClaimsTableProps {
-  claims?: ClaimOverview[];
-}
-
 /**
  * DetailedClaimsTable displays a paginated table of claims with detailed information
  * including status, progress, and financial data
  */
-export const DetailedClaimsTable = ({
-  claims = [],
-}: DetailedClaimsTableProps) => {
+export const DetailedClaimsTable = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -183,32 +177,31 @@ export const DetailedClaimsTable = ({
     []
   );
 
+  const { data: claimsData } = useGetClaimsQuery({
+    page: pagination.pageIndex + 1,
+    pageSize: pagination.pageSize,
+  });
+
   const table = useReactTable<ClaimOverview>({
-    data: (claims || []).slice(
-      pagination.pageIndex * pagination.pageSize,
-      (pagination.pageIndex + 1) * pagination.pageSize
-    ),
+    data: claimsData?.claims || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
       pagination,
     },
     onPaginationChange: (updater) => {
-      // Handle both function and value updates
       const newPagination =
         typeof updater === 'function' ? updater(pagination) : updater;
 
-      // Update URL params first
       const newParams = new URLSearchParams(searchParams);
       newParams.set('page', (newPagination.pageIndex + 1).toString());
       newParams.set('pageSize', newPagination.pageSize.toString());
       setSearchParams(newParams, { replace: true });
 
-      // Then update local state
       setPagination(newPagination);
     },
     manualPagination: true,
-    pageCount: Math.ceil((claims || []).length / pagination.pageSize),
+    pageCount: claimsData?.totalPages || 1,
     filterFns: {
       fuzzy: (() => true) as FilterFn<ClaimOverview>,
       faceted: (() => true) as FilterFn<ClaimOverview>,
@@ -266,9 +259,10 @@ export const DetailedClaimsTable = ({
                           userId={claim.handler.staff.employeeId}
                           name={`${claim.handler.firstName} ${claim.handler.lastName}`}
                           department={claim.handler.staff.department}
+                          disableHoverText
                         />
                       ) : (
-                        <NavAvatar />
+                        <NavAvatar disableHoverText />
                       )}
                     </TableCell>
                     <TableCell>{claim.claimNumber}</TableCell>

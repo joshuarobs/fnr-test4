@@ -10,20 +10,6 @@ import { TestTableUXStuffPure } from '../components/contents-table/TestTableUXSt
 export const HomePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { data: claims, isLoading, error } = useGetClaimsQuery();
-
-  if (isLoading) {
-    return <div className="p-4">Loading claims...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 text-red-500">
-        {error instanceof Error ? error.message : 'An error occurred'}
-      </div>
-    );
-  }
-
   return (
     <div className="flex-1 min-w-0 flex flex-col gap-4 p-4">
       <h1 className="text-2xl font-bold">
@@ -51,7 +37,7 @@ export const HomePage = () => {
         </Button>
       </div>
       <div className="mt-4">
-        <DetailedClaimsTable claims={claims} />
+        <DetailedClaimsTable />
       </div>
       <div className="mt-4">
         <TestTableUXStuff />

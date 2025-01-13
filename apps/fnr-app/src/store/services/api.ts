@@ -235,8 +235,17 @@ export const api = createApi({
       query: (limit = 10) => `staff?limit=${limit}`,
       providesTags: ['Staff'],
     }),
-    getClaims: builder.query<ClaimOverview[], void>({
-      query: () => 'claims?limit=10',
+    getClaims: builder.query<
+      {
+        claims: ClaimOverview[];
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+      },
+      { page: number; pageSize: number }
+    >({
+      query: ({ page, pageSize }) => `claims?page=${page}&pageSize=${pageSize}`,
       providesTags: ['Claims'],
     }),
     getAssignedClaims: builder.query<
@@ -338,16 +347,22 @@ export const api = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(
-            api.util.updateQueryData('getClaims', undefined, (draft) => {
-              const claim = draft.find((c) => c.claimNumber === claimNumber);
-              if (claim) {
-                claim.totalClaimed = data.totalClaimed;
-                claim.totalApproved = data.totalApproved;
-                claim.insuredProgressPercent = data.insuredProgressPercent;
-                claim.ourProgressPercent = data.ourProgressPercent;
-                claim.lastProgressUpdate = data.lastProgressUpdate;
+            api.util.updateQueryData(
+              'getClaims',
+              { page: 1, pageSize: 10 },
+              (draft) => {
+                const claim = draft.claims.find(
+                  (c: ClaimOverview) => c.claimNumber === claimNumber
+                );
+                if (claim) {
+                  claim.totalClaimed = data.totalClaimed;
+                  claim.totalApproved = data.totalApproved;
+                  claim.insuredProgressPercent = data.insuredProgressPercent;
+                  claim.ourProgressPercent = data.ourProgressPercent;
+                  claim.lastProgressUpdate = data.lastProgressUpdate;
+                }
               }
-            })
+            )
           );
           dispatch(
             api.util.updateQueryData('getClaim', claimNumber, (draft) => {

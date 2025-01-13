@@ -71,52 +71,66 @@ router.get('/assigned/:employeeId', async (req, res) => {
 // GET /api/claims
 router.get('/', async (req, res) => {
   try {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 10;
+    const skip = (page - 1) * pageSize;
 
-    const claims = await prisma.claim.findMany({
-      take: limit,
-      select: {
-        id: true,
-        claimNumber: true,
-        description: true,
-        status: true,
-        isDeleted: true,
-        items: {
-          select: {
-            id: true,
+    const [claims, total] = await Promise.all([
+      prisma.claim.findMany({
+        skip,
+        take: pageSize,
+        select: {
+          id: true,
+          claimNumber: true,
+          description: true,
+          status: true,
+          isDeleted: true,
+          items: {
+            select: {
+              id: true,
+            },
           },
-        },
-        totalClaimed: true,
-        totalApproved: true,
-        createdAt: true,
-        updatedAt: true,
-        insuredProgressPercent: true,
-        ourProgressPercent: true,
-        lastProgressUpdate: true,
-        handler: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            avatarColour: true,
-            email: true,
-            staff: {
-              select: {
-                id: true,
-                employeeId: true,
-                department: true,
-                position: true,
+          totalClaimed: true,
+          totalApproved: true,
+          createdAt: true,
+          updatedAt: true,
+          insuredProgressPercent: true,
+          ourProgressPercent: true,
+          lastProgressUpdate: true,
+          handler: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              avatarColour: true,
+              email: true,
+              staff: {
+                select: {
+                  id: true,
+                  employeeId: true,
+                  department: true,
+                  position: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      prisma.claim.count(),
+    ]);
 
-    res.json(claims);
+    res.json({
+      claims,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    });
   } catch (error) {
     console.error('Error fetching claims:', error);
     res.status(500).json({ error: 'Failed to fetch claims' });
