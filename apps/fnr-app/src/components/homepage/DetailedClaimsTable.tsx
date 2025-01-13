@@ -25,7 +25,9 @@ import {
 import {
   useGetClaimsQuery,
   useGetRecentlyViewedClaimsQuery,
+  useGetAssignedClaimsQuery,
 } from '../../store/services/api';
+import { useUser } from '../providers/UserContext';
 import type {
   ClaimOverview,
   RecentlyViewedClaim,
@@ -56,7 +58,7 @@ const formatNumber = (value: number | null | undefined): string => {
  * including status, progress, and financial data
  */
 interface DetailedClaimsTableProps {
-  queryType?: 'all' | 'recent';
+  queryType?: 'all' | 'recent' | 'assigned';
 }
 
 /**
@@ -67,6 +69,7 @@ export const DetailedClaimsTable = ({
   queryType = 'all',
 }: DetailedClaimsTableProps) => {
   const navigate = useNavigate();
+  const user = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Initialize pagination state from URL parameters (convert from 1-based to 0-based)
@@ -189,13 +192,42 @@ export const DetailedClaimsTable = ({
     []
   );
 
-  const { data: claimsData } =
-    queryType === 'recent'
-      ? useGetRecentlyViewedClaimsQuery()
-      : useGetClaimsQuery({
+  const { data: rawClaimsData } = (() => {
+    switch (queryType) {
+      case 'recent':
+        return useGetRecentlyViewedClaimsQuery();
+      case 'assigned':
+        return useGetAssignedClaimsQuery({
+          employeeId: user.employeeId,
+          limit: pagination.pageSize,
+        });
+      default:
+        return useGetClaimsQuery({
           page: pagination.pageIndex + 1,
           pageSize: pagination.pageSize,
         });
+    }
+  })();
+
+  // Transform the data to have a consistent shape
+  const claimsData = React.useMemo(() => {
+    if (!rawClaimsData)
+      return { claims: [], total: 0, page: 1, pageSize: 10, totalPages: 1 };
+
+    if (Array.isArray(rawClaimsData)) {
+      // Handle assigned claims which returns an array
+      return {
+        claims: rawClaimsData,
+        total: rawClaimsData.length,
+        page: 1,
+        pageSize: rawClaimsData.length,
+        totalPages: 1,
+      };
+    }
+
+    // Return paginated data as is
+    return rawClaimsData;
+  }, [rawClaimsData]);
 
   const table = useReactTable<ClaimOverview>({
     data: claimsData?.claims || [],
