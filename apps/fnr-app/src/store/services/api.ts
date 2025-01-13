@@ -129,7 +129,7 @@ export interface ClaimOverview {
 }
 
 // Used for recently viewed claims
-interface RecentlyViewedClaim {
+export interface RecentlyViewedClaim {
   id: number;
   viewedAt: string;
   claim: {
@@ -260,8 +260,43 @@ export const api = createApi({
       query: (id) => `claims/${id}`,
       providesTags: ['Claim'],
     }),
-    getRecentlyViewedClaims: builder.query<RecentlyViewedClaim[], void>({
+    getRecentlyViewedClaims: builder.query<
+      {
+        claims: ClaimOverview[];
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+      },
+      void
+    >({
       query: () => 'claims/recent-views',
+      transformResponse: (response: RecentlyViewedClaim[]) => {
+        const claims = response.map((recentClaim) => ({
+          id: recentClaim.id,
+          claimNumber: recentClaim.claim.claimNumber,
+          description: recentClaim.claim.description,
+          status: recentClaim.claim.status,
+          items: [], // We don't have items in the recent view data
+          totalClaimed: recentClaim.claim.totalClaimed,
+          totalApproved: recentClaim.claim.totalApproved,
+          createdAt: recentClaim.claim.createdAt,
+          updatedAt: recentClaim.claim.updatedAt,
+          insuredProgressPercent: 0, // These fields aren't in recent view data
+          ourProgressPercent: 0,
+          lastProgressUpdate: null,
+          isDeleted: false,
+          handler: recentClaim.claim.handler,
+        }));
+
+        return {
+          claims,
+          total: response.length,
+          page: 1,
+          pageSize: response.length,
+          totalPages: 1,
+        };
+      },
       providesTags: ['RecentViews'],
     }),
     recordClaimView: builder.mutation<void, string>({

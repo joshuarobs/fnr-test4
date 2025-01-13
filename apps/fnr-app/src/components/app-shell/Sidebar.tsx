@@ -35,7 +35,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
   console.error('Is on claim page:', isOnClaimPage);
 
   // Fetch recently viewed claims
-  const { data: recentViews, refetch } = useGetRecentlyViewedClaimsQuery();
+  const { data: recentViewsData, refetch } = useGetRecentlyViewedClaimsQuery();
 
   // Refetch when navigating to a non-claim page
   React.useEffect(() => {
@@ -46,15 +46,9 @@ export const Sidebar = ({ className }: SidebarProps) => {
 
   // Get the 5 most recent claims
   const recentClaims = React.useMemo(() => {
-    if (!recentViews) return [];
-    // Create a copy of the array before sorting
-    return [...recentViews]
-      .sort(
-        (a, b) =>
-          new Date(b.viewedAt).getTime() - new Date(a.viewedAt).getTime()
-      )
-      .slice(0, 5);
-  }, [recentViews]);
+    if (!recentViewsData?.claims) return [];
+    return recentViewsData.claims.slice(0, 5);
+  }, [recentViewsData]);
 
   return (
     <div className={cn('pb-12 w-[224px] min-w-[224px] border-r', className)}>
@@ -99,8 +93,8 @@ export const Sidebar = ({ className }: SidebarProps) => {
               <SidebarTab
                 key={recentClaim.id}
                 icon={<FileTextIcon />}
-                label={recentClaim.claim.claimNumber}
-                to={getClaimRoute(recentClaim.claim.claimNumber)}
+                label={recentClaim.claimNumber}
+                to={getClaimRoute(recentClaim.claimNumber)}
               />
             ))}
             {recentClaims.length === 0 && (

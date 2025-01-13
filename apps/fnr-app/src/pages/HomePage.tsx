@@ -37,7 +37,7 @@ export const HomePage = () => {
         </Button>
       </div>
       <div className="mt-4">
-        <DetailedClaimsTable />
+        <DetailedClaimsTable queryType="all" />
       </div>
       <div className="mt-4">
         <TestTableUXStuff />
