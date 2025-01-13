@@ -26,6 +26,7 @@ import {
   useGetClaimsQuery,
   useGetRecentlyViewedClaimsQuery,
   useGetAssignedClaimsQuery,
+  useGetSupplierClaimsQuery,
 } from '../../store/services/api';
 import { useUser } from '../providers/UserContext';
 import type {
@@ -58,8 +59,9 @@ const formatNumber = (value: number | null | undefined): string => {
  * including status, progress, and financial data
  */
 interface DetailedClaimsTableProps {
-  queryType?: 'all' | 'recent' | 'assigned';
+  queryType?: 'all' | 'recent' | 'assigned' | 'supplier';
   employeeId?: string;
+  supplierId?: string;
 }
 
 /**
@@ -69,6 +71,7 @@ interface DetailedClaimsTableProps {
 export const DetailedClaimsTable = ({
   queryType = 'all',
   employeeId,
+  supplierId,
 }: DetailedClaimsTableProps) => {
   const navigate = useNavigate();
   const user = useUser();
@@ -203,6 +206,10 @@ export const DetailedClaimsTable = ({
           employeeId: employeeId || user.employeeId,
           limit: pagination.pageSize,
         });
+      case 'supplier':
+        if (!supplierId)
+          throw new Error('supplierId is required for supplier queryType');
+        return useGetSupplierClaimsQuery(supplierId);
       default:
         return useGetClaimsQuery({
           page: pagination.pageIndex + 1,
