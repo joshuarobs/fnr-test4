@@ -59,6 +59,7 @@ const formatNumber = (value: number | null | undefined): string => {
  */
 interface DetailedClaimsTableProps {
   queryType?: 'all' | 'recent' | 'assigned';
+  employeeId?: string;
 }
 
 /**
@@ -67,6 +68,7 @@ interface DetailedClaimsTableProps {
  */
 export const DetailedClaimsTable = ({
   queryType = 'all',
+  employeeId,
 }: DetailedClaimsTableProps) => {
   const navigate = useNavigate();
   const user = useUser();
@@ -198,7 +200,7 @@ export const DetailedClaimsTable = ({
         return useGetRecentlyViewedClaimsQuery();
       case 'assigned':
         return useGetAssignedClaimsQuery({
-          employeeId: user.employeeId,
+          employeeId: employeeId || user.employeeId,
           limit: pagination.pageSize,
         });
       default:

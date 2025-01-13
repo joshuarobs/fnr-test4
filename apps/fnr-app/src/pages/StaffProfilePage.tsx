@@ -2,10 +2,7 @@ import { Card } from '@react-monorepo/shared';
 import { Navigate, useParams } from 'react-router-dom';
 import { UserAvatar } from '../components/app-shell/UserAvatar';
 import { DetailedClaimsTable } from '../components/homepage/DetailedClaimsTable';
-import {
-  useGetStaffQuery,
-  useGetAssignedClaimsQuery,
-} from '../store/services/api';
+import { useGetStaffQuery } from '../store/services/api';
 import { getUserInitials } from '../lib/avatar-utils';
 
 // Staff profile page component that displays staff information
@@ -21,13 +18,7 @@ export const StaffProfilePage = () => {
     isLoading: userLoading,
     error: userError,
   } = useGetStaffQuery(employeeId);
-  const {
-    data: claims,
-    isLoading: claimsLoading,
-    error: claimsError,
-  } = useGetAssignedClaimsQuery({ employeeId });
-
-  if (userLoading || claimsLoading) {
+  if (userLoading) {
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Staff Profile</h1>
@@ -36,7 +27,7 @@ export const StaffProfilePage = () => {
     );
   }
 
-  if (userError || !user || claimsError) {
+  if (userError || !user) {
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Staff Profile</h1>
@@ -96,7 +87,7 @@ export const StaffProfilePage = () => {
       {/* Claims Table Section */}
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-4">Assigned Claims</h2>
-        <DetailedClaimsTable claims={claims} />
+        <DetailedClaimsTable queryType="assigned" employeeId={employeeId} />
       </div>
     </div>
   );
