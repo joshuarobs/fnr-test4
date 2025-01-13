@@ -3,13 +3,38 @@
  */
 
 /**
- * Gets initials from a company name
+ * Gets initials from a company name, ignoring common words and symbols
  * @param company - The company name
- * @returns Two letter initials from first two words, or one letter if single word
+ * @returns Two letter initials from first two significant words, or one letter if single word
  */
 export const getCompanyInitials = (company?: string): string => {
   if (!company) return '??';
-  const words = company.trim().split(' ').filter(Boolean);
+
+  // Remove common symbols
+  const cleanedName = company.replace(/[&+]/g, ' ');
+
+  // Common words to ignore
+  const ignoreWords = [
+    'of',
+    'and',
+    'the',
+    'in',
+    'on',
+    'at',
+    'by',
+    'for',
+    'to',
+    'a',
+    'an',
+  ];
+
+  // Split and filter words
+  const words = cleanedName
+    .trim()
+    .split(' ')
+    .filter(Boolean) // Remove empty strings
+    .filter((word) => !ignoreWords.includes(word.toLowerCase())); // Remove common words
+
   if (words.length === 0) return '??';
   if (words.length === 1) return (words[0][0] || '').toUpperCase();
   return ((words[0][0] || '') + (words[1][0] || '')).toUpperCase();
