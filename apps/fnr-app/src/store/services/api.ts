@@ -437,6 +437,17 @@ export const api = createApi({
       query: (supplierId) => `suppliers/${supplierId}/claims`,
       providesTags: ['Claims'],
     }),
+    updateClaimDescription: builder.mutation<
+      void,
+      { claimNumber: string; description: string }
+    >({
+      query: ({ claimNumber, description }) => ({
+        url: `claims/${claimNumber}/description`,
+        method: 'PATCH',
+        body: { description },
+      }),
+      invalidatesTags: ['Claim', 'Claims'],
+    }),
   }),
 });
 
@@ -481,4 +492,5 @@ export const {
   useGetSupplierQuery,
   useGetSupplierClaimsQuery,
   useGetCustomersQuery,
+  useUpdateClaimDescriptionMutation,
 } = api;

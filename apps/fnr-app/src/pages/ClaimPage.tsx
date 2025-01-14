@@ -18,6 +18,7 @@ import {
   useRemoveItemMutation,
   useRecordClaimViewMutation,
   useGetRecentlyViewedClaimsQuery,
+  useUpdateClaimDescriptionMutation,
   api,
 } from '../store/services/api';
 import { Input, Separator } from '@react-monorepo/shared';
@@ -63,6 +64,7 @@ export const ClaimPage = () => {
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
   const [recordView] = useRecordClaimViewMutation();
+  const [updateDescription] = useUpdateClaimDescriptionMutation();
 
   // Record view when claim page is loaded
   React.useEffect(() => {
@@ -224,6 +226,12 @@ export const ClaimPage = () => {
               <Separator orientation="vertical" className="h-8" />
               <ClaimPageDescription
                 description={claimData?.description || ''}
+                onUpdate={(newDescription) =>
+                  updateDescription({
+                    claimNumber: id,
+                    description: newDescription,
+                  })
+                }
               />
             </div>
             <div className="flex items-center gap-4">
