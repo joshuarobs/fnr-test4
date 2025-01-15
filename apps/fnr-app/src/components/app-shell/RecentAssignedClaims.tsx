@@ -14,11 +14,11 @@ const RecentAssignedClaims = () => {
   const { data: claims, isLoading: isClaimsLoading } =
     useGetAssignedClaimsQuery(
       {
-        employeeId: user.employeeId ?? '',
+        employeeId: user.staff?.employeeId || '',
         limit: 5,
       },
       {
-        skip: isUserLoading || !user.employeeId,
+        skip: isUserLoading || !user.staff?.employeeId,
       }
     );
 
