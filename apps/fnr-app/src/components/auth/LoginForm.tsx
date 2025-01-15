@@ -81,12 +81,6 @@ export const LoginForm = ({
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
                   </div>
                   <div className="relative">
                     <Input
@@ -108,6 +102,12 @@ export const LoginForm = ({
                       )}
                     </button>
                   </div>
+                  <a
+                    href="#"
+                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </a>
                 </div>
                 <Button type="submit" className="w-full">
                   Login
