@@ -27,11 +27,6 @@ const RecentAssignedClaims = () => {
     return <div className="text-sm text-muted-foreground px-4">Loading...</div>;
   }
 
-  // If no user data, don't show anything
-  if (!user) {
-    return null;
-  }
-
   if (isClaimsLoading) {
     return <div className="text-sm text-muted-foreground px-4">Loading...</div>;
   }

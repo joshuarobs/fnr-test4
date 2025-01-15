@@ -10,8 +10,8 @@ import {
   toast,
 } from '@react-monorepo/shared';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { useState } from 'react';
-import { useLoginMutation } from '../../store/services/api';
+import { useState, useEffect } from 'react';
+import { useLoginMutation, useGetStaffQuery } from '../../store/services/api';
 import { ROUTES } from '../../routes';
 
 // Login form component that handles authentication
@@ -22,6 +22,10 @@ export const LoginForm = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [login] = useLoginMutation();
+  const [employeeId, setEmployeeId] = useState<string | null>(null);
+  const { isSuccess, isError } = useGetStaffQuery(employeeId ?? '', {
+    skip: !employeeId,
+  });
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -35,9 +39,8 @@ export const LoginForm = ({
       localStorage.setItem('token', result.token);
       localStorage.setItem('employeeId', result.employeeId);
 
-      // Redirect to the attempted URL or home
-      const from = (location.state as any)?.from?.pathname || '/';
-      navigate(from, { replace: true });
+      // Set employeeId to trigger the staff query
+      setEmployeeId(result.employeeId);
     } catch (error) {
       toast({
         title: 'Login failed',
@@ -46,6 +49,24 @@ export const LoginForm = ({
       });
     }
   };
+
+  // Handle redirect after successful staff data fetch
+  useEffect(() => {
+    if (isSuccess && employeeId) {
+      const from = (location.state as any)?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    } else if (isError) {
+      toast({
+        title: 'Error loading user data',
+        description: 'Please try logging in again',
+        variant: 'destructive',
+      });
+      // Clear stored data on error
+      localStorage.removeItem('token');
+      localStorage.removeItem('employeeId');
+      setEmployeeId(null);
+    }
+  }, [isSuccess, isError, employeeId, location.state, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;

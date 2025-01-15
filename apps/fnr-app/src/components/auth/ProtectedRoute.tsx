@@ -20,6 +20,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div>Loading...</div>;
   }
 
-  // If we get here, we have valid auth and user data
+  // If we get here, we have valid auth and user data is loaded
   return <>{children}</>;
 };

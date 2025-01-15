@@ -225,6 +225,7 @@ export const api = createApi({
         method: 'POST',
         body: credentials,
       }),
+      invalidatesTags: ['User'],
     }),
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({

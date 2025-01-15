@@ -24,7 +24,11 @@ const UserContext = createContext<UserContextState | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const token = localStorage.getItem('token');
   const employeeId = localStorage.getItem('employeeId');
-  const { data: userData, isLoading } = useGetStaffQuery(employeeId ?? '', {
+  const {
+    data: userData,
+    isLoading,
+    isError,
+  } = useGetStaffQuery(employeeId ?? '', {
     // Skip the query if we don't have both token and employeeId
     skip: !token || !employeeId,
   });
@@ -41,7 +45,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           position: userData.staff.position ?? '',
         }
       : undefined,
-    isLoading: isLoading && !!token && !!employeeId,
+    isLoading: !isError && (isLoading || !userData) && !!token && !!employeeId,
   };
 
   return (
@@ -55,13 +59,9 @@ export const useUser = () => {
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
-  if (!context.user && !context.isLoading) {
-    throw new Error(
-      'User data is required - this component should only be used when logged in'
-    );
-  }
+  // During loading or if no user data yet, return empty object
   if (!context.user) {
-    return {} as UserContextData; // Return empty object during loading
+    return {} as UserContextData;
   }
   return context.user;
 };
