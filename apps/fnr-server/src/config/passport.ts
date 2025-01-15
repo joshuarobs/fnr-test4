@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import * as bcrypt from 'bcrypt';
 import prisma from '../lib/prisma';
 
 passport.use(
@@ -31,8 +32,9 @@ passport.use(
           return done(null, false, { message: 'Account is inactive' });
         }
 
-        // Check if password matches (trim to handle any whitespace)
-        if (user.password.trim() !== password.trim()) {
+        // Check if password matches using bcrypt
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
           console.log('Password mismatch:', {
             provided: password,
             stored: user.password,

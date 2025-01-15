@@ -226,6 +226,12 @@ export const api = createApi({
         body: credentials,
       }),
     }),
+    logout: builder.mutation<{ message: string }, void>({
+      query: () => ({
+        url: 'auth/logout',
+        method: 'POST',
+      }),
+    }),
     signUp: builder.mutation<SignUpResponse, SignUpRequest>({
       query: (credentials) => ({
         url: 'auth/signup',
@@ -490,6 +496,7 @@ export interface Supplier {
 
 export const {
   useLoginMutation,
+  useLogoutMutation,
   useGetStaffUsersQuery,
   useSignUpMutation,
   useGetMessageQuery,

@@ -10,12 +10,15 @@ import {
 } from '@react-monorepo/shared';
 import { Settings, Bell, LogOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES, getStaffRoute } from '../../routes';
+import { useLogoutMutation } from '../../store/services/api';
 
 // Component for displaying staff profile dropdown in the header
 // Uses UserAvatar component for avatar display and contains menu items for various actions
 export const HeaderProfileButton = () => {
+  const navigate = useNavigate();
+  const [logout] = useLogoutMutation();
   const employeeId = 'ADM001'; // Admin user from seed data. TODO: Get this from auth context when implemented
   const { data: staffData, isLoading } = useGetStaffQuery(employeeId);
 
@@ -79,7 +82,14 @@ export const HeaderProfileButton = () => {
           Notifications
         </DropdownMenuItem>
         <Separator className="my-2" />
-        <DropdownMenuItem className="cursor-pointer gap-2">
+        <DropdownMenuItem
+          className="cursor-pointer gap-2"
+          onClick={async () => {
+            await logout();
+            localStorage.removeItem('token');
+            navigate(ROUTES.LOGIN);
+          }}
+        >
           <LogOut className="h-4 w-4" />
           Sign out
         </DropdownMenuItem>

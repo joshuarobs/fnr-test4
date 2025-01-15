@@ -1,12 +1,13 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useGetStaffQuery } from '../../store/services/api';
 import { ROUTES } from '../../routes';
+import { useUserLoading } from '../providers/UserContext';
 
 // Component to protect routes that require authentication
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const token = localStorage.getItem('token');
   const employeeId = localStorage.getItem('employeeId');
+  const isLoading = useUserLoading();
 
   // If there's no token or employeeId, redirect to login
   if (!token || !employeeId) {
@@ -14,6 +15,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }
 
-  // If we have user data, render the protected content
+  // Show loading state while fetching user data
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  // If we get here, we have valid auth and user data
   return <>{children}</>;
 };

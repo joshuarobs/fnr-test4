@@ -9,6 +9,7 @@ import {
 import { Toaster } from '@react-monorepo/shared';
 import { UserProvider } from './providers/UserContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
+import { AuthRoute } from './auth/AuthRoute';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
@@ -17,6 +18,7 @@ import { useIsAdminRoute } from '../hooks/useIsAdminRoute';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { SignUpPage } from '../pages/SignUpPage';
+import { LogoutPage } from '../pages/LogoutPage';
 import { AssignedPage } from '../pages/AssignedPage';
 import { SettingsPage } from '../pages/SettingsPage';
 import { FeedbackPage } from '../pages/FeedbackPage';
@@ -83,9 +85,24 @@ const AppContent = () => {
     <>
       <Toaster />
       <Routes>
-        {/* Auth routes */}
-        <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-        <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
+        {/* Auth routes - redirect to home if already logged in */}
+        <Route
+          path={ROUTES.LOGIN}
+          element={
+            <AuthRoute>
+              <LoginPage />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path={ROUTES.SIGN_UP}
+          element={
+            <AuthRoute>
+              <SignUpPage />
+            </AuthRoute>
+          }
+        />
+        <Route path={ROUTES.LOGOUT} element={<LogoutPage />} />
 
         {/* Protected routes */}
         <Route
@@ -153,11 +170,11 @@ const AppContent = () => {
 // Wrapper component that provides router context
 export function App() {
   return (
-    <UserProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <UserProvider>
         <AppContent />
-      </BrowserRouter>
-    </UserProvider>
+      </UserProvider>
+    </BrowserRouter>
   );
 }
 

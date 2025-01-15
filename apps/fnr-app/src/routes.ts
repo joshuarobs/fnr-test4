@@ -21,6 +21,7 @@ export const ROUTES = {
   FEEDBACK: '/feedback',
   CLAIM: '/claim/:id',
   CREATE_CLAIM: 'new',
+  LOGOUT: '/logout',
 } as const;
 
 // Helper function to generate claim route with ID
