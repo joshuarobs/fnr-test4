@@ -21,13 +21,13 @@ export const ClaimPageDescription = ({
   };
 
   // Handle key press in textarea
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      setIsEditing(false);
-      if (onUpdate) {
-        onUpdate(editValue);
+      if (onUpdate && editValue !== description) {
+        await onUpdate(editValue);
       }
+      setIsEditing(false);
     }
   };
 
@@ -48,11 +48,11 @@ export const ClaimPageDescription = ({
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        onBlur={() => {
-          setIsEditing(false);
-          if (onUpdate) {
-            onUpdate(editValue);
+        onBlur={async () => {
+          if (onUpdate && editValue !== description) {
+            await onUpdate(editValue);
           }
+          setIsEditing(false);
         }}
         className="w-[400px]"
       />

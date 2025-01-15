@@ -64,7 +64,8 @@ export const ClaimPage = () => {
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
   const [recordView] = useRecordClaimViewMutation();
-  const [updateDescription] = useUpdateClaimDescriptionMutation();
+  const [updateDescription, { isError: isUpdateError }] =
+    useUpdateClaimDescriptionMutation();
 
   // Record view when claim page is loaded
   React.useEffect(() => {
@@ -226,12 +227,16 @@ export const ClaimPage = () => {
               <Separator orientation="vertical" className="h-8" />
               <ClaimPageDescription
                 description={claimData?.description || ''}
-                onUpdate={(newDescription) =>
-                  updateDescription({
-                    claimNumber: id,
-                    description: newDescription,
-                  })
-                }
+                onUpdate={async (newDescription) => {
+                  try {
+                    await updateDescription({
+                      claimNumber: id,
+                      description: newDescription,
+                    }).unwrap();
+                  } catch (error) {
+                    console.error('Failed to update description:', error);
+                  }
+                }}
               />
             </div>
             <div className="flex items-center gap-4">
