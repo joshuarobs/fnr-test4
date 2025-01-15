@@ -4,10 +4,9 @@ import { cn } from '../../../../../shared/src/lib/utils';
 import { SidebarTab } from './SidebarTab';
 import { Separator } from '@react-monorepo/shared';
 import { ROUTES, getClaimRoute } from '../../routes';
-import { useGetRecentlyViewedClaimsQuery } from '../../store/services/api';
 import { RecentAssignedClaims } from './RecentAssignedClaims';
+import { RecentViewedClaims } from './RecentViewedClaims';
 import { HeaderPortalToggleButton } from './HeaderPortalToggleButton';
-
 import {
   HomeIcon,
   StarIcon,
@@ -33,22 +32,6 @@ export const Sidebar = ({ className }: SidebarProps) => {
 
   console.error('Current path:', location.pathname);
   console.error('Is on claim page:', isOnClaimPage);
-
-  // Fetch recently viewed claims
-  const { data: recentViewsData, refetch } = useGetRecentlyViewedClaimsQuery();
-
-  // Refetch when navigating to a non-claim page
-  React.useEffect(() => {
-    if (!isOnClaimPage) {
-      refetch();
-    }
-  }, [isOnClaimPage, refetch]);
-
-  // Get the 5 most recent claims
-  const recentClaims = React.useMemo(() => {
-    if (!recentViewsData?.claims) return [];
-    return recentViewsData.claims.slice(0, 5);
-  }, [recentViewsData]);
 
   return (
     <div className={cn('w-[224px] min-w-[224px] border-r h-full', className)}>
@@ -88,21 +71,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Recently Viewed
           </h2>
-          <div>
-            {recentClaims.map((recentClaim) => (
-              <SidebarTab
-                key={recentClaim.id}
-                icon={<FileTextIcon />}
-                label={recentClaim.claimNumber}
-                to={getClaimRoute(recentClaim.claimNumber)}
-              />
-            ))}
-            {recentClaims.length === 0 && (
-              <p className="text-sm text-muted-foreground px-4">
-                No recently viewed claims
-              </p>
-            )}
-          </div>
+          <RecentViewedClaims />
 
           <SidebarSeparator />
           {/* Other tabs */}

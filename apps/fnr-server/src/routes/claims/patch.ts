@@ -16,12 +16,35 @@ router.patch('/:claimNumber/description', async (req, res) => {
       });
     }
 
-    console.log('Updating claim description:', { claimNumber, description });
-    const updatedClaim = await prisma.claim.update({
-      where: { claimNumber },
-      data: { description },
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      // Update the claim description
+      const updatedClaim = await tx.claim.update({
+        where: { claimNumber },
+        data: { description },
+      });
+
+      // Add user as contributor when they update the description
+      await tx.claimContributor.upsert({
+        where: {
+          claimId_userId: {
+            claimId: updatedClaim.id,
+            userId,
+          },
+        },
+        create: {
+          claimId: updatedClaim.id,
+          userId,
+        },
+        update: {}, // No update needed since we just want to ensure it exists
+      });
+
+      return updatedClaim;
     });
-    console.log('Successfully updated claim:', updatedClaim);
 
     return res.status(200).json({ success: true });
   } catch (error) {

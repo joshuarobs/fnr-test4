@@ -27,9 +27,12 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // TODO: Get actual user IDs from auth
-    const insuredId = 1;
-    const creatorId = 1;
+    const creatorId = req.user?.id;
+    if (!creatorId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    // For now, set insuredId same as creator since we don't have separate insured users yet
+    const insuredId = creatorId;
 
     // Find the staff member by employee ID
     const staff = await prisma.staff.findUnique({
@@ -204,8 +207,10 @@ router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
       });
 
       // Add user as contributor when they add an item
-      // TODO: Get actual user ID from auth
-      const userId = 1;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new Error('Unauthorized');
+      }
       await tx.claimContributor.upsert({
         where: {
           claimId_userId: {
@@ -319,8 +324,10 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
       });
 
       // Add user as contributor when they update an item
-      // TODO: Get actual user ID from auth
-      const userId = 1;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new Error('Unauthorized');
+      }
       await tx.claimContributor.upsert({
         where: {
           claimId_userId: {
@@ -355,8 +362,10 @@ router.patch('/:claimNumber/items/:itemId', async (req, res) => {
 router.post('/:claimNumber/view', async (req, res) => {
   try {
     const { claimNumber } = req.params;
-    // TODO: Get actual user ID from auth
-    const userId = 1;
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const claim = await tx.claim.findUnique({
@@ -482,8 +491,10 @@ router.post('/:claimNumber/reassign', async (req, res) => {
       });
 
       // Add user as contributor when they reassign a claim
-      // TODO: Get actual user ID from auth
-      const userId = 1;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new Error('Unauthorized');
+      }
       await tx.claimContributor.upsert({
         where: {
           claimId_userId: {

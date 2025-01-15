@@ -140,8 +140,10 @@ router.get('/', async (req, res) => {
 // GET /api/claims/recent-views
 router.get('/recent-views', async (req, res) => {
   try {
-    // TODO: Get actual user ID from auth
-    const userId = 1; // Temporary for testing
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
     const recentViews = await prisma.recentlyViewedClaim.findMany({
       where: {
