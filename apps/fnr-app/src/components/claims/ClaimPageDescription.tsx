@@ -1,4 +1,5 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
+import { Textarea } from '@react-monorepo/shared';
 
 interface ClaimPageDescriptionProps {
   description: string;
@@ -30,10 +31,20 @@ export const ClaimPageDescription = ({
     }
   };
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      // Set cursor position to end of text
+      textareaRef.current.setSelectionRange(editValue.length, editValue.length);
+    }
+  }, [isEditing, editValue]);
+
   if (isEditing) {
     return (
-      <textarea
-        className="min-w-[400px] w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      <Textarea
+        ref={textareaRef}
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -43,14 +54,14 @@ export const ClaimPageDescription = ({
             onUpdate(editValue);
           }
         }}
-        autoFocus
+        className="w-[400px]"
       />
     );
   }
 
   return (
     <div
-      className="text-sm text-muted-foreground min-h-[1.5rem] cursor-text min-w-[400px]"
+      className="text-sm text-muted-foreground min-h-[1.5rem] cursor-text w-[400px]"
       onDoubleClick={handleDoubleClick}
     >
       {description || 'No description provided'}
