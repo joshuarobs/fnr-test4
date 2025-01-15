@@ -4,11 +4,12 @@ import {
   calculateClaimValues,
   recalculateClaimValues,
 } from '../../lib/claimHelpers';
+import { isAuthenticated } from '../../middleware/auth';
 
 const router: Router = express.Router();
 
 // POST /api/claims - Create a new claim
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   try {
     const {
       claimNumber,
@@ -133,233 +134,244 @@ const validateItemRequest = (
 };
 
 // POST /api/claims/:claimNumber/items
-router.post('/:claimNumber/items', validateItemRequest, async (req, res) => {
-  try {
-    const { claimNumber } = req.params;
-    console.log('Creating item for claim:', claimNumber);
+router.post(
+  '/:claimNumber/items',
+  isAuthenticated,
+  validateItemRequest,
+  async (req, res) => {
+    try {
+      const { claimNumber } = req.params;
+      console.log('Creating item for claim:', claimNumber);
 
-    // Use a single transaction for all operations
-    const result = await prisma.$transaction(async (tx) => {
-      // Get claim with existing items for calculation
-      const claim = await tx.claim.findUnique({
-        where: { claimNumber },
-        select: {
-          id: true,
-          localItemIds: true,
-          itemOrder: true,
-          items: {
-            select: {
-              insuredsQuote: true,
-              ourQuote: true,
-              quantity: true,
+      // Use a single transaction for all operations
+      const result = await prisma.$transaction(async (tx) => {
+        // Get claim with existing items for calculation
+        const claim = await tx.claim.findUnique({
+          where: { claimNumber },
+          select: {
+            id: true,
+            localItemIds: true,
+            itemOrder: true,
+            items: {
+              select: {
+                insuredsQuote: true,
+                ourQuote: true,
+                quantity: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      if (!claim) {
-        throw new Error('Claim not found');
-      }
+        if (!claim) {
+          throw new Error('Claim not found');
+        }
 
-      // Create the new item
-      const newItem = await tx.item.create({
-        data: {
-          name: req.body.name,
-          category: req.body.category || null,
-          roomCategory: req.body.roomCategory || null, // Added roomCategory field
-          group: req.body.group || null,
-          modelSerialNumber: req.body.modelSerialNumber || null,
-          description: req.body.description || null,
-          quantity: req.body.quantity || 1,
-          purchaseDate: req.body.purchaseDate
-            ? new Date(req.body.purchaseDate)
-            : null,
-          age: req.body.age || null,
-          condition: req.body.condition || null,
-          insuredsQuote: req.body.insuredsQuote || null,
-          ourQuote: req.body.ourQuote || null,
-          ourQuoteProof: req.body.ourQuoteProof || null,
-          itemStatus: req.body.itemStatus || 'NR',
-          claimId: claim.id,
-        },
-      });
+        // Create the new item
+        const newItem = await tx.item.create({
+          data: {
+            name: req.body.name,
+            category: req.body.category || null,
+            roomCategory: req.body.roomCategory || null,
+            group: req.body.group || null,
+            modelSerialNumber: req.body.modelSerialNumber || null,
+            description: req.body.description || null,
+            quantity: req.body.quantity || 1,
+            purchaseDate: req.body.purchaseDate
+              ? new Date(req.body.purchaseDate)
+              : null,
+            age: req.body.age || null,
+            condition: req.body.condition || null,
+            insuredsQuote: req.body.insuredsQuote || null,
+            ourQuote: req.body.ourQuote || null,
+            ourQuoteProof: req.body.ourQuoteProof || null,
+            itemStatus: req.body.itemStatus || 'NR',
+            claimId: claim.id,
+          },
+        });
 
-      // Calculate new totals including the new item
-      const allItems = [
-        ...claim.items,
-        {
-          insuredsQuote: newItem.insuredsQuote,
-          ourQuote: newItem.ourQuote,
-          quantity: newItem.quantity,
-        },
-      ];
+        // Calculate new totals including the new item
+        const allItems = [
+          ...claim.items,
+          {
+            insuredsQuote: newItem.insuredsQuote,
+            ourQuote: newItem.ourQuote,
+            quantity: newItem.quantity,
+          },
+        ];
 
-      const values = calculateClaimValues(allItems);
+        const values = calculateClaimValues(allItems);
 
-      // Update claim with new item and calculated values in one operation
-      await tx.claim.update({
-        where: { id: claim.id },
-        data: {
-          localItemIds: { set: [...(claim.localItemIds || []), newItem.id] },
-          itemOrder: { set: [...(claim.itemOrder || []), newItem.id] },
-          ...values,
-        },
-      });
+        // Update claim with new item and calculated values in one operation
+        await tx.claim.update({
+          where: { id: claim.id },
+          data: {
+            localItemIds: { set: [...(claim.localItemIds || []), newItem.id] },
+            itemOrder: { set: [...(claim.itemOrder || []), newItem.id] },
+            ...values,
+          },
+        });
 
-      // Add user as contributor when they add an item
-      const userId = req.user?.id;
-      if (!userId) {
-        throw new Error('Unauthorized');
-      }
-      await tx.claimContributor.upsert({
-        where: {
-          claimId_userId: {
+        // Add user as contributor when they add an item
+        const userId = req.user?.id;
+        if (!userId) {
+          throw new Error('Unauthorized');
+        }
+        await tx.claimContributor.upsert({
+          where: {
+            claimId_userId: {
+              claimId: claim.id,
+              userId,
+            },
+          },
+          create: {
             claimId: claim.id,
             userId,
           },
-        },
-        create: {
-          claimId: claim.id,
-          userId,
-        },
-        update: {}, // No update needed since we just want to ensure it exists
+          update: {}, // No update needed since we just want to ensure it exists
+        });
+
+        return newItem;
       });
 
-      return newItem;
-    });
-
-    res.status(201).json(result);
-  } catch (error) {
-    console.error('Detailed error creating item:', error);
-    if (error.message === 'Claim not found') {
-      return res.status(404).json({ error: 'Claim not found' });
+      res.status(201).json(result);
+    } catch (error) {
+      console.error('Detailed error creating item:', error);
+      if (error.message === 'Claim not found') {
+        return res.status(404).json({ error: 'Claim not found' });
+      }
+      res
+        .status(500)
+        .json({ error: 'Failed to create item', details: error.message });
     }
-    res
-      .status(500)
-      .json({ error: 'Failed to create item', details: error.message });
   }
-});
+);
 
 // PATCH /api/claims/:claimNumber/items/:itemId
-router.patch('/:claimNumber/items/:itemId', async (req, res) => {
-  try {
-    const { claimNumber, itemId } = req.params;
-    const {
-      name,
-      category,
-      group,
-      modelSerialNumber,
-      description,
-      purchaseDate,
-      age,
-      condition,
-      insuredsQuote,
-      ourQuote,
-      ourQuoteProof,
-      itemStatus,
-      roomCategory,
-      quantity,
-    } = req.body;
+router.patch(
+  '/:claimNumber/items/:itemId',
+  isAuthenticated,
+  async (req, res) => {
+    try {
+      const { claimNumber, itemId } = req.params;
+      const {
+        name,
+        category,
+        group,
+        modelSerialNumber,
+        description,
+        purchaseDate,
+        age,
+        condition,
+        insuredsQuote,
+        ourQuote,
+        ourQuoteProof,
+        itemStatus,
+        roomCategory,
+        quantity,
+      } = req.body;
 
-    const result = await prisma.$transaction(async (tx) => {
-      // First verify the claim exists and the item belongs to it
-      const claim = await tx.claim.findUnique({
-        where: { claimNumber },
-        include: {
-          items: {
-            where: { id: parseInt(itemId) },
+      const result = await prisma.$transaction(async (tx) => {
+        // First verify the claim exists and the item belongs to it
+        const claim = await tx.claim.findUnique({
+          where: { claimNumber },
+          include: {
+            items: {
+              where: { id: parseInt(itemId) },
+            },
           },
-        },
-      });
+        });
 
-      if (!claim) {
-        throw new Error('Claim not found');
-      }
+        if (!claim) {
+          throw new Error('Claim not found');
+        }
 
-      if (claim.items.length === 0) {
-        throw new Error('Item not found in claim');
-      }
+        if (claim.items.length === 0) {
+          throw new Error('Item not found in claim');
+        }
 
-      // Build update data object with all possible fields
-      const updateData: any = {};
-      if (name !== undefined) updateData.name = name;
-      if (category !== undefined) updateData.category = category;
-      if (group !== undefined) updateData.group = group;
-      if (modelSerialNumber !== undefined)
-        updateData.modelSerialNumber = modelSerialNumber;
-      if (description !== undefined) updateData.description = description;
-      if (purchaseDate !== undefined) updateData.purchaseDate = purchaseDate;
-      if (age !== undefined) updateData.age = age;
-      if (condition !== undefined) updateData.condition = condition;
-      if (insuredsQuote !== undefined) updateData.insuredsQuote = insuredsQuote;
-      if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
-      if (ourQuoteProof !== undefined) updateData.ourQuoteProof = ourQuoteProof;
-      if (itemStatus !== undefined) updateData.itemStatus = itemStatus;
-      if (roomCategory !== undefined) updateData.roomCategory = roomCategory;
-      if (quantity !== undefined) updateData.quantity = quantity;
+        // Build update data object with all possible fields
+        const updateData: any = {};
+        if (name !== undefined) updateData.name = name;
+        if (category !== undefined) updateData.category = category;
+        if (group !== undefined) updateData.group = group;
+        if (modelSerialNumber !== undefined)
+          updateData.modelSerialNumber = modelSerialNumber;
+        if (description !== undefined) updateData.description = description;
+        if (purchaseDate !== undefined) updateData.purchaseDate = purchaseDate;
+        if (age !== undefined) updateData.age = age;
+        if (condition !== undefined) updateData.condition = condition;
+        if (insuredsQuote !== undefined)
+          updateData.insuredsQuote = insuredsQuote;
+        if (ourQuote !== undefined) updateData.ourQuote = ourQuote;
+        if (ourQuoteProof !== undefined)
+          updateData.ourQuoteProof = ourQuoteProof;
+        if (itemStatus !== undefined) updateData.itemStatus = itemStatus;
+        if (roomCategory !== undefined) updateData.roomCategory = roomCategory;
+        if (quantity !== undefined) updateData.quantity = quantity;
 
-      // Update the item
-      const updatedItem = await tx.item.update({
-        where: { id: parseInt(itemId) },
-        data: updateData,
-      });
+        // Update the item
+        const updatedItem = await tx.item.update({
+          where: { id: parseInt(itemId) },
+          data: updateData,
+        });
 
-      // Get all items with the updated item for recalculation
-      const allItems = await tx.item.findMany({
-        where: { claimId: claim.id },
-        select: {
-          insuredsQuote: true,
-          ourQuote: true,
-          quantity: true,
-        },
-      });
+        // Get all items with the updated item for recalculation
+        const allItems = await tx.item.findMany({
+          where: { claimId: claim.id },
+          select: {
+            insuredsQuote: true,
+            ourQuote: true,
+            quantity: true,
+          },
+        });
 
-      // Recalculate claim values with updated items
-      const values = calculateClaimValues(allItems);
+        // Recalculate claim values with updated items
+        const values = calculateClaimValues(allItems);
 
-      // Update claim with calculated values
-      await tx.claim.update({
-        where: { id: claim.id },
-        data: values,
-      });
+        // Update claim with calculated values
+        await tx.claim.update({
+          where: { id: claim.id },
+          data: values,
+        });
 
-      // Add user as contributor when they update an item
-      const userId = req.user?.id;
-      if (!userId) {
-        throw new Error('Unauthorized');
-      }
-      await tx.claimContributor.upsert({
-        where: {
-          claimId_userId: {
+        // Add user as contributor when they update an item
+        const userId = req.user?.id;
+        if (!userId) {
+          throw new Error('Unauthorized');
+        }
+        await tx.claimContributor.upsert({
+          where: {
+            claimId_userId: {
+              claimId: claim.id,
+              userId,
+            },
+          },
+          create: {
             claimId: claim.id,
             userId,
           },
-        },
-        create: {
-          claimId: claim.id,
-          userId,
-        },
-        update: {}, // No update needed since we just want to ensure it exists
+          update: {}, // No update needed since we just want to ensure it exists
+        });
+
+        return updatedItem;
       });
 
-      return updatedItem;
-    });
-
-    res.json(result);
-  } catch (error) {
-    console.error('Error updating item:', error);
-    if (error.message === 'Claim not found') {
-      return res.status(404).json({ error: 'Claim not found' });
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating item:', error);
+      if (error.message === 'Claim not found') {
+        return res.status(404).json({ error: 'Claim not found' });
+      }
+      if (error.message === 'Item not found in claim') {
+        return res.status(404).json({ error: 'Item not found in claim' });
+      }
+      res.status(500).json({ error: 'Failed to update item' });
     }
-    if (error.message === 'Item not found in claim') {
-      return res.status(404).json({ error: 'Item not found in claim' });
-    }
-    res.status(500).json({ error: 'Failed to update item' });
   }
-});
+);
 
 // POST /api/claims/:claimNumber/view
-router.post('/:claimNumber/view', async (req, res) => {
+router.post('/:claimNumber/view', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
     const userId = req.user?.id;
@@ -443,9 +455,8 @@ router.post('/:claimNumber/view', async (req, res) => {
   }
 });
 
-// POST /api/claims/:claimNumber/recalculate
 // POST /api/claims/:claimNumber/reassign
-router.post('/:claimNumber/reassign', async (req, res) => {
+router.post('/:claimNumber/reassign', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
     const { employeeId } = req.body;
@@ -498,12 +509,12 @@ router.post('/:claimNumber/reassign', async (req, res) => {
       await tx.claimContributor.upsert({
         where: {
           claimId_userId: {
-            claimId: result.id,
+            claimId: updatedClaim.id,
             userId,
           },
         },
         create: {
-          claimId: result.id,
+          claimId: updatedClaim.id,
           userId,
         },
         update: {}, // No update needed since we just want to ensure it exists
@@ -528,7 +539,8 @@ router.post('/:claimNumber/reassign', async (req, res) => {
   }
 });
 
-router.post('/:claimNumber/recalculate', async (req, res) => {
+// POST /api/claims/:claimNumber/recalculate
+router.post('/:claimNumber/recalculate', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
 
@@ -567,7 +579,7 @@ router.post('/:claimNumber/recalculate', async (req, res) => {
       ourQuotesComplete: result.ourQuotesComplete,
       insuredProgressPercent: result.insuredProgressPercent,
       ourProgressPercent: result.ourProgressPercent,
-      lastProgressUpdate: result.lastProgressUpdate, // Added this field
+      lastProgressUpdate: result.lastProgressUpdate,
     });
   } catch (error) {
     console.error('Error recalculating claim values:', error);

@@ -1,171 +1,189 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { recalculateClaimValues } from '../../lib/claimHelpers';
+import { isAuthenticated } from '../../middleware/auth';
 
 const router: Router = express.Router();
 
 // Soft delete item
 // POST /api/claims/:claimNumber/items/:itemId/soft-delete
-router.post('/:claimNumber/items/:itemId/soft-delete', async (req, res) => {
-  try {
-    const { claimNumber, itemId } = req.params;
+router.post(
+  '/:claimNumber/items/:itemId/soft-delete',
+  isAuthenticated,
+  async (req, res) => {
+    try {
+      const { claimNumber, itemId } = req.params;
 
-    const result = await prisma.$transaction(async (tx) => {
-      // First verify the claim exists and the item belongs to it
-      const claim = await tx.claim.findUnique({
-        where: { claimNumber },
-        include: {
-          items: {
-            where: { id: parseInt(itemId) },
+      const result = await prisma.$transaction(async (tx) => {
+        // First verify the claim exists and the item belongs to it
+        const claim = await tx.claim.findUnique({
+          where: { claimNumber },
+          include: {
+            items: {
+              where: { id: parseInt(itemId) },
+            },
           },
-        },
-      });
+        });
 
-      if (!claim) {
-        throw new Error('Claim not found');
-      }
+        if (!claim) {
+          throw new Error('Claim not found');
+        }
 
-      if (claim.items.length === 0) {
-        throw new Error('Item not found in claim');
-      }
+        if (claim.items.length === 0) {
+          throw new Error('Item not found in claim');
+        }
 
-      // Soft delete the item
-      await tx.item.update({
-        where: { id: parseInt(itemId) },
-        data: {
-          isDeleted: true,
-          deletedAt: new Date(),
-        },
-      });
+        // Soft delete the item
+        await tx.item.update({
+          where: { id: parseInt(itemId) },
+          data: {
+            isDeleted: true,
+            deletedAt: new Date(),
+          },
+        });
 
-      // Add user as contributor when they soft delete an item
-      // TODO: Get actual user ID from auth
-      const userId = 1;
-      await tx.claimContributor.upsert({
-        where: {
-          claimId_userId: {
+        // Add authenticated user as contributor when they soft delete an item
+        if (!req.user) {
+          throw new Error('Unauthorized');
+        }
+        const userId = req.user.id;
+        await tx.claimContributor.upsert({
+          where: {
+            claimId_userId: {
+              claimId: claim.id,
+              userId,
+            },
+          },
+          create: {
             claimId: claim.id,
             userId,
           },
-        },
-        create: {
-          claimId: claim.id,
-          userId,
-        },
-        update: {}, // No update needed since we just want to ensure it exists
+          update: {}, // No update needed since we just want to ensure it exists
+        });
+
+        return { success: true, message: 'Item soft deleted' };
       });
 
-      return { success: true, message: 'Item soft deleted' };
-    });
-
-    res.json(result);
-  } catch (error) {
-    console.error('Error soft deleting item:', error);
-    if (error.message === 'Claim not found') {
-      return res.status(404).json({ error: 'Claim not found' });
+      res.json(result);
+    } catch (error) {
+      console.error('Error soft deleting item:', error);
+      if (error.message === 'Claim not found') {
+        return res.status(404).json({ error: 'Claim not found' });
+      }
+      if (error.message === 'Item not found in claim') {
+        return res.status(404).json({ error: 'Item not found in claim' });
+      }
+      if (error.message === 'Unauthorized') {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      res.status(500).json({ error: 'Failed to soft delete item' });
     }
-    if (error.message === 'Item not found in claim') {
-      return res.status(404).json({ error: 'Item not found in claim' });
-    }
-    res.status(500).json({ error: 'Failed to soft delete item' });
   }
-});
+);
 
 // Hard delete
 // DELETE /api/claims/:claimNumber/items/:itemId
-router.delete('/:claimNumber/items/:itemId', async (req, res) => {
-  try {
-    const { claimNumber, itemId } = req.params;
+router.delete(
+  '/:claimNumber/items/:itemId',
+  isAuthenticated,
+  async (req, res) => {
+    try {
+      const { claimNumber, itemId } = req.params;
 
-    const result = await prisma.$transaction(async (tx) => {
-      // First verify the claim exists and the item belongs to it
-      const claim = await tx.claim.findUnique({
-        where: { claimNumber },
-        include: {
-          items: {
-            where: { id: parseInt(itemId) },
+      const result = await prisma.$transaction(async (tx) => {
+        // First verify the claim exists and the item belongs to it
+        const claim = await tx.claim.findUnique({
+          where: { claimNumber },
+          include: {
+            items: {
+              where: { id: parseInt(itemId) },
+            },
           },
-        },
-      });
+        });
 
-      if (!claim) {
-        throw new Error('Claim not found');
-      }
+        if (!claim) {
+          throw new Error('Claim not found');
+        }
 
-      if (claim.items.length === 0) {
-        throw new Error('Item not found in claim');
-      }
+        if (claim.items.length === 0) {
+          throw new Error('Item not found in claim');
+        }
 
-      // Delete any associated evidence first
-      await tx.evidence.deleteMany({
-        where: { itemId: parseInt(itemId) },
-      });
+        // Delete any associated evidence first
+        await tx.evidence.deleteMany({
+          where: { itemId: parseInt(itemId) },
+        });
 
-      // Hard delete the item
-      await tx.item.delete({
-        where: { id: parseInt(itemId) },
-      });
+        // Hard delete the item
+        await tx.item.delete({
+          where: { id: parseInt(itemId) },
+        });
 
-      // Update claim's arrays and recalculate values
-      await tx.claim.update({
-        where: { id: claim.id },
-        data: {
-          localItemIds: {
-            set: claim.localItemIds.filter((id) => id !== parseInt(itemId)),
+        // Update claim's arrays and recalculate values
+        await tx.claim.update({
+          where: { id: claim.id },
+          data: {
+            localItemIds: {
+              set: claim.localItemIds.filter((id) => id !== parseInt(itemId)),
+            },
+            itemOrder: {
+              set: claim.itemOrder.filter((id) => id !== parseInt(itemId)),
+            },
           },
-          itemOrder: {
-            set: claim.itemOrder.filter((id) => id !== parseInt(itemId)),
+        });
+
+        // Recalculate claim values using the helper function
+        await recalculateClaimValues(claim.id, tx);
+
+        // Add authenticated user as contributor when they hard delete an item
+        if (!req.user) {
+          throw new Error('Unauthorized');
+        }
+        const userId = req.user.id;
+        await tx.claimContributor.upsert({
+          where: {
+            claimId_userId: {
+              claimId: claim.id,
+              userId,
+            },
           },
-        },
-      });
-
-      // Recalculate claim values using the helper function
-      await recalculateClaimValues(claim.id, tx);
-
-      // Add user as contributor when they hard delete an item
-      // TODO: Get actual user ID from auth
-      const userId = 1;
-      await tx.claimContributor.upsert({
-        where: {
-          claimId_userId: {
+          create: {
             claimId: claim.id,
             userId,
           },
-        },
-        create: {
-          claimId: claim.id,
-          userId,
-        },
-        update: {}, // No update needed since we just want to ensure it exists
+          update: {}, // No update needed since we just want to ensure it exists
+        });
+
+        return { success: true, message: 'Item permanently deleted' };
       });
 
-      return { success: true, message: 'Item permanently deleted' };
-    });
-
-    res.json(result);
-  } catch (error) {
-    console.error('Error deleting item:', error);
-    if (error.message === 'Claim not found') {
-      return res.status(404).json({ error: 'Claim not found' });
+      res.json(result);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      if (error.message === 'Claim not found') {
+        return res.status(404).json({ error: 'Claim not found' });
+      }
+      if (error.message === 'Item not found in claim') {
+        return res.status(404).json({ error: 'Item not found in claim' });
+      }
+      if (error.message === 'Unauthorized') {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      res.status(500).json({ error: 'Failed to delete item' });
     }
-    if (error.message === 'Item not found in claim') {
-      return res.status(404).json({ error: 'Item not found in claim' });
-    }
-    res.status(500).json({ error: 'Failed to delete item' });
   }
-});
+);
 
 // Archive claim
 // POST /api/claims/:claimNumber/archive
-router.post('/:claimNumber/archive', async (req, res) => {
+router.post('/:claimNumber/archive', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
-    const { userId, reason } = req.body;
-    const parsedUserId = parseInt(userId);
-
-    if (isNaN(parsedUserId)) {
-      return res.status(400).json({ error: 'Invalid user ID' });
+    const { reason } = req.body;
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
+    const userId = req.user.id;
 
     const claim = await prisma.claim.findUnique({
       where: { claimNumber },
@@ -181,22 +199,22 @@ router.post('/:claimNumber/archive', async (req, res) => {
         data: {
           isDeleted: true,
           deletedAt: new Date(),
-          deletedBy: parsedUserId,
+          deletedBy: userId,
           deleteReason: reason,
         },
       });
 
-      // Add user as contributor when they archive a claim
+      // Add authenticated user as contributor when they archive a claim
       await tx.claimContributor.upsert({
         where: {
           claimId_userId: {
             claimId: updatedClaim.id,
-            userId: parsedUserId,
+            userId,
           },
         },
         create: {
           claimId: updatedClaim.id,
-          userId: parsedUserId,
+          userId,
         },
         update: {}, // No update needed since we just want to ensure it exists
       });
@@ -213,15 +231,13 @@ router.post('/:claimNumber/archive', async (req, res) => {
 
 // Unarchive claim
 // POST /api/claims/:claimNumber/unarchive
-router.post('/:claimNumber/unarchive', async (req, res) => {
+router.post('/:claimNumber/unarchive', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
-    const { userId } = req.body;
-    const parsedUserId = parseInt(userId);
-
-    if (isNaN(parsedUserId)) {
-      return res.status(400).json({ error: 'Invalid user ID' });
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
+    const userId = req.user.id;
 
     const claim = await prisma.claim.findUnique({
       where: { claimNumber },
@@ -242,17 +258,17 @@ router.post('/:claimNumber/unarchive', async (req, res) => {
         },
       });
 
-      // Add user as contributor when they unarchive a claim
+      // Add authenticated user as contributor when they unarchive a claim
       await tx.claimContributor.upsert({
         where: {
           claimId_userId: {
             claimId: updatedClaim.id,
-            userId: parsedUserId,
+            userId,
           },
         },
         create: {
           claimId: updatedClaim.id,
-          userId: parsedUserId,
+          userId,
         },
         update: {}, // No update needed since we just want to ensure it exists
       });

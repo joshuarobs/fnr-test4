@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
+import { isAuthenticated } from '../../middleware/auth';
 
 const router: Router = express.Router();
 
 // GET /api/claims/assigned/:employeeId
-router.get('/assigned/:employeeId', async (req, res) => {
+router.get('/assigned/:employeeId', isAuthenticated, async (req, res) => {
   try {
     const { employeeId } = req.params;
     const limit = req.query.limit
@@ -69,7 +70,7 @@ router.get('/assigned/:employeeId', async (req, res) => {
 });
 
 // GET /api/claims
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const pageSize = req.query.pageSize
@@ -138,7 +139,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/claims/recent-views
-router.get('/recent-views', async (req, res) => {
+router.get('/recent-views', isAuthenticated, async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
@@ -193,7 +194,7 @@ router.get('/recent-views', async (req, res) => {
 });
 
 // GET /api/claims/:claimNumber
-router.get('/:claimNumber', async (req, res) => {
+router.get('/:claimNumber', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
     const claim = await prisma.claim.findUnique({

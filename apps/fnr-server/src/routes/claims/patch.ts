@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
+import { isAuthenticated } from '../../middleware/auth';
 
 const router: Router = express.Router();
 
 // PATCH /api/claims/:claimNumber/description
-router.patch('/:claimNumber/description', async (req, res) => {
+router.patch('/:claimNumber/description', isAuthenticated, async (req, res) => {
   try {
     const { claimNumber } = req.params;
     const { description } = req.body;
