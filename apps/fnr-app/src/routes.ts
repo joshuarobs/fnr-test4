@@ -20,7 +20,7 @@ export const ROUTES = {
   SETTINGS_APPEARANCE: '/settings/appearance',
   FEEDBACK: '/feedback',
   CLAIM: '/claim/:id',
-  CREATE_CLAIM: 'new',
+  CREATE_CLAIM: '/new',
   LOGOUT: '/logout',
 } as const;
 

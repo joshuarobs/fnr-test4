@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../routes';
+import { useIsAdminRoute } from '../../hooks/useIsAdminRoute';
 import {
   Tooltip,
   TooltipContent,
@@ -49,6 +50,13 @@ const CaretDownIcon = () => (
 );
 
 export const HeaderCreateNew = () => {
+  const isAdminRoute = useIsAdminRoute();
+
+  // Don't render the button in admin routes
+  if (isAdminRoute) {
+    return null;
+  }
+
   return (
     <TooltipProvider>
       <Tooltip>

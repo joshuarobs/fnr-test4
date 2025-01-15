@@ -96,6 +96,7 @@ export const CreateClaimPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           ...values,
           assignedAgent: values.assignedAgent?.id, // Just send the ID as assignedAgent
@@ -113,7 +114,11 @@ export const CreateClaimPage = () => {
       window.location.href = getClaimRoute(claim.claimNumber);
     } catch (error) {
       console.error('Error creating claim:', error);
-      // TODO: Show error to user
+      form.setError('root', {
+        type: 'manual',
+        message:
+          error instanceof Error ? error.message : 'Failed to create claim',
+      });
     }
   };
 
@@ -129,6 +134,11 @@ export const CreateClaimPage = () => {
         <h1 className="text-2xl font-semibold">Create a new claim</h1>
       </div>
       <Separator className="mb-4" />
+      {form.formState.errors.root && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
+          {form.formState.errors.root.message}
+        </div>
+      )}
       <p className="italic text-sm text-muted-foreground mb-6">
         Required fields are marked with an asterisk (*)
       </p>

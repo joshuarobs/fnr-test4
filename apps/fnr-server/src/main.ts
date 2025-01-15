@@ -21,7 +21,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: 'http://localhost:4200', // Frontend URL
+    origin: true, // Allow all origins in development
     credentials: true, // Allow credentials
   })
 ); // Enable CORS for all routes
