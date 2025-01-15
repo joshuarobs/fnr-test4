@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Outlet,
+} from 'react-router-dom';
 import { Toaster } from '@react-monorepo/shared';
 import { UserProvider } from './providers/UserContext';
+import { ProtectedRoute } from './auth/ProtectedRoute';
 import { Header } from './app-shell/Header';
 import { Sidebar } from './app-shell/Sidebar';
 import { ThinSidebar } from './app-shell/ThinSidebar';
@@ -76,82 +83,68 @@ const AppContent = () => {
     <>
       <Toaster />
       <Routes>
+        {/* Auth routes */}
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
         <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
+
+        {/* Protected routes */}
         <Route
-          path="*"
           element={
-            <div
-              className="flex flex-col h-screen"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Header
-                onToggleSidebar={handleToggleSidebar}
-                setIsShortcutsOpen={setIsShortcutsOpen}
-                isSidebarExpanded={!isSidebarCollapsed}
-              />
-              <div className="flex flex-1">
-                {isAdminRoute ? (
-                  <AdminSidebar />
-                ) : isSidebarCollapsed ? (
-                  <ThinSidebar />
-                ) : (
-                  <Sidebar />
-                )}
-                <Routes>
-                  <Route path={ROUTES.HOME} element={<HomePage />} />
-                  <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
-                  <Route
-                    path={ROUTES.SETTINGS + '/*'}
-                    element={<SettingsPage />}
-                  />
-                  <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
-                  <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
-                  <Route
-                    path={ROUTES.SUPPLIER}
-                    element={<SupplierProfilePage />}
-                  />
-                  <Route path={ROUTES.HISTORY} element={<HistoryPage />} />
-                  <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
-                  <Route
-                    path={ROUTES.CREATE_CLAIM}
-                    element={<CreateClaimPage />}
-                  />
-                  {/* Admin routes */}
-                  <Route
-                    path={ROUTES.ADMIN_PORTAL}
-                    element={<AdminPortalPage />}
-                  />
-                  <Route
-                    path={ROUTES.ADMIN_USERS}
-                    element={<AdminUsersPage />}
-                  />
-                  <Route
-                    path={ROUTES.ADMIN_CUSTOMERS}
-                    element={<AdminCustomersPage />}
-                  />
-                  <Route
-                    path={ROUTES.ADMIN_SUPPLIERS}
-                    element={<AdminSuppliersPage />}
-                  />
-                  <Route
-                    path={ROUTES.ADMIN_ANALYTICS}
-                    element={<AdminAnalyticsPage />}
-                  />
-                  <Route
-                    path={ROUTES.ADMIN_SETTINGS}
-                    element={<AdminSettingsPage />}
-                  />
-                  <Route path="*" element={<NotFoundPage />} />
-                </Routes>
+            <ProtectedRoute>
+              <div
+                className="flex flex-col h-screen"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Header
+                  onToggleSidebar={handleToggleSidebar}
+                  setIsShortcutsOpen={setIsShortcutsOpen}
+                  isSidebarExpanded={!isSidebarCollapsed}
+                />
+                <div className="flex flex-1">
+                  {isAdminRoute ? (
+                    <AdminSidebar />
+                  ) : isSidebarCollapsed ? (
+                    <ThinSidebar />
+                  ) : (
+                    <Sidebar />
+                  )}
+                  <Outlet />
+                </div>
+                <KeyboardShortcutsPopup
+                  isOpen={isShortcutsOpen}
+                  onClose={() => setIsShortcutsOpen(false)}
+                />
               </div>
-              <KeyboardShortcutsPopup
-                isOpen={isShortcutsOpen}
-                onClose={() => setIsShortcutsOpen(false)}
-              />
-            </div>
+            </ProtectedRoute>
           }
-        />
+        >
+          <Route path={ROUTES.HOME} element={<HomePage />} />
+          <Route path={ROUTES.ASSIGNED} element={<AssignedPage />} />
+          <Route path={ROUTES.SETTINGS + '/*'} element={<SettingsPage />} />
+          <Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />
+          <Route path={ROUTES.STAFF} element={<StaffProfilePage />} />
+          <Route path={ROUTES.SUPPLIER} element={<SupplierProfilePage />} />
+          <Route path={ROUTES.HISTORY} element={<HistoryPage />} />
+          <Route path={ROUTES.CLAIM} element={<ClaimPage />} />
+          <Route path={ROUTES.CREATE_CLAIM} element={<CreateClaimPage />} />
+          {/* Admin routes */}
+          <Route path={ROUTES.ADMIN_PORTAL} element={<AdminPortalPage />} />
+          <Route path={ROUTES.ADMIN_USERS} element={<AdminUsersPage />} />
+          <Route
+            path={ROUTES.ADMIN_CUSTOMERS}
+            element={<AdminCustomersPage />}
+          />
+          <Route
+            path={ROUTES.ADMIN_SUPPLIERS}
+            element={<AdminSuppliersPage />}
+          />
+          <Route
+            path={ROUTES.ADMIN_ANALYTICS}
+            element={<AdminAnalyticsPage />}
+          />
+          <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettingsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
       </Routes>
     </>
   );

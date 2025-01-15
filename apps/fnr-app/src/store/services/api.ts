@@ -193,7 +193,17 @@ export interface User {
 
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: API_CONFIG.baseUrl + '/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_CONFIG.baseUrl + '/',
+    credentials: 'include', // Include credentials in requests
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   tagTypes: [
     'Claim',
     'Item',
@@ -206,6 +216,16 @@ export const api = createApi({
     'Suppliers',
   ],
   endpoints: (builder) => ({
+    login: builder.mutation<
+      { token: string; employeeId: string },
+      { email: string; password: string }
+    >({
+      query: (credentials) => ({
+        url: 'auth/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
     signUp: builder.mutation<SignUpResponse, SignUpRequest>({
       query: (credentials) => ({
         url: 'auth/signup',
@@ -469,6 +489,7 @@ export interface Supplier {
 }
 
 export const {
+  useLoginMutation,
   useGetStaffUsersQuery,
   useSignUpMutation,
   useGetMessageQuery,

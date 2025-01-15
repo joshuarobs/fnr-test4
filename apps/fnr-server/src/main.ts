@@ -6,21 +6,41 @@
 import express from 'express';
 import * as path from 'path';
 import cors from 'cors';
+import session from 'express-session';
 import claimsRouter from './routes/claims/index';
 import usersRouter from './routes/users/index';
 import staffRouter from './routes/staff/index';
 import suppliersRouter from './routes/suppliers/index';
+import authRouter from './routes/auth/index';
+import passport from './config/passport';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
 
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
+app.use(
+  cors({
+    origin: 'http://localhost:4200', // Frontend URL
+    credentials: true, // Allow credentials
+  })
+); // Enable CORS for all routes
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Session and Passport setup
+app.use(
+  session({
+    secret: 'your-secret-key', // TODO: Move to environment variable
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production' },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Basic error handling middleware
 app.use(
@@ -49,6 +69,7 @@ app.get('/api', (req, res) => {
 });
 
 // Routes
+app.use('/api/auth', authRouter);
 app.use('/api/claims', claimsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/staff', staffRouter);

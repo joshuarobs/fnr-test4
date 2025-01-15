@@ -4,7 +4,7 @@ import { UserRole } from '@prisma/client';
 export const admin = {
   user: {
     email: 'admin@example.com',
-    password: 'admin123',
+    password: '12345',
     firstName: 'Admin',
     avatarColour: '#374151',
     lastName: 'User',
@@ -23,7 +23,7 @@ export const staffMembers = [
   {
     user: {
       email: 'claims@example.com',
-      password: 'staff123',
+      password: '12345',
       firstName: 'Sarah',
       avatarColour: '#ec4899',
       lastName: 'Johnson',
@@ -39,7 +39,7 @@ export const staffMembers = [
   {
     user: {
       email: 'valuations@example.com',
-      password: 'staff123',
+      password: '12345',
       firstName: 'Mike',
       avatarColour: '#2563eb',
       lastName: 'Williams',
@@ -55,7 +55,7 @@ export const staffMembers = [
   {
     user: {
       email: 'claims2@example.com',
-      password: 'staff123',
+      password: '12345',
       firstName: 'David',
       avatarColour: '#16a34a',
       lastName: 'Thompson',
@@ -71,7 +71,7 @@ export const staffMembers = [
   {
     user: {
       email: 'claims3@example.com',
-      password: 'staff123',
+      password: '12345',
       firstName: 'Lisa',
       avatarColour: '#fcd34d',
       lastName: 'Anderson',
@@ -91,7 +91,7 @@ export const suppliers = [
   {
     user: {
       email: 'electronics@supplier.com',
-      password: 'supplier123',
+      password: '12345',
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
@@ -105,7 +105,7 @@ export const suppliers = [
   {
     user: {
       email: 'appliances@supplier.com',
-      password: 'supplier123',
+      password: '12345',
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
@@ -119,7 +119,7 @@ export const suppliers = [
   {
     user: {
       email: 'furniture@supplier.com',
-      password: 'supplier123',
+      password: '12345',
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
@@ -133,7 +133,7 @@ export const suppliers = [
   {
     user: {
       email: 'garden@supplier.com',
-      password: 'supplier123',
+      password: '12345',
       firstName: '',
       lastName: '',
       role: UserRole.SUPPLIER,
@@ -151,7 +151,7 @@ export const insureds = [
   {
     user: {
       email: 'john@example.com',
-      password: 'insured123',
+      password: '12345',
       firstName: 'John',
       lastName: 'Smith',
       role: UserRole.INSURED,
@@ -163,7 +163,7 @@ export const insureds = [
   {
     user: {
       email: 'jane@example.com',
-      password: 'insured123',
+      password: '12345',
       firstName: 'Jane',
       lastName: 'Brown',
       role: UserRole.INSURED,
@@ -175,7 +175,7 @@ export const insureds = [
   {
     user: {
       email: 'robert@example.com',
-      password: 'insured123',
+      password: '12345',
       firstName: 'Robert',
       lastName: 'Wilson',
       role: UserRole.INSURED,
@@ -187,7 +187,7 @@ export const insureds = [
   {
     user: {
       email: 'emma@example.com',
-      password: 'insured123',
+      password: '12345',
       firstName: 'Emma',
       lastName: 'Davis',
       role: UserRole.INSURED,

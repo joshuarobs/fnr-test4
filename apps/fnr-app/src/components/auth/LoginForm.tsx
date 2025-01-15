@@ -7,15 +7,54 @@ import {
   CardTitle,
   Input,
   Label,
+  toast,
 } from '@react-monorepo/shared';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useLoginMutation } from '../../store/services/api';
 import { ROUTES } from '../../routes';
 
-// Login form component with social login options and email/password fields
+// Login form component that handles authentication
 export const LoginForm = ({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [login] = useLoginMutation();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const result = await login(formData).unwrap();
+      // Store the token and employeeId
+      localStorage.setItem('token', result.token);
+      localStorage.setItem('employeeId', result.employeeId);
+
+      // Redirect to the attempted URL or home
+      const from = (location.state as any)?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    } catch (error) {
+      toast({
+        title: 'Login failed',
+        description: 'Please check your credentials and try again',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
   return (
     <div className={`flex flex-col gap-6 ${className}`} {...props}>
       <Card>
@@ -24,7 +63,7 @@ export const LoginForm = ({
           <CardDescription>Login to your Insurance account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
@@ -34,6 +73,8 @@ export const LoginForm = ({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    value={formData.email}
+                    onChange={handleInputChange}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -46,7 +87,13 @@ export const LoginForm = ({
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" required />
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <Button type="submit" className="w-full">
                   Login

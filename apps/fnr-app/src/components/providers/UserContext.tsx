@@ -17,10 +17,15 @@ const UserContext = createContext<UserContextData | undefined>(undefined);
 
 // Provider component that fetches and provides user data
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  // Using ADM001 as default user from seed data
-  const { data: userData } = useGetStaffQuery('ADM001');
+  const employeeId = localStorage.getItem('employeeId');
+  const { data: userData } = useGetStaffQuery(employeeId ?? '', {
+    skip: !employeeId,
+  });
 
-  // Only render children when we have user data
+  // If there's no employeeId or we're still loading, just render children
+  if (!employeeId) return <>{children}</>;
+
+  // Only provide user context when we have user data
   if (!userData) return null;
 
   const contextValue: UserContextData = {

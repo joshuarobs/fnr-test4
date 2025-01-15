@@ -1,11 +1,6 @@
-import express, { Router, Request } from 'express';
+import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
-
-interface AuthenticatedRequest extends Request {
-  user?: {
-    email: string;
-  };
-}
+import { AuthenticatedRequest } from '../../types/express';
 
 const router: Router = express.Router();
 
