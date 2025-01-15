@@ -22,10 +22,9 @@ router.post('/', (req, res, next) => {
         return res.status(500).json({ error: 'Internal server error' });
       }
 
-      // Return token (for compatibility with frontend) and employeeId if staff member
+      // Return token (using user ID as token for now)
       res.json({
-        token: user.id.toString(), // Using user ID as token for now
-        employeeId: user.staff?.employeeId || null,
+        token: user.id.toString(),
       });
     });
   })(req, res, next);

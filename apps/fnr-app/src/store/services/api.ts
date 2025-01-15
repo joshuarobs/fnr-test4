@@ -191,6 +191,27 @@ export interface User {
   contributedClaims: any[];
 }
 
+// User context data interface
+export interface UserContextData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  avatarColour: string;
+  role: string;
+  staff?: {
+    employeeId: string;
+    department: string;
+    position: string;
+  };
+  supplier?: {
+    company: string;
+  };
+  insured?: {
+    address: string;
+  };
+}
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
@@ -217,7 +238,7 @@ export const api = createApi({
   ],
   endpoints: (builder) => ({
     login: builder.mutation<
-      { token: string; employeeId: string },
+      { token: string },
       { email: string; password: string }
     >({
       query: (credentials) => ({
@@ -256,6 +277,10 @@ export const api = createApi({
     }),
     getStaff: builder.query<StaffDetail, string>({
       query: (employeeId) => `staff/${employeeId}`,
+      providesTags: ['User'],
+    }),
+    getUser: builder.query<UserContextData, string>({
+      query: (id) => `users/${id}`,
       providesTags: ['User'],
     }),
     getAllStaff: builder.query<StaffDetail[], number | void>({
@@ -513,6 +538,7 @@ export const {
   useArchiveClaimMutation,
   useUnarchiveClaimMutation,
   useGetStaffQuery,
+  useGetUserQuery,
   useReassignClaimMutation,
   useUpdateUserDetailsMutation,
   useGetAllStaffQuery,

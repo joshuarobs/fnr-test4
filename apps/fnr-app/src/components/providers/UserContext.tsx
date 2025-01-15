@@ -1,15 +1,25 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useGetStaffQuery } from '../../store/services/api';
+import { useGetUserQuery } from '../../store/services/api';
 
 // Type for the user data stored in context
 interface UserContextData {
-  employeeId: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   avatarColour: string;
-  department: string;
-  position: string;
+  role: string;
+  staff?: {
+    employeeId: string;
+    department: string;
+    position: string;
+  };
+  supplier?: {
+    company: string;
+  };
+  insured?: {
+    address: string;
+  };
 }
 
 interface UserContextState {
@@ -23,29 +33,17 @@ const UserContext = createContext<UserContextState | undefined>(undefined);
 // Provider component that fetches and provides user data
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const token = localStorage.getItem('token');
-  const employeeId = localStorage.getItem('employeeId');
   const {
     data: userData,
     isLoading,
     isError,
-  } = useGetStaffQuery(employeeId ?? '', {
-    // Skip the query if we don't have both token and employeeId
-    skip: !token || !employeeId,
+  } = useGetUserQuery(token ?? '', {
+    skip: !token,
   });
 
   const contextValue: UserContextState = {
-    user: userData
-      ? {
-          employeeId: userData.staff.employeeId ?? '',
-          firstName: userData.firstName ?? '',
-          lastName: userData.lastName ?? '',
-          email: userData.email ?? '',
-          avatarColour: userData.avatarColour ?? '',
-          department: userData.staff.department ?? '',
-          position: userData.staff.position ?? '',
-        }
-      : undefined,
-    isLoading: !isError && (isLoading || !userData) && !!token && !!employeeId,
+    user: userData,
+    isLoading: !isError && (isLoading || !userData) && !!token,
   };
 
   return (

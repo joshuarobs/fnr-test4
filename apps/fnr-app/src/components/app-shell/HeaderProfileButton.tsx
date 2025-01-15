@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetStaffQuery } from '../../store/services/api';
+import { useUser } from '../providers/UserContext';
 import {
   Button,
   DropdownMenu,
@@ -7,11 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Separator,
+  toast,
 } from '@react-monorepo/shared';
 import { Settings, Bell, LogOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
 import { Link, useNavigate } from 'react-router-dom';
-import { ROUTES, getStaffRoute } from '../../routes';
+import { ROUTES, getStaffRoute, getSupplierRoute } from '../../routes';
 import { useLogoutMutation } from '../../store/services/api';
 
 // Component for displaying staff profile dropdown in the header
@@ -19,20 +20,49 @@ import { useLogoutMutation } from '../../store/services/api';
 export const HeaderProfileButton = () => {
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
-  const employeeId = 'ADM001'; // Admin user from seed data. TODO: Get this from auth context when implemented
-  const { data: staffData, isLoading } = useGetStaffQuery(employeeId);
+  const userData = useUser();
+  const isLoading = !userData?.id;
 
   // Common props for UserAvatar to avoid duplication
   const avatarProps = {
     size: 'sm' as const,
-    color: staffData?.avatarColour || 'bg-blue-600',
-    name: staffData
-      ? `${staffData.firstName} ${staffData.lastName}`
-      : undefined,
-    userInitials: staffData
-      ? `${staffData.firstName[0]}${staffData.lastName[0]}`
-      : 'JD',
-    department: staffData?.staff.department,
+    color: userData?.avatarColour || 'bg-blue-600',
+    name:
+      userData?.firstName && userData?.lastName
+        ? `${userData.firstName} ${userData.lastName}`
+        : undefined,
+    userInitials:
+      userData?.firstName && userData?.lastName
+        ? `${userData.firstName[0]}${userData.lastName[0]}`
+        : 'JD',
+    department: userData?.staff?.department,
+  };
+
+  const getProfileRoute = () => {
+    if (userData.role === 'SUPPLIER') {
+      return getSupplierRoute(userData.id);
+    } else if (userData.role === 'STAFF' || userData.role === 'ADMIN') {
+      return getStaffRoute(userData.staff?.employeeId || '');
+    }
+    return '';
+  };
+
+  const getPositionText = () => {
+    if (userData.role === 'SUPPLIER') {
+      return userData.supplier?.company;
+    } else if (userData.staff?.position) {
+      return userData.staff.position.toUpperCase();
+    }
+    return userData.role;
+  };
+
+  const getIdText = () => {
+    if (userData.role === 'SUPPLIER') {
+      return `Supplier ID: ${userData.id}`;
+    } else if (userData.staff?.employeeId) {
+      return userData.staff.employeeId;
+    }
+    return `User ID: ${userData.id}`;
   };
 
   return (
@@ -47,7 +77,7 @@ export const HeaderProfileButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem className="cursor-pointer p-0" asChild>
-          <Link to={getStaffRoute(employeeId)} className="flex w-full p-2">
+          <Link to={getProfileRoute()} className="flex w-full p-2">
             <div className="flex items-center justify-start gap-2">
               <UserAvatar {...avatarProps} hoverable={false} />
               <div className="flex flex-col">
@@ -56,13 +86,13 @@ export const HeaderProfileButton = () => {
                 ) : (
                   <>
                     <span className="text-sm font-medium">
-                      {`${staffData?.firstName} ${staffData?.lastName}`}
+                      {`${userData.firstName} ${userData.lastName}`}
                     </span>
                     <span className="text-sm truncate max-w-[160px]">
-                      {staffData?.staff.position.toUpperCase()}
+                      {getPositionText()}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      {staffData?.staff.employeeId}
+                      {getIdText()}
                     </span>
                   </>
                 )}
@@ -85,9 +115,17 @@ export const HeaderProfileButton = () => {
         <DropdownMenuItem
           className="cursor-pointer gap-2"
           onClick={async () => {
-            await logout();
-            localStorage.removeItem('token');
-            navigate(ROUTES.LOGIN);
+            try {
+              await logout();
+              localStorage.removeItem('token');
+              navigate(ROUTES.LOGIN);
+            } catch (error) {
+              toast({
+                title: 'Logout failed',
+                description: 'Please try again',
+                variant: 'destructive',
+              });
+            }
           }}
         >
           <LogOut className="h-4 w-4" />

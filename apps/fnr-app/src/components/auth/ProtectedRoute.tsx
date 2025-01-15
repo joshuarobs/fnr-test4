@@ -6,11 +6,10 @@ import { useUserLoading } from '../providers/UserContext';
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const token = localStorage.getItem('token');
-  const employeeId = localStorage.getItem('employeeId');
   const isLoading = useUserLoading();
 
-  // If there's no token or employeeId, redirect to login
-  if (!token || !employeeId) {
+  // If there's no token, redirect to login
+  if (!token) {
     // Save the attempted URL to redirect back after login
     return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }

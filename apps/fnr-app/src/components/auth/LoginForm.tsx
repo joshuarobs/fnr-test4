@@ -11,7 +11,7 @@ import {
 } from '@react-monorepo/shared';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useLoginMutation, useGetStaffQuery } from '../../store/services/api';
+import { useLoginMutation } from '../../store/services/api';
 import { ROUTES } from '../../routes';
 
 // Login form component that handles authentication
@@ -22,10 +22,6 @@ export const LoginForm = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [login] = useLoginMutation();
-  const [employeeId, setEmployeeId] = useState<string | null>(null);
-  const { isSuccess, isError } = useGetStaffQuery(employeeId ?? '', {
-    skip: !employeeId,
-  });
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -35,38 +31,20 @@ export const LoginForm = ({
     e.preventDefault();
     try {
       const result = await login(formData).unwrap();
-      // Store the token and employeeId
+      // Store the token
       localStorage.setItem('token', result.token);
-      localStorage.setItem('employeeId', result.employeeId);
-
-      // Set employeeId to trigger the staff query
-      setEmployeeId(result.employeeId);
+      // Navigate to the intended page or home
+      const from = (location.state as any)?.from?.pathname || '/';
+      navigate(from, { replace: true });
     } catch (error) {
       toast({
         title: 'Login failed',
         description: 'Please check your credentials and try again',
         variant: 'destructive',
       });
+      localStorage.removeItem('token');
     }
   };
-
-  // Handle redirect after successful staff data fetch
-  useEffect(() => {
-    if (isSuccess && employeeId) {
-      const from = (location.state as any)?.from?.pathname || '/';
-      navigate(from, { replace: true });
-    } else if (isError) {
-      toast({
-        title: 'Error loading user data',
-        description: 'Please try logging in again',
-        variant: 'destructive',
-      });
-      // Clear stored data on error
-      localStorage.removeItem('token');
-      localStorage.removeItem('employeeId');
-      setEmployeeId(null);
-    }
-  }, [isSuccess, isError, employeeId, location.state, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;

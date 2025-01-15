@@ -35,7 +35,7 @@ export const NavAvatar = ({
   isSupplier,
 }: NavAvatarProps) => {
   const currentUser = useUser();
-  const isCurrentUser = userId ? userId === currentUser.employeeId : false;
+  const isCurrentUser = userId ? userId === currentUser.id : false;
   const isEmptyUser = !userId;
 
   const content = (
@@ -81,11 +81,19 @@ export const NavAvatar = ({
     return content;
   }
 
-  return userId ? (
-    <Link
-      className="focus:outline-none focus-visible:ring-0"
-      to={isSupplier ? getSupplierRoute(userId) : getStaffRoute(userId)}
-    >
+  if (!userId) {
+    return content;
+  }
+
+  let route = '';
+  if (isSupplier) {
+    route = getSupplierRoute(userId);
+  } else if (currentUser.role === 'STAFF' || currentUser.role === 'ADMIN') {
+    route = getStaffRoute(userId);
+  }
+
+  return route ? (
+    <Link className="focus:outline-none focus-visible:ring-0" to={route}>
       {content}
     </Link>
   ) : (
