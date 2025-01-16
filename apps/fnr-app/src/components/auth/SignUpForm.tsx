@@ -13,6 +13,7 @@ import {
 } from '@react-monorepo/shared';
 import { Input } from '@react-monorepo/shared';
 import { Button } from '@react-monorepo/shared';
+import { SignUpTestFillButton } from '../test-utils/SignUpTestFillButton';
 import {
   Select,
   SelectContent,
@@ -149,9 +150,40 @@ export const SignUpForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="mt-2" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Create account'}
-          </Button>
+
+          {/* Role */}
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="STAFF">Staff</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="SUPPLIER">Supplier</SelectItem>
+                    <SelectItem value="INSURED">Insured</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex gap-2 mt-2">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Creating account...' : 'Create account'}
+            </Button>
+            <SignUpTestFillButton form={form} />
+          </div>
         </form>
       </Form>
     </div>

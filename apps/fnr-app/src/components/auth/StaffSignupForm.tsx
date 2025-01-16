@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@react-monorepo/shared';
+import { StaffSignupTestFillButton } from '../test-utils/StaffSignupTestFillButton';
 import { ChevronsUpDown } from 'lucide-react';
 
 // Department and Position options
@@ -227,8 +228,8 @@ export const StaffSignupForm = () => {
               </FormItem>
             )}
           />
-
-          <Button type="submit" className="mt-6" disabled={isLoading}>
+          <StaffSignupTestFillButton form={form} className="w-full mt-4" />
+          <Button type="submit" disabled={isLoading} className="w-full mt-2">
             {isLoading ? 'Creating account...' : 'Create staff account'}
           </Button>
         </form>
