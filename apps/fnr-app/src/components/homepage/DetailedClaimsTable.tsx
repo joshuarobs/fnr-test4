@@ -202,10 +202,15 @@ export const DetailedClaimsTable = ({
       case 'recent':
         return useGetRecentlyViewedClaimsQuery();
       case 'assigned':
-        return useGetAssignedClaimsQuery({
-          employeeId: employeeId || user.employeeId,
-          limit: pagination.pageSize,
-        });
+        return useGetAssignedClaimsQuery(
+          {
+            employeeId: employeeId || user.staff?.employeeId || '',
+            limit: pagination.pageSize,
+          },
+          {
+            skip: !employeeId && !user.staff?.employeeId,
+          }
+        );
       case 'supplier':
         if (!supplierId)
           throw new Error('supplierId is required for supplier queryType');
