@@ -61,6 +61,25 @@ router.post(
           update: {}, // No update needed since we just want to ensure it exists
         });
 
+        // Log item soft delete
+        await tx.activityLog.create({
+          data: {
+            activityType: 'ITEM_DELETED',
+            userId,
+            claimId: claim.id,
+            metadata: {
+              deleteType: 'soft',
+              itemId: parseInt(itemId),
+              itemName: claim.items[0].name,
+            },
+            items: {
+              create: {
+                itemId: parseInt(itemId),
+              },
+            },
+          },
+        });
+
         return { success: true, message: 'Item soft deleted' };
       });
 
@@ -154,6 +173,26 @@ router.delete(
           update: {}, // No update needed since we just want to ensure it exists
         });
 
+        // Log item hard delete
+        await tx.activityLog.create({
+          data: {
+            activityType: 'ITEM_DELETED',
+            userId,
+            claimId: claim.id,
+            metadata: {
+              deleteType: 'hard',
+              itemId: parseInt(itemId),
+              itemName: claim.items[0].name,
+              evidenceDeleted: true,
+            },
+            items: {
+              create: {
+                itemId: parseInt(itemId),
+              },
+            },
+          },
+        });
+
         return { success: true, message: 'Item permanently deleted' };
       });
 
@@ -219,6 +258,19 @@ router.post('/:claimNumber/archive', isAuthenticated, async (req, res) => {
         update: {}, // No update needed since we just want to ensure it exists
       });
 
+      // Log claim archive
+      await tx.activityLog.create({
+        data: {
+          activityType: 'CLAIM_DELETED',
+          userId,
+          claimId: updatedClaim.id,
+          metadata: {
+            reason,
+            claimNumber,
+          },
+        },
+      });
+
       return updatedClaim;
     });
 
@@ -271,6 +323,19 @@ router.post('/:claimNumber/unarchive', isAuthenticated, async (req, res) => {
           userId,
         },
         update: {}, // No update needed since we just want to ensure it exists
+      });
+
+      // Log claim unarchive
+      await tx.activityLog.create({
+        data: {
+          activityType: 'CLAIM_UPDATED',
+          userId,
+          claimId: updatedClaim.id,
+          metadata: {
+            action: 'unarchive',
+            claimNumber,
+          },
+        },
       });
 
       return updatedClaim;

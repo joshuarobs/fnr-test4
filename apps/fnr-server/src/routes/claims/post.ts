@@ -108,6 +108,21 @@ router.post('/', isAuthenticated, async (req, res) => {
         },
       });
 
+      // Log claim creation
+      await tx.activityLog.create({
+        data: {
+          activityType: 'CLAIM_CREATED',
+          userId: creatorId,
+          claimId: claim.id,
+          metadata: {
+            claimNumber,
+            policyNumber,
+            handlerId: staff.baseUserId,
+            totalItems: parseInt(blankItems.toString()),
+          },
+        },
+      });
+
       return claim;
     });
 
@@ -228,6 +243,25 @@ router.post(
             userId,
           },
           update: {}, // No update needed since we just want to ensure it exists
+        });
+
+        // Log item creation
+        await tx.activityLog.create({
+          data: {
+            activityType: 'ITEM_CREATED',
+            userId,
+            claimId: claim.id,
+            metadata: {
+              itemName: req.body.name,
+              category: req.body.category,
+              roomCategory: req.body.roomCategory,
+            },
+            items: {
+              create: {
+                itemId: newItem.id,
+              },
+            },
+          },
         });
 
         return newItem;
@@ -351,6 +385,25 @@ router.patch(
             userId,
           },
           update: {}, // No update needed since we just want to ensure it exists
+        });
+
+        // Log item update
+        const changedFields = Object.keys(updateData);
+        await tx.activityLog.create({
+          data: {
+            activityType: 'ITEM_UPDATED',
+            userId,
+            claimId: claim.id,
+            metadata: {
+              changedFields,
+              changes: updateData,
+            },
+            items: {
+              create: {
+                itemId: parseInt(itemId),
+              },
+            },
+          },
         });
 
         return updatedItem;
@@ -518,6 +571,19 @@ router.post('/:claimNumber/reassign', isAuthenticated, async (req, res) => {
           userId,
         },
         update: {}, // No update needed since we just want to ensure it exists
+      });
+
+      // Log handler assignment
+      await tx.activityLog.create({
+        data: {
+          activityType: 'CLAIM_HANDLER_ASSIGNED',
+          userId,
+          claimId: updatedClaim.id,
+          metadata: {
+            oldHandlerId: updatedClaim.handlerId,
+            newHandlerId: employeeId ? staff?.baseUserId : null,
+          },
+        },
       });
 
       return updatedClaim;

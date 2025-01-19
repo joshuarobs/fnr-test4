@@ -41,6 +41,8 @@ model BaseUser {
   // @limit 50 claims - This limit must be enforced in application logic
   recentlyViewedClaims RecentlyViewedClaim[] @relation("UserRecentViews")
   contributedClaims ClaimContributor[]
+  // Activity logging relation
+  activities    ActivityLog[] @relation("UserActivities")
 
   @@index([email])
   @@index([isDeleted])
@@ -149,6 +151,8 @@ model Claim {
   contributors ClaimContributor[]
   // Track suppliers allocated to this claim
   allocatedSuppliers AllocatedSupplier[]
+  // Activity logging relation
+  activities ActivityLog[] @relation("ClaimActivities")
 
   // Progress tracking fields
   totalItems Int @default(0)
@@ -255,6 +259,8 @@ model Item {
   updatedAt         DateTime    @updatedAt
   isDeleted         Boolean     @default(false) @map("is_deleted")
   deletedAt         DateTime?   @map("deleted_at")
+  // Activity logging relation
+  activities        ActivityLogItem[]
 
   @@index([claimId])
   @@index([category])
@@ -282,6 +288,8 @@ model Evidence {
   createdAt   DateTime      @default(now())
   isDeleted   Boolean       @default(false) @map("is_deleted")
   deletedAt   DateTime?     @map("deleted_at")
+  // Activity logging relation
+  activities  ActivityLogEvidence[]
 
   @@index([itemId])
   @@index([type])
@@ -295,6 +303,82 @@ enum EvidenceType {
   MANUAL   @map("MANUAL")   /// Product manual
   WARRANTY @map("WARRANTY") /// Warranty documentation
   OTHER    @map("OTHER")    /// Other documentation
+}
+
+/// Activity types for tracking claim-related actions
+enum ActivityType {
+  // Claim activities
+  CLAIM_CREATED           /// New claim created
+  CLAIM_UPDATED          /// General claim details updated
+  CLAIM_DELETED          /// Claim marked as deleted
+  CLAIM_STATUS_CHANGED   /// Claim status transition
+  CLAIM_HANDLER_ASSIGNED /// New handler assigned to claim
+  
+  // Item activities
+  ITEM_CREATED          /// New item added to claim
+  ITEM_UPDATED          /// Item details updated
+  ITEM_DELETED          /// Item marked as deleted
+  ITEM_STATUS_CHANGED   /// Item status changed
+  ITEM_EVIDENCE_ADDED   /// Evidence added to item
+  ITEM_EVIDENCE_REMOVED /// Evidence removed from item
+  
+  // Bulk activities
+  ITEMS_BULK_CREATED    /// Multiple items created at once
+  ITEMS_BULK_UPDATED    /// Multiple items updated at once
+  ITEMS_BULK_DELETED    /// Multiple items deleted at once
+  EVIDENCE_BULK_ADDED   /// Multiple evidence records added
+  EVIDENCE_BULK_REMOVED /// Multiple evidence records removed
+}
+
+/// Main activity log model for tracking claim-related actions
+model ActivityLog {
+  id           Int          @id @default(autoincrement())
+  activityType ActivityType
+  userId       Int
+  user         BaseUser     @relation("UserActivities", fields: [userId], references: [id])
+  claimId      Int
+  claim        Claim        @relation("ClaimActivities", fields: [claimId], references: [id])
+  metadata     Json?        // Store additional context as JSON
+  createdAt    DateTime     @default(now())
+  
+  // Relations to track affected items and evidence
+  items        ActivityLogItem[]
+  evidence     ActivityLogEvidence[]
+
+  @@index([claimId])
+  @@index([userId])
+  @@index([activityType])
+  @@index([createdAt])
+  @@index([claimId, activityType])
+  @@index([claimId, createdAt])
+}
+
+/// Join table for activities and affected items
+model ActivityLogItem {
+  id            Int         @id @default(autoincrement())
+  activityLogId Int
+  activityLog   ActivityLog @relation(fields: [activityLogId], references: [id])
+  itemId        Int
+  item          Item        @relation(fields: [itemId], references: [id])
+  metadata      Json?       // Item-specific metadata for this activity
+
+  @@unique([activityLogId, itemId])
+  @@index([activityLogId])
+  @@index([itemId])
+}
+
+/// Join table for activities and affected evidence
+model ActivityLogEvidence {
+  id            Int         @id @default(autoincrement())
+  activityLogId Int
+  activityLog   ActivityLog @relation(fields: [activityLogId], references: [id])
+  evidenceId    Int
+  evidence      Evidence    @relation(fields: [evidenceId], references: [id])
+  metadata      Json?       // Evidence-specific metadata for this activity
+
+  @@unique([activityLogId, evidenceId])
+  @@index([activityLogId])
+  @@index([evidenceId])
 }
 
 /// Comments and notes on claims

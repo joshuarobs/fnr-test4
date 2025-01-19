@@ -44,6 +44,24 @@ router.patch('/:claimNumber/description', isAuthenticated, async (req, res) => {
         update: {}, // No update needed since we just want to ensure it exists
       });
 
+      // Log description update
+      await tx.activityLog.create({
+        data: {
+          activityType: 'CLAIM_UPDATED',
+          userId,
+          claimId: updatedClaim.id,
+          metadata: {
+            changedFields: ['description'],
+            changes: {
+              description: {
+                old: updatedClaim.description,
+                new: description,
+              },
+            },
+          },
+        },
+      });
+
       return updatedClaim;
     });
 

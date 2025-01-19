@@ -161,6 +161,28 @@ async function main() {
         creatorId: createdStaffMembers[0].id,
         itemOrder: [],
         localItemIds: [],
+        // Set CLM003 as archived by default
+        ...(claim.claimNumber === 'CLM003'
+          ? {
+              isDeleted: true,
+              deletedAt: new Date(),
+              deletedBy: handlerId,
+              deleteReason: 'Archived during initial setup',
+            }
+          : {}),
+      },
+    });
+
+    // Add activity log for claim creation
+    await prisma.activityLog.create({
+      data: {
+        activityType: 'CLAIM_CREATED',
+        userId: createdStaffMembers[0].id,
+        claimId: createdClaim.id,
+        metadata: {
+          claimNumber: claim.claimNumber,
+          description: claim.description,
+        },
       },
     });
 
