@@ -88,7 +88,7 @@ export const PartyAvatarSection = ({
           ))}
         </div>
       ) : (
-        // Horizontal layout for more than 2 avatars (no text)
+        // Horizontal layout for more than 2 avatars (with hidden text)
         <div className="flex gap-0">
           {avatars.map((avatar, index) => (
             <NavAvatar
@@ -96,10 +96,12 @@ export const PartyAvatarSection = ({
               userInitials={avatar.userInitials}
               companyName={avatar.companyName}
               color={avatar.color}
+              name={avatar.name}
               userId={avatar.userId}
               disableNavigation={false}
               //disableHoverText={!!avatar.companyName}
               isSupplier={avatar.isSupplier}
+              hideTextLabel={true}
             />
           ))}
         </div>

@@ -17,6 +17,7 @@ interface NavAvatarProps {
   companyName?: string; // Optional company name to generate initials from
   disableHoverCard?: boolean; // Controls whether the hover card is shown
   isSupplier?: boolean; // Flag to determine if the user is a supplier
+  hideTextLabel?: boolean; // Controls whether the name label is shown
 }
 
 // Navigation avatar component with optional name label
@@ -33,6 +34,7 @@ export const NavAvatar = ({
   companyName: company,
   disableHoverCard,
   isSupplier,
+  hideTextLabel,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.id : false;
@@ -61,7 +63,7 @@ export const NavAvatar = ({
           hoverable={!disableHoverCard}
         />
       </div>
-      {(name || isEmptyUser) && (
+      {!hideTextLabel && (name || isEmptyUser) && (
         <span
           className={`text-sm ${isEmptyUser ? 'text-muted-foreground' : ''} ${
             !disableHoverText ? 'group-hover:text-hover-blue' : ''
