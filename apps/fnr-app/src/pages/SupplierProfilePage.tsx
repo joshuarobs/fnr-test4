@@ -85,9 +85,18 @@ export const SupplierProfilePage = () => {
                 <p className="text-sm">
                   Supplier ID: {supplier.supplier.supplierId}
                 </p>
-                <p className="text-sm">
-                  Allocated Claims: {supplier.supplier.allocatedClaims || 0}
-                </p>
+                <div className="space-y-1">
+                  <p className="text-sm">
+                    Allocated Claims: {supplier.supplier.allocatedClaims || 0}
+                  </p>
+                  <p className="text-sm">
+                    Archived Claims: {supplier.supplier.archivedClaims || 0}
+                  </p>
+                  <p className="text-sm">
+                    Total Allocated Claims:{' '}
+                    {supplier.supplier.totalAllocatedClaims || 0}
+                  </p>
+                </div>
                 <p className="text-sm">Location: {location}</p>
                 <p className="text-sm">Status: Active</p>
               </div>

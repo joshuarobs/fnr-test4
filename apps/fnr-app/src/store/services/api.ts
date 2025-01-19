@@ -525,6 +525,8 @@ export interface Supplier {
     supplierId: string;
     company: string;
     allocatedClaims: number;
+    archivedClaims: number;
+    totalAllocatedClaims: number;
   };
 }
 

@@ -29,7 +29,16 @@ router.get('/', async (req, res) => {
             avatarColour: true,
           },
         },
-        allocatedClaims: true,
+        _count: {
+          select: {
+            allocatedClaims: true,
+          },
+        },
+        allocatedClaims: {
+          include: {
+            claim: true,
+          },
+        },
       },
     });
 
@@ -50,7 +59,11 @@ router.get('/', async (req, res) => {
       supplier: {
         supplierId: s.supplierId,
         company: s.company,
-        allocatedClaims: s.allocatedClaims.length,
+        allocatedClaims: s.allocatedClaims.filter((ac) => !ac.claim.isDeleted)
+          .length,
+        archivedClaims: s.allocatedClaims.filter((ac) => ac.claim.isDeleted)
+          .length,
+        totalAllocatedClaims: s._count.allocatedClaims,
       },
     }));
 
@@ -86,7 +99,16 @@ router.get('/:id', async (req, res) => {
             avatarColour: true,
           },
         },
-        allocatedClaims: true,
+        _count: {
+          select: {
+            allocatedClaims: true,
+          },
+        },
+        allocatedClaims: {
+          include: {
+            claim: true,
+          },
+        },
       },
     });
 
@@ -107,7 +129,13 @@ router.get('/:id', async (req, res) => {
       supplier: {
         supplierId: supplier.supplierId,
         company: supplier.company,
-        allocatedClaims: supplier.allocatedClaims.length,
+        allocatedClaims: supplier.allocatedClaims.filter(
+          (ac) => !ac.claim.isDeleted
+        ).length,
+        archivedClaims: supplier.allocatedClaims.filter(
+          (ac) => ac.claim.isDeleted
+        ).length,
+        totalAllocatedClaims: supplier._count.allocatedClaims,
       },
     };
 
