@@ -302,10 +302,17 @@ export const api = createApi({
     }),
     getAssignedClaims: builder.query<
       ClaimOverview[],
-      { employeeId: string; limit?: number }
+      { employeeId: string; limit?: number; showArchived?: boolean }
     >({
-      query: ({ employeeId, limit }) =>
-        `claims/assigned/${employeeId}${limit ? `?limit=${limit}` : ''}`,
+      query: ({ employeeId, limit, showArchived }) => {
+        const params = new URLSearchParams();
+        if (limit) params.append('limit', limit.toString());
+        if (showArchived !== undefined)
+          params.append('showArchived', showArchived.toString());
+        return `claims/assigned/${employeeId}${
+          params.toString() ? `?${params.toString()}` : ''
+        }`;
+      },
       providesTags: ['Claims'],
     }),
     getClaim: builder.query<ClaimDetail, string>({

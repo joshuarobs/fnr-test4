@@ -62,16 +62,19 @@ interface DetailedClaimsTableProps {
   queryType?: 'all' | 'recent' | 'assigned' | 'supplier';
   employeeId?: string;
   supplierId?: string;
+  showArchived?: boolean;
 }
 
 /**
  * DetailedClaimsTable displays a paginated table of claims with detailed information
- * including status, progress, and financial data
+ * including status, progress, and financial data.
+ * @param showArchived - When true, shows archived claims instead of active ones
  */
 export const DetailedClaimsTable = ({
   queryType = 'all',
   employeeId,
   supplierId,
+  showArchived = false,
 }: DetailedClaimsTableProps) => {
   const navigate = useNavigate();
   const user = useUser();
@@ -206,6 +209,7 @@ export const DetailedClaimsTable = ({
           {
             employeeId: employeeId || user.staff?.employeeId || '',
             limit: pagination.pageSize,
+            showArchived,
           },
           {
             skip: !employeeId && !user.staff?.employeeId,

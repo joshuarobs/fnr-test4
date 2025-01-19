@@ -11,6 +11,7 @@ router.get('/assigned/:employeeId', isAuthenticated, async (req, res) => {
     const limit = req.query.limit
       ? parseInt(req.query.limit as string)
       : undefined;
+    const showArchived = req.query.showArchived === 'true';
 
     const claims = await prisma.claim.findMany({
       ...(limit ? { take: limit } : {}),
@@ -20,6 +21,7 @@ router.get('/assigned/:employeeId', isAuthenticated, async (req, res) => {
             employeeId,
           },
         },
+        isDeleted: showArchived,
       },
       select: {
         id: true,
