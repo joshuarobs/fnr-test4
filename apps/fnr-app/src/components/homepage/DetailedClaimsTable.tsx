@@ -180,7 +180,7 @@ export const DetailedClaimsTable = ({
       {
         id: 'archived',
         header: 'Archived',
-        accessorFn: (row) => row.status === 'ARCHIVED',
+        accessorFn: (row) => row.isDeleted,
       },
       {
         id: 'actions',

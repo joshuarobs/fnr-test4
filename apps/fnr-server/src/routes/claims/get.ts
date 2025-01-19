@@ -162,6 +162,7 @@ router.get('/recent-views', isAuthenticated, async (req, res) => {
             totalApproved: true,
             createdAt: true,
             updatedAt: true,
+            isDeleted: true,
             handler: {
               select: {
                 id: true,

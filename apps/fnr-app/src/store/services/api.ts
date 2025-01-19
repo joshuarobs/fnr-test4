@@ -140,6 +140,7 @@ export interface RecentlyViewedClaim {
     totalApproved: number | null;
     createdAt: string;
     updatedAt: string;
+    isDeleted: boolean;
     handler?: {
       id: number;
       firstName: string;
@@ -344,7 +345,7 @@ export const api = createApi({
           insuredProgressPercent: 0, // These fields aren't in recent view data
           ourProgressPercent: 0,
           lastProgressUpdate: null,
-          isDeleted: false,
+          isDeleted: recentClaim.claim.isDeleted,
           handler: recentClaim.claim.handler,
         }));
 
