@@ -5,7 +5,7 @@ export type Activity = {
     avatar: string;
   };
   action: string;
-  timestamp: Date;
+  timestamp: string;
 };
 
 export const placeholderLatestActivities: Activity[] = [
@@ -16,7 +16,7 @@ export const placeholderLatestActivities: Activity[] = [
       avatar: 'https://github.com/shadcn.png',
     },
     action: 'Updated quote for "2x Clothes" (ID: 1) for $50',
-    timestamp: new Date(), // Just now
+    timestamp: new Date().toISOString(), // Just now
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const placeholderLatestActivities: Activity[] = [
       avatar: 'https://github.com/shadcn.png',
     },
     action: 'Added new item "Kitchen Appliance" (ID: 2)',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
   },
   {
     id: 3,
@@ -34,7 +34,7 @@ export const placeholderLatestActivities: Activity[] = [
       avatar: 'https://github.com/shadcn.png',
     },
     action: 'Modified description for "Electronics" (ID: 3)',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
   },
   {
     id: 4,
@@ -43,7 +43,7 @@ export const placeholderLatestActivities: Activity[] = [
       avatar: 'https://github.com/shadcn.png',
     },
     action: 'Reviewed claim details',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
   },
   {
     id: 5,
@@ -52,6 +52,6 @@ export const placeholderLatestActivities: Activity[] = [
       avatar: 'https://github.com/shadcn.png',
     },
     action: 'Created new claim',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7), // 1 week ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(), // 1 week ago
   },
 ];

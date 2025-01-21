@@ -12,6 +12,7 @@ import usersRouter from './routes/users/index';
 import staffRouter from './routes/staff/index';
 import suppliersRouter from './routes/suppliers/index';
 import authRouter from './routes/auth/index';
+import activitiesRouter from './routes/activities/index';
 import passport from './config/passport';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
@@ -74,6 +75,7 @@ app.use('/api/claims', claimsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/staff', staffRouter);
 app.use('/api/suppliers', suppliersRouter);
+app.use('/api/activities', activitiesRouter);
 
 const server = app.listen(SERVER_CONFIG.port, () => {
   console.log(`Listening at ${getServerBaseUrl()}/api`);

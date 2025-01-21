@@ -1,9 +1,10 @@
 import { Button, ScrollArea, Separator } from '@react-monorepo/shared';
-import { placeholderLatestActivities } from './placeholderLatestActivities';
 import { LatestActivityEntry } from './LatestActivityEntry';
-import { TestApi } from './TestApi';
+import { useGetLatestActivitiesQuery } from '../../store/services/activitiesApi';
 
 export const LatestActivitiesContainer = () => {
+  const { data, isLoading, error } = useGetLatestActivitiesQuery();
+
   return (
     <div className="flex-1 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
@@ -15,9 +16,31 @@ export const LatestActivitiesContainer = () => {
 
       <ScrollArea className="flex-1 -mr-2">
         <div>
-          {placeholderLatestActivities.map((activity) => (
+          {/* Show loading state */}
+          {isLoading && (
+            <p className="text-sm text-muted-foreground p-3">
+              Loading activities...
+            </p>
+          )}
+
+          {/* Show error state */}
+          {error && (
+            <p className="text-sm text-destructive p-3">
+              Failed to load activities. Please try again later.
+            </p>
+          )}
+
+          {/* Show activities */}
+          {data?.map((activity) => (
             <LatestActivityEntry key={activity.id} activity={activity} />
           ))}
+
+          {/* Show empty state */}
+          {data?.length === 0 && (
+            <p className="text-sm text-muted-foreground p-3">
+              No activities yet
+            </p>
+          )}
         </div>
       </ScrollArea>
     </div>

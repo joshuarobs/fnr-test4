@@ -40,13 +40,16 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <p className="text-sm text-muted-foreground">
-                    {formatDistance(activity.timestamp, new Date(), {
+                    {/* Handle date transformation at component level for flexibility
+                        This allows different components to format dates differently
+                        while keeping the raw ISO string in the store */}
+                    {formatDistance(new Date(activity.timestamp), new Date(), {
                       addSuffix: true,
                     })}
                   </p>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {activity.timestamp.toLocaleString()}
+                  {new Date(activity.timestamp).toLocaleString()}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
