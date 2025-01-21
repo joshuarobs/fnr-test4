@@ -213,6 +213,18 @@ export interface UserContextData {
   };
 }
 
+// Activity interface
+export interface Activity {
+  id: number;
+  user: {
+    name: string;
+    avatar: string;
+    avatarColour: string;
+  };
+  action: string;
+  timestamp: string;
+}
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
@@ -236,6 +248,7 @@ export const api = createApi({
     'Staff',
     'Users',
     'Suppliers',
+    'Activities',
   ],
   endpoints: (builder) => ({
     login: builder.mutation<
@@ -383,7 +396,7 @@ export const api = createApi({
           quantity: item.quantity,
         },
       }),
-      invalidatesTags: ['Claim'],
+      invalidatesTags: ['Claim', 'Activities'],
     }),
     addItem: builder.mutation<Item, { claimId: string; item: Partial<Item> }>({
       query: ({ claimId, item }) => ({
@@ -391,14 +404,14 @@ export const api = createApi({
         method: 'POST',
         body: item,
       }),
-      invalidatesTags: ['Claim'],
+      invalidatesTags: ['Claim', 'Activities'],
     }),
     removeItem: builder.mutation<void, { claimId: string; itemId: number }>({
       query: ({ claimId, itemId }) => ({
         url: `claims/${claimId}/items/${itemId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Claim'],
+      invalidatesTags: ['Claim', 'Activities'],
     }),
     archiveClaim: builder.mutation<
       { success: boolean; message: string },
@@ -508,6 +521,29 @@ export const api = createApi({
       }),
       invalidatesTags: ['Claim', 'Claims'],
     }),
+    getLatestActivities: builder.query<Activity[], number | void>({
+      query: (limit = 10) => ({
+        url: `/activities?limit=${limit}`,
+      }),
+      providesTags: ['Activities'],
+    }),
+    getClaimActivities: builder.query<
+      Activity[],
+      { claimNumber: string; limit?: number }
+    >({
+      query: ({ claimNumber, limit = 10 }) => ({
+        url: `/activities/claim/${claimNumber}?limit=${limit}`,
+      }),
+      providesTags: ['Activities'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log('Activities data received:', data);
+        } catch (error) {
+          console.error('Error fetching activities:', error);
+        }
+      },
+    }),
   }),
 });
 
@@ -558,4 +594,6 @@ export const {
   useGetSupplierClaimsQuery,
   useGetCustomersQuery,
   useUpdateClaimDescriptionMutation,
+  useGetLatestActivitiesQuery,
+  useGetClaimActivitiesQuery,
 } = api;

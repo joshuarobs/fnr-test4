@@ -1,5 +1,5 @@
 import { FileIcon } from 'lucide-react';
-import { type Activity } from './placeholderLatestActivities';
+import { type Activity } from '../../store/services/api';
 import { formatDistance } from 'date-fns';
 import {
   Tooltip,

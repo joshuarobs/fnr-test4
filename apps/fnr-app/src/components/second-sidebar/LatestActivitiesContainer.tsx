@@ -1,9 +1,24 @@
-import { Button, ScrollArea, Separator } from '@react-monorepo/shared';
+import { Button, ScrollArea } from '@react-monorepo/shared';
 import { LatestActivityEntry } from './LatestActivityEntry';
-import { useGetLatestActivitiesQuery } from '../../store/services/activitiesApi';
+import { useGetClaimActivitiesQuery } from '../../store/services/api';
+import { useParams } from 'react-router-dom';
 
 export const LatestActivitiesContainer = () => {
-  const { data, isLoading, error } = useGetLatestActivitiesQuery();
+  const { id: claimId } = useParams();
+
+  const { data, isLoading, error } = useGetClaimActivitiesQuery(
+    { claimNumber: claimId || '', limit: 6 },
+    { skip: !claimId }
+  );
+
+  console.log('LatestActivitiesContainer state:', {
+    claimId,
+    data,
+    isLoading,
+    error,
+    hasData: !!data,
+    dataLength: data?.length,
+  });
 
   return (
     <div className="flex-1 flex flex-col h-full">
