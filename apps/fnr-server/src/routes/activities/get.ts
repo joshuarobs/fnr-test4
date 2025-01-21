@@ -11,6 +11,11 @@ type ActivityWithIncludes = Prisma.ActivityLogGetPayload<{
         firstName: true;
         lastName: true;
         avatarColour: true;
+        staff: {
+          select: {
+            employeeId: true;
+          };
+        };
       };
     };
     claim: {
@@ -83,9 +88,13 @@ const formatActivities = (activities: ActivityWithIncludes[]) => {
     return {
       id: activity.id,
       user: {
+        id: activity.user.id,
         name: userName,
+        firstName: activity.user.firstName,
+        lastName: activity.user.lastName,
         avatar: '', // No avatar URLs, using avatarColour instead
         avatarColour: activity.user.avatarColour,
+        employeeId: activity.user.staff?.employeeId,
       },
       action,
       timestamp: activity.createdAt,
@@ -106,6 +115,11 @@ const getQueryOptions = (limit: number) => ({
         firstName: true,
         lastName: true,
         avatarColour: true,
+        staff: {
+          select: {
+            employeeId: true,
+          },
+        },
       },
     },
     claim: {

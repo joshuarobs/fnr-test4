@@ -217,9 +217,13 @@ export interface UserContextData {
 export interface Activity {
   id: number;
   user: {
+    id: number;
     name: string;
+    firstName?: string;
+    lastName?: string;
     avatar: string;
     avatarColour: string;
+    employeeId?: string;
   };
   action: string;
   timestamp: string;
