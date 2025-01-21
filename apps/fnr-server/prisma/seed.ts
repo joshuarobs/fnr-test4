@@ -156,35 +156,57 @@ async function main() {
           (sum, item) => sum + (item.insuredsQuote || 0),
           0
         ),
-        insuredId: insuredId,
-        handlerId: handlerId,
-        creatorId: createdStaffMembers[0].id,
         itemOrder: [],
         localItemIds: [],
+        insured: {
+          connect: {
+            id: insuredId,
+          },
+        },
+        ...(handlerId
+          ? {
+              handler: {
+                connect: {
+                  id: handlerId,
+                },
+              },
+            }
+          : {}),
+        creator: {
+          connect: {
+            id: handlerId || insuredUsers[0].baseUser.id,
+          },
+        },
         // Set CLM003 as archived by default
         ...(claim.claimNumber === 'CLM003'
           ? {
               isDeleted: true,
               deletedAt: new Date(),
-              deletedBy: handlerId,
+              deletedUser: {
+                connect: {
+                  id: handlerId,
+                },
+              },
               deleteReason: 'Archived during initial setup',
             }
           : {}),
       },
     });
 
-    // Add activity log for claim creation
-    await prisma.activityLog.create({
-      data: {
-        activityType: 'CLAIM_CREATED',
-        userId: createdStaffMembers[0].id,
-        claimId: createdClaim.id,
-        metadata: {
-          claimNumber: claim.claimNumber,
-          description: claim.description,
+    // Add activity log for claim creation (only if there's a handler)
+    if (handlerId) {
+      await prisma.activityLog.create({
+        data: {
+          activityType: 'CLAIM_CREATED',
+          userId: handlerId,
+          claimId: createdClaim.id,
+          metadata: {
+            claimNumber: claim.claimNumber,
+            description: claim.description,
+          },
         },
-      },
-    });
+      });
+    }
 
     // Create items and collect their IDs
     const itemIds: number[] = [];
