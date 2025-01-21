@@ -1,6 +1,6 @@
 import { FileIcon } from 'lucide-react';
 import { type Activity } from '../../store/services/api';
-import { formatDistance } from 'date-fns';
+import { formatDistance, format } from 'date-fns';
 import {
   Tooltip,
   TooltipContent,
@@ -53,7 +53,9 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
                   </p>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {new Date(activity.timestamp).toLocaleString()}
+                  {`${format(new Date(activity.timestamp), 'dd-MM-yy')}, ${
+                    new Date(activity.timestamp).toLocaleString().split(',')[1]
+                  }`}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
