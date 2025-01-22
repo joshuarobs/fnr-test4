@@ -16,7 +16,7 @@ interface LatestActivityEntryProps {
 
 export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
   return (
-    <div className="p-3 rounded-lg hover:bg-accent/50 transition-colors space-y-2">
+    <div className="p-3 rounded-lg hover:bg-accent/50 transition-colors space-y-1">
       <NavAvatar
         userInitials={getUserInitials(
           activity.user.firstName,
@@ -27,8 +27,10 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
         userId={activity.user.employeeId}
         mini
       />
-      <div className="flex items-center gap-3">
-        <FileIcon className="h-4 w-4 text-muted-foreground" />
+      <div className="flex items-center gap-2">
+        <div className="p-1.5">
+          <FileIcon className="h-4 w-4 text-muted-foreground" />
+        </div>
         <div className="flex-1">
           <p className="text-sm text-muted-foreground">{activity.action}</p>
           <TooltipProvider>
