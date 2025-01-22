@@ -18,6 +18,7 @@ interface NavAvatarProps {
   disableHoverCard?: boolean; // Controls whether the hover card is shown
   isSupplier?: boolean; // Flag to determine if the user is a supplier
   hideTextLabel?: boolean; // Controls whether the name label is shown
+  mini?: boolean; // Controls whether to use mini style (smaller avatar and text)
 }
 
 // Navigation avatar component with optional name label
@@ -35,10 +36,15 @@ export const NavAvatar = ({
   disableHoverCard,
   isSupplier,
   hideTextLabel,
+  mini,
 }: NavAvatarProps) => {
   const currentUser = useUser();
   const isCurrentUser = userId ? userId === currentUser.id : false;
   const isEmptyUser = !userId;
+
+  // Truncate name if mini style and name is too long
+  const displayName =
+    mini && name && name.length > 20 ? `${name.slice(0, 20)}...` : name;
 
   const content = (
     <div
@@ -51,7 +57,7 @@ export const NavAvatar = ({
     >
       <div className="rounded-full p-0.5">
         <UserAvatar
-          size="sm"
+          size={mini ? 'xs' : 'sm'}
           userInitials={
             company ? getCompanyInitials(company) : userInitials || ''
           }
@@ -65,15 +71,15 @@ export const NavAvatar = ({
       </div>
       {!hideTextLabel && (name || isEmptyUser) && (
         <span
-          className={`text-sm ${isEmptyUser ? 'text-muted-foreground' : ''} ${
-            !disableHoverText ? 'group-hover:text-hover-blue' : ''
-          }`}
+          className={`${mini ? 'text-sm font-medium' : 'text-sm'} ${
+            isEmptyUser ? 'text-muted-foreground' : ''
+          } ${!disableHoverText ? 'group-hover:text-hover-blue' : ''}`}
         >
           {isEmptyUser
             ? 'No user assigned'
             : isCurrentUser
-            ? `You (${name})`
-            : name}
+            ? `You (${displayName})`
+            : displayName}
         </span>
       )}
     </div>

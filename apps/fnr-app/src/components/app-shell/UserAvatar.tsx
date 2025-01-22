@@ -18,7 +18,7 @@ interface UserAvatarProps {
   department?: string;
 
   // Appearance customization
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   color?: string;
   showHeaderRing?: boolean;
   isEmptyUser?: boolean;
@@ -42,13 +42,14 @@ export const UserAvatar = ({
 }: UserAvatarProps) => {
   // Map size prop to actual dimensions and text sizes
   const sizeClasses = {
+    xs: 'h-6 w-6 text-[10px]',
     sm: 'h-8 w-8 text-xs',
     md: 'h-10 w-10 text-sm',
     lg: 'h-16 w-16 text-xl',
   };
 
   // Create avatar component with configurable size
-  const createAvatarComponent = (avatarSize: 'sm' | 'md' | 'lg') => (
+  const createAvatarComponent = (avatarSize: 'xs' | 'sm' | 'md' | 'lg') => (
     <Avatar
       className={`${sizeClasses[avatarSize]} ${
         showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''
