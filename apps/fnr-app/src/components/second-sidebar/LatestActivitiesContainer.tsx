@@ -47,7 +47,11 @@ export const LatestActivitiesContainer = () => {
 
           {/* Show activities */}
           {data?.map((activity) => (
-            <LatestActivityEntry key={activity.id} activity={activity} />
+            <LatestActivityEntry
+              key={activity.id}
+              activity={activity}
+              currentClaimNumber={claimId}
+            />
           ))}
 
           {/* Show empty state */}

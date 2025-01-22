@@ -45,7 +45,7 @@ export const SecondSidebar = ({
   return (
     <div
       className={cn(
-        'max-w-[280px] h-[calc(100vh-56px)] overflow-hidden',
+        'min-w-[240px] max-w-[280px] h-[calc(100vh-56px)] overflow-hidden',
         className
       )}
     >

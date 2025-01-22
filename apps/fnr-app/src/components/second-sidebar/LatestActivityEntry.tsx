@@ -12,11 +12,28 @@ import { getUserInitials } from '../../lib/avatar-utils';
 
 interface LatestActivityEntryProps {
   activity: Activity;
+  currentClaimNumber?: string;
 }
 
-export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
+export const LatestActivityEntry = ({
+  activity,
+  currentClaimNumber,
+}: LatestActivityEntryProps) => {
+  // Extract claim number from "Created claim X" action if present
+  const getActionText = () => {
+    if (!activity.action.startsWith('Created claim')) return activity.action;
+
+    const match = activity.action.match(/Created claim (\w+)/);
+    if (!match) return activity.action;
+
+    const claimNumber = match[1];
+    return claimNumber === currentClaimNumber
+      ? 'Created this claim'
+      : activity.action;
+  };
+
   return (
-    <div className="p-3 rounded-lg hover:bg-accent/50 transition-colors space-y-1">
+    <div className="pt-3 pr-3 pb-3 rounded-lg hover:bg-accent/50 transition-colors space-y-1">
       <NavAvatar
         userInitials={getUserInitials(
           activity.user.firstName,
@@ -32,7 +49,7 @@ export const LatestActivityEntry = ({ activity }: LatestActivityEntryProps) => {
           <FileIcon className="h-4 w-4 text-muted-foreground" />
         </div>
         <div className="flex-1">
-          <p className="text-sm text-muted-foreground">{activity.action}</p>
+          <p className="text-sm text-muted-foreground">{getActionText()}</p>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
