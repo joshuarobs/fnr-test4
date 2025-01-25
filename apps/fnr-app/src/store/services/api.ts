@@ -532,11 +532,17 @@ export const api = createApi({
       providesTags: ['Activities'],
     }),
     getClaimActivities: builder.query<
-      Activity[],
-      { claimNumber: string; limit?: number }
+      {
+        activities: Activity[];
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+      },
+      { claimNumber: string; page?: number; pageSize?: number }
     >({
-      query: ({ claimNumber, limit = 10 }) => ({
-        url: `/activities/claim/${claimNumber}?limit=${limit}`,
+      query: ({ claimNumber, page = 1, pageSize = 10 }) => ({
+        url: `/activities/claim/${claimNumber}?page=${page}&pageSize=${pageSize}`,
       }),
       providesTags: ['Activities'],
       async onQueryStarted(arg, { queryFulfilled }) {

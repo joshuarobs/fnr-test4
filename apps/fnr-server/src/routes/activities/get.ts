@@ -161,11 +161,12 @@ router.get('/', isAuthenticated, async (req, res) => {
 // GET /api/activities/claim/:claimNumber
 router.get('/claim/:claimNumber', isAuthenticated, async (req, res) => {
   try {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
     const claimNumber = req.params.claimNumber;
 
-    if (isNaN(limit) || limit < 1) {
-      return res.status(400).json({ error: 'Invalid limit parameter' });
+    if (isNaN(pageSize) || pageSize < 1 || isNaN(page) || page < 1) {
+      return res.status(400).json({ error: 'Invalid pagination parameters' });
     }
 
     // First find the claim by claimNumber
@@ -178,14 +179,30 @@ router.get('/claim/:claimNumber', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    const activities = await prisma.activityLog.findMany({
-      ...getQueryOptions(limit),
+    // Get total count for pagination
+    const totalActivities = await prisma.activityLog.count({
       where: {
         claimId: claim.id,
       },
     });
 
-    res.json(formatActivities(activities));
+    // Get paginated activities
+    const activities = await prisma.activityLog.findMany({
+      ...getQueryOptions(pageSize),
+      where: {
+        claimId: claim.id,
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    res.json({
+      activities: formatActivities(activities),
+      total: totalActivities,
+      page,
+      pageSize,
+      totalPages: Math.ceil(totalActivities / pageSize),
+    });
   } catch (error) {
     console.error('Error fetching activities:', error);
     res.status(500).json({ error: 'Failed to fetch activities' });

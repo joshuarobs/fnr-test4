@@ -7,7 +7,7 @@ export const LatestActivitiesContainer = () => {
   const { id: claimId } = useParams();
 
   const { data, isLoading, error } = useGetClaimActivitiesQuery(
-    { claimNumber: claimId || '', limit: 6 },
+    { claimNumber: claimId || '', pageSize: 6, page: 1 },
     { skip: !claimId }
   );
 
@@ -17,7 +17,7 @@ export const LatestActivitiesContainer = () => {
     isLoading,
     error,
     hasData: !!data,
-    dataLength: data?.length,
+    dataLength: data?.activities.length,
   });
 
   return (
@@ -46,7 +46,7 @@ export const LatestActivitiesContainer = () => {
           )}
 
           {/* Show activities */}
-          {data?.map((activity) => (
+          {data?.activities.map((activity) => (
             <LatestActivityEntry
               key={activity.id}
               activity={activity}
@@ -55,7 +55,7 @@ export const LatestActivitiesContainer = () => {
           ))}
 
           {/* Show empty state */}
-          {data?.length === 0 && (
+          {data?.activities.length === 0 && (
             <p className="text-sm text-muted-foreground p-3">
               No activities yet
             </p>

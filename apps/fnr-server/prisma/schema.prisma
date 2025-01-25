@@ -321,13 +321,6 @@ enum ActivityType {
   ITEM_STATUS_CHANGED   /// Item status changed
   ITEM_EVIDENCE_ADDED   /// Evidence added to item
   ITEM_EVIDENCE_REMOVED /// Evidence removed from item
-  
-  // Bulk activities
-  ITEMS_BULK_CREATED    /// Multiple items created at once
-  ITEMS_BULK_UPDATED    /// Multiple items updated at once
-  ITEMS_BULK_DELETED    /// Multiple items deleted at once
-  EVIDENCE_BULK_ADDED   /// Multiple evidence records added
-  EVIDENCE_BULK_REMOVED /// Multiple evidence records removed
 }
 
 /// Main activity log model for tracking claim-related actions
