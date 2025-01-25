@@ -94,13 +94,6 @@ export const PaginatedActivitiesContainer = ({
 
   return (
     <div className={`flex flex-col h-full ${className}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <Button variant="outline" size="sm">
-          View all
-        </Button>
-      </div>
-
       <ScrollArea className="flex-1">
         <div className="space-y-1">
           {/* Show loading state */}

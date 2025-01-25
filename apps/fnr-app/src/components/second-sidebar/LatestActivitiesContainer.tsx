@@ -1,4 +1,5 @@
-import { Button, ScrollArea } from '@react-monorepo/shared';
+import { ScrollArea } from '@react-monorepo/shared';
+import { AllActivitiesDialog } from './AllActivitiesDialog';
 import { LatestActivityEntry } from './LatestActivityEntry';
 import { useGetClaimActivitiesQuery } from '../../store/services/api';
 import { useParams } from 'react-router-dom';
@@ -24,9 +25,7 @@ export const LatestActivitiesContainer = () => {
     <div className="flex-1 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Latest activity</h2>
-        <Button variant="outline" size="sm">
-          View all
-        </Button>
+        <AllActivitiesDialog />
       </div>
 
       <ScrollArea className="flex-1 -mr-2">
