@@ -294,6 +294,9 @@ export const ClaimPage = () => {
             isSupplier: true,
           };
         })}
+        activities={claimData?.activities || []}
+        isLoading={isLoading}
+        currentClaimNumber={id}
       />
     </main>
   );

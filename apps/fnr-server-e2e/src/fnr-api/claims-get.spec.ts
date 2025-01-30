@@ -12,6 +12,9 @@ const prisma = {
   recentlyViewedClaim: {
     findMany: jest.fn(),
   },
+  activityLog: {
+    findMany: jest.fn(),
+  },
 } as unknown as PrismaClient;
 
 // Create a mock router
@@ -92,7 +95,66 @@ mockRouter.get('/:claimNumber', async (req, res) => {
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    res.json(claim);
+    // Get activities
+    const activities = await prisma.activityLog.findMany({
+      where: {
+        claim: {
+          claimNumber,
+        },
+      },
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatarColour: true,
+            staff: {
+              select: {
+                employeeId: true,
+              },
+            },
+          },
+        },
+        claim: {
+          select: {
+            claimNumber: true,
+          },
+        },
+        items: {
+          include: {
+            item: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Format activities
+    const formattedActivities = activities.map((activity) => ({
+      id: activity.id,
+      user: {
+        id: activity.user.id,
+        name: `${activity.user.firstName} ${activity.user.lastName}`,
+        firstName: activity.user.firstName,
+        lastName: activity.user.lastName,
+        avatar: '',
+        avatarColour: activity.user.avatarColour,
+        employeeId: activity.user.staff?.employeeId,
+      },
+      action: 'Some action',
+      timestamp: activity.createdAt,
+    }));
+
+    res.json({
+      ...claim,
+      activities: formattedActivities,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch claim' });
   }
@@ -205,10 +267,50 @@ describe('Claims API - GET endpoints', () => {
           quantity: 1,
         },
       ],
+      activities: [
+        {
+          id: 1,
+          user: {
+            id: 1,
+            name: 'John Doe',
+            firstName: 'John',
+            lastName: 'Doe',
+            avatar: '',
+            avatarColour: 'blue',
+            employeeId: 'EMP001',
+          },
+          action: 'Some action',
+          timestamp: new Date().toISOString(),
+        },
+      ],
     };
+
+    const mockActivities = [
+      {
+        id: 1,
+        user: {
+          id: 1,
+          firstName: 'John',
+          lastName: 'Doe',
+          avatarColour: 'blue',
+          staff: {
+            employeeId: 'EMP001',
+          },
+        },
+        claim: {
+          claimNumber: 'CLM001',
+        },
+        items: [],
+        createdAt: new Date().toISOString(),
+        activityType: 'CLAIM_CREATED',
+      },
+    ];
 
     beforeEach(() => {
       (prisma.claim.findUnique as jest.Mock).mockResolvedValue(mockClaim);
+      (prisma.activityLog.findMany as jest.Mock).mockResolvedValue(
+        mockActivities
+      );
     });
 
     it('should fetch a specific claim by claim number', async () => {
@@ -220,6 +322,16 @@ describe('Claims API - GET endpoints', () => {
         where: { claimNumber: 'CLM001' },
         include: { items: true },
       });
+      expect(prisma.activityLog.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            claim: {
+              claimNumber: 'CLM001',
+            },
+          },
+          take: 10,
+        })
+      );
     });
 
     it('should return 404 if claim is not found', async () => {

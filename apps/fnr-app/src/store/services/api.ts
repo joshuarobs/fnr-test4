@@ -59,6 +59,7 @@ interface ClaimDetail {
       };
     };
   }[];
+  activities: Activity[];
 }
 
 interface Message {

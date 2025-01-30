@@ -6,6 +6,8 @@ import { LatestActivitiesContainer } from '../second-sidebar/LatestActivitiesCon
 import { PartyAvatarSection } from '../contents-other/PartyAvatarSection';
 import { ClaimAssignedToSection } from '../contents-other/ClaimAssignedToSection';
 
+import { Activity } from '../../store/services/api';
+
 interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   assignedUser?: {
     userInitials: string;
@@ -26,6 +28,9 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     userId: string;
     isSupplier?: boolean;
   }[];
+  activities: Activity[];
+  isLoading?: boolean;
+  currentClaimNumber?: string;
 }
 
 const SidebarSeparator = () => {
@@ -41,6 +46,9 @@ export const SecondSidebar = ({
   assignedUser,
   contributors = [],
   suppliers = [],
+  activities,
+  isLoading,
+  currentClaimNumber,
 }: SecondSidebarProps) => {
   return (
     <div
@@ -83,7 +91,11 @@ export const SecondSidebar = ({
           {/* ======================================== */}
           {/* Activity */}
           {/* ======================================== */}
-          <LatestActivitiesContainer />
+          <LatestActivitiesContainer
+            activities={activities}
+            isLoading={isLoading}
+            currentClaimNumber={currentClaimNumber}
+          />
         </div>
       </div>
     </div>

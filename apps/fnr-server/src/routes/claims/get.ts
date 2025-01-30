@@ -267,7 +267,111 @@ router.get('/:claimNumber', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Claim not found' });
     }
 
-    res.json(claim);
+    // Get the latest 10 activities for this claim
+    const activities = await prisma.activityLog.findMany({
+      where: {
+        claim: {
+          claimNumber,
+        },
+      },
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatarColour: true,
+            staff: {
+              select: {
+                employeeId: true,
+              },
+            },
+          },
+        },
+        claim: {
+          select: {
+            claimNumber: true,
+          },
+        },
+        items: {
+          include: {
+            item: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Format activities
+    const formattedActivities = activities.map((activity) => {
+      const userName = [activity.user.firstName, activity.user.lastName]
+        .filter(Boolean)
+        .join(' ');
+
+      // Format the action message based on activity type
+      let action = '';
+      switch (activity.activityType) {
+        case 'CLAIM_CREATED':
+          action = `Created claim ${activity.claim?.claimNumber}`;
+          break;
+        case 'CLAIM_UPDATED':
+          action = `Updated claim ${activity.claim?.claimNumber}`;
+          break;
+        case 'CLAIM_STATUS_CHANGED':
+          action = `Changed status of claim ${activity.claim?.claimNumber}`;
+          break;
+        case 'ITEM_CREATED':
+          if (activity.items[0]) {
+            action = `Added new item "${activity.items[0].item.name}"`;
+          }
+          break;
+        case 'ITEM_UPDATED':
+          if (activity.items[0]) {
+            action = `Updated item "${activity.items[0].item.name}"`;
+          }
+          break;
+        case 'ITEM_EVIDENCE_ADDED':
+          if (activity.items[0]) {
+            action = `Added evidence to "${activity.items[0].item.name}"`;
+          }
+          break;
+        default:
+          action = activity.activityType.toLowerCase().replace(/_/g, ' ');
+      }
+
+      // Add metadata details if available
+      if (activity.metadata) {
+        const meta = activity.metadata as Record<string, any>;
+        if (meta.details) {
+          action += ` - ${meta.details}`;
+        }
+      }
+
+      return {
+        id: activity.id,
+        user: {
+          id: activity.user.id,
+          name: userName,
+          firstName: activity.user.firstName,
+          lastName: activity.user.lastName,
+          avatar: '',
+          avatarColour: activity.user.avatarColour,
+          employeeId: activity.user.staff?.employeeId,
+        },
+        action,
+        timestamp: activity.createdAt,
+      };
+    });
+
+    res.json({
+      ...claim,
+      activities: formattedActivities,
+    });
   } catch (error) {
     console.error('Error fetching claim:', error);
     res.status(500).json({ error: 'Failed to fetch claim' });
