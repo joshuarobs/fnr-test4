@@ -25,7 +25,7 @@ export const AllActivitiesDialog = () => {
           <DialogTitle>All Activities</DialogTitle>
         </DialogHeader>
         <div className="h-[calc(80vh-120px)]">
-          <PaginatedActivitiesContainer title="" />
+          <PaginatedActivitiesContainer title="" wideVersion />
         </div>
       </DialogContent>
     </Dialog>

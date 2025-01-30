@@ -21,6 +21,8 @@ import {
 interface PaginatedActivitiesContainerProps {
   className?: string;
   title?: string;
+  /** If true, displays activities in a horizontal layout */
+  wideVersion?: boolean;
 }
 
 /**
@@ -31,6 +33,7 @@ interface PaginatedActivitiesContainerProps {
 export const PaginatedActivitiesContainer = ({
   className = '',
   title = 'Latest activity',
+  wideVersion = false,
 }: PaginatedActivitiesContainerProps) => {
   const { id: claimId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -116,6 +119,7 @@ export const PaginatedActivitiesContainer = ({
               key={activity.id}
               activity={activity}
               currentClaimNumber={claimId}
+              wideVersion={wideVersion}
             />
           ))}
 

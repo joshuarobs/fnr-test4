@@ -107,7 +107,9 @@ export const SupplierProfilePage = () => {
 
       {/* Claims Table Section */}
       <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-4">Allocated Claims</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Allocated Claims as a supplier
+        </h2>
         <DetailedClaimsTable queryType="supplier" supplierId={supplierId} />
       </div>
     </div>

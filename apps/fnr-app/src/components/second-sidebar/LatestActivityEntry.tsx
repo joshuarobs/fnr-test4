@@ -13,11 +13,14 @@ import { getUserInitials } from '../../lib/avatar-utils';
 interface LatestActivityEntryProps {
   activity: Activity;
   currentClaimNumber?: string;
+  /** If true, displays in a horizontal layout instead of vertical */
+  wideVersion?: boolean;
 }
 
 export const LatestActivityEntry = ({
   activity,
   currentClaimNumber,
+  wideVersion = false,
 }: LatestActivityEntryProps) => {
   // Extract claim number from "Created claim X" action if present
   const getActionText = () => {
@@ -33,7 +36,11 @@ export const LatestActivityEntry = ({
   };
 
   return (
-    <div className="pt-3 pr-3 pb-3 rounded-lg hover:bg-accent/50 transition-colors space-y-1">
+    <div
+      className={`pt-3 pr-3 pb-3 rounded-lg hover:bg-accent/50 transition-colors ${
+        wideVersion ? 'flex items-center gap-4' : 'space-y-1'
+      }`}
+    >
       <NavAvatar
         userInitials={getUserInitials(
           activity.user.firstName,
