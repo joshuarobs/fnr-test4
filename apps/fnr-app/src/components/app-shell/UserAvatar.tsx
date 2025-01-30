@@ -51,9 +51,10 @@ export const UserAvatar = ({
   // Create avatar component with configurable size
   const createAvatarComponent = (avatarSize: 'xs' | 'sm' | 'md' | 'lg') => (
     <Avatar
-      className={`${sizeClasses[avatarSize]} ${
-        showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''
-      } ${hoverable ? 'hover:cursor-pointer' : ''} ${
+      className={`${sizeClasses[avatarSize]} 
+      ${showHeaderRing ? 'ring-1 ring-gray-300 dark:ring-gray-600' : ''} ${
+        hoverable ? 'hover:cursor-pointer' : ''
+      } ${
         isEmptyUser
           ? 'border border-dashed border-gray-300 dark:border-gray-600 bg-transparent'
           : ''
@@ -67,7 +68,7 @@ export const UserAvatar = ({
         <AvatarImage src={imageUrl} alt={name || userInitials} />
       ) : (
         <AvatarFallback
-          className="dark:brightness-[0.9] font-medium"
+          className="dark:brightness-[0.9] font-medium select-none"
           style={{ backgroundColor: color, color: fontColorContrast(color) }}
         >
           {userInitials}
