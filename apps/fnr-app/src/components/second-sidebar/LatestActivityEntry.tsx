@@ -9,6 +9,7 @@ import {
 } from '@react-monorepo/shared';
 import { NavAvatar } from '../contents-other/NavAvatar';
 import { getUserInitials } from '../../lib/avatar-utils';
+import { getActivityText } from '../../lib/activity-utils';
 
 interface LatestActivityEntryProps {
   activity: Activity;
@@ -22,17 +23,13 @@ export const LatestActivityEntry = ({
   currentClaimNumber,
   wideVersion = false,
 }: LatestActivityEntryProps) => {
-  // Extract claim number from "Created claim X" action if present
+  // Get formatted activity text using utility function
   const getActionText = () => {
-    if (!activity.action.startsWith('Created claim')) return activity.action;
-
-    const match = activity.action.match(/Created claim (\w+)/);
-    if (!match) return activity.action;
-
-    const claimNumber = match[1];
-    return claimNumber === currentClaimNumber
-      ? 'Created this claim'
-      : activity.action;
+    return getActivityText(
+      activity.activityType,
+      activity.metadata || {},
+      currentClaimNumber
+    );
   };
 
   return (

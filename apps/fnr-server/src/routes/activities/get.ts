@@ -46,45 +46,6 @@ const formatActivities = (activities: ActivityWithIncludes[]) => {
       .filter(Boolean)
       .join(' ');
 
-    // Format the action message based on activity type
-    let action = '';
-    switch (activity.activityType) {
-      case 'CLAIM_CREATED':
-        action = `Created claim ${activity.claim?.claimNumber}`;
-        break;
-      case 'CLAIM_UPDATED':
-        action = `Updated claim ${activity.claim?.claimNumber}`;
-        break;
-      case 'CLAIM_STATUS_CHANGED':
-        action = `Changed status of claim ${activity.claim?.claimNumber}`;
-        break;
-      case 'ITEM_CREATED':
-        if (activity.items[0]) {
-          action = `Added new item "${activity.items[0].item.name}"`;
-        }
-        break;
-      case 'ITEM_UPDATED':
-        if (activity.items[0]) {
-          action = `Updated item "${activity.items[0].item.name}"`;
-        }
-        break;
-      case 'ITEM_EVIDENCE_ADDED':
-        if (activity.items[0]) {
-          action = `Added evidence to "${activity.items[0].item.name}"`;
-        }
-        break;
-      default:
-        action = activity.activityType.toLowerCase().replace(/_/g, ' ');
-    }
-
-    // Add metadata details if available
-    if (activity.metadata) {
-      const meta = activity.metadata as Record<string, any>;
-      if (meta.details) {
-        action += ` - ${meta.details}`;
-      }
-    }
-
     return {
       id: activity.id,
       user: {
@@ -96,8 +57,13 @@ const formatActivities = (activities: ActivityWithIncludes[]) => {
         avatarColour: activity.user.avatarColour,
         employeeId: activity.user.staff?.employeeId,
       },
-      action,
+      activityType: activity.activityType,
       timestamp: activity.createdAt,
+      metadata: {
+        claimNumber: activity.claim?.claimNumber,
+        itemName: activity.items[0]?.item.name,
+        details: (activity.metadata as { details?: string })?.details,
+      },
     };
   });
 };

@@ -1,9 +1,15 @@
-import { PrismaClient, UserRole, ClaimStatus } from '@prisma/client';
+import {
+  PrismaClient,
+  UserRole,
+  ClaimStatus,
+  ActivityType,
+} from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { admin, staffMembers, suppliers, insureds } from './seedData/userData';
 import { claimData } from './seedData/claimData';
 import { recalculateClaimValues } from '../src/lib/claimHelpers';
 import { seedContributors } from './seedData/seedContributors';
+import { seedItemActivities } from './seedData/seedItemActivities';
 
 const prisma = new PrismaClient();
 
@@ -197,7 +203,7 @@ async function main() {
     if (handlerId) {
       await prisma.activityLog.create({
         data: {
-          activityType: 'CLAIM_CREATED',
+          activityType: ActivityType.CLAIM_CREATED,
           userId: handlerId,
           claimId: createdClaim.id,
           metadata: {
@@ -244,6 +250,9 @@ async function main() {
 
       itemIds.push(createdItem.id);
     }
+
+    // Add activity logs for item creation
+    await seedItemActivities(prisma, createdClaim, handlerId, claim.items);
 
     // Update claim with both itemOrder and localItemIds arrays
     // Both arrays contain the same database IDs initially

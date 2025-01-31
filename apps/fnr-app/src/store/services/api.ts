@@ -214,6 +214,23 @@ export interface UserContextData {
   };
 }
 
+export enum ActivityType {
+  // Claim activities
+  CLAIM_CREATED = 'CLAIM_CREATED',
+  CLAIM_UPDATED = 'CLAIM_UPDATED',
+  CLAIM_DELETED = 'CLAIM_DELETED',
+  CLAIM_STATUS_CHANGED = 'CLAIM_STATUS_CHANGED',
+  CLAIM_HANDLER_ASSIGNED = 'CLAIM_HANDLER_ASSIGNED',
+
+  // Item activities
+  ITEM_CREATED = 'ITEM_CREATED',
+  ITEM_UPDATED = 'ITEM_UPDATED',
+  ITEM_DELETED = 'ITEM_DELETED',
+  ITEM_STATUS_CHANGED = 'ITEM_STATUS_CHANGED',
+  ITEM_EVIDENCE_ADDED = 'ITEM_EVIDENCE_ADDED',
+  ITEM_EVIDENCE_REMOVED = 'ITEM_EVIDENCE_REMOVED',
+}
+
 // Activity interface
 export interface Activity {
   id: number;
@@ -226,8 +243,13 @@ export interface Activity {
     avatarColour: string;
     employeeId?: string;
   };
-  action: string;
+  activityType: ActivityType;
   timestamp: string;
+  metadata: {
+    claimNumber?: string;
+    itemName?: string;
+    details?: string;
+  };
 }
 
 export const api = createApi({
