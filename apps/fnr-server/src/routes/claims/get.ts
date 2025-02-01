@@ -363,8 +363,13 @@ router.get('/:claimNumber', isAuthenticated, async (req, res) => {
           avatarColour: activity.user.avatarColour,
           employeeId: activity.user.staff?.employeeId,
         },
-        action,
+        activityType: activity.activityType,
         timestamp: activity.createdAt,
+        metadata: {
+          claimNumber: activity.claim?.claimNumber,
+          itemName: activity.items[0]?.item.name,
+          details: (activity.metadata as { details?: string })?.details,
+        },
       };
     });
 

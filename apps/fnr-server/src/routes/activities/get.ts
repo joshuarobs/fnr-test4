@@ -3,37 +3,35 @@ import prisma from '../../lib/prisma';
 import { isAuthenticated } from '../../middleware/auth';
 import { ActivityLog, Prisma, ActivityType } from '@prisma/client';
 
-type ActivityWithIncludes = Prisma.ActivityLogGetPayload<{
-  include: {
-    user: {
-      select: {
-        id: true;
-        firstName: true;
-        lastName: true;
-        avatarColour: true;
-        staff: {
-          select: {
-            employeeId: true;
-          };
-        };
-      };
-    };
-    claim: {
-      select: {
-        claimNumber: true;
-      };
-    };
-    items: {
-      include: {
-        item: {
-          select: {
-            name: true;
-          };
-        };
-      };
-    };
+type ActivityWithIncludes = {
+  id: number;
+  activityType: ActivityType;
+  userId: number;
+  claimId: number;
+  metadata: Prisma.JsonValue;
+  createdAt: Date;
+  user: {
+    id: number;
+    firstName: string | null;
+    lastName: string | null;
+    avatarColour: string | null;
+    staff?: {
+      employeeId: string;
+    } | null;
   };
-}>;
+  claim: {
+    claimNumber: string;
+  } | null;
+  items: {
+    id: number;
+    metadata: Prisma.JsonValue;
+    activityLogId: number;
+    itemId: number;
+    item: {
+      name: string;
+    };
+  }[];
+};
 
 const router: Router = express.Router();
 
@@ -74,7 +72,13 @@ const getQueryOptions = (limit: number) => ({
   orderBy: {
     createdAt: 'desc' as const,
   },
-  include: {
+  select: {
+    id: true,
+    activityType: true,
+    createdAt: true,
+    metadata: true,
+    userId: true,
+    claimId: true,
     user: {
       select: {
         id: true,
@@ -94,7 +98,11 @@ const getQueryOptions = (limit: number) => ({
       },
     },
     items: {
-      include: {
+      select: {
+        id: true,
+        metadata: true,
+        activityLogId: true,
+        itemId: true,
         item: {
           select: {
             name: true,

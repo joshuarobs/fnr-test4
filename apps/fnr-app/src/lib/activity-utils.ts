@@ -21,7 +21,10 @@ export const getActivityText = (
 ): string => {
   const { claimNumber, itemName, details } = metadata;
 
-  switch (activityType) {
+  // Ensure activityType is a valid enum value
+  const normalizedType = activityType?.toUpperCase?.() || activityType;
+
+  switch (normalizedType) {
     // Claim activities
     case ActivityType.CLAIM_CREATED:
       if (claimNumber === currentClaimNumber) {
@@ -77,7 +80,13 @@ export const getActivityText = (
       return `Removed evidence from "${itemName}"`;
 
     default:
-      console.warn(`Unhandled activity type: ${activityType}`);
-      return 'Unknown activity';
+      // More detailed logging to help debug activity type issues
+      console.warn(
+        `Unhandled activity type: ${activityType}`,
+        `Normalized type: ${normalizedType}`,
+        `Valid types:`,
+        Object.values(ActivityType)
+      );
+      return `Unknown activity (${activityType})`;
   }
 };
