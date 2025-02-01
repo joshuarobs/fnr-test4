@@ -53,7 +53,44 @@ export const LatestActivityEntry = ({
           <FileIcon className="h-4 w-4 text-muted-foreground" />
         </div>
         <div className="flex-1">
-          <p className="text-sm text-muted-foreground">{getActionText()}</p>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="text-sm text-muted-foreground">
+                  {getActionText()}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent>
+                {activity.activityType.startsWith('ITEM_') &&
+                activity.metadata ? (
+                  <div className="space-y-1 text-sm">
+                    <p>Item Details:</p>
+                    {activity.metadata.itemName && (
+                      <p>Name: {activity.metadata.itemName}</p>
+                    )}
+                    {activity.metadata.category && (
+                      <p>Category: {activity.metadata.category}</p>
+                    )}
+                    {activity.metadata.roomCategory && (
+                      <p>Room: {activity.metadata.roomCategory}</p>
+                    )}
+                    {activity.metadata.quantity && (
+                      <p>Quantity: {activity.metadata.quantity}</p>
+                    )}
+                    {activity.metadata.insuredsQuote && (
+                      <p>Insured's Quote: ${activity.metadata.insuredsQuote}</p>
+                    )}
+                    {activity.metadata.ourQuote && (
+                      <p>Our Quote: ${activity.metadata.ourQuote}</p>
+                    )}
+                    {activity.metadata.itemStatus && (
+                      <p>Status: {activity.metadata.itemStatus}</p>
+                    )}
+                  </div>
+                ) : null}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

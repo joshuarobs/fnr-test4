@@ -246,9 +246,43 @@ export interface Activity {
   activityType: ActivityType;
   timestamp: string;
   metadata: {
+    // Common fields
     claimNumber?: string;
     itemName?: string;
     details?: string;
+
+    // Item-specific fields
+    category?: string;
+    roomCategory?: string;
+    group?: string;
+    modelSerialNumber?: string;
+    description?: string;
+    quantity?: number;
+    purchaseDate?: string;
+    age?: number;
+    condition?: string;
+    insuredsQuote?: number;
+    ourQuote?: number;
+    itemStatus?: string;
+
+    // For item updates
+    changes?: {
+      name?: string;
+      category?: string;
+      roomCategory?: string;
+      group?: string;
+      modelSerialNumber?: string;
+      description?: string;
+      quantity?: number;
+      purchaseDate?: string;
+      age?: number;
+      condition?: string;
+      insuredsQuote?: number;
+      ourQuote?: number;
+      itemStatus?: string;
+    };
+
+    [key: string]: any; // Allow additional fields
   };
 }
 

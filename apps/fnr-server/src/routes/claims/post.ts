@@ -255,6 +255,16 @@ router.post(
               itemName: req.body.name,
               category: req.body.category,
               roomCategory: req.body.roomCategory,
+              group: req.body.group,
+              modelSerialNumber: req.body.modelSerialNumber,
+              description: req.body.description,
+              quantity: req.body.quantity,
+              purchaseDate: req.body.purchaseDate,
+              age: req.body.age,
+              condition: req.body.condition,
+              insuredsQuote: req.body.insuredsQuote,
+              ourQuote: req.body.ourQuote,
+              itemStatus: req.body.itemStatus,
             },
             items: {
               create: {

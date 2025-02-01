@@ -1,10 +1,43 @@
 import { ActivityType } from '../store/services/api';
 
 interface ActivityMetadata {
+  // Common fields
   claimNumber?: string;
   itemName?: string;
   details?: string;
-  [key: string]: any;
+
+  // Item-specific fields
+  category?: string;
+  roomCategory?: string;
+  group?: string;
+  modelSerialNumber?: string;
+  description?: string;
+  quantity?: number;
+  purchaseDate?: string;
+  age?: number;
+  condition?: string;
+  insuredsQuote?: number;
+  ourQuote?: number;
+  itemStatus?: string;
+
+  // For item updates
+  changes?: {
+    name?: string;
+    category?: string;
+    roomCategory?: string;
+    group?: string;
+    modelSerialNumber?: string;
+    description?: string;
+    quantity?: number;
+    purchaseDate?: string;
+    age?: number;
+    condition?: string;
+    insuredsQuote?: number;
+    ourQuote?: number;
+    itemStatus?: string;
+  };
+
+  [key: string]: any; // Allow additional fields
 }
 
 /**
@@ -62,10 +95,26 @@ export const getActivityText = (
 
     // Item activities
     case ActivityType.ITEM_CREATED:
-      return `Added new item "${itemName}"`;
+      const itemDetails = [];
+      if (metadata.itemName) itemDetails.push(metadata.itemName);
+      if (metadata.insuredsQuote)
+        itemDetails.push(`Insured's Quote: $${metadata.insuredsQuote}`);
+      if (metadata.ourQuote)
+        itemDetails.push(`Our Quote: $${metadata.ourQuote}`);
+      return `Added new item "${itemDetails.join(' - ')}"`;
 
     case ActivityType.ITEM_UPDATED:
-      return `Updated item "${itemName}"`;
+      const changes = [];
+      if (metadata.changes) {
+        if (metadata.changes.name) changes.push('name');
+        if (metadata.changes.insuredsQuote) changes.push("insured's quote");
+        if (metadata.changes.ourQuote) changes.push('our quote');
+        if (metadata.changes.itemStatus) changes.push('status');
+        if (metadata.changes.category) changes.push('category');
+        if (metadata.changes.roomCategory) changes.push('room');
+        if (metadata.changes.quantity) changes.push('quantity');
+      }
+      return `Updated ${changes.join(', ')} for item "${itemName}"`;
 
     case ActivityType.ITEM_DELETED:
       return `Deleted item "${itemName}"`;
