@@ -216,6 +216,7 @@ async function main() {
 
     // Create items and collect their IDs
     const itemIds: number[] = [];
+    const createdItems = [];
 
     for (const item of claim.items) {
       const createdItem = await prisma.item.create({
@@ -249,10 +250,11 @@ async function main() {
       }
 
       itemIds.push(createdItem.id);
+      createdItems.push({ ...item, id: createdItem.id });
     }
 
     // Add activity logs for item creation
-    await seedItemActivities(prisma, createdClaim, handlerId, claim.items);
+    await seedItemActivities(prisma, createdClaim, handlerId, createdItems);
 
     // Update claim with both itemOrder and localItemIds arrays
     // Both arrays contain the same database IDs initially

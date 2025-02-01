@@ -53,16 +53,15 @@ export const LatestActivityEntry = ({
           <FileIcon className="h-4 w-4 text-muted-foreground" />
         </div>
         <div className="flex-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <p className="text-sm text-muted-foreground">
-                  {getActionText()}
-                </p>
-              </TooltipTrigger>
-              <TooltipContent>
-                {activity.activityType.startsWith('ITEM_') &&
-                activity.metadata ? (
+          {activity.activityType.startsWith('ITEM_') && activity.metadata ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-sm text-muted-foreground">
+                    {getActionText()}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
                   <div className="space-y-1 text-sm">
                     <p>Item Details:</p>
                     {activity.metadata.itemName && (
@@ -87,10 +86,12 @@ export const LatestActivityEntry = ({
                       <p>Status: {activity.metadata.itemStatus}</p>
                     )}
                   </div>
-                ) : null}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <p className="text-sm text-muted-foreground">{getActionText()}</p>
+          )}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
