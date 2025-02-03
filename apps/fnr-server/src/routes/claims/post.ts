@@ -407,6 +407,7 @@ router.patch(
             metadata: {
               changedFields,
               changes: updateData,
+              itemName: updateData.name || claim.items[0].name, // Use new name if changed, otherwise use old name
             },
             items: {
               create: {

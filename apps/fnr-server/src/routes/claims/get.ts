@@ -365,11 +365,8 @@ router.get('/:claimNumber', isAuthenticated, async (req, res) => {
         },
         activityType: activity.activityType,
         timestamp: activity.createdAt,
-        metadata: {
-          claimNumber: activity.claim?.claimNumber,
-          itemName: activity.items[0]?.item.name,
-          details: (activity.metadata as { details?: string })?.details,
-        },
+        // Use the original metadata from the activity log to preserve historical data
+        metadata: activity.metadata as Record<string, any>,
       };
     });
 

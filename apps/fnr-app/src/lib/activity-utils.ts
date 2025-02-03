@@ -52,7 +52,8 @@ export const getActivityText = (
   metadata: ActivityMetadata,
   currentClaimNumber?: string
 ): string => {
-  const { claimNumber, itemName, details } = metadata;
+  const { claimNumber, details } = metadata;
+  // DO NOT destructure itemName - we want to always use metadata.itemName directly
 
   // Ensure activityType is a valid enum value
   const normalizedType = activityType?.toUpperCase?.() || activityType;
@@ -96,6 +97,7 @@ export const getActivityText = (
     // Item activities
     case ActivityType.ITEM_CREATED:
       const itemDetails = [];
+      // For ITEM_CREATED, use the original name from metadata
       if (metadata.itemName) itemDetails.push(metadata.itemName);
       if (metadata.insuredsQuote)
         itemDetails.push(`Insured's Quote: $${metadata.insuredsQuote}`);
@@ -114,19 +116,25 @@ export const getActivityText = (
         if (metadata.changes.roomCategory) changes.push('room');
         if (metadata.changes.quantity) changes.push('quantity');
       }
-      return `Updated ${changes.join(', ')} for item "${itemName}"`;
+      // metadata.itemName is now the NEW name after the update
+      // metadata.changes contains the update data that was applied
+      return `Updated ${changes.join(', ')} for item "${metadata.itemName}"`;
 
     case ActivityType.ITEM_DELETED:
-      return `Deleted item "${itemName}"`;
+      // For deletion, use the name at time of deletion from metadata
+      return `Deleted item "${metadata.itemName}"`;
 
     case ActivityType.ITEM_STATUS_CHANGED:
-      return `Changed status of item "${itemName}"`;
+      // For status changes, use the name at time of status change from metadata
+      return `Changed status of item "${metadata.itemName}"`;
 
     case ActivityType.ITEM_EVIDENCE_ADDED:
-      return `Added evidence to "${itemName}"`;
+      // For evidence operations, use the name at time of evidence addition from metadata
+      return `Added evidence to "${metadata.itemName}"`;
 
     case ActivityType.ITEM_EVIDENCE_REMOVED:
-      return `Removed evidence from "${itemName}"`;
+      // For evidence operations, use the name at time of evidence removal from metadata
+      return `Removed evidence from "${metadata.itemName}"`;
 
     default:
       // More detailed logging to help debug activity type issues

@@ -22,15 +22,6 @@ type ActivityWithIncludes = {
   claim: {
     claimNumber: string;
   } | null;
-  items: {
-    id: number;
-    metadata: Prisma.JsonValue;
-    activityLogId: number;
-    itemId: number;
-    item: {
-      name: string;
-    };
-  }[];
 };
 
 const router: Router = express.Router();
@@ -57,11 +48,7 @@ const formatActivities = (activities: ActivityWithIncludes[]) => {
       },
       activityType: activity.activityType,
       timestamp: activity.createdAt,
-      metadata: {
-        claimNumber: activity.claim?.claimNumber,
-        itemName: activity.items[0]?.item.name,
-        details: (activity.metadata as { details?: string })?.details,
-      },
+      metadata: activity.metadata as Record<string, any>,
     };
   });
 };
@@ -95,19 +82,6 @@ const getQueryOptions = (limit: number) => ({
     claim: {
       select: {
         claimNumber: true,
-      },
-    },
-    items: {
-      select: {
-        id: true,
-        metadata: true,
-        activityLogId: true,
-        itemId: true,
-        item: {
-          select: {
-            name: true,
-          },
-        },
       },
     },
   },
