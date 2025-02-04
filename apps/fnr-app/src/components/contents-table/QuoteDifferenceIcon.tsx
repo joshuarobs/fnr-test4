@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@react-monorepo/shared';
+import { formatNumberWithSmallDecimals } from './cells/tableCellsStyles';
 
 interface QuoteDifferenceIconProps {
   insuredsQuote: number;
@@ -17,11 +18,6 @@ export const QuoteDifferenceIcon = ({
   ourQuote, // Fixed casing to match database schema
 }: QuoteDifferenceIconProps) => {
   const diff = insuredsQuote - ourQuote;
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
-
   const iconStyle = {
     display: 'inline-flex',
     verticalAlign: 'middle',
@@ -30,12 +26,12 @@ export const QuoteDifferenceIcon = ({
 
   const tooltipText =
     diff > 0
-      ? `The insured's quote is higher than our quote by ${formatter.format(
-          Math.abs(diff)
-        )}`
-      : `The insured's quote is lower than our quote by ${formatter.format(
-          Math.abs(diff)
-        )}`;
+      ? `The insured's quote is higher than our quote by $${Math.abs(
+          diff
+        ).toFixed(2)}`
+      : `The insured's quote is lower than our quote by $${Math.abs(
+          diff
+        ).toFixed(2)}`;
 
   if (diff === 0) {
     return <GreenTickIcon />;
@@ -50,7 +46,7 @@ export const QuoteDifferenceIcon = ({
                 style={iconStyle}
               />
               <span className="text-status-error dark:text-red-400 font-semibold">
-                {formatter.format(diff)}
+                ${formatNumberWithSmallDecimals(diff)}
               </span>
             </div>
           </TooltipTrigger>
@@ -71,7 +67,7 @@ export const QuoteDifferenceIcon = ({
                 style={{ ...iconStyle, top: '2px' }}
               />
               <span className="text-status-success dark:text-green-400 font-semibold">
-                {formatter.format(Math.abs(diff))}
+                ${formatNumberWithSmallDecimals(Math.abs(diff))}
               </span>
             </div>
           </TooltipTrigger>
