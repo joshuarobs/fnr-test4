@@ -14,13 +14,23 @@ export const styles = {
 
 // Format a number to display decimals in smaller font with optional opacity for "00"
 export const formatNumberWithSmallDecimals = (num: number) => {
-  // For zero, return normal format
+  // For zero, return normal format with decimals
   if (num === 0) {
-    return '0.00';
+    return (
+      <span className={styles.numberContainer}>
+        0<span className={`${styles.decimals} opacity-60`}>00</span>
+      </span>
+    );
   }
 
-  const parts = num.toFixed(2).split('.');
-  const opacity = parts[1] === '00' ? 'opacity-70' : '';
+  // Format with commas for thousands and split for decimals
+  const parts = num
+    .toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+    .split('.');
+  const opacity = parts[1] === '00' ? 'opacity-60' : '';
   return (
     <span className={styles.numberContainer}>
       {parts[0]}
