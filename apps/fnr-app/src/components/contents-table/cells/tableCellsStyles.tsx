@@ -1,6 +1,7 @@
 import React from 'react';
 
-// Reusable CSS classes
+// Shared styles and formatting utilities for table cell components, particularly focused on
+// quote formatting with special handling for decimal places and consistent styling across cells
 export const styles = {
   container: 'flex items-center justify-end w-full',
   inputField: 'w-24',
