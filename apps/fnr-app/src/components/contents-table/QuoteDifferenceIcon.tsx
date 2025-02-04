@@ -11,11 +11,13 @@ import { formatNumberWithSmallDecimals } from './cells/tableCellsStyles';
 interface QuoteDifferenceIconProps {
   insuredsQuote: number;
   ourQuote: number; // Fixed casing to match database schema
+  showDollarSign?: boolean; // Optional prop to control $ sign visibility, defaults to false
 }
 
 export const QuoteDifferenceIcon = ({
   insuredsQuote,
   ourQuote, // Fixed casing to match database schema
+  showDollarSign = false, // Default to false
 }: QuoteDifferenceIconProps) => {
   const diff = insuredsQuote - ourQuote;
   const iconStyle = {
@@ -46,7 +48,8 @@ export const QuoteDifferenceIcon = ({
                 style={iconStyle}
               />
               <span className="text-status-error dark:text-red-400 font-semibold">
-                ${formatNumberWithSmallDecimals(diff)}
+                {showDollarSign && '$'}
+                {formatNumberWithSmallDecimals(diff)}
               </span>
             </div>
           </TooltipTrigger>
@@ -67,7 +70,8 @@ export const QuoteDifferenceIcon = ({
                 style={{ ...iconStyle, top: '2px' }}
               />
               <span className="text-status-success dark:text-green-400 font-semibold">
-                ${formatNumberWithSmallDecimals(Math.abs(diff))}
+                {showDollarSign && '$'}
+                {formatNumberWithSmallDecimals(Math.abs(diff))}
               </span>
             </div>
           </TooltipTrigger>

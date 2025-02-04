@@ -39,6 +39,7 @@ export const TotalCalculatedPriceText = ({
           <QuoteDifferenceIcon
             insuredsQuote={insuredsQuote}
             ourQuote={ourQuote} // Fixed casing
+            showDollarSign
           />
         )}
       </div>
