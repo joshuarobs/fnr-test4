@@ -29,6 +29,30 @@ export const LoginForm = ({
   });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  // Quick login handler for development mode
+  const handleQuickLogin = async () => {
+    setFormData({
+      email: 'admin@example.com',
+      password: '12345',
+    });
+    try {
+      const result = await login({
+        email: 'admin@example.com',
+        password: '12345',
+      }).unwrap();
+      localStorage.setItem('token', result.token);
+      const from = (location.state as any)?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    } catch (error) {
+      toast({
+        title: 'Quick login failed',
+        description: 'Development login failed',
+        variant: 'destructive',
+      });
+      localStorage.removeItem('token');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -111,6 +135,17 @@ export const LoginForm = ({
                     Forgot your password?
                   </a>
                 </div>
+                {/* Quick login button only shown in development */}
+                {import.meta.env.DEV && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleQuickLogin}
+                  >
+                    Quick Login (Dev)
+                  </Button>
+                )}
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
