@@ -184,7 +184,7 @@ router.post(
         // Create the new item
         const newItem = await tx.item.create({
           data: {
-            name: req.body.name,
+            name: req.body.name.trim(),
             category: req.body.category || null,
             roomCategory: req.body.roomCategory || null,
             group: req.body.group || null,
@@ -335,7 +335,7 @@ router.patch(
 
         // Build update data object with all possible fields
         const updateData: any = {};
-        if (name !== undefined) updateData.name = name;
+        if (name !== undefined) updateData.name = name.trim();
         if (category !== undefined) updateData.category = category;
         if (group !== undefined) updateData.group = group;
         if (modelSerialNumber !== undefined)
