@@ -7,6 +7,7 @@ interface ActivityMetadata {
   details?: string;
 
   // Item-specific fields
+  itemId: string;
   category?: string;
   roomCategory?: string;
   group?: string;
@@ -103,7 +104,9 @@ export const getActivityText = (
         itemDetails.push(`Insured's Quote: $${metadata.insuredsQuote}`);
       if (metadata.ourQuote)
         itemDetails.push(`Our Quote: $${metadata.ourQuote}`);
-      return `Added new item "${itemDetails.join(' - ')}"`;
+      return `Added new item "${itemDetails.join(' - ')}" (ID: ${
+        metadata.itemId
+      })`;
 
     case ActivityType.ITEM_UPDATED:
       const changes = [];
@@ -118,23 +121,25 @@ export const getActivityText = (
       }
       // metadata.itemName is now the NEW name after the update
       // metadata.changes contains the update data that was applied
-      return `Updated ${changes.join(', ')} for item "${metadata.itemName}"`;
+      return `Updated ${changes.join(', ')} for item "${
+        metadata.itemName
+      }" (ID: ${metadata.itemId})`;
 
     case ActivityType.ITEM_DELETED:
       // For deletion, use the name at time of deletion from metadata
-      return `Deleted item "${metadata.itemName}"`;
+      return `Deleted item "${metadata.itemName}" (ID: ${metadata.itemId})`;
 
     case ActivityType.ITEM_STATUS_CHANGED:
       // For status changes, use the name at time of status change from metadata
-      return `Changed status of item "${metadata.itemName}"`;
+      return `Changed status of item "${metadata.itemName}" (ID: ${metadata.itemId})`;
 
     case ActivityType.ITEM_EVIDENCE_ADDED:
       // For evidence operations, use the name at time of evidence addition from metadata
-      return `Added evidence to "${metadata.itemName}"`;
+      return `Added evidence to "${metadata.itemName}" (ID: ${metadata.itemId})`;
 
     case ActivityType.ITEM_EVIDENCE_REMOVED:
       // For evidence operations, use the name at time of evidence removal from metadata
-      return `Removed evidence from "${metadata.itemName}"`;
+      return `Removed evidence from "${metadata.itemName}" (ID: ${metadata.itemId})`;
 
     default:
       // More detailed logging to help debug activity type issues
