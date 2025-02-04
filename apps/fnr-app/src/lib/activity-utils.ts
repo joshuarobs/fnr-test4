@@ -109,18 +109,8 @@ export const getActivityText = (
       })`;
 
     case ActivityType.ITEM_UPDATED:
-      const changes = [];
-      if (metadata.changes) {
-        if (metadata.changes.name) changes.push('name');
-        if (metadata.changes.insuredsQuote) changes.push("insured's quote");
-        if (metadata.changes.ourQuote) changes.push('our quote');
-        if (metadata.changes.itemStatus) changes.push('status');
-        if (metadata.changes.category) changes.push('category');
-        if (metadata.changes.roomCategory) changes.push('room');
-        if (metadata.changes.quantity) changes.push('quantity');
-      }
-      // metadata.itemName is now the NEW name after the update
-      // metadata.changes contains the update data that was applied
+      // Use changedFields array which only contains actually changed fields
+      const changes = metadata.changedFields || [];
       return `Updated ${changes.join(', ')} for item "${
         metadata.itemName
       }" (ID: ${metadata.itemId})`;

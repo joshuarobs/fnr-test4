@@ -397,25 +397,39 @@ router.patch(
           update: {}, // No update needed since we just want to ensure it exists
         });
 
-        // Log item update
-        const changedFields = Object.keys(updateData);
-        await tx.activityLog.create({
-          data: {
-            activityType: 'ITEM_UPDATED',
-            userId,
-            claimId: claim.id,
-            metadata: {
-              changedFields,
-              changes: updateData,
-              itemName: updateData.name || claim.items[0].name, // Use new name if changed, otherwise use old name
-            },
-            items: {
-              create: {
-                itemId: parseInt(itemId),
+        // Compare old and new values to determine actual changes
+        const oldItem = claim.items[0];
+        const actualChanges: Record<string, any> = {};
+        const changedFields: string[] = [];
+
+        Object.entries(updateData).forEach(([key, newValue]) => {
+          const oldValue = oldItem[key];
+          if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+            actualChanges[key] = newValue;
+            changedFields.push(key);
+          }
+        });
+
+        // Only log if there were actual changes
+        if (changedFields.length > 0) {
+          await tx.activityLog.create({
+            data: {
+              activityType: 'ITEM_UPDATED',
+              userId,
+              claimId: claim.id,
+              metadata: {
+                changedFields,
+                changes: actualChanges,
+                itemName: updateData.name || oldItem.name,
+              },
+              items: {
+                create: {
+                  itemId: parseInt(itemId),
+                },
               },
             },
-          },
-        });
+          });
+        }
 
         return updatedItem;
       });
