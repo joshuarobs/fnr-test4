@@ -29,6 +29,7 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     isSupplier?: boolean;
   }[];
   activities: Activity[];
+  totalActivitiesNumber?: number;
   isLoading?: boolean;
   currentClaimNumber?: string;
 }
@@ -47,6 +48,7 @@ export const SecondSidebar = ({
   contributors = [],
   suppliers = [],
   activities,
+  totalActivitiesNumber,
   isLoading,
   currentClaimNumber,
 }: SecondSidebarProps) => {
@@ -93,6 +95,7 @@ export const SecondSidebar = ({
           {/* ======================================== */}
           <LatestActivitiesContainer
             activities={activities}
+            totalActivitiesNumber={totalActivitiesNumber}
             isLoading={isLoading}
             currentClaimNumber={currentClaimNumber}
           />

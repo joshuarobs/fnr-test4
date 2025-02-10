@@ -60,6 +60,8 @@ export const ClaimPage = () => {
   }
 
   const { data: claimData, isLoading, error } = useGetClaimQuery(id);
+  console.log('Claim data from DB:', claimData);
+  console.log('Latest activities:', claimData?.activities);
   const [updateItem] = useUpdateItemMutation();
   const [addItemMutation] = useAddItemMutation();
   const [removeItemMutation] = useRemoveItemMutation();
@@ -295,6 +297,7 @@ export const ClaimPage = () => {
           };
         })}
         activities={claimData?.activities || []}
+        totalActivitiesNumber={claimData?.activities?.length || 0}
         isLoading={isLoading}
         currentClaimNumber={id}
       />

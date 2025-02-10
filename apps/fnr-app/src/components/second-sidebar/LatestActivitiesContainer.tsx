@@ -5,12 +5,14 @@ import { Activity } from '../../store/services/api';
 
 interface LatestActivitiesContainerProps {
   activities: Activity[];
+  totalActivitiesNumber?: number;
   isLoading?: boolean;
   currentClaimNumber?: string;
 }
 
 export const LatestActivitiesContainer = ({
   activities,
+  totalActivitiesNumber,
   isLoading,
   currentClaimNumber,
 }: LatestActivitiesContainerProps) => {
@@ -18,7 +20,7 @@ export const LatestActivitiesContainer = ({
     <div className="flex-1 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Latest activity</h2>
-        <AllActivitiesDialog />
+        <AllActivitiesDialog totalActivitiesNumber={totalActivitiesNumber} />
       </div>
 
       <ScrollArea className="flex-1 -mr-2">
