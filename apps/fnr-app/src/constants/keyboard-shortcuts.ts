@@ -29,13 +29,13 @@ export const GENERAL_KEYBOARD_SHORTCUTS_MAP: Record<string, KeyboardShortcut> =
       action: 'Toggle sidebar',
       keybinds: [[KeyboardKeys.LEFT_BRACKET], [KeyboardKeys.RIGHT_BRACKET]],
     },
-    [KeyboardShortcutId.VIEW_KEYBOARD_SHORTCUTS]: {
-      action: 'View this keyboard shortcuts popup',
-      keybinds: [[KeyboardKeys.QUESTION_MARK]],
-    },
     [KeyboardShortcutId.OPEN_CLAIM_POPUP]: {
       action: 'Open claim popup',
       keybinds: [[KeyboardKeys.C]],
+    },
+    [KeyboardShortcutId.VIEW_KEYBOARD_SHORTCUTS]: {
+      action: 'View this keyboard shortcuts popup',
+      keybinds: [[KeyboardKeys.QUESTION_MARK]],
     },
   };
 
@@ -44,6 +44,10 @@ export const CLAIM_PAGE_KEYBOARD_SHORTCUTS_MAP: Record<
   string,
   KeyboardShortcut
 > = {
+  [KeyboardShortcutId.OPEN_ADD_ITEM_MODAL]: {
+    action: 'Open add item modal',
+    keybinds: [[KeyboardKeys.A]],
+  },
   [KeyboardShortcutId.EDIT_CELL]: {
     action: 'Edit cell',
     keybinds: [[KeyboardKeys.ENTER]],
@@ -59,10 +63,6 @@ export const CLAIM_PAGE_KEYBOARD_SHORTCUTS_MAP: Record<
   [KeyboardShortcutId.NAVIGATE_PAGE_RIGHT]: {
     action: 'Navigate page right',
     keybinds: [[KeyboardKeys.ALT, KeyboardKeys.ARROW_RIGHT]],
-  },
-  [KeyboardShortcutId.OPEN_ADD_ITEM_MODAL]: {
-    action: 'Open add item modal',
-    keybinds: [[KeyboardKeys.A]],
   },
 };
 
