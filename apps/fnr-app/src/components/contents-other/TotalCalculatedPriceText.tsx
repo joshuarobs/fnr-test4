@@ -1,5 +1,6 @@
 import { QuoteDifferenceIcon } from '../contents-table/QuoteDifferenceIcon';
 import { WarningIconTooltip } from './WarningIconTooltip';
+import { formatNumberWithSmallDecimals } from '../contents-table/cells/tableCellsStyles';
 
 interface TotalCalculatedPriceTextProps {
   title?: string;
@@ -22,10 +23,12 @@ export const TotalCalculatedPriceText = ({
     insuredsQuote > 1 &&
     ourQuote > 1; // Fixed casing
 
-  const formattedValue = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value);
+  const formattedValue = (
+    <span className="inline-flex items-center">
+      <span className="text-[0.85em] pr-[1px]">$</span>
+      {formatNumberWithSmallDecimals(value)}
+    </span>
+  );
 
   return (
     <div>
