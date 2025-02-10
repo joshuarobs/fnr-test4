@@ -19,6 +19,7 @@ export const KeyboardShortcutId = {
   NAVIGATE_PAGE_LEFT: 'NAVIGATE_PAGE_LEFT',
   NAVIGATE_PAGE_RIGHT: 'NAVIGATE_PAGE_RIGHT',
   OPEN_CLAIM_POPUP: 'OPEN_CLAIM_POPUP',
+  OPEN_ADD_ITEM_MODAL: 'OPEN_ADD_ITEM_MODAL',
 } as const;
 
 // Application keyboard shortcuts map
@@ -58,6 +59,10 @@ export const CLAIM_PAGE_KEYBOARD_SHORTCUTS_MAP: Record<
   [KeyboardShortcutId.NAVIGATE_PAGE_RIGHT]: {
     action: 'Navigate page right',
     keybinds: [[KeyboardKeys.ALT, KeyboardKeys.ARROW_RIGHT]],
+  },
+  [KeyboardShortcutId.OPEN_ADD_ITEM_MODAL]: {
+    action: 'Open add item modal',
+    keybinds: [[KeyboardKeys.A]],
   },
 };
 

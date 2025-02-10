@@ -1,4 +1,10 @@
-import React, { useState, useCallback, KeyboardEvent } from 'react';
+import React, {
+  useState,
+  useCallback,
+  KeyboardEvent,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import {
   Button,
   Dialog,
@@ -96,7 +102,14 @@ const DEFAULT_VALUES = {
   status: ItemStatus.NR as ItemStatusType,
 };
 
-export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
+export interface AddNewItemModalRef {
+  openModal: () => void;
+}
+
+export const AddNewItemModal = forwardRef<
+  AddNewItemModalRef,
+  AddNewItemModalProps
+>(({ addItem }, ref) => {
   const { id } = useParams<{ id: string }>();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
@@ -183,6 +196,11 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       handleMultiAdd();
     }
   };
+
+  // Expose the openModal method through the ref
+  useImperativeHandle(ref, () => ({
+    openModal: () => setIsOpen(true),
+  }));
 
   // Check if any field has changed from its default value
   const checkQuickAddChanges = (
@@ -322,7 +340,10 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
           className="w-full select-none flex items-center justify-center gap-2"
         >
           <PlusIcon className="h-4 w-4" />
-          Add Item
+          <span className="inline-flex">
+            <span className="underline">A</span>
+            <span>dd Item</span>
+          </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
@@ -523,4 +544,4 @@ export function AddNewItemModal({ addItem }: AddNewItemModalProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

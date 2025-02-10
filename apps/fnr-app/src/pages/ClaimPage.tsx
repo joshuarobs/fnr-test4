@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ContentsTableWithToolbar } from '../components/contents-table/ContentsTable';
 import { placeholderContentsData } from '../components/contents-table/placeholderContentsData';
 import { Item } from '../components/contents-table/item';
 import { ClaimPageHeaderActions } from '../components/contents-table/ClaimPageHeaderActions';
+import { AddNewItemModalRef } from '../components/contents-table/new-item-modal/AddNewItemModal';
+import { KeyboardKeys } from '../constants/keyboard-constants';
+import {
+  CLAIM_PAGE_KEYBOARD_SHORTCUTS_MAP,
+  KeyboardShortcutId,
+} from '../constants/keyboard-shortcuts';
 import { TotalCalculatedPriceText } from '../components/contents-other/TotalCalculatedPriceText';
 import { TotalProgressBar } from '../components/contents-other/TotalProgressBar';
 import { SecondSidebar } from '../components/app-shell/SecondSidebar';
@@ -33,6 +39,33 @@ export const ClaimPage = () => {
   const navigate = useNavigate();
   const [claimInput, setClaimInput] = React.useState('');
   const tableRef = React.useRef<any>(null);
+  const addItemModalRef = useRef<AddNewItemModalRef>(null);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only trigger if no input/textarea is focused
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      ) {
+        return;
+      }
+
+      const addItemShortcut =
+        CLAIM_PAGE_KEYBOARD_SHORTCUTS_MAP[
+          KeyboardShortcutId.OPEN_ADD_ITEM_MODAL
+        ];
+      const shortcutKey = addItemShortcut.keybinds[0][0];
+      if (e.key.toLowerCase() === shortcutKey.toLowerCase()) {
+        e.preventDefault();
+        addItemModalRef.current?.openModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   if (!id) {
     return (
@@ -244,6 +277,7 @@ export const ClaimPage = () => {
             <div className="flex items-center gap-4">
               {claimData?.isDeleted && <ArchivedLabel />}
               <ClaimPageHeaderActions
+                ref={addItemModalRef}
                 addItem={addItem}
                 lastProgressUpdate={claimData?.lastProgressUpdate || null}
                 isDeleted={claimData?.isDeleted}

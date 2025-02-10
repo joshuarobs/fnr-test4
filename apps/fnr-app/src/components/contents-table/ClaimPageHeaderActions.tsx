@@ -1,8 +1,12 @@
-import { AddNewItemModal } from './new-item-modal/AddNewItemModal';
+import React from 'react';
+import {
+  AddNewItemModal,
+  AddNewItemModalRef,
+} from './new-item-modal/AddNewItemModal';
 import { Item } from './item';
 import { ClaimHeaderMiscActions } from './claim-actions/ClaimHeaderMiscActions';
 
-interface ClaimPageHeaderActionsProps {
+interface ClaimPageHeaderActionsProps extends React.PropsWithChildren {
   addItem: (item: Item | Item[]) => void;
   lastProgressUpdate: string | null;
   isDeleted?: boolean;
@@ -22,22 +26,30 @@ interface ClaimPageHeaderActionsProps {
   };
 }
 
-export const ClaimPageHeaderActions = ({
-  addItem,
-  lastProgressUpdate,
-  isDeleted = false,
-  claimNumber,
-  handler,
-}: ClaimPageHeaderActionsProps) => {
-  return (
-    <div className="flex items-center gap-2">
-      <ClaimHeaderMiscActions
-        lastProgressUpdate={lastProgressUpdate}
-        isDeleted={isDeleted}
-        claimNumber={claimNumber}
-        handler={handler}
-      />
-      <AddNewItemModal addItem={addItem} />
-    </div>
-  );
-};
+export const ClaimPageHeaderActions = React.forwardRef<
+  AddNewItemModalRef,
+  ClaimPageHeaderActionsProps
+>(
+  (
+    {
+      addItem,
+      lastProgressUpdate,
+      isDeleted = false,
+      claimNumber,
+      handler,
+    }: ClaimPageHeaderActionsProps,
+    ref
+  ) => {
+    return (
+      <div className="flex items-center gap-2">
+        <ClaimHeaderMiscActions
+          lastProgressUpdate={lastProgressUpdate}
+          isDeleted={isDeleted}
+          claimNumber={claimNumber}
+          handler={handler}
+        />
+        <AddNewItemModal ref={ref} addItem={addItem} />
+      </div>
+    );
+  }
+);
