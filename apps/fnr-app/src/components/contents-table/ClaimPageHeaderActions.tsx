@@ -48,7 +48,7 @@ export const ClaimPageHeaderActions = React.forwardRef<
           claimNumber={claimNumber}
           handler={handler}
         />
-        <AddNewItemModal ref={ref} addItem={addItem} />
+        <AddNewItemModal ref={ref} addItem={addItem} isDeleted={isDeleted} />
       </div>
     );
   }

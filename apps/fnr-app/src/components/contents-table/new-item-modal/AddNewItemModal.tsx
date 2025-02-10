@@ -44,6 +44,7 @@ import { useParams } from 'react-router-dom';
 
 interface AddNewItemModalProps {
   addItem: (item: Item | Item[]) => void;
+  isDeleted?: boolean;
 }
 
 enum TabType {
@@ -109,7 +110,7 @@ export interface AddNewItemModalRef {
 export const AddNewItemModal = forwardRef<
   AddNewItemModalRef,
   AddNewItemModalProps
->(({ addItem }, ref) => {
+>(({ addItem, isDeleted = false }, ref) => {
   const { id } = useParams<{ id: string }>();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
@@ -338,6 +339,10 @@ export const AddNewItemModal = forwardRef<
         <Button
           variant="default"
           className="w-full select-none flex items-center justify-center gap-2"
+          disabled={isDeleted}
+          title={
+            isDeleted ? 'Cannot add items to an archived claim' : undefined
+          }
         >
           <PlusIcon className="h-4 w-4" />
           <span className="inline-flex">
