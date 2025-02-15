@@ -195,7 +195,7 @@ export interface User {
 
 // User context data interface
 export interface UserContextData {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;

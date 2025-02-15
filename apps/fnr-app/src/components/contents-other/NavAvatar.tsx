@@ -8,7 +8,7 @@ interface NavAvatarProps {
   userInitials?: string;
   color?: string;
   name?: string;
-  userId?: string;
+  userId?: number;
   department?: string;
   disableNavigation?: boolean; // Add prop to control navigation behavior
   showHeaderRing?: boolean; // Controls header ring visibility

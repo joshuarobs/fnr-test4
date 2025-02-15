@@ -117,7 +117,7 @@ export const DetailedClaimsTable = ({
             <NavAvatar
               userInitials={`${handler.firstName[0]}${handler.lastName[0]}`}
               color={handler.avatarColour}
-              userId={handler.staff.employeeId}
+              userId={handler.id}
               name={`${handler.firstName} ${handler.lastName}`}
               department={handler.staff.department}
               disableHoverText
@@ -321,7 +321,7 @@ export const DetailedClaimsTable = ({
                         <NavAvatar
                           userInitials={`${claim.handler.firstName[0]}${claim.handler.lastName[0]}`}
                           color={claim.handler.avatarColour}
-                          userId={claim.handler.staff.employeeId}
+                          userId={claim.handler.id}
                           name={`${claim.handler.firstName} ${claim.handler.lastName}`}
                           department={claim.handler.staff.department}
                           disableHoverText
