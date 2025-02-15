@@ -114,23 +114,31 @@ export const AddNewItemModal = forwardRef<
   const { id } = useParams<{ id: string }>();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(TabType.Single);
+
+  // Quick Add tab states
   const [quickAddInput, setQuickAddInput] = useState(DEFAULT_VALUES.name);
   const [modelSerialInput, setModelSerialInput] = useState(
     DEFAULT_VALUES.modelSerial
   );
   const [quantityInput, setQuantityInput] = useState(DEFAULT_VALUES.quantity);
   const [selectedRoom, setSelectedRoom] = useState(DEFAULT_VALUES.room);
-  const [multiAddInput, setMultiAddInput] = useState('');
-  const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
-  const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
-  const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
-  const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState(DEFAULT_VALUES.status);
-  const [selectedCategory, setSelectedCategory] = useState(
+  const [quickAddCategory, setQuickAddCategory] = useState(
     DEFAULT_VALUES.category
   );
+  const [quickAddStatus, setQuickAddStatus] = useState(DEFAULT_VALUES.status);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [roomOpen, setRoomOpen] = useState(false);
+  const [addItemHasMinReqs, setAddItemHasMinReqs] = useState(false);
+  const [quickAddHasChanges, setQuickAddHasChanges] = useState(false);
+
+  // Multi Add tab states
+  const [multiAddInput, setMultiAddInput] = useState('');
+  const [multiAddCategory, setMultiAddCategory] = useState(
+    DEFAULT_VALUES.category
+  );
+  const [multiAddStatus, setMultiAddStatus] = useState(DEFAULT_VALUES.status);
+  const [multiAddHasMinReqs, setMultiAddHasMinReqs] = useState(false);
+  const [multiAddHasChanges, setMultiAddHasChanges] = useState(false);
 
   const handleQuickAdd = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | { key: string }) => {
@@ -138,8 +146,8 @@ export const AddNewItemModal = forwardRef<
         const quantity = parseInt(quantityInput) || 1; // Default to 1 if invalid
         const newItem = createNewItem(
           quickAddInput,
-          selectedStatus,
-          selectedCategory,
+          quickAddStatus,
+          quickAddCategory,
           quantity,
           selectedRoom,
           modelSerialInput
@@ -149,8 +157,8 @@ export const AddNewItemModal = forwardRef<
         setModelSerialInput(DEFAULT_VALUES.modelSerial);
         setQuantityInput(DEFAULT_VALUES.quantity);
         setSelectedRoom(DEFAULT_VALUES.room);
-        setSelectedCategory(DEFAULT_VALUES.category);
-        setSelectedStatus(DEFAULT_VALUES.status);
+        setQuickAddCategory(DEFAULT_VALUES.category);
+        setQuickAddStatus(DEFAULT_VALUES.status);
         setIsOpen(false);
       } else if (e.key === 'Escape') {
         setIsOpen(false);
@@ -161,8 +169,8 @@ export const AddNewItemModal = forwardRef<
       modelSerialInput,
       quantityInput,
       selectedRoom,
-      selectedStatus,
-      selectedCategory,
+      quickAddStatus,
+      quickAddCategory,
       addItem,
     ]
   );
@@ -176,8 +184,8 @@ export const AddNewItemModal = forwardRef<
         (itemName) =>
           createNewItem(
             itemName,
-            selectedStatus,
-            selectedCategory,
+            multiAddStatus,
+            multiAddCategory,
             1,
             selectedRoom
           ) as Item
@@ -222,6 +230,19 @@ export const AddNewItemModal = forwardRef<
     );
   };
 
+  // Check if any multi add field has changed from its default value
+  const checkMultiAddChanges = (
+    input: string,
+    category: ItemCategory | null,
+    status: ItemStatusType
+  ) => {
+    return (
+      input.trim() !== '' ||
+      category !== DEFAULT_VALUES.category ||
+      status !== DEFAULT_VALUES.status
+    );
+  };
+
   // Update addItemHasMinReqs and quickAddHasChanges whenever any field changes
   const handleQuickAddInputChange = (value: string) => {
     setQuickAddInput(value);
@@ -232,8 +253,8 @@ export const AddNewItemModal = forwardRef<
         modelSerialInput,
         quantityInput,
         selectedRoom,
-        selectedStatus,
-        selectedCategory
+        quickAddStatus,
+        quickAddCategory
       )
     );
   };
@@ -246,8 +267,8 @@ export const AddNewItemModal = forwardRef<
         value,
         quantityInput,
         selectedRoom,
-        selectedStatus,
-        selectedCategory
+        quickAddStatus,
+        quickAddCategory
       )
     );
   };
@@ -260,8 +281,8 @@ export const AddNewItemModal = forwardRef<
         modelSerialInput,
         value,
         selectedRoom,
-        selectedStatus,
-        selectedCategory
+        quickAddStatus,
+        quickAddCategory
       )
     );
   };
@@ -274,14 +295,14 @@ export const AddNewItemModal = forwardRef<
         modelSerialInput,
         quantityInput,
         value,
-        selectedStatus,
-        selectedCategory
+        quickAddStatus,
+        quickAddCategory
       )
     );
   };
 
-  const handleStatusChange = (value: ItemStatusType) => {
-    setSelectedStatus(value);
+  const handleQuickAddStatusChange = (value: ItemStatusType) => {
+    setQuickAddStatus(value);
     setQuickAddHasChanges(
       checkQuickAddChanges(
         quickAddInput,
@@ -289,20 +310,20 @@ export const AddNewItemModal = forwardRef<
         quantityInput,
         selectedRoom,
         value,
-        selectedCategory
+        quickAddCategory
       )
     );
   };
 
-  const handleCategoryChange = (value: ItemCategory | null) => {
-    setSelectedCategory(value);
+  const handleQuickAddCategoryChange = (value: ItemCategory | null) => {
+    setQuickAddCategory(value);
     setQuickAddHasChanges(
       checkQuickAddChanges(
         quickAddInput,
         modelSerialInput,
         quantityInput,
         selectedRoom,
-        selectedStatus,
+        quickAddStatus,
         value
       )
     );
@@ -312,7 +333,9 @@ export const AddNewItemModal = forwardRef<
   const handleMultiAddInputChange = (value: string) => {
     setMultiAddInput(value);
     setMultiAddHasMinReqs(value.trim() !== '');
-    setMultiAddHasChanges(value.trim() !== '');
+    setMultiAddHasChanges(
+      checkMultiAddChanges(value, multiAddCategory, multiAddStatus)
+    );
   };
 
   const handleClearFields = () => {
@@ -321,13 +344,15 @@ export const AddNewItemModal = forwardRef<
       setModelSerialInput(DEFAULT_VALUES.modelSerial);
       setQuantityInput(DEFAULT_VALUES.quantity);
       setSelectedRoom(DEFAULT_VALUES.room);
-      setSelectedCategory(DEFAULT_VALUES.category);
-      setSelectedStatus(DEFAULT_VALUES.status);
+      setQuickAddCategory(DEFAULT_VALUES.category);
+      setQuickAddStatus(DEFAULT_VALUES.status);
       setAddItemHasMinReqs(false);
       setQuickAddHasChanges(false);
     }
     if (activeTab === TabType.Multi) {
       setMultiAddInput('');
+      setMultiAddCategory(DEFAULT_VALUES.category);
+      setMultiAddStatus(DEFAULT_VALUES.status);
       setMultiAddHasMinReqs(false);
       setMultiAddHasChanges(false);
     }
@@ -389,12 +414,12 @@ export const AddNewItemModal = forwardRef<
               roomOpen={roomOpen}
               setRoomOpen={setRoomOpen}
               handleQuickAdd={handleQuickAdd}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={handleCategoryChange}
+              selectedCategory={quickAddCategory}
+              setSelectedCategory={handleQuickAddCategoryChange}
               categoryOpen={categoryOpen}
               setCategoryOpen={setCategoryOpen}
-              selectedStatus={selectedStatus}
-              setSelectedStatus={handleStatusChange}
+              selectedStatus={quickAddStatus}
+              setSelectedStatus={handleQuickAddStatusChange}
             />
           ) : (
             <div className="space-y-4">
@@ -419,11 +444,11 @@ export const AddNewItemModal = forwardRef<
                       className="flex-1 justify-between"
                     >
                       <div className="flex items-center gap-2">
-                        {selectedCategory &&
-                          React.createElement(categoryIcons[selectedCategory], {
+                        {multiAddCategory &&
+                          React.createElement(categoryIcons[multiAddCategory], {
                             className: 'h-4 w-4',
                           })}
-                        <span>{selectedCategory || 'None'}</span>
+                        <span>{multiAddCategory || 'None'}</span>
                       </div>
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -453,7 +478,14 @@ export const AddNewItemModal = forwardRef<
                                     currentValue === 'none'
                                       ? null
                                       : (currentValue as ItemCategory);
-                                  handleCategoryChange(newCategory);
+                                  setMultiAddCategory(newCategory);
+                                  setMultiAddHasChanges(
+                                    checkMultiAddChanges(
+                                      multiAddInput,
+                                      newCategory,
+                                      multiAddStatus
+                                    )
+                                  );
                                   setCategoryOpen(false);
                                 }}
                               >
@@ -461,7 +493,7 @@ export const AddNewItemModal = forwardRef<
                                   <Check
                                     className={cn(
                                       'mr-2 h-4 w-4',
-                                      selectedCategory === category.value
+                                      multiAddCategory === category.value
                                         ? 'opacity-100'
                                         : 'opacity-0'
                                     )}
@@ -485,20 +517,37 @@ export const AddNewItemModal = forwardRef<
               <div className="flex items-center gap-4">
                 <Label className="min-w-[80px] text-right">Status</Label>
                 <RadioGroup
-                  value={selectedStatus}
-                  onValueChange={(value) =>
-                    handleStatusChange(value as ItemStatusType)
-                  }
-                  className="flex gap-3 flex-1"
+                  value={multiAddStatus}
+                  onValueChange={(value) => {
+                    const newStatus = value as ItemStatusType;
+                    setMultiAddStatus(newStatus);
+                    setMultiAddHasChanges(
+                      checkMultiAddChanges(
+                        multiAddInput,
+                        multiAddCategory,
+                        newStatus
+                      )
+                    );
+                  }}
+                  className="flex flex-1"
+                  noGap
                 >
                   {ORDERED_ITEM_STATUSES.map((status) => (
                     <CustomRadioButton
                       key={status}
                       value={status}
-                      selectedValue={selectedStatus}
-                      onChange={(value) =>
-                        handleStatusChange(value as ItemStatusType)
-                      }
+                      selectedValue={multiAddStatus}
+                      onChange={(value) => {
+                        const newStatus = value as ItemStatusType;
+                        setMultiAddStatus(newStatus);
+                        setMultiAddHasChanges(
+                          checkMultiAddChanges(
+                            multiAddInput,
+                            multiAddCategory,
+                            newStatus
+                          )
+                        );
+                      }}
                       label={<ItemStatusBadge itemStatus={status} />}
                     />
                   ))}
