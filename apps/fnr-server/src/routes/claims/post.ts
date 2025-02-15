@@ -167,6 +167,7 @@ router.post(
             id: true,
             localItemIds: true,
             itemOrder: true,
+            isDeleted: true,
             items: {
               select: {
                 insuredsQuote: true,
@@ -179,6 +180,10 @@ router.post(
 
         if (!claim) {
           throw new Error('Claim not found');
+        }
+
+        if (claim.isDeleted) {
+          throw new Error('Cannot modify archived claim');
         }
 
         // Create the new item
@@ -327,6 +332,10 @@ router.patch(
 
         if (!claim) {
           throw new Error('Claim not found');
+        }
+
+        if (claim.isDeleted) {
+          throw new Error('Cannot modify archived claim');
         }
 
         if (claim.items.length === 0) {

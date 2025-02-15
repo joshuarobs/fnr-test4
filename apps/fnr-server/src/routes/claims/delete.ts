@@ -29,6 +29,10 @@ router.post(
           throw new Error('Claim not found');
         }
 
+        if (claim.isDeleted) {
+          throw new Error('Cannot modify archived claim');
+        }
+
         if (claim.items.length === 0) {
           throw new Error('Item not found in claim');
         }
@@ -122,6 +126,10 @@ router.delete(
 
         if (!claim) {
           throw new Error('Claim not found');
+        }
+
+        if (claim.isDeleted) {
+          throw new Error('Cannot modify archived claim');
         }
 
         if (claim.items.length === 0) {
