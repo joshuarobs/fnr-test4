@@ -286,19 +286,43 @@ export interface Activity {
   };
 }
 
+// Custom base query with auth error handling
+const baseQueryWithAuth = fetchBaseQuery({
+  baseUrl: API_CONFIG.baseUrl + '/',
+  credentials: 'include',
+  prepareHeaders: (headers) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers.set('authorization', `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
+const baseQueryWithErrorHandling = async (
+  args: any,
+  api: any,
+  extraOptions: any
+) => {
+  const result = await baseQueryWithAuth(args, api, extraOptions);
+
+  if (result.error && result.error.status === 401) {
+    // Clear invalid token
+    localStorage.removeItem('token');
+
+    // Get current location and redirect to login
+    const currentLocation = window.location.pathname + window.location.search;
+    window.location.href = `/login?redirect=${encodeURIComponent(
+      currentLocation
+    )}`;
+  }
+
+  return result;
+};
+
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_CONFIG.baseUrl + '/',
-    credentials: 'include', // Include credentials in requests
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithErrorHandling,
   tagTypes: [
     'Claim',
     'Item',

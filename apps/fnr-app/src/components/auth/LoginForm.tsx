@@ -30,6 +30,14 @@ export const LoginForm = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   // Quick login handler for development mode
+  // Get redirect URL from query params or location state
+  const getRedirectUrl = () => {
+    const params = new URLSearchParams(location.search);
+    const redirectUrl = params.get('redirect');
+    const fromState = (location.state as any)?.from?.pathname;
+    return redirectUrl || fromState || '/';
+  };
+
   const handleQuickLogin = async () => {
     setFormData({
       email: 'admin@example.com',
@@ -41,8 +49,7 @@ export const LoginForm = ({
         password: '12345',
       }).unwrap();
       localStorage.setItem('token', result.token);
-      const from = (location.state as any)?.from?.pathname || '/';
-      navigate(from, { replace: true });
+      navigate(getRedirectUrl(), { replace: true });
     } catch (error) {
       toast({
         title: 'Quick login failed',
@@ -60,8 +67,7 @@ export const LoginForm = ({
       // Store the token
       localStorage.setItem('token', result.token);
       // Navigate to the intended page or home
-      const from = (location.state as any)?.from?.pathname || '/';
-      navigate(from, { replace: true });
+      navigate(getRedirectUrl(), { replace: true });
     } catch (error) {
       toast({
         title: 'Login failed',
