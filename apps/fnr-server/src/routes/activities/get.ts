@@ -44,7 +44,7 @@ const formatActivities = (activities: ActivityWithIncludes[]) => {
         lastName: activity.user.lastName,
         avatar: '', // No avatar URLs, using avatarColour instead
         avatarColour: activity.user.avatarColour,
-        employeeId: activity.user.staff?.employeeId,
+        employeeId: activity.user.staff?.employeeId || '',
       },
       activityType: activity.activityType,
       timestamp: activity.createdAt,

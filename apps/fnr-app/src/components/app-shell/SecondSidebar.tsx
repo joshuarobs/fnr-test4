@@ -14,6 +14,7 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     color?: string;
     name: string;
     userId: number;
+    employeeId?: string;
   };
   contributors?: {
     userInitials: string;

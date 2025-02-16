@@ -8,7 +8,9 @@ interface NavAvatarProps {
   userInitials?: string;
   color?: string;
   name?: string;
-  userId?: string;
+  userId?: number;
+  employeeId?: string;
+  supplierId?: string;
   department?: string;
   disableNavigation?: boolean; // Add prop to control navigation behavior
   showHeaderRing?: boolean; // Controls header ring visibility
@@ -27,6 +29,8 @@ export const NavAvatar = ({
   color,
   name,
   userId,
+  employeeId,
+  supplierId,
   department,
   disableNavigation,
   showHeaderRing,
@@ -39,7 +43,7 @@ export const NavAvatar = ({
   mini,
 }: NavAvatarProps) => {
   const currentUser = useUser();
-  const isCurrentUser = userId ? userId === currentUser.id : false;
+  const isCurrentUser = userId ? userId === currentUser?.id : false;
   const isEmptyUser = !userId;
 
   // Truncate name if mini style and name is too long
@@ -95,9 +99,12 @@ export const NavAvatar = ({
 
   let route = '';
   if (isSupplier) {
-    route = getSupplierRoute(userId);
-  } else if (currentUser.role === 'STAFF' || currentUser.role === 'ADMIN') {
-    route = getStaffRoute(userId);
+    route = getSupplierRoute(supplierId || '');
+  } else if (
+    (currentUser.role === 'STAFF' || currentUser.role === 'ADMIN') &&
+    employeeId
+  ) {
+    route = getStaffRoute(employeeId);
   }
 
   return route ? (

@@ -47,6 +47,7 @@ export const LatestActivityEntry = ({
         name={activity.user.name}
         color={activity.user.avatarColour}
         userId={activity.user.id}
+        employeeId={activity.user.employeeId}
         mini
       />
       <div className="flex items-center gap-2">

@@ -15,7 +15,9 @@ interface AvatarData {
   color?: string;
   name: string; // Name field for displaying next to avatar (mandatory)
   userId: number; // User ID for navigation
+  employeeId?: string; // Employee ID for staff profile routing
   isSupplier?: boolean; // Flag to determine if the user is a supplier
+  supplierId?: string; // Supplier ID for supplier profile routing
 }
 
 interface PartyAvatarSectionProps {
@@ -58,9 +60,11 @@ export const PartyAvatarSection = ({
                     color={avatar.color}
                     name={avatar.name}
                     userId={avatar.userId}
+                    employeeId={avatar.employeeId}
                     disableNavigation={false}
                     disableHoverText={!!avatar.companyName}
                     isSupplier={avatar.isSupplier}
+                    supplierId={avatar.supplierId}
                   />
                 ))}
               </div>
@@ -81,9 +85,11 @@ export const PartyAvatarSection = ({
               color={avatar.color}
               name={avatar.name}
               userId={avatar.userId}
+              employeeId={avatar.employeeId}
               disableNavigation={false}
               //disableHoverText={!!avatar.companyName}
               isSupplier={avatar.isSupplier}
+              supplierId={avatar.supplierId}
             />
           ))}
         </div>
@@ -98,9 +104,11 @@ export const PartyAvatarSection = ({
               color={avatar.color}
               name={avatar.name}
               userId={avatar.userId}
+              employeeId={avatar.employeeId}
               disableNavigation={false}
               //disableHoverText={!!avatar.companyName}
               isSupplier={avatar.isSupplier}
+              supplierId={avatar.supplierId}
               hideTextLabel={true}
             />
           ))}

@@ -6,7 +6,8 @@ interface AssignedUserData {
   userInitials: string;
   color?: string;
   name: string;
-  userId: string;
+  userId: number;
+  employeeId?: string;
 }
 
 interface ClaimAssignedToSectionProps {
@@ -39,6 +40,7 @@ export const ClaimAssignedToSection = ({
         color={assignedUser?.color}
         name={assignedUser?.name}
         userId={assignedUser?.userId}
+        employeeId={assignedUser?.employeeId}
       />
     </div>
   );
