@@ -251,6 +251,7 @@ router.get('/:claimNumber', isAuthenticated, async (req, res) => {
                 company: true,
                 baseUser: {
                   select: {
+                    id: true,
                     firstName: true,
                     lastName: true,
                     avatarColour: true,

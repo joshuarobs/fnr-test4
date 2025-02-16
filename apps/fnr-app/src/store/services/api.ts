@@ -53,6 +53,7 @@ interface ClaimDetail {
       supplierId: string;
       company: string;
       baseUser: {
+        id: number;
         firstName: string;
         lastName: string;
         avatarColour: string;

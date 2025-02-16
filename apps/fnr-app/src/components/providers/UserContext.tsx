@@ -3,7 +3,7 @@ import { useGetUserQuery } from '../../store/services/api';
 
 // Type for the user data stored in context
 interface UserContextData {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;

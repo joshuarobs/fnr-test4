@@ -13,19 +13,19 @@ interface SecondSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     userInitials: string;
     color?: string;
     name: string;
-    userId: string;
+    userId: number;
   };
   contributors?: {
     userInitials: string;
     color?: string;
     name: string;
-    userId: string;
+    userId: number;
   }[];
   suppliers?: {
     companyName: string;
     color?: string;
     name: string;
-    userId: string;
+    userId: number;
     isSupplier?: boolean;
   }[];
   activities: Activity[];

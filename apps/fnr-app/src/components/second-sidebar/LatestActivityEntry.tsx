@@ -25,11 +25,12 @@ export const LatestActivityEntry = ({
 }: LatestActivityEntryProps) => {
   // Get formatted activity text using utility function
   const getActionText = () => {
-    return getActivityText(
-      activity.activityType,
-      activity.metadata || {},
-      currentClaimNumber
-    );
+    // Ensure metadata has required itemId field
+    const metadata = {
+      ...activity.metadata,
+      itemId: activity.metadata?.itemId || 'unknown',
+    };
+    return getActivityText(activity.activityType, metadata, currentClaimNumber);
   };
 
   return (
@@ -45,7 +46,7 @@ export const LatestActivityEntry = ({
         )}
         name={activity.user.name}
         color={activity.user.avatarColour}
-        userId={activity.user.employeeId}
+        userId={activity.user.id}
         mini
       />
       <div className="flex items-center gap-2">

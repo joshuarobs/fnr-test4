@@ -303,9 +303,7 @@ export const ClaimPage = () => {
           claimData?.handler && {
             userInitials: `${claimData.handler.firstName[0]}${claimData.handler.lastName[0]}`,
             name: `${claimData.handler.firstName} ${claimData.handler.lastName}`,
-            userId:
-              claimData.handler.staff?.employeeId ||
-              `user-${claimData.handler.id}`,
+            userId: claimData.handler.id,
             color: claimData.handler.avatarColour,
           }
         }
@@ -315,7 +313,7 @@ export const ClaimPage = () => {
             return {
               userInitials: `${user.firstName[0]}${user.lastName[0]}`,
               name: `${user.firstName} ${user.lastName}`,
-              userId: user.staff?.employeeId || `user-${user.id}`,
+              userId: user.id,
               color: user.avatarColour,
             };
           }) || []
@@ -325,7 +323,7 @@ export const ClaimPage = () => {
           return {
             companyName: supplier.company,
             name: supplier.company,
-            userId: supplier.supplierId,
+            userId: supplier.baseUser.id,
             color: supplier.baseUser.avatarColour,
             isSupplier: true,
           };

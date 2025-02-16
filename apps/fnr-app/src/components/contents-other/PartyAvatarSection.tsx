@@ -14,7 +14,7 @@ interface AvatarData {
   companyName?: string;
   color?: string;
   name: string; // Name field for displaying next to avatar (mandatory)
-  userId: string; // User ID for navigation
+  userId: number; // User ID for navigation
   isSupplier?: boolean; // Flag to determine if the user is a supplier
 }
 
