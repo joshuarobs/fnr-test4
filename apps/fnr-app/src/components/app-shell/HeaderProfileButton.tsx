@@ -114,18 +114,8 @@ export const HeaderProfileButton = () => {
         <Separator className="my-2" />
         <DropdownMenuItem
           className="cursor-pointer gap-2"
-          onClick={async () => {
-            try {
-              await logout();
-              localStorage.removeItem('token');
-              navigate(ROUTES.LOGIN);
-            } catch (error) {
-              toast({
-                title: 'Logout failed',
-                description: 'Please try again',
-                variant: 'destructive',
-              });
-            }
+          onClick={() => {
+            navigate(ROUTES.LOGOUT);
           }}
         >
           <LogOut className="h-4 w-4" />

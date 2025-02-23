@@ -300,7 +300,10 @@ const baseQueryWithErrorHandling = async (
 ) => {
   const result = await baseQueryWithSession(args, api, extraOptions);
 
-  if (result.error && result.error.status === 401) {
+  // Don't handle 401s during logout to prevent navigation flicker
+  const isLogoutRequest = args.url === 'auth/logout';
+
+  if (result.error?.status === 401 && !isLogoutRequest) {
     // Get current location and redirect to login
     const currentLocation = window.location.pathname + window.location.search;
     window.location.href = `/login?redirect=${encodeURIComponent(
@@ -343,6 +346,18 @@ export const api = createApi({
         url: 'auth/logout',
         method: 'POST',
       }),
+      // Invalidate all cached data when logout is successful
+      invalidatesTags: [
+        'User',
+        'Claims',
+        'Claim',
+        'RecentViews',
+        'ArchivedClaims',
+        'Staff',
+        'Users',
+        'Suppliers',
+        'Activities',
+      ],
     }),
     signUp: builder.mutation<SignUpResponse, SignUpRequest>({
       query: (credentials) => ({
