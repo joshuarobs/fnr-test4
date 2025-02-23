@@ -22,10 +22,15 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: true, // Allow all origins in development
-    credentials: true, // Allow credentials
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.CLIENT_URL
+        : ['http://localhost:4200', 'http://127.0.0.1:4200'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
-); // Enable CORS for all routes
+);
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
@@ -34,10 +39,16 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 // Session and Passport setup
 app.use(
   session({
-    secret: 'your-secret-key', // TODO: Move to environment variable
+    secret: process.env.SESSION_SECRET || 'your-secret-key', // TODO: Move to environment variable
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' },
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    },
+    name: 'fnr.sid', // Custom session cookie name
   })
 );
 app.use(passport.initialize());

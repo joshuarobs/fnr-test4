@@ -1,5 +1,7 @@
 import { createContext, useContext, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useGetUserQuery } from '../../store/services/api';
+import { ROUTES } from '../../routes';
 
 // Type for the user data stored in context
 interface UserContextData {
@@ -32,18 +34,24 @@ const UserContext = createContext<UserContextState | undefined>(undefined);
 
 // Provider component that fetches and provides user data
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const token = localStorage.getItem('token');
+  const location = useLocation();
+  const isAuthRoute = [ROUTES.LOGIN, ROUTES.SIGN_UP].includes(
+    location.pathname
+  );
+
   const {
     data: userData,
     isLoading,
     isError,
-  } = useGetUserQuery(token ?? '', {
-    skip: !token,
+  } = useGetUserQuery('me', {
+    // Skip fetching on auth routes to prevent redirect loops
+    skip: isAuthRoute,
   });
 
   const contextValue: UserContextState = {
     user: userData,
-    isLoading: !isError && (isLoading || !userData) && !!token,
+    // Only show loading state when not on auth routes
+    isLoading: !isAuthRoute && !isError && isLoading,
   };
 
   return (

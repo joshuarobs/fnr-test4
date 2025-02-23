@@ -1,7 +1,47 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
+import { isAuthenticated } from '../../middleware/auth';
 
 const router: Router = express.Router();
+
+// GET /api/users/me - Get current user's data from session
+router.get('/me', isAuthenticated, async (req, res) => {
+  try {
+    const user = await prisma.baseUser.findUnique({
+      where: { id: req.user?.id },
+      include: {
+        staff: {
+          select: {
+            department: true,
+            employeeId: true,
+            position: true,
+          },
+        },
+        insured: {
+          select: {
+            address: true,
+          },
+        },
+        supplier: {
+          select: {
+            company: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Remove sensitive data
+    const { password: _, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    res.status(500).json({ error: 'Failed to fetch current user' });
+  }
+});
 
 // GET /api/users/customers - Get all customer users
 router.get('/customers', async (req, res) => {

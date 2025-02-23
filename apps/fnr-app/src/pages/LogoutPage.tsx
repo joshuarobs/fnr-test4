@@ -13,7 +13,7 @@ export const LogoutPage = () => {
     const performLogout = async () => {
       try {
         await logout();
-        localStorage.removeItem('token');
+        // Session will be cleared by the server
         navigate(ROUTES.LOGIN);
       } catch (error) {
         console.error('Logout failed:', error);

@@ -22,10 +22,8 @@ router.post('/', (req, res, next) => {
         return res.status(500).json({ error: 'Internal server error' });
       }
 
-      // Return token (using user ID as token for now)
-      res.json({
-        token: user.id.toString(),
-      });
+      // Return success response with session cookie
+      res.json({ success: true });
     });
   })(req, res, next);
 });

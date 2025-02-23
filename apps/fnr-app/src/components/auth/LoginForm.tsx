@@ -44,11 +44,10 @@ export const LoginForm = ({
       password: '12345',
     });
     try {
-      const result = await login({
+      await login({
         email: 'admin@example.com',
         password: '12345',
       }).unwrap();
-      localStorage.setItem('token', result.token);
       navigate(getRedirectUrl(), { replace: true });
     } catch (error) {
       toast({
@@ -56,16 +55,13 @@ export const LoginForm = ({
         description: 'Development login failed',
         variant: 'destructive',
       });
-      localStorage.removeItem('token');
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await login(formData).unwrap();
-      // Store the token
-      localStorage.setItem('token', result.token);
+      await login(formData).unwrap();
       // Navigate to the intended page or home
       navigate(getRedirectUrl(), { replace: true });
     } catch (error) {
@@ -74,7 +70,6 @@ export const LoginForm = ({
         description: 'Please check your credentials and try again',
         variant: 'destructive',
       });
-      localStorage.removeItem('token');
     }
   };
 

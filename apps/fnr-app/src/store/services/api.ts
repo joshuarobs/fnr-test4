@@ -287,17 +287,10 @@ export interface Activity {
   };
 }
 
-// Custom base query with auth error handling
-const baseQueryWithAuth = fetchBaseQuery({
+// Base query with session handling
+const baseQueryWithSession = fetchBaseQuery({
   baseUrl: API_CONFIG.baseUrl + '/',
-  credentials: 'include',
-  prepareHeaders: (headers) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      headers.set('authorization', `Bearer ${token}`);
-    }
-    return headers;
-  },
+  credentials: 'include', // Important for sending/receiving cookies
 });
 
 const baseQueryWithErrorHandling = async (
@@ -305,12 +298,9 @@ const baseQueryWithErrorHandling = async (
   api: any,
   extraOptions: any
 ) => {
-  const result = await baseQueryWithAuth(args, api, extraOptions);
+  const result = await baseQueryWithSession(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    // Clear invalid token
-    localStorage.removeItem('token');
-
     // Get current location and redirect to login
     const currentLocation = window.location.pathname + window.location.search;
     window.location.href = `/login?redirect=${encodeURIComponent(
@@ -338,7 +328,7 @@ export const api = createApi({
   ],
   endpoints: (builder) => ({
     login: builder.mutation<
-      { token: string },
+      { success: boolean },
       { email: string; password: string }
     >({
       query: (credentials) => ({
