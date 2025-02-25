@@ -195,25 +195,81 @@ export interface User {
 }
 
 // User context data interface
-export interface UserContextData {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatarColour: string;
-  role: string;
-  staff?: {
-    employeeId: string;
-    department: string;
-    position: string;
+export interface AppShellData {
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatarColour: string;
+    role: string;
+    staff?: {
+      employeeId: string;
+      department: string;
+      position: string;
+    };
+    supplier?: {
+      company: string;
+    };
+    insured?: {
+      address: string;
+    };
   };
-  supplier?: {
-    company: string;
-  };
-  insured?: {
-    address: string;
-  };
+  recentlyViewedClaims: {
+    id: number;
+    claim: {
+      id: number;
+      claimNumber: string;
+      description: string;
+      status: string;
+      totalClaimed: number;
+      totalApproved: number | null;
+      createdAt: string;
+      updatedAt: string;
+      isDeleted: boolean;
+      handler?: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        email: string;
+        avatarColour: string;
+        staff: {
+          id: number;
+          employeeId: string;
+          department: string;
+          position: string;
+        };
+      };
+    };
+    viewedAt: string;
+  }[];
+  assignedClaims: {
+    id: number;
+    claimNumber: string;
+    description: string;
+    status: string;
+    totalClaimed: number;
+    totalApproved: number | null;
+    createdAt: string;
+    updatedAt: string;
+    isDeleted: boolean;
+    handler?: {
+      id: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      avatarColour: string;
+      staff: {
+        id: number;
+        employeeId: string;
+        department: string;
+        position: string;
+      };
+    };
+  }[];
 }
+
+export interface UserContextData extends AppShellData['user'] {}
 
 export enum ActivityType {
   // Claim activities
@@ -384,9 +440,9 @@ export const api = createApi({
       query: (employeeId) => `staff/${employeeId}`,
       providesTags: ['User'],
     }),
-    getUser: builder.query<UserContextData, string>({
+    getUser: builder.query<AppShellData, string>({
       query: (id) => `users/${id}`,
-      providesTags: ['User'],
+      providesTags: ['User', 'RecentViews', 'Claims'],
     }),
     getAllStaff: builder.query<StaffDetail[], number | void>({
       query: (limit = 10) => `staff?limit=${limit}`,

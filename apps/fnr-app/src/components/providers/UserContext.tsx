@@ -3,30 +3,13 @@ import { useLocation } from 'react-router-dom';
 import { useGetUserQuery } from '../../store/services/api';
 import { ROUTES } from '../../routes';
 
-// Type for the user data stored in context
-interface UserContextData {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatarColour: string;
-  role: string;
-  staff?: {
-    employeeId: string;
-    department: string;
-    position: string;
-  };
-  supplier?: {
-    company: string;
-  };
-  insured?: {
-    address: string;
-  };
-}
+import { AppShellData } from '../../store/services/api';
 
 interface UserContextState {
-  user: UserContextData | undefined;
+  user: AppShellData['user'] | undefined;
   isLoading: boolean;
+  recentlyViewedClaims: AppShellData['recentlyViewedClaims'];
+  assignedClaims: AppShellData['assignedClaims'];
 }
 
 // Create context with undefined initial value
@@ -35,9 +18,8 @@ const UserContext = createContext<UserContextState | undefined>(undefined);
 // Provider component that fetches and provides user data
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
-  const isAuthRoute = [ROUTES.LOGIN, ROUTES.SIGN_UP].includes(
-    location.pathname
-  );
+  const isAuthRoute =
+    location.pathname === ROUTES.LOGIN || location.pathname === ROUTES.SIGN_UP;
 
   const {
     data: userData,
@@ -48,10 +30,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     skip: isAuthRoute,
   });
 
+  // Consider loading complete only when we have all required data
+  const isLoadingData = !isAuthRoute && (!userData?.user || isLoading);
+  const hasError = !isAuthRoute && isError;
+
   const contextValue: UserContextState = {
-    user: userData,
-    // Only show loading state when not on auth routes
-    isLoading: !isAuthRoute && !isError && isLoading,
+    user: userData?.user,
+    isLoading: isLoadingData,
+    // Only return empty arrays when explicitly not loading and no error
+    recentlyViewedClaims:
+      isLoadingData || hasError ? [] : userData?.recentlyViewedClaims || [],
+    assignedClaims:
+      isLoadingData || hasError ? [] : userData?.assignedClaims || [],
   };
 
   return (
@@ -59,17 +49,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook to use the user context
+// Custom hooks to use the user context
 export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
-  // During loading or if no user data yet, return empty object
-  if (!context.user) {
-    return {} as UserContextData;
+  // Return empty object only if not loading and no user data
+  if (!context.isLoading && !context.user) {
+    return {} as AppShellData['user'];
   }
-  return context.user;
+  return context.user || ({} as AppShellData['user']);
 };
 
 // Hook to access loading state
@@ -79,4 +69,30 @@ export const useUserLoading = () => {
     throw new Error('useUserLoading must be used within a UserProvider');
   }
   return context.isLoading;
+};
+
+// Hook to access recently viewed claims
+export const useRecentlyViewedClaims = () => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error(
+      'useRecentlyViewedClaims must be used within a UserProvider'
+    );
+  }
+  return {
+    claims: context.recentlyViewedClaims,
+    isLoading: context.isLoading,
+  };
+};
+
+// Hook to access assigned claims
+export const useAssignedClaims = () => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useAssignedClaims must be used within a UserProvider');
+  }
+  return {
+    claims: context.assignedClaims,
+    isLoading: context.isLoading,
+  };
 };

@@ -7,36 +7,106 @@ const router: Router = express.Router();
 // GET /api/users/me - Get current user's data from session
 router.get('/me', isAuthenticated, async (req, res) => {
   try {
-    const user = await prisma.baseUser.findUnique({
-      where: { id: req.user?.id },
-      include: {
-        staff: {
-          select: {
-            department: true,
-            employeeId: true,
-            position: true,
+    const [user, recentlyViewedClaims, assignedClaims] = await Promise.all([
+      prisma.baseUser.findUnique({
+        where: { id: req.user?.id },
+        include: {
+          staff: {
+            select: {
+              department: true,
+              employeeId: true,
+              position: true,
+            },
+          },
+          insured: {
+            select: {
+              address: true,
+            },
+          },
+          supplier: {
+            select: {
+              company: true,
+            },
           },
         },
-        insured: {
-          select: {
-            address: true,
+      }),
+      prisma.recentlyViewedClaim.findMany({
+        where: {
+          userId: req.user?.id,
+        },
+        orderBy: {
+          viewedAt: 'desc',
+        },
+        include: {
+          claim: {
+            include: {
+              handler: {
+                include: {
+                  staff: true,
+                },
+              },
+            },
           },
         },
-        supplier: {
-          select: {
-            company: true,
-          },
-        },
-      },
-    });
+      }),
+      req.user?.staff?.employeeId
+        ? prisma.claim.findMany({
+            where: {
+              handlerId: req.user.id,
+              isDeleted: false,
+            },
+            orderBy: {
+              updatedAt: 'desc',
+            },
+            take: 5,
+            include: {
+              handler: {
+                include: {
+                  staff: true,
+                },
+              },
+            },
+          })
+        : Promise.resolve([]),
+    ]);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Remove sensitive data
+    // Remove sensitive data and combine all data
     const { password: _, ...userWithoutPassword } = user;
-    res.json(userWithoutPassword);
+    res.json({
+      user: userWithoutPassword,
+      recentlyViewedClaims: recentlyViewedClaims.map((rv) => ({
+        id: rv.id,
+        claim: {
+          id: rv.claim.id,
+          claimNumber: rv.claim.claimNumber,
+          description: rv.claim.description,
+          status: rv.claim.status,
+          totalClaimed: rv.claim.totalClaimed,
+          totalApproved: rv.claim.totalApproved,
+          createdAt: rv.claim.createdAt,
+          updatedAt: rv.claim.updatedAt,
+          isDeleted: rv.claim.isDeleted,
+          handler: rv.claim.handler,
+        },
+        viewedAt: rv.viewedAt,
+      })),
+      assignedClaims: assignedClaims.map((claim) => ({
+        id: claim.id,
+        claimNumber: claim.claimNumber,
+        description: claim.description,
+        status: claim.status,
+        totalClaimed: claim.totalClaimed,
+        totalApproved: claim.totalApproved,
+        createdAt: claim.createdAt,
+        updatedAt: claim.updatedAt,
+        isDeleted: claim.isDeleted,
+        handler: claim.handler,
+      })),
+    });
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ error: 'Failed to fetch current user' });

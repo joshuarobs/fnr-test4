@@ -1,29 +1,18 @@
 import React from 'react';
-import { useUser, useUserLoading } from '../providers/UserContext';
-import { useGetAssignedClaimsQuery } from '../../store/services/api';
+import { useAssignedClaims } from '../providers/UserContext';
 import { RecentClaimsList } from './RecentClaimsList';
 
 /**
  * Displays the 5 most recent claims assigned to the current user
+ * Data is loaded as part of the app shell query
  */
 export const RecentAssignedClaims = () => {
-  const isUserLoading = useUserLoading();
-  const user = useUser();
-  const { data: claims, isLoading: isClaimsLoading } =
-    useGetAssignedClaimsQuery(
-      {
-        employeeId: user.staff?.employeeId || '',
-        limit: 5,
-      },
-      {
-        skip: isUserLoading || !user.staff?.employeeId,
-      }
-    );
+  const { claims, isLoading } = useAssignedClaims();
 
   return (
     <RecentClaimsList
       claims={claims}
-      isLoading={isUserLoading || isClaimsLoading}
+      isLoading={isLoading}
       emptyMessage="No assigned claims"
     />
   );

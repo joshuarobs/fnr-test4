@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUser } from '../providers/UserContext';
+import { useUser, useUserLoading } from '../providers/UserContext';
 import {
   Button,
   DropdownMenu,
@@ -21,7 +21,7 @@ export const HeaderProfileButton = () => {
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
   const userData = useUser();
-  const isLoading = !userData?.id;
+  const isLoading = useUserLoading();
 
   // Common props for UserAvatar to avoid duplication
   const avatarProps = {
@@ -40,7 +40,7 @@ export const HeaderProfileButton = () => {
 
   const getProfileRoute = () => {
     if (userData.role === 'SUPPLIER') {
-      return getSupplierRoute(userData.id);
+      return getSupplierRoute(userData.id.toString());
     } else if (userData.role === 'STAFF' || userData.role === 'ADMIN') {
       return getStaffRoute(userData.staff?.employeeId || '');
     }
@@ -58,7 +58,7 @@ export const HeaderProfileButton = () => {
 
   const getIdText = () => {
     if (userData.role === 'SUPPLIER') {
-      return `Supplier ID: ${userData.id}`;
+      return `Supplier ID: ${userData.id.toString()}`;
     } else if (userData.staff?.employeeId) {
       return userData.staff.employeeId;
     }
