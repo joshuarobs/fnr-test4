@@ -23,3 +23,15 @@ export const isAuthenticated = (
   }
   res.status(401).json({ error: 'Unauthorized' });
 };
+
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (req.user?.role !== 'ADMIN') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+
+  next();
+};

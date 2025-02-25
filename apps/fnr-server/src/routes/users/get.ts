@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import prisma from '../../lib/prisma';
-import { isAuthenticated } from '../../middleware/auth';
+import { isAuthenticated, isAdmin } from '../../middleware/auth';
 
 const router: Router = express.Router();
 
@@ -268,6 +268,62 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+// PATCH /api/users/me - Update current user's details
+router.patch('/me', isAuthenticated, async (req, res) => {
+  try {
+    const { firstName, lastName, department, avatarColour } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    // Get the user's current data to check their role
+    const currentUser = await prisma.baseUser.findUnique({
+      where: { id: userId },
+      include: { staff: true },
+    });
+
+    if (!currentUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update the base user
+    const updatedUser = await prisma.baseUser.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+        avatarColour,
+        // If user is staff, update their staff record too
+        ...(currentUser.staff && {
+          staff: {
+            update: {
+              department,
+            },
+          },
+        }),
+      },
+      include: {
+        staff: {
+          select: {
+            department: true,
+            employeeId: true,
+            position: true,
+          },
+        },
+      },
+    });
+
+    // Remove sensitive data
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    res.json(userWithoutPassword);
+  } catch (error) {
+    console.error('Error updating user details:', error);
+    res.status(500).json({ error: 'Failed to update user details' });
   }
 });
 

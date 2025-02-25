@@ -72,7 +72,7 @@ export const AccountSettings = () => {
         title: '', // Add these fields when available in the API
         firstName: user.firstName,
         surname: user.lastName,
-        department: user.department,
+        department: user.staff?.department || '',
         location: '', // Add when available in the API
         avatarColor: user.avatarColour,
       });
@@ -86,7 +86,6 @@ export const AccountSettings = () => {
     async (data: AccountFormValues) => {
       try {
         await updateUserDetails({
-          employeeId: user.employeeId,
           firstName: data.firstName,
           lastName: data.surname,
           department: data.department,

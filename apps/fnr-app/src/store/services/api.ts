@@ -269,7 +269,7 @@ export interface AppShellData {
   }[];
 }
 
-export interface UserContextData extends AppShellData['user'] {}
+export type UserContextData = AppShellData['user'];
 
 export enum ActivityType {
   // Claim activities
@@ -422,12 +422,9 @@ export const api = createApi({
         body: credentials,
       }),
     }),
-    updateUserDetails: builder.mutation<
-      StaffDetail,
-      UpdateUserDetailsRequest & { employeeId: string }
-    >({
-      query: ({ employeeId, ...details }) => ({
-        url: `staff/${employeeId}`,
+    updateUserDetails: builder.mutation<StaffDetail, UpdateUserDetailsRequest>({
+      query: (details) => ({
+        url: 'users/me',
         method: 'PATCH',
         body: details,
       }),
