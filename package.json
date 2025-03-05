@@ -13,7 +13,9 @@
     "deploy": "bash scripts/quick-deploy.sh",
     "deploy:prod": "bash scripts/quick-deploy.sh %npm_config_ip% %npm_config_key%",
     "setup:server": "bash scripts/server-setup.sh",
-    "setup:server:prod": "bash scripts/server-setup.sh %npm_config_ip% %npm_config_key%"
+    "setup:server:prod": "bash scripts/server-setup.sh %npm_config_ip% %npm_config_key%",
+    "verify:deployment": "bash scripts/verify-deployment.sh",
+    "verify:deployment:prod": "bash scripts/verify-deployment.sh %npm_config_ip% %npm_config_key%"
   },
   "prisma": {
     "seed": "cd apps/fnr-server && ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
