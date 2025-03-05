@@ -297,3 +297,50 @@ And join the Nx community:
 
 ### Test ideas
 - Pressing down with the highlighted cell at bottom of table will automatically go to next page
+
+## Deployment
+
+### Initial Server Setup
+When setting up a new Digital Ocean droplet for the first time:
+
+1. **Development Setup**
+   ```sh
+   npm run setup:server <droplet_ip>
+   ```
+
+2. **Production Setup** (with custom SSH key)
+   ```sh
+   npm run setup:server:prod --ip=<droplet_ip> --key=<path_to_ssh_key>
+   ```
+
+   This script will:
+   - Install Node.js and npm
+   - Install PM2 for process management
+   - Install and configure PostgreSQL
+   - Set up required directories and permissions
+   - Configure environment variables
+   - Install certbot for SSL
+
+### Deploying Updates
+After the initial setup, use these commands to deploy updates:
+
+1. **Development Deployment**
+   ```sh
+   npm run deploy <droplet_ip>
+   ```
+
+2. **Production Deployment** (with custom SSH key)
+   ```sh
+   npm run deploy:prod --ip=<droplet_ip> --key=<path_to_ssh_key>
+   ```
+
+   This will:
+   - Build the application locally
+   - Transfer files to the server
+   - Install production dependencies
+   - Restart the application using PM2
+
+### Important Notes
+- Update the database password in `/var/www/fnr-app/.env` on the server after setup
+- Configure SSL certificates if needed using: `certbot --nginx`
+- The server must be set up once with `setup:server` before running any deployments
