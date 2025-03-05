@@ -9,7 +9,9 @@
     "test:api": "npx nx test fnr-server-e2e",
     "nx graph app": "npx nx show project fnr-app",
     "nx reset": "npx nx reset",
-    "nx build server ": "npx nx build fnr-server"
+    "nx build server ": "npx nx build fnr-server",
+    "deploy": "bash scripts/quick-deploy.sh",
+    "deploy:prod": "bash scripts/quick-deploy.sh %npm_config_ip% %npm_config_key%"
   },
   "prisma": {
     "seed": "cd apps/fnr-server && ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
