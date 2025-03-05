@@ -344,3 +344,37 @@ After the initial setup, use these commands to deploy updates:
 - Update the database password in `/var/www/fnr-app/.env` on the server after setup
 - Configure SSL certificates if needed using: `certbot --nginx`
 - The server must be set up once with `setup:server` before running any deployments
+
+### Verifying Deployment
+After setting up or deploying to a server, you can verify the deployment status:
+
+1. **Development Verification**
+   ```sh
+   npm run verify:deployment <droplet_ip>
+   ```
+
+2. **Production Verification** (with custom SSH key)
+   ```sh
+   npm run verify:deployment:prod --ip=<droplet_ip> --key=<path_to_ssh_key>
+   ```
+
+   The verification script checks:
+   - Server Environment
+     - Node.js and PM2 installation
+     - PostgreSQL service status
+     - Required directories and environment files
+   - Database Status
+     - PostgreSQL connection
+     - Database and user existence
+     - Migrations status
+   - Application Status
+     - PM2 processes
+     - Application logs
+     - HTTP endpoint response
+   - System Status
+     - Memory usage
+     - Disk space
+     - CPU load
+     - Active connections
+
+   Each check provides clear status indicators and suggested fixes if issues are found.
