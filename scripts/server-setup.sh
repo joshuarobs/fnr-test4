@@ -1,17 +1,43 @@
 #!/bin/bash
 # server-setup.sh - Initial server environment setup for Digital Ocean droplet
-# Usage: ./scripts/server-setup.sh <droplet_ip> [ssh_key_path]
+# Usage: ./scripts/server-setup.sh <environment> [ssh_key_path]
 
-# Check if droplet IP is provided
+# Load environment variables from .env.deploy
+if [ ! -f .env.deploy ]; then
+    echo "Error: .env.deploy file not found"
+    exit 1
+fi
+source .env.deploy
+
+# Check if environment is provided
 if [ "$#" -lt 1 ]; then
-    echo "Usage: ./scripts/server-setup.sh <droplet_ip> [ssh_key_path]"
-    echo "Example: ./scripts/server-setup.sh 123.456.789.0"
-    echo "Example with custom SSH key: ./scripts/server-setup.sh 123.456.789.0 ~/.ssh/digital_ocean_key"
+    echo "Usage: ./scripts/server-setup.sh <environment> [ssh_key_path]"
+    echo "Environment options: staging, prod"
+    echo "Example: ./scripts/server-setup.sh prod"
+    echo "Example with custom SSH key: ./scripts/server-setup.sh prod ~/.ssh/digital_ocean_key"
     exit 1
 fi
 
-DROPLET_IP=$1
+ENV=$1
 SSH_KEY="${2:-~/.ssh/id_rsa}"
+
+# Set droplet IP based on environment
+if [ "$ENV" = "prod" ]; then
+    DROPLET_IP=$PROD_DROPLET_IP
+    NODE_ENV="production"
+elif [ "$ENV" = "staging" ]; then
+    DROPLET_IP=$STAGING_DROPLET_IP
+    NODE_ENV="staging"
+else
+    echo "Error: Invalid environment. Use 'staging' or 'prod'"
+    exit 1
+fi
+
+# Check if droplet IP is set
+if [ -z "$DROPLET_IP" ]; then
+    echo "Error: Droplet IP not set for $ENV environment in .env.deploy"
+    exit 1
+fi
 
 echo "=== Initial Server Setup Script ==="
 echo "Droplet IP: $DROPLET_IP"
@@ -89,7 +115,7 @@ chown -R $USER:$USER /var/backups/app
 echo "Setting up environment variables..."
 cat > /var/www/fnr-app/.env << ENV
 DATABASE_URL="postgresql://fnrapp:your_secure_password@localhost:5432/fnrdb"
-NODE_ENV="production"
+NODE_ENV="$NODE_ENV"
 PORT=3000
 ENV
 

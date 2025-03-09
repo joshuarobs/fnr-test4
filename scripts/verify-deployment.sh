@@ -1,17 +1,41 @@
 #!/bin/bash
 # verify-deployment.sh - Verify the deployment status of the FNR application
-# Usage: ./scripts/verify-deployment.sh <droplet_ip> [ssh_key_path]
+# Usage: ./scripts/verify-deployment.sh <environment> [ssh_key_path]
 
-# Check if droplet IP is provided
+# Load environment variables from .env.deploy
+if [ ! -f .env.deploy ]; then
+    echo "Error: .env.deploy file not found"
+    exit 1
+fi
+source .env.deploy
+
+# Check if environment is provided
 if [ "$#" -lt 1 ]; then
-    echo "Usage: ./scripts/verify-deployment.sh <droplet_ip> [ssh_key_path]"
-    echo "Example: ./scripts/verify-deployment.sh 123.456.789.0"
-    echo "Example with custom SSH key: ./scripts/verify-deployment.sh 123.456.789.0 ~/.ssh/digital_ocean_key"
+    echo "Usage: ./scripts/verify-deployment.sh <environment> [ssh_key_path]"
+    echo "Environment options: staging, prod"
+    echo "Example: ./scripts/verify-deployment.sh prod"
+    echo "Example with custom SSH key: ./scripts/verify-deployment.sh prod ~/.ssh/digital_ocean_key"
     exit 1
 fi
 
-DROPLET_IP=$1
+ENV=$1
 SSH_KEY="${2:-~/.ssh/id_rsa}"
+
+# Set droplet IP based on environment
+if [ "$ENV" = "prod" ]; then
+    DROPLET_IP=$PROD_DROPLET_IP
+elif [ "$ENV" = "staging" ]; then
+    DROPLET_IP=$STAGING_DROPLET_IP
+else
+    echo "Error: Invalid environment. Use 'staging' or 'prod'"
+    exit 1
+fi
+
+# Check if droplet IP is set
+if [ -z "$DROPLET_IP" ]; then
+    echo "Error: Droplet IP not set for $ENV environment in .env.deploy"
+    exit 1
+fi
 
 # Color codes for output
 RED='\033[0;31m'
@@ -126,11 +150,11 @@ fi
 print_header "Application Status"
 
 # Check PM2 processes
-PM2_PROCESS=$(pm2 list 2>/dev/null | grep fnr-server)
+PM2_PROCESS=$(pm2 list 2>/dev/null | grep "fnr-server-$ENV")
 if [ $? -eq 0 ]; then
-    print_status "PM2 process" 0 "fnr-server is running"
+    print_status "PM2 process" 0 "fnr-server-$ENV is running"
 else
-    print_status "PM2 process" 1 "Start application: cd $APP_DIR && pm2 start dist/main.js --name fnr-server"
+    print_status "PM2 process" 1 "Start application: cd $APP_DIR && pm2 start dist/main.js --name fnr-server-$ENV"
 fi
 
 # Check application logs

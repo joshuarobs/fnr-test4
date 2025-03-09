@@ -1,17 +1,45 @@
 #!/bin/bash
 # quick-deploy.sh - Reset and deploy latest build to Digital Ocean droplet
-# Usage: ./scripts/quick-deploy.sh <droplet_ip> [ssh_key_path]
+# Usage: ./scripts/quick-deploy.sh <environment> [ssh_key_path]
 
-# Check if droplet IP is provided
+# Load environment variables from .env.deploy
+if [ ! -f .env.deploy ]; then
+    echo "Error: .env.deploy file not found"
+    exit 1
+fi
+source .env.deploy
+
+# Check if environment is provided
 if [ "$#" -lt 1 ]; then
-    echo "Usage: ./scripts/quick-deploy.sh <droplet_ip> [ssh_key_path]"
-    echo "Example: ./scripts/quick-deploy.sh 123.456.789.0"
-    echo "Example with custom SSH key: ./scripts/quick-deploy.sh 123.456.789.0 ~/.ssh/digital_ocean_key"
+    echo "Usage: ./scripts/quick-deploy.sh <environment> [ssh_key_path]"
+    echo "Environment options: staging, prod"
+    echo "Example: ./scripts/quick-deploy.sh prod"
+    echo "Example with custom SSH key: ./scripts/quick-deploy.sh prod ~/.ssh/digital_ocean_key"
     exit 1
 fi
 
-DROPLET_IP=$1
+ENV=$1
 SSH_KEY="${2:-~/.ssh/id_rsa}"
+
+# Set droplet IP and build configuration based on environment
+if [ "$ENV" = "prod" ]; then
+    DROPLET_IP=$PROD_DROPLET_IP
+    BUILD_CONFIG="--prod"
+    NODE_ENV="production"
+elif [ "$ENV" = "staging" ]; then
+    DROPLET_IP=$STAGING_DROPLET_IP
+    BUILD_CONFIG="--configuration=staging"
+    NODE_ENV="staging"
+else
+    echo "Error: Invalid environment. Use 'staging' or 'prod'"
+    exit 1
+fi
+
+# Check if droplet IP is set
+if [ -z "$DROPLET_IP" ]; then
+    echo "Error: Droplet IP not set for $ENV environment in .env.deploy"
+    exit 1
+fi
 APP_DIR="/var/www/fnr-app"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/var/backups/app"
@@ -21,9 +49,9 @@ echo "Droplet IP: $DROPLET_IP"
 echo "Using SSH key: $SSH_KEY"
 
 # Build the application locally
-echo "Building application..."
+echo "Building application for $ENV environment..."
 npm install
-npx nx build fnr-server --prod  # Build server for production
+npx nx build fnr-server $BUILD_CONFIG
 
 # Create temporary directory for deployment
 echo "Preparing deployment package..."
@@ -76,7 +104,7 @@ pm2 delete all 2>/dev/null || true
 cd $APP_DIR
 
 # Start the server using the NX build output
-pm2 start dist/main.js --name fnr-server
+pm2 start dist/main.js --name "fnr-server-$ENV"
 
 pm2 save
 
