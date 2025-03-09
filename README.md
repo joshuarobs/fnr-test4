@@ -300,81 +300,101 @@ And join the Nx community:
 
 ## Deployment
 
-### Initial Server Setup
-When setting up a new Digital Ocean droplet for the first time:
-
-1. **Development Setup**
+### Prerequisites
+1. Generate a GitHub deploy key:
    ```sh
-   npm run setup:server <droplet_ip>
+   # Default location and name
+   ssh-keygen -t ed25519 -C "deploy-key-fnr-test4" -f C:\Users\User\.ssh\fnr_deploy_key
+
+   # Or custom location and name
+   ssh-keygen -t ed25519 -C "deploy-key-fnr-test4" -f /custom/path/custom_key_name
+   ```
+2. Add the public key (fnr_deploy_key.pub or custom_key_name.pub) to your GitHub repository's Deploy Keys
+   - Go to repository Settings > Deploy keys
+   - Add new deploy key
+   - Paste the contents of the .pub file
+   - Give read-only access
+
+### Deployment Scripts
+The deployment process uses four scripts in sequence:
+
+1. **pre-setup.sh**
+   - Sets up SSH authentication on the server
+   - Copies the deploy key from your local machine
+   - Configures GitHub access
+   ```sh
+   # Using default key location and name
+   ./scripts/pre-setup.sh prod
+
+   # Using custom key location
+   ./scripts/pre-setup.sh prod /custom/path
+
+   # Using custom key location and name
+   ./scripts/pre-setup.sh prod /custom/path custom_key_name
    ```
 
-2. **Production Setup** (with custom SSH key)
+2. **server-setup.sh**
+   - Sets up Node.js, PM2, PostgreSQL
+   - Creates application directory
+   - Clones the repository
+   - Configures environment variables
    ```sh
-   npm run setup:server:prod --ip=<droplet_ip> --key=<path_to_ssh_key>
+   ./scripts/server-setup.sh prod
    ```
 
-   This script will:
-   - Install Node.js and npm
-   - Install PM2 for process management
-   - Install and configure PostgreSQL
-   - Set up required directories and permissions
-   - Configure environment variables
-   - Install certbot for SSL
-
-### Deploying Updates
-After the initial setup, use these commands to deploy updates:
-
-1. **Development Deployment**
+3. **quick-deploy.sh**
+   - Builds the application
+   - Deploys to the server
+   - Restarts services
    ```sh
-   npm run deploy <droplet_ip>
+   ./scripts/quick-deploy.sh prod
    ```
 
-2. **Production Deployment** (with custom SSH key)
+4. **verify-deployment.sh**
+   - Verifies all components are running
+   - Checks server health
+   - Validates application status
    ```sh
-   npm run deploy:prod --ip=<droplet_ip> --key=<path_to_ssh_key>
+   ./scripts/verify-deployment.sh prod
    ```
 
-   This will:
-   - Build the application locally
-   - Transfer files to the server
-   - Install production dependencies
-   - Restart the application using PM2
+### Full Deployment Process
+```sh
+# Using default SSH key location (C:\Users\User\.ssh\fnr_deploy_key)
+./scripts/pre-setup.sh prod
+
+# Or using custom key location and name
+./scripts/pre-setup.sh prod /custom/path custom_key_name
+
+# Then run the remaining scripts
+./scripts/server-setup.sh prod
+./scripts/quick-deploy.sh prod
+./scripts/verify-deployment.sh prod
+```
 
 ### Important Notes
+- The scripts use the droplet IP from .env.deploy file. Ensure PROD_DROPLET_IP is set correctly.
 - Update the database password in `/var/www/fnr-app/.env` on the server after setup
 - Configure SSL certificates if needed using: `certbot --nginx`
-- The server must be set up once with `setup:server` before running any deployments
 
-### Verifying Deployment
-After setting up or deploying to a server, you can verify the deployment status:
+### Verification Details
+The verify-deployment.sh script checks:
+- Server Environment
+  - Node.js and PM2 installation
+  - PostgreSQL service status
+  - Required directories and environment files
+- Database Status
+  - PostgreSQL connection
+  - Database and user existence
+  - Migrations status
+- Application Status
+  - PM2 processes
+  - Application logs
+  - HTTP endpoint response
+- System Status
+  - Memory usage
+  - Disk space
+  - CPU load
+  - Active connections
 
-1. **Development Verification**
-   ```sh
-   npm run verify:deployment <droplet_ip>
-   ```
-
-2. **Production Verification** (with custom SSH key)
-   ```sh
-   npm run verify:deployment:prod --ip=<droplet_ip> --key=<path_to_ssh_key>
-   ```
-
-   The verification script checks:
-   - Server Environment
-     - Node.js and PM2 installation
-     - PostgreSQL service status
-     - Required directories and environment files
-   - Database Status
-     - PostgreSQL connection
-     - Database and user existence
-     - Migrations status
-   - Application Status
-     - PM2 processes
-     - Application logs
-     - HTTP endpoint response
-   - System Status
-     - Memory usage
-     - Disk space
-     - CPU load
-     - Active connections
-
-   Each check provides clear status indicators and suggested fixes if issues are found.
+Each check provides clear status indicators and suggested fixes if issues are found.

@@ -106,6 +106,11 @@ echo "Setting up application directory..."
 mkdir -p /var/www/fnr-app
 chown -R $USER:$USER /var/www/fnr-app
 
+# Clone repository
+echo "Cloning repository..."
+cd /var/www/fnr-app
+git clone git@github.com:joshuarobs/fnr-test4.git .
+
 # Create backup directory
 echo "Setting up backup directory..."
 mkdir -p /var/backups/app
