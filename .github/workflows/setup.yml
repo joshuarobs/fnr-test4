@@ -1,0 +1,123 @@
+name: Server Setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to setup (prod/staging)'
+        required: true
+        type: choice
+        options:
+          - prod
+          - staging
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+      - name: Install System Dependencies
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            # Update system
+            apt-get update
+            apt-get upgrade -y
+
+            # Install required packages
+            apt-get install -y curl git build-essential
+
+            # Install Node.js
+            curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+            apt-get install -y nodejs
+
+            # Install PM2
+            npm install -g pm2
+
+            # Install PostgreSQL
+            apt-get install -y postgresql postgresql-contrib
+
+            # Start PostgreSQL
+            systemctl start postgresql
+            systemctl enable postgresql
+          ENDSSH
+
+      - name: Configure PostgreSQL
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            # Create database user and database
+            sudo -u postgres psql << PSQL
+            CREATE USER fnrapp WITH PASSWORD '${DATABASE_PASSWORD}';
+            CREATE DATABASE fnrdb;
+            GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
+            \q
+            PSQL
+
+            # Configure PostgreSQL to listen on all interfaces
+            sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/*/main/postgresql.conf
+
+            # Allow connections from application
+            echo "host    fnrdb    fnrapp    0.0.0.0/0    scram-sha-256" >> /etc/postgresql/*/main/pg_hba.conf
+
+            # Restart PostgreSQL
+            systemctl restart postgresql
+          ENDSSH
+
+      - name: Setup Application Directory
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            # Create application directory
+            mkdir -p /var/www/fnr-app
+            mkdir -p /var/www/fnr-app/logs
+            mkdir -p /var/backups/app
+            mkdir -p /var/backups/db
+
+            # Set permissions
+            chown -R $USER:$USER /var/www/fnr-app
+            chmod 755 /var/www/fnr-app
+            chmod 755 /var/www/fnr-app/logs
+          ENDSSH
+
+      - name: Configure Environment
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            # Create environment file
+            cat > /var/www/fnr-app/.env << EOF
+            DATABASE_URL="${{ secrets.DATABASE_URL }}"
+            NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
+            PORT=3000
+            HOST="0.0.0.0"
+            SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
+            CLIENT_URL="${{ secrets.CLIENT_URL }}"
+            PM2_HOME="/var/www/fnr-app/.pm2"
+            EOF
+
+            # Set permissions
+            chmod 600 /var/www/fnr-app/.env
+          ENDSSH
+
+      - name: Verify Setup
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            # Verify Node.js and PM2
+            node --version
+            pm2 --version
+
+            # Verify PostgreSQL
+            systemctl status postgresql | grep "active (running)"
+            psql -U fnrapp -d fnrdb -c "\l" || echo "Database connection failed"
+
+            # Verify directories
+            test -d /var/www/fnr-app || echo "App directory missing"
+            test -d /var/www/fnr-app/logs || echo "Logs directory missing"
+            test -f /var/www/fnr-app/.env || echo "Environment file missing"
+          ENDSSH

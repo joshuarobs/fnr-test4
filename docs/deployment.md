@@ -1,14 +1,25 @@
 # Deployment Guide
 
-## GitHub Actions CI/CD Setup
+## GitHub Actions Workflows
 
-The repository is configured with GitHub Actions for automated deployment to Digital Ocean. The workflow will automatically deploy:
-- `main` branch → Production environment
-- `staging` branch → Staging environment
+The repository uses two GitHub Actions workflows for managing deployments:
+
+1. **Server Setup** (`setup.yml`):
+   - One-time server provisioning workflow
+   - Manually triggered for initial setup
+   - Installs and configures all required dependencies
+   - Sets up PostgreSQL, Node.js, PM2, and application directory structure
+
+2. **Continuous Deployment** (`deploy.yml`):
+   - Automated deployment workflow
+   - Triggers on push to protected branches:
+     - `main` branch → Production environment
+     - `staging` branch → Staging environment
+   - Handles building, testing, and deploying application updates
 
 ### Required GitHub Secrets
 
-Before the deployment workflow can run, you need to set up the following secrets in your GitHub repository:
+Before running either workflow, you need to set up the following secrets in your GitHub repository:
 
 1. Go to your GitHub repository → Settings → Secrets and variables → Actions → New repository secret
 
@@ -43,45 +54,33 @@ Before the deployment workflow can run, you need to set up the following secrets
   https://your-frontend-domain.com
   ```
 
-### Initial Server Setup
+### Initial Setup Process
 
-Before the first deployment, ensure PostgreSQL is installed and configured on your Digital Ocean droplet:
+1. **Provision Server**:
+   - Create a Digital Ocean droplet
+   - Add your SSH public key to the droplet
+   - Update `.env.deploy` with the droplet IP
 
-1. Install PostgreSQL:
-   ```bash
-   sudo apt update
-   sudo apt install postgresql postgresql-contrib
-   ```
+2. **Configure GitHub Secrets**:
+   - Add all required secrets to your GitHub repository
+   - Ensure the SSH key has proper permissions on the droplet
 
-2. Configure PostgreSQL:
-   ```bash
-   sudo -u postgres psql
-   CREATE USER fnrapp WITH PASSWORD 'your_secure_password';
-   CREATE DATABASE fnrdb;
-   GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
-   \q
-   ```
+3. **Run Server Setup**:
+   - Go to GitHub Actions → Workflows → Server Setup
+   - Click "Run workflow"
+   - Select environment (prod/staging)
+   - Monitor setup progress in Actions tab
 
-3. Update pg_hba.conf to allow application connections:
-   ```bash
-   sudo nano /etc/postgresql/*/main/pg_hba.conf
-   # Add line:
-   host    fnrdb    fnrapp    0.0.0.0/0    scram-sha-256
-   ```
-
-4. Configure PostgreSQL to listen on all interfaces:
-   ```bash
-   sudo nano /etc/postgresql/*/main/postgresql.conf
-   # Update line:
-   listen_addresses = '*'
-   ```
-
-5. Restart PostgreSQL:
-   ```bash
-   sudo systemctl restart postgresql
-   ```
+4. **Verify Setup**:
+   The setup workflow will automatically verify:
+   - Node.js and PM2 installation
+   - PostgreSQL configuration
+   - Directory structure
+   - Environment configuration
 
 ### Deployment Process
+
+After successful server setup, deployments are fully automated:
 
 1. Push to protected branches:
    - Push to `main` for production deployment
@@ -103,14 +102,6 @@ Before the first deployment, ensure PostgreSQL is installed and configured on yo
      cd /var/www/fnr-app/logs
      tail -f app.log
      ```
-
-### Manual Deployment
-
-While GitHub Actions is the preferred method, you can also use the provided shell scripts for manual deployment:
-
-1. Initial setup: `./scripts/server-setup.sh prod`
-2. Quick deploy: `./scripts/quick-deploy.sh prod`
-3. Verify deployment: `./scripts/verify-deployment.sh prod`
 
 ### Troubleshooting
 
