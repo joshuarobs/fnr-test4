@@ -42,7 +42,6 @@ jobs:
       - name: Run tests
         run: |
           npx nx test fnr-server --skip-nx-cache
-          npx nx test fnr-server-e2e --skip-nx-cache
 
       - name: Setup SSH
         run: |

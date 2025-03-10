@@ -17,7 +17,7 @@ import passport from './config/passport';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
 
-const app = express();
+export const app: express.Application = express();
 
 // Middleware
 app.use(
