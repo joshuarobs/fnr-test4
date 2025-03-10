@@ -56,14 +56,17 @@ jobs:
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             # Create database user and database
             sudo -u postgres psql << PSQL
-            CREATE USER fnrapp WITH PASSWORD '${DATABASE_PASSWORD}';
+            CREATE USER fnrapp WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';
             CREATE DATABASE fnrdb;
             GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
+            ALTER USER fnrapp WITH SUPERUSER;
             \q
             PSQL
 
-            # Configure PostgreSQL to listen on all interfaces
+            # Configure PostgreSQL
             sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/*/main/postgresql.conf
+            sed -i "s/peer/scram-sha-256/" /etc/postgresql/*/main/pg_hba.conf
+            sed -i "s/ident/scram-sha-256/" /etc/postgresql/*/main/pg_hba.conf
 
             # Allow connections from application
             echo "host    fnrdb    fnrapp    0.0.0.0/0    scram-sha-256" >> /etc/postgresql/*/main/pg_hba.conf

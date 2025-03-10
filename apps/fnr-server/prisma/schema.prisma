@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://user:12345@localhost:5432/fnr_db"
+  url      = env("DATABASE_URL")
 }
 
 /// Represents the base user model with common fields across all user types

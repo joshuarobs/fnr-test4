@@ -19,64 +19,43 @@ The repository uses two GitHub Actions workflows for managing deployments:
 
 ### Required GitHub Secrets
 
-Before running either workflow, you need to set up the following secrets in your GitHub repository:
+See [GitHub Secrets Setup Guide](./github-secrets.md) for detailed instructions on setting up all required secrets.
 
-1. Go to your GitHub repository → Settings → Secrets and variables → Actions → New repository secret
-
-2. Add the following secrets:
-
-- `DO_SSH_KEY`: Your Digital Ocean SSH private key
-  ```bash
-  # Generate a new key pair if needed:
-  ssh-keygen -t rsa -b 4096 -C "github-actions-deploy"
-  # Add the public key to your Digital Ocean droplet's ~/.ssh/authorized_keys
-  # Add the private key content to this secret
-  ```
-
-- `DROPLET_IP`: Your Digital Ocean droplet IP address
-  ```
-  170.64.155.210
-  ```
-
-- `DATABASE_URL`: PostgreSQL connection string
-  ```
-  postgresql://fnrapp:your_password@localhost:5432/fnrdb
-  ```
-
-- `SESSION_SECRET`: A secure random string for session encryption
-  ```bash
-  # Generate a secure random string:
-  openssl rand -base64 32
-  ```
-
-- `CLIENT_URL`: Your frontend application URL
-  ```
-  https://your-frontend-domain.com
-  ```
+The following secrets must be configured before deployment:
+- `DO_SSH_KEY`: SSH key for Digital Ocean access
+- `DROPLET_IP`: Digital Ocean droplet IP
+- `DATABASE_PASSWORD`: PostgreSQL user password
+- `DATABASE_URL`: Database connection string
+- `SESSION_SECRET`: Session encryption key
+- `CLIENT_URL`: Frontend application URL
 
 ### Initial Setup Process
 
-1. **Provision Server**:
-   - Create a Digital Ocean droplet
-   - Add your SSH public key to the droplet
-   - Update `.env.deploy` with the droplet IP
+1. **Provision Digital Ocean Droplet**:
+   - Create a new droplet in your Digital Ocean account
+   - Choose Ubuntu 22.04 LTS
+   - Select your preferred size (minimum 2GB RAM recommended)
+   - Add your SSH public key during creation
+   - Note the droplet's IP address
 
-2. **Configure GitHub Secrets**:
-   - Add all required secrets to your GitHub repository
-   - Ensure the SSH key has proper permissions on the droplet
+2. **Configure GitHub Repository**:
+   - Follow the [GitHub Secrets Setup Guide](./github-secrets.md)
+   - Ensure all required secrets are properly configured
+   - Verify SSH key permissions on the droplet
 
-3. **Run Server Setup**:
-   - Go to GitHub Actions → Workflows → Server Setup
+3. **Run Initial Server Setup**:
+   - Navigate to GitHub Actions → Workflows → Server Setup
    - Click "Run workflow"
-   - Select environment (prod/staging)
-   - Monitor setup progress in Actions tab
+   - Choose environment (prod/staging)
+   - Monitor the setup process in Actions tab
 
-4. **Verify Setup**:
-   The setup workflow will automatically verify:
-   - Node.js and PM2 installation
-   - PostgreSQL configuration
-   - Directory structure
-   - Environment configuration
+4. **Verify Installation**:
+   The setup workflow automatically verifies:
+   - Node.js (v20) and PM2 installation
+   - PostgreSQL setup and configuration
+   - Application directory structure
+   - Environment variables
+   - Database connection
 
 ### Deployment Process
 
