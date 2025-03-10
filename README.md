@@ -300,101 +300,37 @@ And join the Nx community:
 
 ## Deployment
 
-### Prerequisites
-1. Generate a GitHub deploy key:
+The application can be deployed using either GitHub Actions (recommended) or manual deployment scripts.
+
+### GitHub Actions Deployment (Recommended)
+
+We use GitHub Actions for automated CI/CD to Digital Ocean. This provides:
+- Automated builds and tests
+- Automatic deployment on push to main/staging
+- Deployment verification and health checks
+- Automatic rollback on failure
+
+See [Deployment Guide](docs/deployment.md) for detailed setup instructions and configuration.
+
+### Manual Deployment Scripts
+
+For cases where manual deployment is needed, we provide a set of shell scripts:
+
+1. **Initial Setup**
    ```sh
-   # Default location and name
-   ssh-keygen -t ed25519 -C "deploy-key-fnr-test4" -f C:\Users\User\.ssh\fnr_deploy_key
-
-   # Or custom location and name
-   ssh-keygen -t ed25519 -C "deploy-key-fnr-test4" -f /custom/path/custom_key_name
-   ```
-2. Add the public key (fnr_deploy_key.pub or custom_key_name.pub) to your GitHub repository's Deploy Keys
-   - Go to repository Settings > Deploy keys
-   - Add new deploy key
-   - Paste the contents of the .pub file
-   - Give read-only access
-
-### Deployment Scripts
-The deployment process uses four scripts in sequence:
-
-1. **pre-setup.sh**
-   - Sets up SSH authentication on the server
-   - Copies the deploy key from your local machine
-   - Configures GitHub access
-   ```sh
-   # Using default key location and name
-   ./scripts/pre-setup.sh prod
-
-   # Using custom key location
-   ./scripts/pre-setup.sh prod /custom/path
-
-   # Using custom key location and name
-   ./scripts/pre-setup.sh prod /custom/path custom_key_name
+   ./scripts/pre-setup.sh prod    # Setup SSH and GitHub access
+   ./scripts/server-setup.sh prod # Configure server environment
    ```
 
-2. **server-setup.sh**
-   - Sets up Node.js, PM2, PostgreSQL
-   - Creates application directory
-   - Clones the repository
-   - Configures environment variables
+2. **Deployment**
    ```sh
-   ./scripts/server-setup.sh prod
+   ./scripts/quick-deploy.sh prod     # Deploy latest changes
+   ./scripts/verify-deployment.sh prod # Verify deployment
    ```
 
-3. **quick-deploy.sh**
-   - Builds the application
-   - Deploys to the server
-   - Restarts services
-   ```sh
-   ./scripts/quick-deploy.sh prod
-   ```
-
-4. **verify-deployment.sh**
-   - Verifies all components are running
-   - Checks server health
-   - Validates application status
-   ```sh
-   ./scripts/verify-deployment.sh prod
-   ```
-
-### Full Deployment Process
-```sh
-# Using default SSH key location (C:\Users\User\.ssh\fnr_deploy_key)
-./scripts/pre-setup.sh prod
-
-# Or using custom key location and name
-./scripts/pre-setup.sh prod /custom/path custom_key_name
-
-# Then run the remaining scripts
-./scripts/server-setup.sh prod
-./scripts/quick-deploy.sh prod
-./scripts/verify-deployment.sh prod
-```
+See [Legacy Deployment Scripts](docs/legacy-deployment.md) for detailed information about manual deployment.
 
 ### Important Notes
-- The scripts use the droplet IP from .env.deploy file. Ensure PROD_DROPLET_IP is set correctly.
-- Update the database password in `/var/www/fnr-app/.env` on the server after setup
-- Configure SSL certificates if needed using: `certbot --nginx`
-
-### Verification Details
-The verify-deployment.sh script checks:
-- Server Environment
-  - Node.js and PM2 installation
-  - PostgreSQL service status
-  - Required directories and environment files
-- Database Status
-  - PostgreSQL connection
-  - Database and user existence
-  - Migrations status
-- Application Status
-  - PM2 processes
-  - Application logs
-  - HTTP endpoint response
-- System Status
-  - Memory usage
-  - Disk space
-  - CPU load
-  - Active connections
-
-Each check provides clear status indicators and suggested fixes if issues are found.
+- Set `PROD_DROPLET_IP` in `.env.deploy` file
+- Update database credentials in server's `.env` after setup
+- Configure SSL with `certbot --nginx` if needed
