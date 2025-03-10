@@ -98,15 +98,32 @@ echo "Installing production dependencies..."
 cd $APP_DIR
 npm ci --only=production
 
+# Ensure logs directory exists with proper permissions
+echo "Setting up logs directory..."
+mkdir -p $APP_DIR/logs
+chown -R $USER:$USER $APP_DIR/logs
+chmod 755 $APP_DIR/logs
+
 # Start application
 echo "Starting application..."
 pm2 delete all 2>/dev/null || true
 cd $APP_DIR
 
-# Start the server using the NX build output
-pm2 start dist/main.js --name "fnr-server-$ENV"
+# Start the server using the NX build output with proper logging
+pm2 start dist/main.js \
+  --name "fnr-server-$ENV" \
+  --log $APP_DIR/logs/app.log \
+  --error $APP_DIR/logs/error.log \
+  --time \
+  --merge-logs \
+  --env production
 
+# Save PM2 configuration
 pm2 save
+
+# Display running processes and logs location
+pm2 list
+echo "Application logs can be found at: $APP_DIR/logs/"
 
 echo "Deployment complete!"
 EOF

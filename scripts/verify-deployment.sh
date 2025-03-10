@@ -158,24 +158,39 @@ else
 fi
 
 # Check application logs
-if [ -f "$HOME/.pm2/logs/fnr-server-out.log" ]; then
-    ERROR_COUNT=$(tail -n 50 "$HOME/.pm2/logs/fnr-server-out.log" | grep -i "error" | wc -l)
+APP_LOG="$APP_DIR/logs/app.log"
+ERROR_LOG="$APP_DIR/logs/error.log"
+
+if [ -f "$APP_LOG" ]; then
+    ERROR_COUNT=$(tail -n 50 "$ERROR_LOG" 2>/dev/null | grep -i "error" | wc -l)
     if [ $ERROR_COUNT -eq 0 ]; then
         print_status "Application logs" 0 "No recent errors found"
     else
-        print_status "Application logs" 1 "Found $ERROR_COUNT recent errors. Check: tail -n 50 $HOME/.pm2/logs/fnr-server-out.log"
+        print_status "Application logs" 1 "Found $ERROR_COUNT recent errors. Check: tail -n 50 $ERROR_LOG"
     fi
 else
-    print_status "Application logs" 1 "Log file not found"
+    print_status "Application logs" 1 "Log files not found at $APP_DIR/logs/"
+fi
+
+# Load environment variables
+if [ -f "$APP_DIR/.env" ]; then
+    source "$APP_DIR/.env"
 fi
 
 # Check HTTP endpoint
 if command -v curl >/dev/null 2>&1; then
-    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000)
-    if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
-        print_status "HTTP endpoint" 0 "Server responding on port 3000"
+    PORT=${PORT:-3000}
+    HOST=${HOST:-"0.0.0.0"}
+    
+    # Try both localhost and 0.0.0.0
+    RESPONSE_LOCAL=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$PORT/api" 2>/dev/null)
+    RESPONSE_ALL=$(curl -s -o /dev/null -w "%{http_code}" "http://$HOST:$PORT/api" 2>/dev/null)
+    
+    if [ "$RESPONSE_LOCAL" = "200" ] || [ "$RESPONSE_LOCAL" = "301" ] || [ "$RESPONSE_LOCAL" = "302" ] || \
+       [ "$RESPONSE_ALL" = "200" ] || [ "$RESPONSE_ALL" = "301" ] || [ "$RESPONSE_ALL" = "302" ]; then
+        print_status "HTTP endpoint" 0 "Server responding on port $PORT"
     else
-        print_status "HTTP endpoint" 1 "Server not responding correctly (Status: $RESPONSE)"
+        print_status "HTTP endpoint" 1 "Server not responding correctly (Status: Local=$RESPONSE_LOCAL, All=$RESPONSE_ALL)"
     fi
 else
     print_status "HTTP endpoint" 1 "curl not installed"
@@ -207,7 +222,8 @@ print_status "Active connections" 0 "Count: $CONN_COUNT"
 # Final summary
 print_header "Summary"
 echo -e "${YELLOW}If any checks failed, address the suggested fixes and run this script again.${NC}"
-echo -e "${YELLOW}For detailed logs: tail -f /root/.pm2/logs/fnr-server-out.log${NC}"
+echo -e "${YELLOW}For detailed logs: tail -f $APP_DIR/logs/app.log${NC}"
+echo -e "${YELLOW}For error logs: tail -f $APP_DIR/logs/error.log${NC}"
 EOF
 
 # Transfer and execute the verification script

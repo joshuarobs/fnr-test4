@@ -116,12 +116,22 @@ echo "Setting up backup directory..."
 mkdir -p /var/backups/app
 chown -R $USER:$USER /var/backups/app
 
+# Create logs directory
+echo "Setting up logs directory..."
+mkdir -p /var/www/fnr-app/logs
+chown -R $USER:$USER /var/www/fnr-app/logs
+chmod 755 /var/www/fnr-app/logs
+
 # Setup environment variables
 echo "Setting up environment variables..."
 cat > /var/www/fnr-app/.env << ENV
 DATABASE_URL="postgresql://fnrapp:your_secure_password@localhost:5432/fnrdb"
 NODE_ENV="$NODE_ENV"
 PORT=3000
+HOST="0.0.0.0"
+SESSION_SECRET="your-secure-session-secret"
+CLIENT_URL="https://your-frontend-domain.com"
+PM2_HOME="/var/www/fnr-app/.pm2"
 ENV
 
 # Set correct permissions for the .env file
