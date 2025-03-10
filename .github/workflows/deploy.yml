@@ -28,15 +28,15 @@ jobs:
       - name: Build application
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            npx nx build fnr-server --prod
+            npx nx build fnr-server --prod --skip-nx-cache
           else
-            npx nx build fnr-server --configuration=staging
+            npx nx build fnr-server --configuration=staging --skip-nx-cache
           fi
 
       - name: Run tests
         run: |
-          npx nx test fnr-server
-          npx nx test fnr-server-e2e
+          npx nx test fnr-server --skip-nx-cache
+          npx nx test fnr-server-e2e --skip-nx-cache
 
       - name: Setup SSH
         run: |
