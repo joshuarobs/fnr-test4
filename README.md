@@ -312,25 +312,64 @@ We use GitHub Actions for automated CI/CD to Digital Ocean. This provides:
 
 See [Deployment Guide](docs/deployment.md) for detailed setup instructions and configuration.
 
-### Manual Deployment Scripts
+### Windows Deployment Setup
 
-For cases where manual deployment is needed, we provide a set of shell scripts:
+Since the deployment scripts are written in bash, Windows users need a different approach for the initial setup:
 
-1. **Initial Setup**
-   ```sh
-   ./scripts/pre-setup.sh prod    # Setup SSH and GitHub access
-   ./scripts/server-setup.sh prod # Configure server environment
+1. **Generate SSH Key**
+   ```powershell
+   # Open PowerShell and run:
+   ssh-keygen -t rsa -b 4096 -C "github-actions-deploy" -f "$env:USERPROFILE\.ssh\fnr_app_github_actions_deploy"
+   # This creates two files:
+   # - fnr_app_github_actions_deploy.pub (public key for Digital Ocean)
+   # - fnr_app_github_actions_deploy (private key for GitHub Actions)
+   # Press Enter twice to skip passphrase (required for automated deployment)
    ```
 
-2. **Deployment**
-   ```sh
-   ./scripts/quick-deploy.sh prod     # Deploy latest changes
-   ./scripts/verify-deployment.sh prod # Verify deployment
+2. **Add Public Key to Droplet**
+   ```powershell
+   # Method 1 - If you have password access to the droplet:
+   cat "$env:USERPROFILE\.ssh\fnr_app_github_actions_deploy.pub" | ssh root@your_droplet_ip "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+
+   # Method 2 - Manual setup:
+   # 1. Display your public key:
+   cat "$env:USERPROFILE\.ssh\fnr_app_github_actions_deploy.pub"
+   # 2. Copy the output
+   # 3. SSH into your droplet:
+   ssh root@your_droplet_ip
+   # 4. Create .ssh directory and set permissions:
+   mkdir -p ~/.ssh
+   chmod 700 ~/.ssh
+   # 5. Add your key:
+   echo "your-public-key-here" >> ~/.ssh/authorized_keys
+   chmod 600 ~/.ssh/authorized_keys
    ```
 
-See [Legacy Deployment Scripts](docs/legacy-deployment.md) for detailed information about manual deployment.
+3. **Add GitHub Secrets**
+   - Go to your GitHub repository → Settings → Secrets → Actions
+   - Add these required secrets:
+     ```
+     DO_SSH_KEY: Your private key content (from fnr_app_github_actions_deploy - the file WITHOUT .pub)
+                 Make sure to copy the entire key including BEGIN and END lines
+     DROPLET_IP: Your droplet's IP address
+     DATABASE_URL: postgresql://fnrapp:your_password@localhost:5432/fnrdb
+     SESSION_SECRET: (Generate with: openssl rand -base64 32)
+     CLIENT_URL: http://your_droplet_ip:3000
+     ```
+
+4. **Test Connection**
+   ```powershell
+   # Test SSH connection to droplet using the private key
+   ssh -i "$env:USERPROFILE\.ssh\fnr_app_github_actions_deploy" root@your_droplet_ip "echo 'SSH key setup successful!'"
+   ```
+
+5. **Deploy Application**
+   - Push your changes to the main branch
+   - GitHub Actions will automatically deploy your application
+   - Monitor the deployment in GitHub Actions tab
 
 ### Important Notes
 - Set `PROD_DROPLET_IP` in `.env.deploy` file
 - Update database credentials in server's `.env` after setup
 - Configure SSL with `certbot --nginx` if needed
+- If you encounter permission issues, ensure proper file permissions on both your local machine and the droplet
