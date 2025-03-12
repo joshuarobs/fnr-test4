@@ -63,13 +63,13 @@ jobs:
             \q
             PSQL
 
-            # Configure PostgreSQL
-            sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/*/main/postgresql.conf
-            sed -i "s/peer/scram-sha-256/" /etc/postgresql/*/main/pg_hba.conf
-            sed -i "s/ident/scram-sha-256/" /etc/postgresql/*/main/pg_hba.conf
-
-            # Allow connections from application
-            echo "host    fnrdb    fnrapp    0.0.0.0/0    scram-sha-256" >> /etc/postgresql/*/main/pg_hba.conf
+            # Configure PostgreSQL for local connections
+            sed -i "s/peer/md5/" /etc/postgresql/*/main/pg_hba.conf
+            sed -i "s/ident/md5/" /etc/postgresql/*/main/pg_hba.conf
+            
+            # Ensure local connections use password auth
+            echo "local   fnrdb    fnrapp                    md5" >> /etc/postgresql/*/main/pg_hba.conf
+            echo "host    fnrdb    fnrapp    127.0.0.1/32   md5" >> /etc/postgresql/*/main/pg_hba.conf
 
             # Restart PostgreSQL
             systemctl restart postgresql
@@ -93,9 +93,9 @@ jobs:
       - name: Configure Environment
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            # Create environment file
+            # Create environment file with local database URL
             cat > /var/www/fnr-app/.env << EOF
-            DATABASE_URL="${{ secrets.DATABASE_URL }}"
+            DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
             NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
             PORT=3000
             HOST="0.0.0.0"
