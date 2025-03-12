@@ -63,12 +63,9 @@ jobs:
 
       - name: Run Database Migrations
         run: |
-          # Copy prisma files for migration
-          scp -r apps/fnr-server/prisma root@${{ secrets.DROPLET_IP }}:/tmp/prisma/
-
-          # Run migrations on the server
+          # Run migrations directly on the deployed application
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            cd /tmp/prisma
+            cd /var/www/fnr-app
             DATABASE_URL="${{ secrets.DATABASE_URL }}" npx prisma migrate deploy
             if [ $? -ne 0 ]; then
               echo "Migration failed. Rolling back to last backup..."
