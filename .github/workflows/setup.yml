@@ -53,62 +53,54 @@ jobs:
           echo "📁 Creating app directory if not exists..."
           mkdir -p /var/www/fnr-app
 
-          echo "👤 Creating database user and database..."
-          SQL_COMMAND=$(cat << 'EOF'
-          DO $block$ BEGIN
+          echo "👤 Setting up PostgreSQL users and database..."
+          # First set postgres user password
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';"
+
+          # Now we can use postgres user with password authentication
+          export PGPASSWORD="${{ secrets.DATABASE_PASSWORD }}"
+
+          # Create application user and database
+          psql -U postgres -h localhost << 'EOSQL'
+          DO $$
+          BEGIN
             IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'fnrapp') THEN
-              CREATE USER fnrapp WITH PASSWORD '12345';
+              CREATE USER fnrapp WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';
             END IF;
             IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'fnrdb') THEN
               CREATE DATABASE fnrdb;
             END IF;
-          END $block$;
-          GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
-          ALTER USER fnrapp WITH SUPERUSER;
-          EOF
-          )
-          echo "${SQL_COMMAND}" | sudo -u postgres psql -v ON_ERROR_STOP=1
-          echo "\dt" | sudo -u postgres psql -d fnrdb
-
-          if [ $? -ne 0 ]; then
-            echo "❌ Failed to setup database user and permissions"
-            exit 1
-          fi
-          echo "✅ Database user and permissions configured"
+            GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
+            ALTER USER fnrapp WITH SUPERUSER;
+          END
+          $$;
+          EOSQL
 
           echo "🔧 Configuring PostgreSQL authentication..."
-          PG_HBA_CONF=$(find /etc/postgresql -name "pg_hba.conf" | head -n 1)
-          if [ -z "$PG_HBA_CONF" ]; then
+          PG_HBA_CONF=\$(find /etc/postgresql -name "pg_hba.conf" | head -n 1)
+          if [ -z "\$PG_HBA_CONF" ]; then
             echo "❌ Could not find pg_hba.conf"
             exit 1
           fi
 
-          cp "$PG_HBA_CONF" "${PG_HBA_CONF}.bak"
-          sed -i "s/peer/md5/g" "$PG_HBA_CONF"
-          sed -i "s/ident/md5/g" "$PG_HBA_CONF"
+          cp "\$PG_HBA_CONF" "\${PG_HBA_CONF}.bak"
 
-          echo "# Added by setup workflow" >> "$PG_HBA_CONF"
-          echo "local   fnrdb    fnrapp                    md5" >> "$PG_HBA_CONF"
-          echo "host    fnrdb    fnrapp    127.0.0.1/32   md5" >> "$PG_HBA_CONF"
+          sed -i 's/peer/md5/g' "\$PG_HBA_CONF"
+          sed -i 's/ident/md5/g' "\$PG_HBA_CONF"
+          echo "# Added by setup workflow" >> "\$PG_HBA_CONF"
+          echo "local   all      postgres                   md5" >> "\$PG_HBA_CONF"
+          echo "local   fnrdb    fnrapp                     md5" >> "\$PG_HBA_CONF"
+          echo "host    fnrdb    fnrapp      127.0.0.1/32   md5" >> "\$PG_HBA_CONF"
 
           echo "🔄 Restarting PostgreSQL..."
           systemctl restart postgresql
-          if ! systemctl is-active --quiet postgresql; then
-            echo "❌ PostgreSQL failed to restart"
-            systemctl status postgresql
-            mv "${PG_HBA_CONF}.bak" "$PG_HBA_CONF"
-            systemctl restart postgresql
-            exit 1
-          fi
-          echo "✅ PostgreSQL restarted successfully"
 
           echo "🧪 Testing database connection..."
-          export PGPASSWORD="12345"
+          export PGPASSWORD="${{ secrets.DATABASE_PASSWORD }}"
           if ! psql -U fnrapp -h localhost -d fnrdb -c "\conninfo"; then
             echo "❌ Database connection test failed"
             exit 1
           fi
-          unset PGPASSWORD
           echo "✅ Database connection test successful"
           ENDSSH
 
@@ -164,7 +156,7 @@ jobs:
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
           cat > /var/www/fnr-app/.env << 'EOF'
-          DATABASE_URL="postgresql://fnrapp:12345@localhost:5432/fnrdb"
+          DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
           NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
           PORT=3000
           HOST="0.0.0.0"
@@ -205,7 +197,7 @@ jobs:
           echo "✅ PostgreSQL is running"
 
           echo "🔐 Testing database connection..."
-          export PGPASSWORD="12345"
+          export PGPASSWORD="${{ secrets.DATABASE_PASSWORD }}"
           if ! psql -U fnrapp -h localhost -d fnrdb -c "\l" > /dev/null; then
             echo "❌ Database connection test failed"
             exit 1

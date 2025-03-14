@@ -24,7 +24,10 @@ Example: 170.64.188.76
 ## `DATABASE_PASSWORD`
 PostgreSQL database password for the fnrapp user
 ```bash
-# Generate a secure password:
+# Default development value (not for production use):
+12345
+
+# For production, generate a secure password:
 openssl rand -base64 32
 ```
 

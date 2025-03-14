@@ -1,0 +1,99 @@
+name: Server Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_cleanup:
+        description: 'Type "CLEANUP" to confirm server reset (this will delete all data)'
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm_cleanup == 'CLEANUP'
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+      - name: Stop Services
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🛑 Stopping all services..."
+          pm2 delete all || true
+          systemctl stop postgresql || true
+          ENDSSH
+
+      - name: Clean PostgreSQL
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🗑️ Removing PostgreSQL..."
+          apt-get remove --purge -y postgresql postgresql-*
+          apt-get autoremove -y
+          rm -rf /var/lib/postgresql/
+          rm -rf /var/log/postgresql/
+          rm -rf /etc/postgresql/
+          ENDSSH
+
+      - name: Clean Application
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🗑️ Removing application files..."
+          rm -rf /var/www/fnr-app
+          rm -rf /var/backups/app
+          rm -rf /var/backups/db
+          rm -rf /root/.pm2
+          ENDSSH
+
+      - name: Clean Node.js
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🗑️ Removing Node.js..."
+          npm uninstall -g pm2
+          apt-get remove --purge -y nodejs
+          rm -rf /etc/apt/sources.list.d/nodesource.list
+          ENDSSH
+
+      - name: Verify Cleanup
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🔍 Verifying cleanup..."
+
+          echo "Checking PostgreSQL..."
+          if dpkg -l | grep -q postgresql; then
+            echo "❌ PostgreSQL still installed"
+            exit 1
+          fi
+
+          echo "Checking Node.js..."
+          if command -v node &> /dev/null; then
+            echo "❌ Node.js still installed"
+            exit 1
+          fi
+
+          echo "Checking PM2..."
+          if command -v pm2 &> /dev/null; then
+            echo "❌ PM2 still installed"
+            exit 1
+          fi
+
+          echo "Checking directories..."
+          for dir in "/var/www/fnr-app" "/var/backups/app" "/var/backups/db" "/var/lib/postgresql"; do
+            if [ -d "$dir" ]; then
+              echo "❌ Directory still exists: $dir"
+              exit 1
+            fi
+          done
+
+          echo "✅ Cleanup verified successfully"
+          ENDSSH
+
+      - name: Final Message
+        run: |
+          echo "🧹 Server cleanup completed successfully"
+          echo "👉 Run the 'Server Setup' workflow to reinstall everything"
