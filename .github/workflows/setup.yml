@@ -17,7 +17,6 @@ env:
 jobs:
   setup:
     runs-on: ubuntu-latest
-
     steps:
       - name: Setup SSH
         run: |
@@ -29,24 +28,13 @@ jobs:
       - name: Install System Dependencies
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            # Update system
             apt-get update
             apt-get upgrade -y
-
-            # Install required packages
             apt-get install -y curl git build-essential
-
-            # Install Node.js
             curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
             apt-get install -y nodejs
-
-            # Install PM2
             npm install -g pm2
-
-            # Install PostgreSQL
             apt-get install -y postgresql postgresql-contrib
-
-            # Start PostgreSQL
             systemctl start postgresql
             systemctl enable postgresql
           ENDSSH
@@ -61,39 +49,37 @@ jobs:
               exit 1
             fi
             echo "✅ PostgreSQL is running"
-            
+
             echo "📁 Creating app directory if not exists..."
             mkdir -p /var/www/fnr-app
-            
+
             echo "🔑 Generating database password..."
             DB_PASSWORD=$(openssl rand -base64 32)
-            
+
             echo "👤 Creating database user and database..."
-            if ! sudo -u postgres psql -v ON_ERROR_STOP=1 << PSQL
-            DO \$\$
-            BEGIN
-              IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'fnrapp') THEN
-                CREATE USER fnrapp WITH PASSWORD '$DB_PASSWORD';
-              END IF;
-            END
-            \$\$;
-            CREATE DATABASE fnrdb;
-            GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
-            ALTER USER fnrapp WITH SUPERUSER;
-            \c fnrdb
-            \dt
+            sudo -u postgres psql -v ON_ERROR_STOP=1 << 'PSQL'
+              DO $$
+              BEGIN
+                IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'fnrapp') THEN
+                  CREATE USER fnrapp WITH PASSWORD '${DB_PASSWORD}';
+                END IF;
+              END
+              $$;
+              CREATE DATABASE fnrdb;
+              GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
+              ALTER USER fnrapp WITH SUPERUSER;
+              \c fnrdb
+              \dt
             PSQL
-            then
+
+            if [ $? -ne 0 ]; then
               echo "❌ Failed to setup database user and permissions"
               exit 1
             fi
             echo "✅ Database user and permissions configured"
 
             echo "💾 Storing database password..."
-            if ! echo "$DB_PASSWORD" > /var/www/fnr-app/.db_password; then
-              echo "❌ Failed to store database password"
-              exit 1
-            fi
+            echo "$DB_PASSWORD" > /var/www/fnr-app/.db_password
             chmod 600 /var/www/fnr-app/.db_password
             echo "✅ Database password stored securely"
 
@@ -103,25 +89,20 @@ jobs:
               echo "❌ Could not find pg_hba.conf"
               exit 1
             fi
-            
-            # Backup original config
+
             cp "$PG_HBA_CONF" "${PG_HBA_CONF}.bak"
-            
-            # Update authentication methods
             sed -i "s/peer/md5/g" "$PG_HBA_CONF"
             sed -i "s/ident/md5/g" "$PG_HBA_CONF"
-            
-            # Add our specific rules
+
             echo "# Added by setup workflow" >> "$PG_HBA_CONF"
             echo "local   fnrdb    fnrapp                    md5" >> "$PG_HBA_CONF"
             echo "host    fnrdb    fnrapp    127.0.0.1/32   md5" >> "$PG_HBA_CONF"
-            
+
             echo "🔄 Restarting PostgreSQL..."
             systemctl restart postgresql
             if ! systemctl is-active --quiet postgresql; then
               echo "❌ PostgreSQL failed to restart"
               systemctl status postgresql
-              # Restore backup if restart failed
               mv "${PG_HBA_CONF}.bak" "$PG_HBA_CONF"
               systemctl restart postgresql
               exit 1
@@ -142,8 +123,6 @@ jobs:
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             echo "📁 Setting up application directories..."
-            
-            # Create directories with error checking
             for dir in "/var/www/fnr-app" "/var/www/fnr-app/logs" "/var/backups/app" "/var/backups/db"; do
               if ! mkdir -p "$dir"; then
                 echo "❌ Failed to create directory: $dir"
@@ -157,7 +136,7 @@ jobs:
               echo "❌ Failed to set directory ownership"
               exit 1
             fi
-            
+
             for dir in "/var/www/fnr-app" "/var/www/fnr-app/logs"; do
               if ! chmod 755 "$dir"; then
                 echo "❌ Failed to set permissions for: $dir"
@@ -172,15 +151,13 @@ jobs:
                 echo "❌ Directory not found: $dir"
                 exit 1
               fi
-              
-              # Check permissions
+
               perms=$(stat -c "%a" "$dir")
               if [ "$perms" != "755" ] && [ "$dir" = "/var/www/fnr-app" -o "$dir" = "/var/www/fnr-app/logs" ]; then
                 echo "❌ Incorrect permissions on: $dir (found: $perms, expected: 755)"
                 exit 1
               fi
-              
-              # Check ownership
+
               owner=$(stat -c "%U:%G" "$dir")
               if [ "$owner" != "$USER:$USER" ] && [ "$dir" = "/var/www/fnr-app" -o "$dir" = "/var/www/fnr-app/logs" ]; then
                 echo "❌ Incorrect ownership on: $dir (found: $owner, expected: $USER:$USER)"
@@ -193,7 +170,6 @@ jobs:
       - name: Configure Environment
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            # Create environment file with local database URL
             DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
             cat > /var/www/fnr-app/.env << EOF
             DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
@@ -204,8 +180,6 @@ jobs:
             CLIENT_URL="http://${{ secrets.DROPLET_IP }}:3000"
             PM2_HOME="/var/www/fnr-app/.pm2"
             EOF
-
-            # Set permissions
             chmod 600 /var/www/fnr-app/.env
           ENDSSH
 
@@ -213,7 +187,7 @@ jobs:
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             echo "🔍 Running comprehensive setup verification..."
-            
+
             echo "📦 Verifying Node.js installation..."
             NODE_VERSION=$(node --version)
             if [ $? -ne 0 ]; then
