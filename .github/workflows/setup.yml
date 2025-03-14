@@ -53,14 +53,11 @@ jobs:
           echo "📁 Creating app directory if not exists..."
           mkdir -p /var/www/fnr-app
 
-          echo "🔑 Generating database password..."
-          DB_PASSWORD=$(openssl rand -base64 32)
-
           echo "👤 Creating database user and database..."
           SQL_COMMAND=$(cat << 'EOF'
           DO $block$ BEGIN
             IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'fnrapp') THEN
-              CREATE USER fnrapp WITH PASSWORD '$(echo "${DB_PASSWORD}" | sed "s/'/''/g")';
+              CREATE USER fnrapp WITH PASSWORD '12345';
             END IF;
             IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'fnrdb') THEN
               CREATE DATABASE fnrdb;
@@ -78,11 +75,6 @@ jobs:
             exit 1
           fi
           echo "✅ Database user and permissions configured"
-
-          echo "💾 Storing database password..."
-          echo "$DB_PASSWORD" > /var/www/fnr-app/.db_password
-          chmod 600 /var/www/fnr-app/.db_password
-          echo "✅ Database password stored securely"
 
           echo "🔧 Configuring PostgreSQL authentication..."
           PG_HBA_CONF=$(find /etc/postgresql -name "pg_hba.conf" | head -n 1)
@@ -111,7 +103,7 @@ jobs:
           echo "✅ PostgreSQL restarted successfully"
 
           echo "🧪 Testing database connection..."
-          export PGPASSWORD="$DB_PASSWORD"
+          export PGPASSWORD="12345"
           if ! psql -U fnrapp -h localhost -d fnrdb -c "\conninfo"; then
             echo "❌ Database connection test failed"
             exit 1
@@ -171,9 +163,8 @@ jobs:
       - name: Configure Environment
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-          DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
           cat > /var/www/fnr-app/.env << 'EOF'
-          DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+          DATABASE_URL="postgresql://fnrapp:12345@localhost:5432/fnrdb"
           NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
           PORT=3000
           HOST="0.0.0.0"
@@ -214,8 +205,7 @@ jobs:
           echo "✅ PostgreSQL is running"
 
           echo "🔐 Testing database connection..."
-          DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
-          export PGPASSWORD="$DB_PASSWORD"
+          export PGPASSWORD="12345"
           if ! psql -U fnrapp -h localhost -d fnrdb -c "\l" > /dev/null; then
             echo "❌ Database connection test failed"
             exit 1
@@ -228,7 +218,6 @@ jobs:
             "/var/www/fnr-app"
             "/var/www/fnr-app/logs"
             "/var/www/fnr-app/.env"
-            "/var/www/fnr-app/.db_password"
           )
 
           for file in "${REQUIRED_FILES[@]}"; do
@@ -242,10 +231,6 @@ jobs:
           echo "🔒 Verifying file permissions..."
           if [ "$(stat -c %a /var/www/fnr-app/.env)" != "600" ]; then
             echo "❌ Incorrect permissions on .env file"
-            exit 1
-          fi
-          if [ "$(stat -c %a /var/www/fnr-app/.db_password)" != "600" ]; then
-            echo "❌ Incorrect permissions on .db_password file"
             exit 1
           fi
           echo "✅ File permissions verified"

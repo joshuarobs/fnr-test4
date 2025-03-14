@@ -18,7 +18,7 @@ ssh-keygen -t rsa -b 4096 -C "github-actions-deploy"
 ## `DROPLET_IP`
 Your Digital Ocean droplet IP address
 ```
-xxx.xxx.xxx.xxx
+Example: 170.64.188.76
 ```
 
 ## `DATABASE_PASSWORD`
@@ -29,9 +29,9 @@ openssl rand -base64 32
 ```
 
 ## `DATABASE_URL`
-PostgreSQL connection string using the password above
+PostgreSQL connection string
 ```
-postgresql://fnrapp:your_database_password@localhost:5432/fnrdb
+Example value to copy: postgresql://fnrapp:12345@localhost:5432/fnrdb
 ```
 
 ## `SESSION_SECRET`
@@ -44,7 +44,7 @@ openssl rand -base64 32
 ## `CLIENT_URL`
 Your frontend application URL
 ```
-https://your-frontend-domain.com
+Example: http://170.64.188.76:3000
 ```
 
 # Setting Up Secrets
