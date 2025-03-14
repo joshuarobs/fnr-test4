@@ -54,14 +54,21 @@ jobs:
       - name: Configure PostgreSQL
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            # Generate a secure password
+            DB_PASSWORD=$(openssl rand -base64 32)
+            
             # Create database user and database
             sudo -u postgres psql << PSQL
-            CREATE USER fnrapp WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';
+            CREATE USER fnrapp WITH PASSWORD '$DB_PASSWORD';
             CREATE DATABASE fnrdb;
             GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
             ALTER USER fnrapp WITH SUPERUSER;
             \q
             PSQL
+
+            # Store the password securely on the server
+            echo "$DB_PASSWORD" > /var/www/fnr-app/.db_password
+            chmod 600 /var/www/fnr-app/.db_password
 
             # Configure PostgreSQL for local connections
             sed -i "s/peer/md5/" /etc/postgresql/*/main/pg_hba.conf
@@ -94,13 +101,14 @@ jobs:
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             # Create environment file with local database URL
+            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
             cat > /var/www/fnr-app/.env << EOF
-            DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
+            DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
             PORT=3000
             HOST="0.0.0.0"
-            SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
-            CLIENT_URL="${{ secrets.CLIENT_URL }}"
+            SESSION_SECRET="$(openssl rand -base64 32)"
+            CLIENT_URL="http://${{ secrets.DROPLET_IP }}:3000"
             PM2_HOME="/var/www/fnr-app/.pm2"
             EOF
 

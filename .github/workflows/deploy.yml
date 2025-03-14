@@ -56,9 +56,18 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             BACKUP_DIR="/var/backups/db"
             mkdir -p $BACKUP_DIR
-            PGPASSWORD=${{ secrets.DATABASE_PASSWORD }} pg_dump -U fnrapp -h localhost fnrdb > $BACKUP_DIR/fnrdb_$TIMESTAMP.sql
+            
+            # Get database password from server
+            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export PGPASSWORD="$DB_PASSWORD"
+            
+            pg_dump -U fnrapp -h localhost fnrdb > $BACKUP_DIR/fnrdb_$TIMESTAMP.sql
+            
             # Keep only last 5 backups
             ls -t $BACKUP_DIR/fnrdb_*.sql | tail -n +6 | xargs rm -f 2>/dev/null
+            
+            # Clear password from environment
+            unset PGPASSWORD
           ENDSSH
 
       - name: Run Database Migrations
@@ -66,13 +75,16 @@ jobs:
           # Run migrations directly on the deployed application
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             cd /var/www/fnr-app
-            export DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
+            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             npx prisma migrate deploy
             if [ $? -ne 0 ]; then
               echo "Migration failed. Rolling back to last backup..."
               LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
               if [ -n "$LATEST_BACKUP" ]; then
-                PGPASSWORD=${{ secrets.DATABASE_PASSWORD }} psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
+                export PGPASSWORD="$DB_PASSWORD"
+                psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
+                unset PGPASSWORD
               fi
               exit 1
             fi
@@ -88,12 +100,12 @@ jobs:
 
           # Create deployment environment file
           cat > .deploy/.env << EOF
-          DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
+          DATABASE_URL="postgresql://fnrapp:\${DB_PASSWORD}@localhost:5432/fnrdb"
           NODE_ENV=${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           PORT=3000
           HOST="0.0.0.0"
-          SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
-          CLIENT_URL="${{ secrets.CLIENT_URL }}"
+          SESSION_SECRET="$(openssl rand -base64 32)"
+          CLIENT_URL="http://${{ secrets.DROPLET_IP }}:3000"
           PM2_HOME="/var/www/fnr-app/.pm2"
           EOF
 
@@ -154,7 +166,8 @@ jobs:
           # Verify database connection
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             cd /var/www/fnr-app
-            export DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
+            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             npx prisma db seed
             if [ $? -ne 0 ]; then
               echo "Database verification failed"
