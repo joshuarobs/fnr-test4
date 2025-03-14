@@ -67,17 +67,17 @@ jobs:
             IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'fnrapp') THEN
               CREATE USER fnrapp WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';
             END IF;
-            IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'fnrdb') THEN
-              CREATE DATABASE fnrdb;
-            END IF;
-            GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
-            ALTER USER fnrapp WITH SUPERUSER;
           END
           $$;
+          SELECT 'Creating database...' as step;
+          DROP DATABASE IF EXISTS fnrdb;
+          CREATE DATABASE fnrdb WITH OWNER fnrapp;
+          GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
+          ALTER USER fnrapp WITH SUPERUSER;
           EOSQL
 
           echo "🔧 Configuring PostgreSQL authentication..."
-          PG_HBA_CONF=\$(find /etc/postgresql -name "pg_hba.conf" | head -n 1)
+          PG_HBA_CONF=$(find /etc/postgresql -name "pg_hba.conf" | head -n 1)
           if [ -z "\$PG_HBA_CONF" ]; then
             echo "❌ Could not find pg_hba.conf"
             exit 1
@@ -155,6 +155,10 @@ jobs:
       - name: Configure Environment
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          # Save database password for deploy workflow
+          echo "${{ secrets.DATABASE_PASSWORD }}" > /var/www/fnr-app/.db_password
+          chmod 600 /var/www/fnr-app/.db_password
+
           cat > /var/www/fnr-app/.env << 'EOF'
           DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
           NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
@@ -210,6 +214,7 @@ jobs:
             "/var/www/fnr-app"
             "/var/www/fnr-app/logs"
             "/var/www/fnr-app/.env"
+            "/var/www/fnr-app/.db_password"
           )
 
           for file in "${REQUIRED_FILES[@]}"; do
@@ -221,10 +226,12 @@ jobs:
           done
 
           echo "🔒 Verifying file permissions..."
-          if [ "$(stat -c %a /var/www/fnr-app/.env)" != "600" ]; then
-            echo "❌ Incorrect permissions on .env file"
-            exit 1
-          fi
+          for file in "/var/www/fnr-app/.env" "/var/www/fnr-app/.db_password"; do
+            if [ "$(stat -c %a $file)" != "600" ]; then
+              echo "❌ Incorrect permissions on $file"
+              exit 1
+            fi
+          done
           echo "✅ File permissions verified"
 
           echo "🌍 Verifying environment variables..."
