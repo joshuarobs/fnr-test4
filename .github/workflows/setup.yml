@@ -54,47 +54,140 @@ jobs:
       - name: Configure PostgreSQL
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            # Generate a secure password
+            echo "🔍 Checking PostgreSQL status..."
+            if ! systemctl is-active --quiet postgresql; then
+              echo "❌ PostgreSQL is not running!"
+              systemctl status postgresql
+              exit 1
+            fi
+            echo "✅ PostgreSQL is running"
+            
+            echo "📁 Creating app directory if not exists..."
+            mkdir -p /var/www/fnr-app
+            
+            echo "🔑 Generating database password..."
             DB_PASSWORD=$(openssl rand -base64 32)
             
-            # Create database user and database
-            sudo -u postgres psql << PSQL
-            CREATE USER fnrapp WITH PASSWORD '$DB_PASSWORD';
+            echo "👤 Creating database user and database..."
+            if ! sudo -u postgres psql -v ON_ERROR_STOP=1 << PSQL
+            DO \$\$
+            BEGIN
+              IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'fnrapp') THEN
+                CREATE USER fnrapp WITH PASSWORD '$DB_PASSWORD';
+              END IF;
+            END
+            \$\$;
             CREATE DATABASE fnrdb;
             GRANT ALL PRIVILEGES ON DATABASE fnrdb TO fnrapp;
             ALTER USER fnrapp WITH SUPERUSER;
-            \q
+            \c fnrdb
+            \dt
             PSQL
+            then
+              echo "❌ Failed to setup database user and permissions"
+              exit 1
+            fi
+            echo "✅ Database user and permissions configured"
 
-            # Store the password securely on the server
-            echo "$DB_PASSWORD" > /var/www/fnr-app/.db_password
+            echo "💾 Storing database password..."
+            if ! echo "$DB_PASSWORD" > /var/www/fnr-app/.db_password; then
+              echo "❌ Failed to store database password"
+              exit 1
+            fi
             chmod 600 /var/www/fnr-app/.db_password
+            echo "✅ Database password stored securely"
 
-            # Configure PostgreSQL for local connections
-            sed -i "s/peer/md5/" /etc/postgresql/*/main/pg_hba.conf
-            sed -i "s/ident/md5/" /etc/postgresql/*/main/pg_hba.conf
+            echo "🔧 Configuring PostgreSQL authentication..."
+            PG_HBA_CONF=$(find /etc/postgresql -name "pg_hba.conf" | head -n 1)
+            if [ -z "$PG_HBA_CONF" ]; then
+              echo "❌ Could not find pg_hba.conf"
+              exit 1
+            fi
             
-            # Ensure local connections use password auth
-            echo "local   fnrdb    fnrapp                    md5" >> /etc/postgresql/*/main/pg_hba.conf
-            echo "host    fnrdb    fnrapp    127.0.0.1/32   md5" >> /etc/postgresql/*/main/pg_hba.conf
-
-            # Restart PostgreSQL
+            # Backup original config
+            cp "$PG_HBA_CONF" "${PG_HBA_CONF}.bak"
+            
+            # Update authentication methods
+            sed -i "s/peer/md5/g" "$PG_HBA_CONF"
+            sed -i "s/ident/md5/g" "$PG_HBA_CONF"
+            
+            # Add our specific rules
+            echo "# Added by setup workflow" >> "$PG_HBA_CONF"
+            echo "local   fnrdb    fnrapp                    md5" >> "$PG_HBA_CONF"
+            echo "host    fnrdb    fnrapp    127.0.0.1/32   md5" >> "$PG_HBA_CONF"
+            
+            echo "🔄 Restarting PostgreSQL..."
             systemctl restart postgresql
+            if ! systemctl is-active --quiet postgresql; then
+              echo "❌ PostgreSQL failed to restart"
+              systemctl status postgresql
+              # Restore backup if restart failed
+              mv "${PG_HBA_CONF}.bak" "$PG_HBA_CONF"
+              systemctl restart postgresql
+              exit 1
+            fi
+            echo "✅ PostgreSQL restarted successfully"
+
+            echo "🧪 Testing database connection..."
+            export PGPASSWORD="$DB_PASSWORD"
+            if ! psql -U fnrapp -h localhost -d fnrdb -c "\conninfo"; then
+              echo "❌ Database connection test failed"
+              exit 1
+            fi
+            unset PGPASSWORD
+            echo "✅ Database connection test successful"
           ENDSSH
 
       - name: Setup Application Directory
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            # Create application directory
-            mkdir -p /var/www/fnr-app
-            mkdir -p /var/www/fnr-app/logs
-            mkdir -p /var/backups/app
-            mkdir -p /var/backups/db
+            echo "📁 Setting up application directories..."
+            
+            # Create directories with error checking
+            for dir in "/var/www/fnr-app" "/var/www/fnr-app/logs" "/var/backups/app" "/var/backups/db"; do
+              if ! mkdir -p "$dir"; then
+                echo "❌ Failed to create directory: $dir"
+                exit 1
+              fi
+              echo "✅ Created directory: $dir"
+            done
 
-            # Set permissions
-            chown -R $USER:$USER /var/www/fnr-app
-            chmod 755 /var/www/fnr-app
-            chmod 755 /var/www/fnr-app/logs
+            echo "🔐 Setting directory permissions..."
+            if ! chown -R $USER:$USER /var/www/fnr-app; then
+              echo "❌ Failed to set directory ownership"
+              exit 1
+            fi
+            
+            for dir in "/var/www/fnr-app" "/var/www/fnr-app/logs"; do
+              if ! chmod 755 "$dir"; then
+                echo "❌ Failed to set permissions for: $dir"
+                exit 1
+              fi
+              echo "✅ Set permissions for: $dir"
+            done
+
+            echo "🔍 Verifying directory structure..."
+            for dir in "/var/www/fnr-app" "/var/www/fnr-app/logs" "/var/backups/app" "/var/backups/db"; do
+              if [ ! -d "$dir" ]; then
+                echo "❌ Directory not found: $dir"
+                exit 1
+              fi
+              
+              # Check permissions
+              perms=$(stat -c "%a" "$dir")
+              if [ "$perms" != "755" ] && [ "$dir" = "/var/www/fnr-app" -o "$dir" = "/var/www/fnr-app/logs" ]; then
+                echo "❌ Incorrect permissions on: $dir (found: $perms, expected: 755)"
+                exit 1
+              fi
+              
+              # Check ownership
+              owner=$(stat -c "%U:%G" "$dir")
+              if [ "$owner" != "$USER:$USER" ] && [ "$dir" = "/var/www/fnr-app" -o "$dir" = "/var/www/fnr-app/logs" ]; then
+                echo "❌ Incorrect ownership on: $dir (found: $owner, expected: $USER:$USER)"
+                exit 1
+              fi
+            done
+            echo "✅ Directory structure verified"
           ENDSSH
 
       - name: Configure Environment
@@ -119,16 +212,79 @@ jobs:
       - name: Verify Setup
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            # Verify Node.js and PM2
-            node --version
-            pm2 --version
+            echo "🔍 Running comprehensive setup verification..."
+            
+            echo "📦 Verifying Node.js installation..."
+            NODE_VERSION=$(node --version)
+            if [ $? -ne 0 ]; then
+              echo "❌ Node.js verification failed"
+              exit 1
+            fi
+            echo "✅ Node.js version: $NODE_VERSION"
 
-            # Verify PostgreSQL
-            systemctl status postgresql | grep "active (running)"
-            psql -U fnrapp -d fnrdb -c "\l" || echo "Database connection failed"
+            echo "🔄 Verifying PM2 installation..."
+            PM2_VERSION=$(pm2 --version)
+            if [ $? -ne 0 ]; then
+              echo "❌ PM2 verification failed"
+              exit 1
+            fi
+            echo "✅ PM2 version: $PM2_VERSION"
 
-            # Verify directories
-            test -d /var/www/fnr-app || echo "App directory missing"
-            test -d /var/www/fnr-app/logs || echo "Logs directory missing"
-            test -f /var/www/fnr-app/.env || echo "Environment file missing"
+            echo "🐘 Verifying PostgreSQL status..."
+            if ! systemctl is-active --quiet postgresql; then
+              echo "❌ PostgreSQL is not running"
+              systemctl status postgresql
+              exit 1
+            fi
+            echo "✅ PostgreSQL is running"
+
+            echo "🔐 Testing database connection..."
+            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export PGPASSWORD="$DB_PASSWORD"
+            if ! psql -U fnrapp -h localhost -d fnrdb -c "\l" > /dev/null; then
+              echo "❌ Database connection test failed"
+              exit 1
+            fi
+            unset PGPASSWORD
+            echo "✅ Database connection successful"
+
+            echo "📁 Verifying file structure..."
+            REQUIRED_FILES=(
+              "/var/www/fnr-app"
+              "/var/www/fnr-app/logs"
+              "/var/www/fnr-app/.env"
+              "/var/www/fnr-app/.db_password"
+            )
+
+            for file in "${REQUIRED_FILES[@]}"; do
+              if [ ! -e "$file" ]; then
+                echo "❌ Required file/directory missing: $file"
+                exit 1
+              fi
+              echo "✅ Found: $file"
+            done
+
+            echo "🔒 Verifying file permissions..."
+            if [ "$(stat -c %a /var/www/fnr-app/.env)" != "600" ]; then
+              echo "❌ Incorrect permissions on .env file"
+              exit 1
+            fi
+            if [ "$(stat -c %a /var/www/fnr-app/.db_password)" != "600" ]; then
+              echo "❌ Incorrect permissions on .db_password file"
+              exit 1
+            fi
+            echo "✅ File permissions verified"
+
+            echo "🌍 Verifying environment variables..."
+            if ! grep -q "DATABASE_URL" /var/www/fnr-app/.env; then
+              echo "❌ DATABASE_URL missing from .env"
+              exit 1
+            fi
+            if ! grep -q "NODE_ENV" /var/www/fnr-app/.env; then
+              echo "❌ NODE_ENV missing from .env"
+              exit 1
+            fi
+            echo "✅ Environment variables verified"
+
+            echo "✨ Setup verification completed successfully"
           ENDSSH
