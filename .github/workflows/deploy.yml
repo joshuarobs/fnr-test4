@@ -1,17 +1,25 @@
-name: Deploy to Digital Ocean
+name: Build and Deploy
 
 on:
   push:
     branches: [main, staging]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 env:
   NODE_VERSION: '20'
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,16 +40,51 @@ jobs:
           cd ../..
 
       - name: Build application
-        run: |
-          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            npx nx build fnr-server --prod --skip-nx-cache
-          else
-            npx nx build fnr-server --configuration=staging --skip-nx-cache
-          fi
+        run: npx nx build fnr-server --skip-nx-cache
 
       - name: Run tests
+        run: npx nx test fnr-server --skip-nx-cache
+
+      - name: Prepare deployment package
         run: |
-          npx nx test fnr-server --skip-nx-cache
+          rm -rf .deploy
+          mkdir -p .deploy/dist
+          mkdir -p .deploy/prisma/seedData
+          mkdir -p .deploy/src/lib
+
+          # Copy dist files
+          cp -r dist/apps/fnr-server/* .deploy/dist/
+
+          # Copy Prisma files
+          cp -r apps/fnr-server/prisma/*.{ts,prisma} .deploy/prisma/
+          cp -r apps/fnr-server/prisma/migrations .deploy/prisma/
+          cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/
+
+          # Copy required source files for seeding
+          cp apps/fnr-server/src/lib/claimHelpers.ts .deploy/src/lib/
+
+          # Copy package files
+          cp package.json .deploy/
+          cp package-lock.json .deploy/ 2>/dev/null || cp yarn.lock .deploy/ 2>/dev/null || echo "No lock file found"
+
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: .deploy
+          retention-days: 1
+
+  deploy-staging:
+    needs: build
+    if: github.ref == 'refs/heads/staging' || github.event.inputs.environment == 'staging'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download deployment package
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
+          path: .deploy
 
       - name: Setup SSH
         run: |
@@ -70,30 +113,6 @@ jobs:
             unset PGPASSWORD
           ENDSSH
 
-      - name: Prepare deployment package
-        run: |
-          rm -rf .deploy
-          mkdir -p .deploy/dist
-          mkdir -p .deploy/prisma
-          # Copy dist files
-          cp -r dist/apps/fnr-server/* .deploy/dist/
-          # Copy Prisma files
-          cp -r apps/fnr-server/prisma/* .deploy/prisma/
-          # Copy package files
-          cp package.json .deploy/
-          cp package-lock.json .deploy/ 2>/dev/null || cp yarn.lock .deploy/ 2>/dev/null || echo "No lock file found"
-
-          # Create deployment environment file
-          cat > .deploy/.env << EOF
-          DATABASE_URL="postgresql://fnrapp:\${DB_PASSWORD}@localhost:5432/fnrdb"
-          NODE_ENV=${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-          PORT=3000
-          HOST="0.0.0.0"
-          SESSION_SECRET="$(openssl rand -base64 32)"
-          CLIENT_URL="http://${{ secrets.DROPLET_IP }}:3000"
-          PM2_HOME="/var/www/fnr-app/.pm2"
-          EOF
-
       - name: Deploy Application
         run: |
           # Transfer files
@@ -120,17 +139,23 @@ jobs:
             rm -rf $APP_DIR/*
             cp -r /tmp/deploy/* $APP_DIR/
 
-            # Install dependencies and setup
+            # Install production dependencies only
             cd $APP_DIR
             npm ci --only=production
+
+            # Generate Prisma client
+            npx prisma generate
+
+            # Setup directories
             mkdir -p logs
             chmod 755 logs
             chmod -R 755 prisma
 
-            # Run database migrations with explicit schema path
+            # Run database migrations
             DB_PASSWORD=$(cat .db_password)
             export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             npx prisma migrate deploy --schema=./prisma/schema.prisma
+
             if [ $? -ne 0 ]; then
               echo "Migration failed. Rolling back to last backup..."
               LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
@@ -164,19 +189,165 @@ jobs:
           # Check if service is running
           ssh root@${{ secrets.DROPLET_IP }} "pm2 list | grep fnr-server"
 
-          # Verify database connection
+          # Verify database connection and run seed
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             cd /var/www/fnr-app
-            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            DB_PASSWORD=$(cat .db_password)
             export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
-            npx prisma db seed --schema=./prisma/schema.prisma
+            
+            # Run seed
+            npx prisma db seed
+            
             if [ $? -ne 0 ]; then
-              echo "Database verification failed"
+              echo "Database seeding failed"
               exit 1
             fi
+            echo "Database seeding completed successfully"
           ENDSSH
 
           # Verify HTTP endpoint
+          echo "Verifying HTTP endpoint..."
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/api)
+          if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
+            echo "Deployment verified successfully"
+          else
+            echo "Deployment verification failed"
+            exit 1
+          fi
+
+  deploy-production:
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download deployment package
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
+          path: .deploy
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+      - name: Backup Database
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            BACKUP_DIR="/var/backups/db"
+            mkdir -p $BACKUP_DIR
+            
+            # Get database password from server
+            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export PGPASSWORD="$DB_PASSWORD"
+            
+            pg_dump -U fnrapp -h localhost fnrdb > $BACKUP_DIR/fnrdb_$TIMESTAMP.sql
+            
+            # Keep only last 5 backups
+            ls -t $BACKUP_DIR/fnrdb_*.sql | tail -n +6 | xargs rm -f 2>/dev/null
+            
+            # Clear password from environment
+            unset PGPASSWORD
+          ENDSSH
+
+      - name: Deploy Application
+        run: |
+          # Transfer files
+          scp -r .deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
+
+          # Execute deployment
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            APP_DIR="/var/www/fnr-app"
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            BACKUP_DIR="/var/backups/app"
+
+            # Backup current deployment
+            if [ -d "$APP_DIR" ] && [ "$(ls -A $APP_DIR)" ]; then
+              mkdir -p $BACKUP_DIR
+              tar -czf $BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz -C $APP_DIR .
+              ls -t $BACKUP_DIR/app_backup_*.tar.gz | tail -n +6 | xargs rm -f 2>/dev/null
+            fi
+
+            # Stop current application
+            pm2 stop all 2>/dev/null || true
+
+            # Deploy new build
+            mkdir -p $APP_DIR
+            rm -rf $APP_DIR/*
+            cp -r /tmp/deploy/* $APP_DIR/
+
+            # Install production dependencies only
+            cd $APP_DIR
+            npm ci --only=production
+
+            # Generate Prisma client
+            npx prisma generate
+
+            # Setup directories
+            mkdir -p logs
+            chmod 755 logs
+            chmod -R 755 prisma
+
+            # Run database migrations
+            DB_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            npx prisma migrate deploy --schema=./prisma/schema.prisma
+
+            if [ $? -ne 0 ]; then
+              echo "Migration failed. Rolling back to last backup..."
+              LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
+              if [ -n "$LATEST_BACKUP" ]; then
+                export PGPASSWORD="$DB_PASSWORD"
+                psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
+                unset PGPASSWORD
+              fi
+              exit 1
+            fi
+
+            # Start application
+            pm2 delete all 2>/dev/null || true
+            ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
+            pm2 start dist/main.js \
+              --name "fnr-server-$ENV" \
+              --log $APP_DIR/logs/app.log \
+              --error $APP_DIR/logs/error.log \
+              --time \
+              --merge-logs \
+              --env production
+            
+            pm2 save
+          ENDSSH
+
+      - name: Verify Deployment
+        run: |
+          # Wait for application to start
+          sleep 10
+
+          # Check if service is running
+          ssh root@${{ secrets.DROPLET_IP }} "pm2 list | grep fnr-server"
+
+          # Verify database connection and run seed
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+            cd /var/www/fnr-app
+            DB_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            
+            # Run seed
+            npx prisma db seed
+            
+            if [ $? -ne 0 ]; then
+              echo "Database seeding failed"
+              exit 1
+            fi
+            echo "Database seeding completed successfully"
+          ENDSSH
+
+          # Verify HTTP endpoint
+          echo "Verifying HTTP endpoint..."
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/api)
           if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
             echo "Deployment verified successfully"
@@ -190,4 +361,4 @@ jobs:
         run: |
           rm -rf ~/.ssh/id_rsa
           rm -rf .deploy
-          ssh root@${{ secrets.DROPLET_IP }} "rm -rf /tmp/prisma"
+          ssh root@${{ secrets.DROPLET_IP }} "rm -rf /tmp/deploy"
