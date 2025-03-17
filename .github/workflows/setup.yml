@@ -8,8 +8,8 @@ on:
         required: true
         type: choice
         options:
-          - prod
           - staging
+          - prod
 
 env:
   NODE_VERSION: '20'
