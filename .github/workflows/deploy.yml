@@ -70,31 +70,16 @@ jobs:
             unset PGPASSWORD
           ENDSSH
 
-      - name: Run Database Migrations
-        run: |
-          # Run migrations directly on the deployed application
-          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-            cd /var/www/fnr-app
-            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
-            npx prisma migrate deploy
-            if [ $? -ne 0 ]; then
-              echo "Migration failed. Rolling back to last backup..."
-              LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
-              if [ -n "$LATEST_BACKUP" ]; then
-                export PGPASSWORD="$DB_PASSWORD"
-                psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
-                unset PGPASSWORD
-              fi
-              exit 1
-            fi
-          ENDSSH
-
       - name: Prepare deployment package
         run: |
           rm -rf .deploy
           mkdir -p .deploy/dist
+          mkdir -p .deploy/prisma
+          # Copy dist files
           cp -r dist/apps/fnr-server/* .deploy/dist/
+          # Copy Prisma files
+          cp -r apps/fnr-server/prisma/* .deploy/prisma/
+          # Copy package files
           cp package.json .deploy/
           cp package-lock.json .deploy/ 2>/dev/null || cp yarn.lock .deploy/ 2>/dev/null || echo "No lock file found"
 
@@ -140,6 +125,22 @@ jobs:
             npm ci --only=production
             mkdir -p logs
             chmod 755 logs
+            chmod -R 755 prisma
+
+            # Run database migrations with explicit schema path
+            DB_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            npx prisma migrate deploy --schema=./prisma/schema.prisma
+            if [ $? -ne 0 ]; then
+              echo "Migration failed. Rolling back to last backup..."
+              LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
+              if [ -n "$LATEST_BACKUP" ]; then
+                export PGPASSWORD="$DB_PASSWORD"
+                psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
+                unset PGPASSWORD
+              fi
+              exit 1
+            fi
 
             # Start application
             pm2 delete all 2>/dev/null || true
@@ -168,7 +169,7 @@ jobs:
             cd /var/www/fnr-app
             DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
             export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
-            npx prisma db seed
+            npx prisma db seed --schema=./prisma/schema.prisma
             if [ $? -ne 0 ]; then
               echo "Database verification failed"
               exit 1
