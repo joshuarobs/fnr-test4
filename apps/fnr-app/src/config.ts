@@ -1,5 +1,8 @@
 export const API_CONFIG = {
-  baseUrl: 'http://localhost:3333/api',
+  baseUrl:
+    process.env.NODE_ENV === 'production'
+      ? '/api' // In production, use relative URL
+      : 'http://localhost:3333/api', // In development, use localhost
 } as const;
 
 // Helper to get full API URL
