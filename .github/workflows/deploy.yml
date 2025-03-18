@@ -129,8 +129,8 @@ jobs:
           # Clean up empty directories
           rm -rf deploy/apps deploy/dist/apps
 
-          echo "📋 Final deployment structure:"
-          ls -R deploy/
+          echo "📋 Final deployment structure (excluding node_modules):"
+          ls -R deploy/ | grep -v "node_modules"
 
       - name: Verify deployment package
         run: |
@@ -269,8 +269,8 @@ jobs:
               exit 1
             fi
             
-            echo "📂 Deployment directory structure:"
-            ls -R
+            echo "📂 Deployment directory structure (excluding node_modules):"
+            find . -maxdepth 2 -not -path "./node_modules*" -not -path "*/node_modules*"
             
             # Setup environment
             DB_PASSWORD=$(cat .db_password)
@@ -328,8 +328,8 @@ jobs:
           # Clean up empty directories
           rm -rf deploy/apps deploy/dist/apps
 
-          echo "📋 Final deployment structure:"
-          ls -R deploy/
+          echo "📋 Final deployment structure (excluding node_modules):"
+          ls -R deploy/ | grep -v "node_modules"
 
       - name: Verify deployment package
         run: |
@@ -468,8 +468,8 @@ jobs:
               exit 1
             fi
             
-            echo "📂 Deployment directory structure:"
-            ls -R
+            echo "📂 Deployment directory structure (excluding node_modules):"
+            find . -maxdepth 2 -not -path "./node_modules*" -not -path "*/node_modules*"
             
             # Setup environment
             DB_PASSWORD=$(cat .db_password)
