@@ -48,51 +48,122 @@ jobs:
       - name: Prepare deployment package
         id: prepare-package
         run: |
+          set -e  # Exit on any error
+
           echo "🧹 Cleaning up previous deployment directory..."
-          rm -rf .deploy
+          rm -rf .deploy || {
+            echo "Failed to clean up previous deployment directory"
+            exit 1
+          }
 
           echo "📁 Creating deployment directory structure..."
-          mkdir -p .deploy/dist
-          mkdir -p .deploy/prisma/seedData
-          mkdir -p .deploy/src/lib
+          mkdir -p .deploy || {
+            echo "Failed to create .deploy directory"
+            exit 1
+          }
+
+          # Create all required directories first
+          directories=(
+            ".deploy/dist"
+            ".deploy/prisma/seedData"
+            ".deploy/prisma/migrations"
+            ".deploy/src/lib"
+          )
+
+          for dir in "${directories[@]}"; do
+            mkdir -p "$dir" || {
+              echo "Failed to create directory: $dir"
+              exit 1
+            }
+            echo "Created directory: $dir"
+          done
 
           echo "📦 Copying dist files..."
-          cp -r dist/apps/fnr-server/* .deploy/dist/
+          if [ ! -d "dist/apps/fnr-server" ]; then
+            echo "❌ Source directory not found: dist/apps/fnr-server"
+            exit 1
+          fi
+          cp -r dist/apps/fnr-server/* .deploy/dist/ || {
+            echo "Failed to copy dist files"
+            exit 1
+          }
 
           echo "🔄 Copying Prisma files..."
-          cp -r apps/fnr-server/prisma/*.{ts,prisma} .deploy/prisma/
-          cp -r apps/fnr-server/prisma/migrations .deploy/prisma/
-          cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/
+          cp apps/fnr-server/prisma/schema.prisma .deploy/prisma/ || {
+            echo "Failed to copy schema.prisma"
+            exit 1
+          }
+
+          cp -r apps/fnr-server/prisma/migrations/* .deploy/prisma/migrations/ || {
+            echo "Failed to copy migrations"
+            exit 1
+          }
+
+          if [ -d "apps/fnr-server/prisma/seedData" ]; then
+            cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/ || {
+              echo "Failed to copy seedData"
+              exit 1
+            }
+          fi
 
           echo "📄 Copying source files..."
-          cp apps/fnr-server/src/lib/claimHelpers.ts .deploy/src/lib/
+          cp apps/fnr-server/src/lib/claimHelpers.ts .deploy/src/lib/ || {
+            echo "Failed to copy claimHelpers.ts"
+            exit 1
+          }
 
           echo "📝 Copying package files..."
-          cp package.json .deploy/
-          cp package-lock.json .deploy/ 2>/dev/null || cp yarn.lock .deploy/ 2>/dev/null || echo "No lock file found"
+          cp package.json .deploy/ || {
+            echo "Failed to copy package.json"
+            exit 1
+          }
+
+          # Try to copy either package-lock.json or yarn.lock
+          if [ -f "package-lock.json" ]; then
+            cp package-lock.json .deploy/ || echo "Warning: Could not copy package-lock.json"
+          elif [ -f "yarn.lock" ]; then
+            cp yarn.lock .deploy/ || echo "Warning: Could not copy yarn.lock"
+          fi
 
           echo "🔍 Verifying deployment package contents..."
           required_files=(
-            "dist/main.js"
-            "prisma/schema.prisma"
-            "prisma/migrations"
-            "prisma/seedData"
-            "src/lib/claimHelpers.ts"
-            "package.json"
+            ".deploy/dist/main.js"
+            ".deploy/prisma/schema.prisma"
+            ".deploy/prisma/migrations"
+            ".deploy/src/lib/claimHelpers.ts"
+            ".deploy/package.json"
           )
 
-          cd .deploy
           for file in "${required_files[@]}"; do
             if [ ! -e "$file" ]; then
               echo "❌ Required file/directory missing: $file"
+              ls -la "$(dirname "$file")"
               exit 1
             fi
             echo "✅ Found: $file"
           done
-          cd ..
 
           echo "📋 Listing deployment package contents:"
           ls -R .deploy/
+
+          echo "✨ Deployment package prepared successfully"
+
+      - name: Pre-upload verification
+        run: |
+          if [ ! -d ".deploy" ]; then
+            echo "❌ .deploy directory not found"
+            pwd
+            ls -la
+            exit 1
+          fi
+
+          echo "📦 .deploy directory size:"
+          du -sh .deploy
+
+          echo "📋 .deploy directory contents:"
+          ls -la .deploy
+
+          echo "✅ Verification complete"
 
       - name: Upload deployment package
         id: upload-package
@@ -102,6 +173,8 @@ jobs:
           path: .deploy
           retention-days: 1
           if-no-files-found: error
+          compression-level: 6
+          overwrite: true
 
       - name: Verify artifact upload
         run: |
@@ -110,7 +183,17 @@ jobs:
             echo "❌ Artifact upload failed"
             exit 1
           fi
-          echo "✅ Artifact upload successful"
+
+          # Additional verification
+          echo "🔍 Checking artifact existence..."
+          if ! curl -s -f -H "Authorization: token ${{ github.token }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" | \
+            grep -q "deployment-package"; then
+            echo "❌ Artifact not found in repository"
+            exit 1
+          fi
+
+          echo "✅ Artifact upload verified successfully"
 
   deploy-staging:
     needs: build
