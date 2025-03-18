@@ -65,142 +65,37 @@ jobs:
         run: npx nx test fnr-server --skip-nx-cache
 
       - name: Prepare deployment package
-        id: prepare-package
         run: |
-          set -e  # Exit on any error
+          pwd
+          echo "Current directory contents:"
+          ls -la
 
-          echo "🔍 Verifying build artifacts..."
-          if [ ! -d "dist/apps/fnr-server" ] || [ ! -f "dist/apps/fnr-server/main.js" ]; then
-            echo "❌ Build artifacts missing. Build step may have failed."
-            exit 1
-          fi
-
-          echo "🧹 Cleaning up previous deployment directory..."
-          rm -rf .deploy
-
-          echo "📁 Creating deployment directory..."
-          mkdir -p .deploy
-
-          echo "📦 Creating deployment package..."
-
-          # Create dist directory and copy build output
+          echo "Creating deployment directory..."
           mkdir -p .deploy/dist
-          cp dist/apps/fnr-server/main.js .deploy/dist/ || {
-            echo "❌ Failed to copy build output"
-            ls -la dist/apps/fnr-server/
-            exit 1
-          }
-
-          # Copy Prisma files
           mkdir -p .deploy/prisma
-          echo "Copying schema.prisma..."
-          cp apps/fnr-server/prisma/schema.prisma .deploy/prisma/ || {
-            echo "❌ Failed to copy schema.prisma"
-            exit 1
-          }
 
-          echo "Copying migrations..."
-          if [ -d "apps/fnr-server/prisma/migrations" ]; then
-            cp -r apps/fnr-server/prisma/migrations .deploy/prisma/ || {
-              echo "❌ Failed to copy migrations"
-              exit 1
-            }
-          else
-            echo "⚠️ No migrations directory found"
-          fi
+          echo "Copying build output..."
+          ls -la dist/apps/fnr-server/
+          cp -r dist/apps/fnr-server/* .deploy/dist/
 
-          echo "Copying seedData..."
-          if [ -d "apps/fnr-server/prisma/seedData" ]; then
-            mkdir -p .deploy/prisma/seedData
-            cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/ || {
-              echo "❌ Failed to copy seedData"
-              exit 1
-            }
-          else
-            echo "⚠️ No seedData directory found"
-          fi
+          echo "Copying Prisma files..."
+          cp apps/fnr-server/prisma/schema.prisma .deploy/prisma/
+          cp -r apps/fnr-server/prisma/migrations .deploy/prisma/
+          cp -r apps/fnr-server/prisma/seedData .deploy/prisma/
 
-          # Copy package files
-          cp package.json .deploy/ || {
-            echo "❌ Failed to copy package.json"
-            exit 1
-          }
+          echo "Copying package files..."
+          cp package.json .deploy/
+          cp package-lock.json .deploy/
 
-          if [ -f "package-lock.json" ]; then
-            cp package-lock.json .deploy/
-          fi
-
-          echo "🔍 Verifying deployment package..."
-          required_paths=(
-            ".deploy/dist/main.js"
-            ".deploy/prisma/schema.prisma"
-            ".deploy/package.json"
-          )
-
-          for path in "${required_paths[@]}"; do
-            if [ ! -e "$path" ]; then
-              echo "❌ Missing required path: $path"
-              echo "Current directory structure:"
-              ls -R .deploy/
-              exit 1
-            fi
-            echo "✅ Found: $path"
-          done
-
-          echo "📊 Deployment package size:"
-          du -sh .deploy/*
-
-          echo "📋 Full deployment package contents:"
+          echo "Final .deploy contents:"
           ls -R .deploy/
 
-          echo "✨ Deployment package prepared successfully"
-
-      - name: Pre-upload verification
-        run: |
-          if [ ! -d ".deploy" ]; then
-            echo "❌ .deploy directory not found"
-            pwd
-            ls -la
-            exit 1
-          fi
-
-          echo "📦 .deploy directory size:"
-          du -sh .deploy
-
-          echo "📋 .deploy directory contents:"
-          ls -la .deploy
-
-          echo "✅ Verification complete"
-
       - name: Upload deployment package
-        id: upload-package
         uses: actions/upload-artifact@v4
         with:
           name: deployment-package
           path: .deploy
-          retention-days: 1
           if-no-files-found: error
-          compression-level: 6
-          overwrite: true
-
-      - name: Verify artifact upload
-        run: |
-          echo "📤 Artifact upload status: ${{ steps.upload-package.outcome }}"
-          if [ "${{ steps.upload-package.outcome }}" != "success" ]; then
-            echo "❌ Artifact upload failed"
-            exit 1
-          fi
-
-          # Additional verification
-          echo "🔍 Checking artifact existence..."
-          if ! curl -s -f -H "Authorization: token ${{ github.token }}" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" | \
-            grep -q "deployment-package"; then
-            echo "❌ Artifact not found in repository"
-            exit 1
-          fi
-
-          echo "✅ Artifact upload verified successfully"
 
   deploy-staging:
     needs: build
