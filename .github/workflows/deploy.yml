@@ -40,7 +40,26 @@ jobs:
           cd ../..
 
       - name: Build application
-        run: npx nx build fnr-server --skip-nx-cache
+        id: build
+        run: |
+          echo "🏗️ Building server application..."
+          npx nx build fnr-server --skip-nx-cache
+
+          # Verify build output
+          if [ ! -d "dist/apps/fnr-server" ]; then
+            echo "❌ Build output directory not found"
+            exit 1
+          fi
+
+          echo "📦 Build output contents:"
+          ls -la dist/apps/fnr-server/
+
+          if [ ! -f "dist/apps/fnr-server/main.js" ]; then
+            echo "❌ Main build artifact not found"
+            exit 1
+          fi
+
+          echo "✅ Build completed successfully"
 
       - name: Run tests
         run: npx nx test fnr-server --skip-nx-cache
@@ -50,100 +69,88 @@ jobs:
         run: |
           set -e  # Exit on any error
 
+          echo "🔍 Verifying build artifacts..."
+          if [ ! -d "dist/apps/fnr-server" ] || [ ! -f "dist/apps/fnr-server/main.js" ]; then
+            echo "❌ Build artifacts missing. Build step may have failed."
+            exit 1
+          fi
+
           echo "🧹 Cleaning up previous deployment directory..."
-          rm -rf .deploy || {
-            echo "Failed to clean up previous deployment directory"
+          rm -rf .deploy
+
+          echo "📁 Creating deployment directory..."
+          mkdir -p .deploy
+
+          echo "📦 Creating deployment package..."
+
+          # Create dist directory and copy build output
+          mkdir -p .deploy/dist
+          cp dist/apps/fnr-server/main.js .deploy/dist/ || {
+            echo "❌ Failed to copy build output"
+            ls -la dist/apps/fnr-server/
             exit 1
           }
 
-          echo "📁 Creating deployment directory structure..."
-          mkdir -p .deploy || {
-            echo "Failed to create .deploy directory"
-            exit 1
-          }
-
-          # Create all required directories first
-          directories=(
-            ".deploy/dist"
-            ".deploy/prisma/seedData"
-            ".deploy/prisma/migrations"
-            ".deploy/src/lib"
-          )
-
-          for dir in "${directories[@]}"; do
-            mkdir -p "$dir" || {
-              echo "Failed to create directory: $dir"
-              exit 1
-            }
-            echo "Created directory: $dir"
-          done
-
-          echo "📦 Copying dist files..."
-          if [ ! -d "dist/apps/fnr-server" ]; then
-            echo "❌ Source directory not found: dist/apps/fnr-server"
-            exit 1
-          fi
-          cp -r dist/apps/fnr-server/* .deploy/dist/ || {
-            echo "Failed to copy dist files"
-            exit 1
-          }
-
-          echo "🔄 Copying Prisma files..."
+          # Copy Prisma files
+          mkdir -p .deploy/prisma
+          echo "Copying schema.prisma..."
           cp apps/fnr-server/prisma/schema.prisma .deploy/prisma/ || {
-            echo "Failed to copy schema.prisma"
+            echo "❌ Failed to copy schema.prisma"
             exit 1
           }
 
-          cp -r apps/fnr-server/prisma/migrations/* .deploy/prisma/migrations/ || {
-            echo "Failed to copy migrations"
-            exit 1
-          }
-
-          if [ -d "apps/fnr-server/prisma/seedData" ]; then
-            cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/ || {
-              echo "Failed to copy seedData"
+          echo "Copying migrations..."
+          if [ -d "apps/fnr-server/prisma/migrations" ]; then
+            cp -r apps/fnr-server/prisma/migrations .deploy/prisma/ || {
+              echo "❌ Failed to copy migrations"
               exit 1
             }
+          else
+            echo "⚠️ No migrations directory found"
           fi
 
-          echo "📄 Copying source files..."
-          cp apps/fnr-server/src/lib/claimHelpers.ts .deploy/src/lib/ || {
-            echo "Failed to copy claimHelpers.ts"
-            exit 1
-          }
+          echo "Copying seedData..."
+          if [ -d "apps/fnr-server/prisma/seedData" ]; then
+            mkdir -p .deploy/prisma/seedData
+            cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/ || {
+              echo "❌ Failed to copy seedData"
+              exit 1
+            }
+          else
+            echo "⚠️ No seedData directory found"
+          fi
 
-          echo "📝 Copying package files..."
+          # Copy package files
           cp package.json .deploy/ || {
-            echo "Failed to copy package.json"
+            echo "❌ Failed to copy package.json"
             exit 1
           }
 
-          # Try to copy either package-lock.json or yarn.lock
           if [ -f "package-lock.json" ]; then
-            cp package-lock.json .deploy/ || echo "Warning: Could not copy package-lock.json"
-          elif [ -f "yarn.lock" ]; then
-            cp yarn.lock .deploy/ || echo "Warning: Could not copy yarn.lock"
+            cp package-lock.json .deploy/
           fi
 
-          echo "🔍 Verifying deployment package contents..."
-          required_files=(
+          echo "🔍 Verifying deployment package..."
+          required_paths=(
             ".deploy/dist/main.js"
             ".deploy/prisma/schema.prisma"
-            ".deploy/prisma/migrations"
-            ".deploy/src/lib/claimHelpers.ts"
             ".deploy/package.json"
           )
 
-          for file in "${required_files[@]}"; do
-            if [ ! -e "$file" ]; then
-              echo "❌ Required file/directory missing: $file"
-              ls -la "$(dirname "$file")"
+          for path in "${required_paths[@]}"; do
+            if [ ! -e "$path" ]; then
+              echo "❌ Missing required path: $path"
+              echo "Current directory structure:"
+              ls -R .deploy/
               exit 1
             fi
-            echo "✅ Found: $file"
+            echo "✅ Found: $path"
           done
 
-          echo "📋 Listing deployment package contents:"
+          echo "📊 Deployment package size:"
+          du -sh .deploy/*
+
+          echo "📋 Full deployment package contents:"
           ls -R .deploy/
 
           echo "✨ Deployment package prepared successfully"
