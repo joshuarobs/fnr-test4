@@ -64,82 +64,39 @@ jobs:
       - name: Run tests
         run: npx nx test fnr-server --skip-nx-cache
 
-      - name: Prepare deployment package
+      - name: Verify build artifacts
         run: |
-          DEPLOY_DIR="$GITHUB_WORKSPACE/.deploy"
-          echo "🏗️ Creating deployment directory structure..."
+          echo "🔍 Verifying build artifacts..."
 
-          # Create directories with error checking
-          mkdir -p "$DEPLOY_DIR/dist" || { echo "❌ Failed to create dist directory"; exit 1; }
-          mkdir -p "$DEPLOY_DIR/prisma" || { echo "❌ Failed to create prisma directory"; exit 1; }
-
-          echo "📂 Deployment directory structure created at: $DEPLOY_DIR"
-          ls -la "$DEPLOY_DIR"
-
-          echo "📦 Copying build output..."
+          # Check build output
           if [ ! -d "dist/apps/fnr-server" ]; then
-            echo "❌ Build directory not found: dist/apps/fnr-server"
+            echo "❌ Build output directory not found"
             exit 1
           fi
-          cp -rv dist/apps/fnr-server/* "$DEPLOY_DIR/dist/" || { echo "❌ Failed to copy build output"; exit 1; }
 
-          echo "📄 Copying Prisma files..."
-          PRISMA_DIR="apps/fnr-server/prisma"
-          if [ ! -d "$PRISMA_DIR" ]; then
-            echo "❌ Prisma directory not found: $PRISMA_DIR"
+          # Check Prisma files
+          if [ ! -d "apps/fnr-server/prisma" ]; then
+            echo "❌ Prisma directory not found"
             exit 1
           fi
-          cp -v "$PRISMA_DIR/schema.prisma" "$DEPLOY_DIR/prisma/" || { echo "❌ Failed to copy schema.prisma"; exit 1; }
-          cp -rv "$PRISMA_DIR/migrations" "$DEPLOY_DIR/prisma/" || { echo "❌ Failed to copy migrations"; exit 1; }
-          cp -rv "$PRISMA_DIR/seedData" "$DEPLOY_DIR/prisma/" || { echo "❌ Failed to copy seedData"; exit 1; }
 
-          echo "📝 Copying package files..."
-          cp -v package.json "$DEPLOY_DIR/" || { echo "❌ Failed to copy package.json"; exit 1; }
-          cp -v package-lock.json "$DEPLOY_DIR/" || { echo "❌ Failed to copy package-lock.json"; exit 1; }
+          echo "✅ All required directories found"
 
-          echo "✅ Verifying deployment package contents:"
-          echo "Directory structure:"
-          ls -R "$DEPLOY_DIR"
+          echo "📦 Build output contents:"
+          ls -la dist/apps/fnr-server/
 
-          echo "🔍 Checking critical files..."
-          required_files=(
-            "$DEPLOY_DIR/dist/main.js"
-            "$DEPLOY_DIR/prisma/schema.prisma"
-            "$DEPLOY_DIR/prisma/migrations"
-            "$DEPLOY_DIR/prisma/seedData"
-            "$DEPLOY_DIR/package.json"
-            "$DEPLOY_DIR/package-lock.json"
-          )
-
-          for file in "${required_files[@]}"; do
-            if [ ! -e "$file" ]; then
-              echo "❌ Required file/directory missing: $file"
-              exit 1
-            fi
-            echo "✅ Found: $file"
-          done
-
-          echo "📊 Directory sizes:"
-          du -sh "$DEPLOY_DIR"/*
-
-      - name: Verify directory for upload
-        run: |
-          echo "🔍 Verifying .deploy directory before upload..."
-          if [ ! -d ".deploy" ]; then
-            echo "❌ .deploy directory not found in current directory"
-            pwd
-            ls -la
-            exit 1
-          fi
-          echo "📁 .deploy directory contents:"
-          ls -la .deploy/
-          echo "✅ Directory verified and ready for upload"
+          echo "📄 Prisma directory contents:"
+          ls -la apps/fnr-server/prisma/
 
       - name: Upload deployment package
         uses: actions/upload-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: |
+            dist/apps/fnr-server/**
+            apps/fnr-server/prisma/**
+            package.json
+            package-lock.json
           if-no-files-found: error
           retention-days: 1
           compression-level: 6
@@ -156,29 +113,40 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: deploy
+
+      - name: Organize deployment files
+        run: |
+          echo "🔍 Organizing deployment files..."
+
+          # Create directory structure
+          mkdir -p deploy/dist deploy/prisma
+
+          # Move files to correct locations
+          mv deploy/apps/fnr-server/prisma/* deploy/prisma/
+          mv deploy/dist/apps/fnr-server/* deploy/dist/
+
+          # Clean up empty directories
+          rm -rf deploy/apps deploy/dist/apps
+
+          echo "📋 Final deployment structure:"
+          ls -R deploy/
 
       - name: Verify deployment package
         run: |
-          echo "🔍 Verifying downloaded package contents..."
-          if [ ! -d "$GITHUB_WORKSPACE/.deploy" ]; then
-            echo "❌ Deployment directory not found"
-            exit 1
-          fi
+          echo "🔍 Verifying deployment package..."
 
-          echo "📋 Package contents:"
-          ls -R $GITHUB_WORKSPACE/.deploy/
-
-          echo "✅ Checking required files..."
+          echo "📦 Checking required files..."
           required_files=(
-            "$GITHUB_WORKSPACE/.deploy/dist/main.js"
-            "$GITHUB_WORKSPACE/.deploy/prisma/schema.prisma"
-            "$GITHUB_WORKSPACE/.deploy/package.json"
+            "deploy/dist/main.js"
+            "deploy/prisma/schema.prisma"
+            "deploy/package.json"
           )
 
           for file in "${required_files[@]}"; do
             if [ ! -f "$file" ]; then
               echo "❌ Required file not found: $file"
+              ls -la $(dirname "$file")
               exit 1
             fi
             echo "✅ Found: $file"
@@ -216,7 +184,7 @@ jobs:
       - name: Deploy Application
         run: |
           # Transfer files
-          scp -r $GITHUB_WORKSPACE/.deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
+          scp -r deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
 
           # Execute deployment
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
@@ -326,29 +294,40 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: deploy
+
+      - name: Organize deployment files
+        run: |
+          echo "🔍 Organizing deployment files..."
+
+          # Create directory structure
+          mkdir -p deploy/dist deploy/prisma
+
+          # Move files to correct locations
+          mv deploy/apps/fnr-server/prisma/* deploy/prisma/
+          mv deploy/dist/apps/fnr-server/* deploy/dist/
+
+          # Clean up empty directories
+          rm -rf deploy/apps deploy/dist/apps
+
+          echo "📋 Final deployment structure:"
+          ls -R deploy/
 
       - name: Verify deployment package
         run: |
-          echo "🔍 Verifying downloaded package contents..."
-          if [ ! -d ".deploy" ]; then
-            echo "❌ Deployment directory not found"
-            exit 1
-          fi
+          echo "🔍 Verifying deployment package..."
 
-          echo "📋 Package contents:"
-          ls -R .deploy/
-
-          echo "✅ Checking required files..."
+          echo "📦 Checking required files..."
           required_files=(
-            ".deploy/dist/main.js"
-            ".deploy/prisma/schema.prisma"
-            ".deploy/package.json"
+            "deploy/dist/main.js"
+            "deploy/prisma/schema.prisma"
+            "deploy/package.json"
           )
 
           for file in "${required_files[@]}"; do
             if [ ! -f "$file" ]; then
               echo "❌ Required file not found: $file"
+              ls -la $(dirname "$file")
               exit 1
             fi
             echo "✅ Found: $file"
@@ -386,7 +365,7 @@ jobs:
       - name: Deploy Application
         run: |
           # Transfer files
-          scp -r .deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
+          scp -r deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
 
           # Execute deployment
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
