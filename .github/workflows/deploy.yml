@@ -66,35 +66,30 @@ jobs:
 
       - name: Prepare deployment package
         run: |
-          pwd
-          echo "Current directory contents:"
-          ls -la
-
           echo "Creating deployment directory..."
-          mkdir -p .deploy/dist
-          mkdir -p .deploy/prisma
+          mkdir -p $GITHUB_WORKSPACE/.deploy/dist
+          mkdir -p $GITHUB_WORKSPACE/.deploy/prisma
 
           echo "Copying build output..."
-          ls -la dist/apps/fnr-server/
-          cp -r dist/apps/fnr-server/* .deploy/dist/
+          cp -r $GITHUB_WORKSPACE/dist/apps/fnr-server/* $GITHUB_WORKSPACE/.deploy/dist/
 
           echo "Copying Prisma files..."
-          cp apps/fnr-server/prisma/schema.prisma .deploy/prisma/
-          cp -r apps/fnr-server/prisma/migrations .deploy/prisma/
-          cp -r apps/fnr-server/prisma/seedData .deploy/prisma/
+          cp $GITHUB_WORKSPACE/apps/fnr-server/prisma/schema.prisma $GITHUB_WORKSPACE/.deploy/prisma/
+          cp -r $GITHUB_WORKSPACE/apps/fnr-server/prisma/migrations $GITHUB_WORKSPACE/.deploy/prisma/
+          cp -r $GITHUB_WORKSPACE/apps/fnr-server/prisma/seedData $GITHUB_WORKSPACE/.deploy/prisma/
 
           echo "Copying package files..."
-          cp package.json .deploy/
-          cp package-lock.json .deploy/
+          cp $GITHUB_WORKSPACE/package.json $GITHUB_WORKSPACE/.deploy/
+          cp $GITHUB_WORKSPACE/package-lock.json $GITHUB_WORKSPACE/.deploy/
 
-          echo "Final .deploy contents:"
-          ls -R .deploy/
+          echo "Verifying .deploy contents:"
+          ls -R $GITHUB_WORKSPACE/.deploy/
 
       - name: Upload deployment package
         uses: actions/upload-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: ${{ github.workspace }}/.deploy
           if-no-files-found: error
 
   deploy-staging:
@@ -108,24 +103,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: ${{ github.workspace }}/.deploy
 
       - name: Verify deployment package
         run: |
           echo "🔍 Verifying downloaded package contents..."
-          if [ ! -d ".deploy" ]; then
+          if [ ! -d "$GITHUB_WORKSPACE/.deploy" ]; then
             echo "❌ Deployment directory not found"
             exit 1
           fi
 
           echo "📋 Package contents:"
-          ls -R .deploy/
+          ls -R $GITHUB_WORKSPACE/.deploy/
 
           echo "✅ Checking required files..."
           required_files=(
-            ".deploy/dist/main.js"
-            ".deploy/prisma/schema.prisma"
-            ".deploy/package.json"
+            "$GITHUB_WORKSPACE/.deploy/dist/main.js"
+            "$GITHUB_WORKSPACE/.deploy/prisma/schema.prisma"
+            "$GITHUB_WORKSPACE/.deploy/package.json"
           )
 
           for file in "${required_files[@]}"; do
@@ -168,7 +163,7 @@ jobs:
       - name: Deploy Application
         run: |
           # Transfer files
-          scp -r .deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
+          scp -r $GITHUB_WORKSPACE/.deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
 
           # Execute deployment
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
@@ -278,24 +273,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: ${{ github.workspace }}/.deploy
 
       - name: Verify deployment package
         run: |
           echo "🔍 Verifying downloaded package contents..."
-          if [ ! -d ".deploy" ]; then
+          if [ ! -d "$GITHUB_WORKSPACE/.deploy" ]; then
             echo "❌ Deployment directory not found"
             exit 1
           fi
 
           echo "📋 Package contents:"
-          ls -R .deploy/
+          ls -R $GITHUB_WORKSPACE/.deploy/
 
           echo "✅ Checking required files..."
           required_files=(
-            ".deploy/dist/main.js"
-            ".deploy/prisma/schema.prisma"
-            ".deploy/package.json"
+            "$GITHUB_WORKSPACE/.deploy/dist/main.js"
+            "$GITHUB_WORKSPACE/.deploy/prisma/schema.prisma"
+            "$GITHUB_WORKSPACE/.deploy/package.json"
           )
 
           for file in "${required_files[@]}"; do
@@ -338,7 +333,7 @@ jobs:
       - name: Deploy Application
         run: |
           # Transfer files
-          scp -r .deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
+          scp -r $GITHUB_WORKSPACE/.deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
 
           # Execute deployment
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
