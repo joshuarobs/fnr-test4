@@ -122,11 +122,24 @@ jobs:
           echo "📊 Directory sizes:"
           du -sh "$DEPLOY_DIR"/*
 
+      - name: Verify directory for upload
+        run: |
+          echo "🔍 Verifying .deploy directory before upload..."
+          if [ ! -d ".deploy" ]; then
+            echo "❌ .deploy directory not found in current directory"
+            pwd
+            ls -la
+            exit 1
+          fi
+          echo "📁 .deploy directory contents:"
+          ls -la .deploy/
+          echo "✅ Directory verified and ready for upload"
+
       - name: Upload deployment package
         uses: actions/upload-artifact@v4
         with:
           name: deployment-package
-          path: ${{ github.workspace }}/.deploy
+          path: .deploy
           if-no-files-found: error
           retention-days: 1
           compression-level: 6
@@ -143,7 +156,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-          path: ${{ github.workspace }}/.deploy
+          path: .deploy
 
       - name: Verify deployment package
         run: |
@@ -313,24 +326,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-          path: ${{ github.workspace }}/.deploy
+          path: .deploy
 
       - name: Verify deployment package
         run: |
           echo "🔍 Verifying downloaded package contents..."
-          if [ ! -d "$GITHUB_WORKSPACE/.deploy" ]; then
+          if [ ! -d ".deploy" ]; then
             echo "❌ Deployment directory not found"
             exit 1
           fi
 
           echo "📋 Package contents:"
-          ls -R $GITHUB_WORKSPACE/.deploy/
+          ls -R .deploy/
 
           echo "✅ Checking required files..."
           required_files=(
-            "$GITHUB_WORKSPACE/.deploy/dist/main.js"
-            "$GITHUB_WORKSPACE/.deploy/prisma/schema.prisma"
-            "$GITHUB_WORKSPACE/.deploy/package.json"
+            ".deploy/dist/main.js"
+            ".deploy/prisma/schema.prisma"
+            ".deploy/package.json"
           )
 
           for file in "${required_files[@]}"; do
@@ -373,7 +386,7 @@ jobs:
       - name: Deploy Application
         run: |
           # Transfer files
-          scp -r $GITHUB_WORKSPACE/.deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
+          scp -r .deploy/* root@${{ secrets.DROPLET_IP }}:/tmp/deploy/
 
           # Execute deployment
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
