@@ -39,25 +39,42 @@ jobs:
           npx prisma generate
           cd ../..
 
-      - name: Build application
+      - name: Build applications
         id: build
         run: |
           echo "🏗️ Building server application..."
           npx nx build fnr-server --skip-nx-cache
 
-          # Verify build output
+          echo "🏗️ Building frontend application..."
+          npx nx build fnr-app --skip-nx-cache
+
+          # Verify server build output
           if [ ! -d "dist/apps/fnr-server" ]; then
-            echo "❌ Build output directory not found"
+            echo "❌ Server build output directory not found"
+            exit 1
+          fi
+
+          if [ ! -f "dist/apps/fnr-server/main.js" ]; then
+            echo "❌ Server main build artifact not found"
+            exit 1
+          fi
+
+          # Verify frontend build output
+          if [ ! -d "dist/apps/fnr-app" ]; then
+            echo "❌ Frontend build output directory not found"
+            exit 1
+          fi
+
+          if [ ! -f "dist/apps/fnr-app/index.html" ]; then
+            echo "❌ Frontend index.html not found"
             exit 1
           fi
 
           echo "📦 Build output contents:"
+          echo "Server build:"
           ls -la dist/apps/fnr-server/
-
-          if [ ! -f "dist/apps/fnr-server/main.js" ]; then
-            echo "❌ Main build artifact not found"
-            exit 1
-          fi
+          echo "Frontend build:"
+          ls -la dist/apps/fnr-app/
 
           echo "✅ Build completed successfully"
 
@@ -94,6 +111,7 @@ jobs:
           name: deployment-package
           path: |
             dist/apps/fnr-server/**
+            dist/apps/fnr-app/**
             apps/fnr-server/prisma/**
             package.json
             package-lock.json
@@ -125,9 +143,10 @@ jobs:
           # Move files to correct locations
           mv deploy/apps/fnr-server/prisma/* deploy/prisma/
           mv deploy/dist/apps/fnr-server/* deploy/dist/
+          mv deploy/dist/apps/fnr-app deploy/dist/
 
           # Clean up empty directories
-          rm -rf deploy/apps deploy/dist/apps
+          rm -rf deploy/apps
 
           echo "📋 Final deployment structure (excluding node_modules):"
           ls -R deploy/ | grep -v "node_modules"
@@ -139,6 +158,7 @@ jobs:
           echo "📦 Checking required files..."
           required_files=(
             "deploy/dist/main.js"
+            "deploy/dist/fnr-app/index.html"
             "deploy/prisma/schema.prisma"
             "deploy/package.json"
           )
@@ -293,13 +313,28 @@ jobs:
 
           # Verify HTTP endpoint
           echo "Verifying HTTP endpoint..."
+          # Verify API endpoint
+          echo "Verifying API endpoint..."
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/api)
+
+          # Verify frontend serving
+          echo "Verifying frontend serving..."
+          FRONTEND_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/)
           if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
-            echo "Deployment verified successfully"
+            echo "✅ API endpoint verified successfully"
           else
-            echo "Deployment verification failed"
+            echo "❌ API endpoint verification failed"
             exit 1
           fi
+
+          if [ "$FRONTEND_RESPONSE" = "200" ] || [ "$FRONTEND_RESPONSE" = "301" ] || [ "$FRONTEND_RESPONSE" = "302" ]; then
+            echo "✅ Frontend serving verified successfully"
+          else
+            echo "❌ Frontend serving verification failed"
+            exit 1
+          fi
+
+          echo "✅ Deployment verified successfully"
 
   deploy-production:
     needs: build
@@ -324,9 +359,10 @@ jobs:
           # Move files to correct locations
           mv deploy/apps/fnr-server/prisma/* deploy/prisma/
           mv deploy/dist/apps/fnr-server/* deploy/dist/
+          mv deploy/dist/apps/fnr-app deploy/dist/
 
           # Clean up empty directories
-          rm -rf deploy/apps deploy/dist/apps
+          rm -rf deploy/apps
 
           echo "📋 Final deployment structure (excluding node_modules):"
           ls -R deploy/ | grep -v "node_modules"
@@ -338,6 +374,7 @@ jobs:
           echo "📦 Checking required files..."
           required_files=(
             "deploy/dist/main.js"
+            "deploy/dist/fnr-app/index.html"
             "deploy/prisma/schema.prisma"
             "deploy/package.json"
           )
@@ -492,13 +529,28 @@ jobs:
 
           # Verify HTTP endpoint
           echo "Verifying HTTP endpoint..."
+          # Verify API endpoint
+          echo "Verifying API endpoint..."
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/api)
+
+          # Verify frontend serving
+          echo "Verifying frontend serving..."
+          FRONTEND_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/)
           if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
-            echo "Deployment verified successfully"
+            echo "✅ API endpoint verified successfully"
           else
-            echo "Deployment verification failed"
+            echo "❌ API endpoint verification failed"
             exit 1
           fi
+
+          if [ "$FRONTEND_RESPONSE" = "200" ] || [ "$FRONTEND_RESPONSE" = "301" ] || [ "$FRONTEND_RESPONSE" = "302" ]; then
+            echo "✅ Frontend serving verified successfully"
+          else
+            echo "❌ Frontend serving verification failed"
+            exit 1
+          fi
+
+          echo "✅ Deployment verified successfully"
 
       - name: Cleanup
         if: always()

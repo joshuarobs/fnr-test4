@@ -6,6 +6,7 @@
 import express from 'express';
 import * as path from 'path';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
 import session from 'express-session';
 import claimsRouter from './routes/claims/index';
 import usersRouter from './routes/users/index';
@@ -20,11 +21,13 @@ import { SERVER_CONFIG, getServerBaseUrl } from './config';
 export const app: express.Application = express();
 
 // Middleware
+// CORS configuration
 app.use(
   cors({
+    // In production, we're serving frontend from same origin
     origin:
       process.env.NODE_ENV === 'production'
-        ? process.env.CLIENT_URL
+        ? true // Allow same origin requests
         : ['http://localhost:4200', 'http://127.0.0.1:4200'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -34,7 +37,14 @@ app.use(
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
+// Serve static files
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// In production, serve the frontend build files
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from frontend build directory
+  app.use(express.static(path.join(__dirname, '../../fnr-app')));
+}
 
 // Session and Passport setup
 app.use(
@@ -87,6 +97,18 @@ app.use('/api/users', usersRouter);
 app.use('/api/staff', staffRouter);
 app.use('/api/suppliers', suppliersRouter);
 app.use('/api/activities', activitiesRouter);
+
+// Add catch-all route for client-side routing in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ message: 'API endpoint not found' });
+    }
+    // Serve index.html for all other routes
+    res.sendFile(path.join(__dirname, '../../fnr-app/index.html'));
+  });
+}
 
 const server = app.listen(SERVER_CONFIG.port, () => {
   console.log(`Listening at ${getServerBaseUrl()}/api`);
