@@ -260,17 +260,35 @@ jobs:
           # Verify database connection and run seed
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             cd /var/www/fnr-app
-            DB_PASSWORD=$(cat .db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             
-            # Run seed
-            npx prisma db seed
-            
-            if [ $? -ne 0 ]; then
-              echo "Database seeding failed"
+            # Verify directory structure
+            echo "Verifying deployment structure..."
+            if [ ! -d "prisma" ]; then
+              echo "❌ Error: prisma directory not found"
+              ls -la
               exit 1
             fi
-            echo "Database seeding completed successfully"
+            
+            echo "📂 Deployment directory structure:"
+            ls -R
+            
+            # Setup environment
+            DB_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            export NODE_ENV=production
+            
+            echo "Running database seed..."
+            # Run seed directly from the prisma directory
+            npx ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts 2>&1 | tee seed.log
+            
+            if [ $? -ne 0 ]; then
+              echo "❌ Database seeding failed. Check seed.log for details:"
+              cat seed.log
+              exit 1
+            fi
+            
+            echo "✅ Database seeding completed successfully"
+            rm -f seed.log
           ENDSSH
 
           # Verify HTTP endpoint
@@ -441,17 +459,35 @@ jobs:
           # Verify database connection and run seed
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             cd /var/www/fnr-app
-            DB_PASSWORD=$(cat .db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             
-            # Run seed
-            npx prisma db seed
-            
-            if [ $? -ne 0 ]; then
-              echo "Database seeding failed"
+            # Verify directory structure
+            echo "Verifying deployment structure..."
+            if [ ! -d "prisma" ]; then
+              echo "❌ Error: prisma directory not found"
+              ls -la
               exit 1
             fi
-            echo "Database seeding completed successfully"
+            
+            echo "📂 Deployment directory structure:"
+            ls -R
+            
+            # Setup environment
+            DB_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            export NODE_ENV=production
+            
+            echo "Running database seed..."
+            # Run seed directly from the prisma directory
+            npx ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts 2>&1 | tee seed.log
+            
+            if [ $? -ne 0 ]; then
+              echo "❌ Database seeding failed. Check seed.log for details:"
+              cat seed.log
+              exit 1
+            fi
+            
+            echo "✅ Database seeding completed successfully"
+            rm -f seed.log
           ENDSSH
 
           # Verify HTTP endpoint
