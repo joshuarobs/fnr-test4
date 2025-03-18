@@ -503,6 +503,9 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          rm -rf ~/.ssh/id_rsa
+          # First cleanup remote files
+          ssh root@${{ secrets.DROPLET_IP }} "rm -rf /tmp/deploy" || echo "Remote cleanup failed but continuing..."
+          # Then cleanup local files
           rm -rf .deploy
-          ssh root@${{ secrets.DROPLET_IP }} "rm -rf /tmp/deploy"
+          # Finally remove SSH key as the last step
+          rm -rf ~/.ssh/id_rsa
