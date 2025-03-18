@@ -94,7 +94,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: deployment-package
-          path: .deploy
+          path: |
+            .deploy/**/*
+            !.deploy/**/.git*
           if-no-files-found: error
 
   deploy-staging:
