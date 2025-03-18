@@ -43,8 +43,9 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 // In production, serve the frontend build files
 if (process.env.NODE_ENV === 'production') {
   // Serve static files from frontend build directory
-  app.use(express.static(path.join(__dirname, '../fnr-app')));
-  console.log(`Serving frontend from: ${path.join(__dirname, '../fnr-app')}`);
+  // Based on the deployment structure, main.js and fnr-app are at the same level in dist
+  app.use(express.static(path.join(__dirname, './fnr-app')));
+  console.log(`Serving frontend from: ${path.join(__dirname, './fnr-app')}`);
 }
 
 // Session and Passport setup
@@ -107,7 +108,7 @@ if (process.env.NODE_ENV === 'production') {
       return res.status(404).json({ message: 'API endpoint not found' });
     }
     // Serve index.html for all other routes
-    res.sendFile(path.join(__dirname, '../fnr-app/index.html'));
+    res.sendFile(path.join(__dirname, './fnr-app/index.html'));
   });
 }
 
