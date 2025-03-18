@@ -46,33 +46,71 @@ jobs:
         run: npx nx test fnr-server --skip-nx-cache
 
       - name: Prepare deployment package
+        id: prepare-package
         run: |
+          echo "🧹 Cleaning up previous deployment directory..."
           rm -rf .deploy
+
+          echo "📁 Creating deployment directory structure..."
           mkdir -p .deploy/dist
           mkdir -p .deploy/prisma/seedData
           mkdir -p .deploy/src/lib
 
-          # Copy dist files
+          echo "📦 Copying dist files..."
           cp -r dist/apps/fnr-server/* .deploy/dist/
 
-          # Copy Prisma files
+          echo "🔄 Copying Prisma files..."
           cp -r apps/fnr-server/prisma/*.{ts,prisma} .deploy/prisma/
           cp -r apps/fnr-server/prisma/migrations .deploy/prisma/
           cp -r apps/fnr-server/prisma/seedData/* .deploy/prisma/seedData/
 
-          # Copy required source files for seeding
+          echo "📄 Copying source files..."
           cp apps/fnr-server/src/lib/claimHelpers.ts .deploy/src/lib/
 
-          # Copy package files
+          echo "📝 Copying package files..."
           cp package.json .deploy/
           cp package-lock.json .deploy/ 2>/dev/null || cp yarn.lock .deploy/ 2>/dev/null || echo "No lock file found"
 
+          echo "🔍 Verifying deployment package contents..."
+          required_files=(
+            "dist/main.js"
+            "prisma/schema.prisma"
+            "prisma/migrations"
+            "prisma/seedData"
+            "src/lib/claimHelpers.ts"
+            "package.json"
+          )
+
+          cd .deploy
+          for file in "${required_files[@]}"; do
+            if [ ! -e "$file" ]; then
+              echo "❌ Required file/directory missing: $file"
+              exit 1
+            fi
+            echo "✅ Found: $file"
+          done
+          cd ..
+
+          echo "📋 Listing deployment package contents:"
+          ls -R .deploy/
+
       - name: Upload deployment package
+        id: upload-package
         uses: actions/upload-artifact@v4
         with:
           name: deployment-package
           path: .deploy
           retention-days: 1
+          if-no-files-found: error
+
+      - name: Verify artifact upload
+        run: |
+          echo "📤 Artifact upload status: ${{ steps.upload-package.outcome }}"
+          if [ "${{ steps.upload-package.outcome }}" != "success" ]; then
+            echo "❌ Artifact upload failed"
+            exit 1
+          fi
+          echo "✅ Artifact upload successful"
 
   deploy-staging:
     needs: build
@@ -81,10 +119,39 @@ jobs:
 
     steps:
       - name: Download deployment package
+        id: download-package
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
           path: .deploy
+
+      - name: Verify deployment package
+        run: |
+          echo "🔍 Verifying downloaded package contents..."
+          if [ ! -d ".deploy" ]; then
+            echo "❌ Deployment directory not found"
+            exit 1
+          fi
+
+          echo "📋 Package contents:"
+          ls -R .deploy/
+
+          echo "✅ Checking required files..."
+          required_files=(
+            ".deploy/dist/main.js"
+            ".deploy/prisma/schema.prisma"
+            ".deploy/package.json"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Required file not found: $file"
+              exit 1
+            fi
+            echo "✅ Found: $file"
+          done
+
+          echo "✅ Deployment package verification successful"
 
       - name: Setup SSH
         run: |
@@ -222,10 +289,39 @@ jobs:
 
     steps:
       - name: Download deployment package
+        id: download-package
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
           path: .deploy
+
+      - name: Verify deployment package
+        run: |
+          echo "🔍 Verifying downloaded package contents..."
+          if [ ! -d ".deploy" ]; then
+            echo "❌ Deployment directory not found"
+            exit 1
+          fi
+
+          echo "📋 Package contents:"
+          ls -R .deploy/
+
+          echo "✅ Checking required files..."
+          required_files=(
+            ".deploy/dist/main.js"
+            ".deploy/prisma/schema.prisma"
+            ".deploy/package.json"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Required file not found: $file"
+              exit 1
+            fi
+            echo "✅ Found: $file"
+          done
+
+          echo "✅ Deployment package verification successful"
 
       - name: Setup SSH
         run: |
