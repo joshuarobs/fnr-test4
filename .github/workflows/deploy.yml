@@ -66,24 +66,61 @@ jobs:
 
       - name: Prepare deployment package
         run: |
-          echo "Creating deployment directory..."
-          mkdir -p $GITHUB_WORKSPACE/.deploy/dist
-          mkdir -p $GITHUB_WORKSPACE/.deploy/prisma
+          DEPLOY_DIR="$GITHUB_WORKSPACE/.deploy"
+          echo "🏗️ Creating deployment directory structure..."
 
-          echo "Copying build output..."
-          cp -r $GITHUB_WORKSPACE/dist/apps/fnr-server/* $GITHUB_WORKSPACE/.deploy/dist/
+          # Create directories with error checking
+          mkdir -p "$DEPLOY_DIR/dist" || { echo "❌ Failed to create dist directory"; exit 1; }
+          mkdir -p "$DEPLOY_DIR/prisma" || { echo "❌ Failed to create prisma directory"; exit 1; }
 
-          echo "Copying Prisma files..."
-          cp $GITHUB_WORKSPACE/apps/fnr-server/prisma/schema.prisma $GITHUB_WORKSPACE/.deploy/prisma/
-          cp -r $GITHUB_WORKSPACE/apps/fnr-server/prisma/migrations $GITHUB_WORKSPACE/.deploy/prisma/
-          cp -r $GITHUB_WORKSPACE/apps/fnr-server/prisma/seedData $GITHUB_WORKSPACE/.deploy/prisma/
+          echo "📂 Deployment directory structure created at: $DEPLOY_DIR"
+          ls -la "$DEPLOY_DIR"
 
-          echo "Copying package files..."
-          cp $GITHUB_WORKSPACE/package.json $GITHUB_WORKSPACE/.deploy/
-          cp $GITHUB_WORKSPACE/package-lock.json $GITHUB_WORKSPACE/.deploy/
+          echo "📦 Copying build output..."
+          if [ ! -d "dist/apps/fnr-server" ]; then
+            echo "❌ Build directory not found: dist/apps/fnr-server"
+            exit 1
+          fi
+          cp -rv dist/apps/fnr-server/* "$DEPLOY_DIR/dist/" || { echo "❌ Failed to copy build output"; exit 1; }
 
-          echo "Verifying .deploy contents:"
-          ls -R $GITHUB_WORKSPACE/.deploy/
+          echo "📄 Copying Prisma files..."
+          PRISMA_DIR="apps/fnr-server/prisma"
+          if [ ! -d "$PRISMA_DIR" ]; then
+            echo "❌ Prisma directory not found: $PRISMA_DIR"
+            exit 1
+          fi
+          cp -v "$PRISMA_DIR/schema.prisma" "$DEPLOY_DIR/prisma/" || { echo "❌ Failed to copy schema.prisma"; exit 1; }
+          cp -rv "$PRISMA_DIR/migrations" "$DEPLOY_DIR/prisma/" || { echo "❌ Failed to copy migrations"; exit 1; }
+          cp -rv "$PRISMA_DIR/seedData" "$DEPLOY_DIR/prisma/" || { echo "❌ Failed to copy seedData"; exit 1; }
+
+          echo "📝 Copying package files..."
+          cp -v package.json "$DEPLOY_DIR/" || { echo "❌ Failed to copy package.json"; exit 1; }
+          cp -v package-lock.json "$DEPLOY_DIR/" || { echo "❌ Failed to copy package-lock.json"; exit 1; }
+
+          echo "✅ Verifying deployment package contents:"
+          echo "Directory structure:"
+          ls -R "$DEPLOY_DIR"
+
+          echo "🔍 Checking critical files..."
+          required_files=(
+            "$DEPLOY_DIR/dist/main.js"
+            "$DEPLOY_DIR/prisma/schema.prisma"
+            "$DEPLOY_DIR/prisma/migrations"
+            "$DEPLOY_DIR/prisma/seedData"
+            "$DEPLOY_DIR/package.json"
+            "$DEPLOY_DIR/package-lock.json"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -e "$file" ]; then
+              echo "❌ Required file/directory missing: $file"
+              exit 1
+            fi
+            echo "✅ Found: $file"
+          done
+
+          echo "📊 Directory sizes:"
+          du -sh "$DEPLOY_DIR"/*
 
       - name: Upload deployment package
         uses: actions/upload-artifact@v4
@@ -91,6 +128,9 @@ jobs:
           name: deployment-package
           path: ${{ github.workspace }}/.deploy
           if-no-files-found: error
+          retention-days: 1
+          compression-level: 6
+          overwrite: true
 
   deploy-staging:
     needs: build
