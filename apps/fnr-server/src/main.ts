@@ -66,22 +66,20 @@ if (process.env.NODE_ENV === 'production') {
     }
     console.log(`✅ index.html found at: ${indexPath}`);
 
-    // Check and create assets directory if needed
+    // Check assets directory
     if (!fs.existsSync(assetsPath)) {
-      fs.mkdirSync(assetsPath, { recursive: true });
-      console.log(`📁 Created assets directory at: ${assetsPath}`);
-    } else {
-      const assetFiles = fs.readdirSync(assetsPath);
-      console.log(`📂 Assets directory contents: ${assetFiles.join(', ')}`);
+      throw new Error(`Assets directory not found at: ${assetsPath}`);
     }
+    const assetFiles = fs.readdirSync(assetsPath);
+    console.log(`📂 Assets directory contents: ${assetFiles.join(', ')}`);
 
     // Serve static files with proper caching and error handling
     app.use(
+      '/',
       express.static(frontendPath, {
         maxAge: '1h', // Cache regular files for 1 hour
         index: false, // Don't serve index.html automatically
         fallthrough: true, // Allow falling through to next middleware
-        redirect: false, // Don't redirect on missing trailing slash
       })
     );
     console.log(`🌐 Serving frontend from: ${frontendPath}`);
@@ -92,28 +90,35 @@ if (process.env.NODE_ENV === 'production') {
       express.static(assetsPath, {
         maxAge: '7d', // Cache assets for 7 days
         immutable: true, // Assets are immutable (they have hash in filename)
-        fallthrough: false, // Return 404 if asset not found
-        redirect: false, // Don't redirect on missing trailing slash
+        fallthrough: true, // Allow falling through to next middleware
       })
     );
     console.log(`🌐 Serving assets from: ${assetsPath}`);
 
-    // Error handler for missing assets
+    // Global error handler for static files
     app.use(
-      '/assets',
       (
         err: any,
         req: express.Request,
         res: express.Response,
         next: express.NextFunction
       ) => {
-        console.error(`❌ Asset not found: ${req.path}`);
-        res.status(404).json({ error: 'Asset not found', path: req.path });
+        if (err.code === 'ENOENT') {
+          console.error(`❌ File not found: ${req.path}`);
+          if (req.path.startsWith('/assets/')) {
+            return res
+              .status(404)
+              .json({ error: 'Asset not found', path: req.path });
+          }
+          // For non-asset paths, try serving index.html
+          return res.sendFile(indexPath);
+        }
+        next(err);
       }
     );
   } catch (error) {
     console.error(`❌ Error setting up frontend serving: ${error}`);
-    // Continue running the server even if frontend serving setup fails
+    throw error; // Stop server if frontend serving setup fails
   }
 }
 

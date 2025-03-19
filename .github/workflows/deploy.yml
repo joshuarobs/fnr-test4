@@ -368,13 +368,35 @@ jobs:
             # Start application
             pm2 delete all 2>/dev/null || true
             ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
+            
+            # Set environment variables
+            export NODE_ENV=production
+            
+            # Verify frontend files
+            echo "Verifying frontend files..."
+            if [ ! -d "dist/fnr-app" ] || [ ! -f "dist/fnr-app/index.html" ]; then
+              echo "❌ Frontend files missing or incomplete"
+              exit 1
+            fi
+            
+            # Verify assets
+            echo "Verifying frontend assets..."
+            if [ ! -d "dist/fnr-app/assets" ]; then
+              echo "❌ Assets directory missing"
+              exit 1
+            fi
+            
+            # Set correct permissions
+            chmod -R 755 dist/fnr-app
+            
             pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
               --error $APP_DIR/logs/error.log \
               --time \
               --merge-logs \
-              --env production
+              --env production \
+              --env NODE_ENV=production
             
             pm2 save
           ENDSSH

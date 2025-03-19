@@ -54,6 +54,6 @@ export default defineConfig({
       },
     },
   },
-  // Use relative base path for production
-  base: './',
+  // Use absolute base path for production
+  base: '/',
 });
