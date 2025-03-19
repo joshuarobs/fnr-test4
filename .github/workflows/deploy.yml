@@ -85,43 +85,82 @@ jobs:
         run: |
           echo "🔍 Verifying build artifacts..."
 
-          # Check build output
-          if [ ! -d "dist/apps/fnr-server" ]; then
-            echo "❌ Server build output directory not found"
-            exit 1
-          fi
+          # Function to check required files
+          check_file() {
+            local file=$1
+            local name=$2
+            if [ ! -f "$file" ]; then
+              echo "❌ Required $name not found at: $file"
+              return 1
+            fi
+            echo "✅ Found $name: $file"
+            return 0
+          }
 
-          if [ ! -d "dist/apps/fnr-app" ]; then
-            echo "❌ Frontend build output directory not found"
-            exit 1
-          fi
+          # Function to check required directories
+          check_directory() {
+            local dir=$1
+            local name=$2
+            if [ ! -d "$dir" ]; then
+              echo "❌ Required $name directory not found at: $dir"
+              return 1
+            fi
+            echo "✅ Found $name directory: $dir"
+            echo "📦 Contents of $name directory:"
+            ls -la "$dir"
+            return 0
+          }
 
-          # Check for frontend assets
+          # Check server build
+          check_directory "dist/apps/fnr-server" "Server build" || exit 1
+          check_file "dist/apps/fnr-server/main.js" "Server main file" || exit 1
+
+          # Check frontend build
+          check_directory "dist/apps/fnr-app" "Frontend build" || exit 1
+          check_file "dist/apps/fnr-app/index.html" "Frontend index file" || exit 1
+          check_file "dist/apps/fnr-app/manifest.json" "Frontend manifest" || exit 1
+
+          # Check frontend assets
           if [ ! -d "dist/apps/fnr-app/assets" ]; then
-            echo "⚠️ Frontend assets directory not found, this may cause issues"
+            echo "⚠️ Frontend assets directory not found, creating it..."
             mkdir -p dist/apps/fnr-app/assets
           else
             echo "✅ Frontend assets directory found"
             echo "📦 Assets directory contents:"
             ls -la dist/apps/fnr-app/assets/
+            
+            # Check for critical asset types
+            echo "🔍 Checking for critical asset types..."
+            asset_types=("js" "css")
+            for type in "${asset_types[@]}"; do
+              count=$(find dist/apps/fnr-app/assets -name "*.${type}" | wc -l)
+              if [ "$count" -eq 0 ]; then
+                echo "⚠️ Warning: No .${type} files found in assets directory"
+              else
+                echo "✅ Found ${count} .${type} files"
+              fi
+            done
           fi
 
           # Check Prisma files
-          if [ ! -d "apps/fnr-server/prisma" ]; then
-            echo "❌ Prisma directory not found"
+          check_directory "apps/fnr-server/prisma" "Prisma" || exit 1
+          check_file "apps/fnr-server/prisma/schema.prisma" "Prisma schema" || exit 1
+          check_file "apps/fnr-server/prisma/seed.ts" "Prisma seed" || exit 1
+
+          # Verify frontend build integrity
+          echo "🔍 Verifying frontend build integrity..."
+          if ! grep -q "<!DOCTYPE html>" "dist/apps/fnr-app/index.html"; then
+            echo "❌ index.html appears to be invalid"
             exit 1
           fi
 
-          echo "✅ All required directories found"
+          # Check for environment-specific configurations
+          echo "🔍 Checking environment configurations..."
+          if [ ! -f "dist/apps/fnr-app/config.js" ] && [ ! -f "dist/apps/fnr-app/assets/config.js" ]; then
+            echo "⚠️ Warning: No frontend configuration file found"
+          fi
 
-          echo "📦 Server build output contents:"
-          ls -la dist/apps/fnr-server/
-
-          echo "📦 Frontend build output contents:"
-          ls -la dist/apps/fnr-app/
-
-          echo "📄 Prisma directory contents:"
-          ls -la apps/fnr-server/prisma/
+          echo "✅ Build artifact verification completed successfully"
 
       - name: Upload deployment package
         uses: actions/upload-artifact@v4
@@ -133,10 +172,48 @@ jobs:
             apps/fnr-server/prisma/**
             package.json
             package-lock.json
+            .env.deploy
           if-no-files-found: error
           retention-days: 1
           compression-level: 6
           overwrite: true
+
+      - name: Generate deployment manifest
+        run: |
+          echo "📝 Generating deployment manifest..."
+          cat << EOF > deployment-manifest.json
+          {
+            "version": "1.0",
+            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "commit": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "environment": "${{ github.event.inputs.environment || 'staging' }}",
+            "artifacts": {
+              "server": {
+                "main": "dist/apps/fnr-server/main.js",
+                "config": "dist/apps/fnr-server/config.js"
+              },
+              "frontend": {
+                "index": "dist/apps/fnr-app/index.html",
+                "assets": "dist/apps/fnr-app/assets"
+              },
+              "prisma": {
+                "schema": "apps/fnr-server/prisma/schema.prisma",
+                "seed": "apps/fnr-server/prisma/seed.ts"
+              }
+            }
+          }
+          EOF
+
+          echo "✅ Deployment manifest generated:"
+          cat deployment-manifest.json
+
+      - name: Upload deployment manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-manifest
+          path: deployment-manifest.json
+          if-no-files-found: error
 
   deploy-staging:
     needs: build

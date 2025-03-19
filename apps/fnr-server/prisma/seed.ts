@@ -7,8 +7,8 @@ import {
 import * as bcrypt from 'bcrypt';
 import { admin, staffMembers, suppliers, insureds } from './seedData/userData';
 import { claimData } from './seedData/claimData';
-// Fix the import path to work in both development and production
-import { recalculateClaimValues } from '../src/lib/claimHelpers';
+// Use local copy of claimHelpers to avoid import path issues in production
+import { recalculateClaimValues } from './claimHelpers';
 import { seedContributors } from './seedData/seedContributors';
 import { seedItemActivities } from './seedData/seedItemActivities';
 
