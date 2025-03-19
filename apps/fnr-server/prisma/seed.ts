@@ -7,7 +7,8 @@ import {
 import * as bcrypt from 'bcrypt';
 import { admin, staffMembers, suppliers, insureds } from './seedData/userData';
 import { claimData } from './seedData/claimData';
-import { recalculateClaimValues } from '../src/lib/claimHelpers';
+// Use local copy of claimHelpers to avoid import path issues in production
+import { recalculateClaimValues } from './claimHelpers';
 import { seedContributors } from './seedData/seedContributors';
 import { seedItemActivities } from './seedData/seedItemActivities';
 
@@ -238,7 +239,7 @@ async function main() {
       // Create evidence separately if it exists
       if (item.insuredsEvidence && item.insuredsEvidence.length > 0) {
         await Promise.all(
-          item.insuredsEvidence.map((evidence) =>
+          item.insuredsEvidence.map((evidence: any) =>
             prisma.evidence.create({
               data: {
                 ...evidence,

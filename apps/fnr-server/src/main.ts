@@ -5,6 +5,7 @@
 
 import express from 'express';
 import * as path from 'path';
+import * as fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import session from 'express-session';
@@ -42,8 +43,78 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // In production, serve the frontend build files
 if (process.env.NODE_ENV === 'production') {
-  // Serve static files from frontend build directory
-  app.use(express.static(path.join(__dirname, '../../fnr-app')));
+  // Define paths for frontend files
+  const frontendPath = path.join(__dirname, './fnr-app');
+  const assetsPath = path.join(__dirname, './fnr-app/assets');
+  const indexPath = path.join(frontendPath, 'index.html');
+
+  // Verify frontend directory structure
+  try {
+    // Check frontend directory
+    if (!fs.existsSync(frontendPath)) {
+      throw new Error(`Frontend directory not found at: ${frontendPath}`);
+    }
+    console.log(`✅ Frontend directory found at: ${frontendPath}`);
+
+    // List frontend files for debugging
+    const files = fs.readdirSync(frontendPath);
+    console.log(`📂 Frontend directory contents: ${files.join(', ')}`);
+
+    // Check index.html
+    if (!fs.existsSync(indexPath)) {
+      throw new Error(`index.html not found at: ${indexPath}`);
+    }
+    console.log(`✅ index.html found at: ${indexPath}`);
+
+    // Check and create assets directory if needed
+    if (!fs.existsSync(assetsPath)) {
+      fs.mkdirSync(assetsPath, { recursive: true });
+      console.log(`📁 Created assets directory at: ${assetsPath}`);
+    } else {
+      const assetFiles = fs.readdirSync(assetsPath);
+      console.log(`📂 Assets directory contents: ${assetFiles.join(', ')}`);
+    }
+
+    // Serve static files with proper caching and error handling
+    app.use(
+      express.static(frontendPath, {
+        maxAge: '1h', // Cache regular files for 1 hour
+        index: false, // Don't serve index.html automatically
+        fallthrough: true, // Allow falling through to next middleware
+        redirect: false, // Don't redirect on missing trailing slash
+      })
+    );
+    console.log(`🌐 Serving frontend from: ${frontendPath}`);
+
+    // Serve assets with longer cache time
+    app.use(
+      '/assets',
+      express.static(assetsPath, {
+        maxAge: '7d', // Cache assets for 7 days
+        immutable: true, // Assets are immutable (they have hash in filename)
+        fallthrough: false, // Return 404 if asset not found
+        redirect: false, // Don't redirect on missing trailing slash
+      })
+    );
+    console.log(`🌐 Serving assets from: ${assetsPath}`);
+
+    // Error handler for missing assets
+    app.use(
+      '/assets',
+      (
+        err: any,
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        console.error(`❌ Asset not found: ${req.path}`);
+        res.status(404).json({ error: 'Asset not found', path: req.path });
+      }
+    );
+  } catch (error) {
+    console.error(`❌ Error setting up frontend serving: ${error}`);
+    // Continue running the server even if frontend serving setup fails
+  }
 }
 
 // Session and Passport setup
@@ -100,14 +171,55 @@ app.use('/api/activities', activitiesRouter);
 
 // Add catch-all route for client-side routing in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
     // Skip API routes
     if (req.path.startsWith('/api')) {
-      return res.status(404).json({ message: 'API endpoint not found' });
+      return res.status(404).json({
+        error: 'API endpoint not found',
+        path: req.path,
+        method: req.method,
+      });
     }
+
     // Serve index.html for all other routes
-    res.sendFile(path.join(__dirname, '../../fnr-app/index.html'));
+    const indexPath = path.join(__dirname, './fnr-app/index.html');
+
+    // Check if index.html exists
+    if (!fs.existsSync(indexPath)) {
+      console.error(`❌ index.html not found at: ${indexPath}`);
+      return res.status(500).json({
+        error: 'Frontend not properly deployed',
+        details: 'index.html is missing',
+      });
+    }
+
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error(`❌ Error serving index.html: ${err}`);
+        next(err);
+      } else {
+        console.log(`📄 Served index.html for: ${req.path}`);
+      }
+    });
   });
+
+  // Error handler for sendFile errors
+  app.use(
+    (
+      err: any,
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) => {
+      console.error(`❌ Error serving file: ${err}`);
+      res.status(500).json({
+        error: 'Error serving frontend file',
+        path: req.path,
+        details:
+          process.env.NODE_ENV === 'development' ? err.message : undefined,
+      });
+    }
+  );
 }
 
 const server = app.listen(SERVER_CONFIG.port, () => {

@@ -1,5 +1,6 @@
 export const SERVER_CONFIG = {
-  port: process.env.PORT || 3333,
+  port:
+    process.env.PORT || (process.env.NODE_ENV === 'production' ? 3000 : 3333),
   host: process.env.HOST || 'localhost',
 } as const;
 

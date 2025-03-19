@@ -37,5 +37,23 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    // Ensure assets use relative paths
+    assetsDir: 'assets',
+    // Generate manifest for better asset tracking
+    manifest: true,
+    rollupOptions: {
+      output: {
+        // Ensure proper chunking and naming
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+        // Ensure assets have consistent naming
+        assetFileNames: 'assets/[name].[hash].[ext]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
+      },
+    },
   },
+  // Use relative base path for production
+  base: './',
 });
