@@ -1,10 +1,22 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 // Load environment variables from .env file
-dotenv.config();
+try {
+  dotenv.config();
+  console.log('Environment variables loaded successfully');
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+} catch (error) {
+  console.error('Error loading environment variables:', error);
+  console.log('Continuing with default environment settings');
+  // Set default NODE_ENV if not set
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production';
+    console.log('NODE_ENV defaulted to:', process.env.NODE_ENV);
+  }
+}
 
-import * as path from 'path';
 import * as fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';

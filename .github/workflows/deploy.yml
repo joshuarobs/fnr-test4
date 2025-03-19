@@ -337,6 +337,13 @@ jobs:
             cd $APP_DIR
             npm ci --only=production
 
+            # Create production .env file
+            echo "NODE_ENV=production" > .env
+            echo "DATABASE_URL=postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb" >> .env
+            echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+            echo "PORT=3000" >> .env
+            echo "HOST=0.0.0.0" >> .env
+
             # Generate Prisma client
             npx prisma generate
 
@@ -389,14 +396,23 @@ jobs:
             # Set correct permissions
             chmod -R 755 dist/fnr-app
             
+            # Ensure environment variables are set
+            export NODE_ENV=production
+            export PORT=3000
+            export HOST="0.0.0.0"
+            
+            # Start PM2 with explicit environment configuration
             pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
               --error $APP_DIR/logs/error.log \
               --time \
               --merge-logs \
+              --update-env \
               --env production \
-              --env NODE_ENV=production
+              --node-args="-r dotenv/config" \
+              -- \
+              --max-old-space-size=512
             
             pm2 save
           ENDSSH
@@ -589,6 +605,13 @@ jobs:
             cd $APP_DIR
             npm ci --only=production
 
+            # Create production .env file
+            echo "NODE_ENV=production" > .env
+            echo "DATABASE_URL=postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb" >> .env
+            echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+            echo "PORT=3000" >> .env
+            echo "HOST=0.0.0.0" >> .env
+
             # Generate Prisma client
             npx prisma generate
 
@@ -620,19 +643,19 @@ jobs:
             # Set environment variables
             ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
             
-            # Update environment file with production settings
-            echo "Updating environment variables..."
-            sed -i 's/^NODE_ENV=.*/NODE_ENV=production/' .env
-            
-            # Start application
+            # Start application with explicit environment variables
             pm2 delete all 2>/dev/null || true
-            NODE_ENV=production pm2 start dist/main.js \
+            pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
               --error $APP_DIR/logs/error.log \
               --time \
               --merge-logs \
-              --env production
+              --env production \
+              --node-args="-r dotenv/config" \
+              --env NODE_ENV=production \
+              --env PORT=3000 \
+              --env HOST="0.0.0.0"
             
             # Save PM2 configuration
             pm2 save
