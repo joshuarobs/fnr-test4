@@ -1,6 +1,10 @@
 #!/bin/bash
 # Frontend Diagnostics Script for FNR Application
 # This script helps diagnose issues with frontend serving in the FNR application
+#
+# To run this script on the server:
+# ssh root@170.64.188.76 '/var/www/fnr-app/scripts/frontend-diagnostics.sh'
+#
 
 echo "=== FNR Frontend Diagnostics ==="
 echo "Running diagnostics on $(date)"

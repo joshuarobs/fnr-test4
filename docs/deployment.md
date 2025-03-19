@@ -88,7 +88,11 @@ If deployment fails:
 
 1. Check GitHub Actions logs for errors
 2. Verify secrets are correctly set
-3. Check server logs:
+3. Run frontend diagnostics:
+   ```bash
+   ssh root@170.64.188.76 '/var/www/fnr-app/scripts/frontend-diagnostics.sh'
+   ```
+4. Check server logs:
    ```bash
    ssh root@170.64.155.210
    cd /var/www/fnr-app/logs

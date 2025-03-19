@@ -170,6 +170,7 @@ jobs:
             dist/apps/fnr-server/**
             dist/apps/fnr-app/**
             apps/fnr-server/prisma/**
+            docs/frontend-diagnostics.sh
             package.json
             package-lock.json
             .env.deploy
@@ -340,9 +341,13 @@ jobs:
             npx prisma generate
 
             # Setup directories
-            mkdir -p logs
-            chmod 755 logs
+            mkdir -p logs scripts
+            chmod 755 logs scripts
             chmod -R 755 prisma
+
+            # Copy diagnostics script
+            cp /tmp/deploy/docs/frontend-diagnostics.sh scripts/
+            chmod +x scripts/frontend-diagnostics.sh
 
             # Run database migrations
             DB_PASSWORD=$(cat .db_password)
@@ -566,9 +571,13 @@ jobs:
             npx prisma generate
 
             # Setup directories
-            mkdir -p logs
-            chmod 755 logs
+            mkdir -p logs scripts
+            chmod 755 logs scripts
             chmod -R 755 prisma
+
+            # Copy diagnostics script
+            cp /tmp/deploy/docs/frontend-diagnostics.sh scripts/
+            chmod +x scripts/frontend-diagnostics.sh
 
             # Run database migrations
             DB_PASSWORD=$(cat .db_password)
