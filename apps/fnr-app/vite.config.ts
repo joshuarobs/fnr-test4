@@ -25,7 +25,11 @@ export default defineConfig({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
+  plugins: [
+    react(),
+    nxViteTsPaths(),
+    nxCopyAssetsPlugin(['*.md', 'manifest.json']),
+  ],
   build: {
     outDir: '../../dist/apps/fnr-app',
     emptyOutDir: true,
