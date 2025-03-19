@@ -87,8 +87,23 @@ jobs:
 
           # Check build output
           if [ ! -d "dist/apps/fnr-server" ]; then
-            echo "❌ Build output directory not found"
+            echo "❌ Server build output directory not found"
             exit 1
+          fi
+
+          if [ ! -d "dist/apps/fnr-app" ]; then
+            echo "❌ Frontend build output directory not found"
+            exit 1
+          fi
+
+          # Check for frontend assets
+          if [ ! -d "dist/apps/fnr-app/assets" ]; then
+            echo "⚠️ Frontend assets directory not found, this may cause issues"
+            mkdir -p dist/apps/fnr-app/assets
+          else
+            echo "✅ Frontend assets directory found"
+            echo "📦 Assets directory contents:"
+            ls -la dist/apps/fnr-app/assets/
           fi
 
           # Check Prisma files
@@ -99,8 +114,11 @@ jobs:
 
           echo "✅ All required directories found"
 
-          echo "📦 Build output contents:"
+          echo "📦 Server build output contents:"
           ls -la dist/apps/fnr-server/
+
+          echo "📦 Frontend build output contents:"
+          ls -la dist/apps/fnr-app/
 
           echo "📄 Prisma directory contents:"
           ls -la apps/fnr-server/prisma/
@@ -171,6 +189,16 @@ jobs:
             fi
             echo "✅ Found: $file"
           done
+
+          # Check for assets directory
+          if [ ! -d "deploy/dist/fnr-app/assets" ]; then
+            echo "⚠️ Assets directory not found, creating it to prevent issues"
+            mkdir -p deploy/dist/fnr-app/assets
+          else
+            echo "✅ Assets directory found"
+            echo "📦 Assets directory contents:"
+            ls -la deploy/dist/fnr-app/assets/
+          fi
 
           echo "✅ Deployment package verification successful"
 
@@ -387,6 +415,16 @@ jobs:
             fi
             echo "✅ Found: $file"
           done
+
+          # Check for assets directory
+          if [ ! -d "deploy/dist/fnr-app/assets" ]; then
+            echo "⚠️ Assets directory not found, creating it to prevent issues"
+            mkdir -p deploy/dist/fnr-app/assets
+          else
+            echo "✅ Assets directory found"
+            echo "📦 Assets directory contents:"
+            ls -la deploy/dist/fnr-app/assets/
+          fi
 
           echo "✅ Deployment package verification successful"
 

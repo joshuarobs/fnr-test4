@@ -5,6 +5,7 @@
 
 import express from 'express';
 import * as path from 'path';
+import * as fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import session from 'express-session';
@@ -44,8 +45,46 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 if (process.env.NODE_ENV === 'production') {
   // Serve static files from frontend build directory
   // Based on the deployment structure, main.js and fnr-app are at the same level in dist
-  app.use(express.static(path.join(__dirname, './fnr-app')));
-  console.log(`Serving frontend from: ${path.join(__dirname, './fnr-app')}`);
+  const frontendPath = path.join(__dirname, './fnr-app');
+  const assetsPath = path.join(__dirname, './fnr-app/assets');
+
+  // Check if frontend directory exists
+  try {
+    if (!fs.existsSync(frontendPath)) {
+      console.error(`Frontend directory not found at: ${frontendPath}`);
+    } else {
+      console.log(`Frontend directory found at: ${frontendPath}`);
+
+      // List files in the frontend directory to help with debugging
+      const files = fs.readdirSync(frontendPath);
+      console.log(`Frontend directory contents: ${files.join(', ')}`);
+
+      // Check if assets directory exists
+      if (fs.existsSync(assetsPath)) {
+        console.log(`Assets directory found at: ${assetsPath}`);
+        const assetFiles = fs.readdirSync(assetsPath);
+        console.log(`Assets directory contents: ${assetFiles.join(', ')}`);
+      } else {
+        console.warn(`Assets directory not found at: ${assetsPath}`);
+      }
+    }
+  } catch (error) {
+    console.error(`Error checking frontend directories: ${error}`);
+  }
+
+  // Serve the main frontend files
+  app.use(express.static(frontendPath));
+  console.log(`Serving frontend from: ${frontendPath}`);
+
+  // Add a specific route for assets with longer cache time
+  app.use(
+    '/assets',
+    express.static(assetsPath, {
+      maxAge: '7d', // Cache assets for 7 days
+      fallthrough: false, // Return 404 if asset not found
+    })
+  );
+  console.log(`Serving assets from: ${assetsPath}`);
 }
 
 // Session and Passport setup
