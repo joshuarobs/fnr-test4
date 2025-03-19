@@ -6,7 +6,9 @@
 # ssh root@170.64.188.76 '/var/www/fnr-app/scripts/frontend-diagnostics.sh'
 #
 
+echo "================================"
 echo "=== FNR Frontend Diagnostics ==="
+echo "================================"
 echo "Running diagnostics on $(date)"
 echo
 

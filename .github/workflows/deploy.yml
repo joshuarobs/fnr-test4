@@ -617,10 +617,16 @@ jobs:
               exit 1
             fi
 
+            # Set environment variables
+            ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
+            
+            # Update environment file with production settings
+            echo "Updating environment variables..."
+            sed -i 's/^NODE_ENV=.*/NODE_ENV=production/' .env
+            
             # Start application
             pm2 delete all 2>/dev/null || true
-            ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
-            pm2 start dist/main.js \
+            NODE_ENV=production pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
               --error $APP_DIR/logs/error.log \
@@ -628,7 +634,12 @@ jobs:
               --merge-logs \
               --env production
             
+            # Save PM2 configuration
             pm2 save
+            
+            # Verify environment
+            echo "Verifying NODE_ENV setting..."
+            pm2 env 0 | grep NODE_ENV
           ENDSSH
 
       - name: Verify Deployment

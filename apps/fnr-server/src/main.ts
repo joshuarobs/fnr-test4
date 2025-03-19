@@ -1,9 +1,9 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import express from 'express';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
 import * as path from 'path';
 import * as fs from 'fs';
 import cors from 'cors';
@@ -73,26 +73,39 @@ if (process.env.NODE_ENV === 'production') {
     const assetFiles = fs.readdirSync(assetsPath);
     console.log(`📂 Assets directory contents: ${assetFiles.join(', ')}`);
 
+    // Log environment for debugging
+    console.log('Environment:', {
+      NODE_ENV: process.env.NODE_ENV,
+      frontendPath,
+      assetsPath,
+      indexPath,
+    });
+
+    // Create static middleware instances
+    const frontendMiddleware = express.static(frontendPath, {
+      maxAge: '1h',
+      index: false,
+      fallthrough: true,
+    });
+
+    const assetsMiddleware = express.static(assetsPath, {
+      maxAge: '7d',
+      immutable: true,
+      fallthrough: true,
+    });
+
     // Serve static files with proper caching and error handling
-    app.use(
-      '/',
-      express.static(frontendPath, {
-        maxAge: '1h', // Cache regular files for 1 hour
-        index: false, // Don't serve index.html automatically
-        fallthrough: true, // Allow falling through to next middleware
-      })
-    );
+    app.use('/', (req, res, next) => {
+      console.log(`📝 Static request for: ${req.path}`);
+      frontendMiddleware(req, res, next);
+    });
     console.log(`🌐 Serving frontend from: ${frontendPath}`);
 
     // Serve assets with longer cache time
-    app.use(
-      '/assets',
-      express.static(assetsPath, {
-        maxAge: '7d', // Cache assets for 7 days
-        immutable: true, // Assets are immutable (they have hash in filename)
-        fallthrough: true, // Allow falling through to next middleware
-      })
-    );
+    app.use('/assets', (req, res, next) => {
+      console.log(`📝 Asset request for: ${req.path}`);
+      assetsMiddleware(req, res, next);
+    });
     console.log(`🌐 Serving assets from: ${assetsPath}`);
 
     // Global error handler for static files
