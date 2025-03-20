@@ -171,6 +171,7 @@ jobs:
             dist/apps/fnr-app/**
             apps/fnr-server/prisma/**
             docs/frontend-diagnostics.sh
+            scripts/run-seed.sh
             package.json
             package-lock.json
             .env.deploy
@@ -401,16 +402,21 @@ jobs:
             }
             EOL
             
-            # Start application using PM2 ecosystem file
+            # Ensure NODE_ENV is set system-wide
+            echo "NODE_ENV=production" | sudo tee -a /etc/environment
+            source /etc/environment
+            
+            # Start application using PM2 ecosystem file with explicit environment
             pm2 delete all 2>/dev/null || true
-            pm2 start ecosystem.config.js --env production
+            NODE_ENV=production pm2 start ecosystem.config.js --env production --update-env
             
             # Save PM2 configuration
             pm2 save
             
             # Verify environment
             echo "Verifying NODE_ENV setting..."
-            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV: $NODE_ENV"
+            source /etc/environment
+            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV from environment: $NODE_ENV"
           ENDSSH
 
       - name: Verify Deployment
@@ -442,8 +448,8 @@ jobs:
             export NODE_ENV=production
             
             echo "Running database seed..."
-            # Run seed with transpileOnly to bypass TypeScript errors
-            npx ts-node --skipProject --transpileOnly --compiler-options '{"module":"CommonJS"}' prisma/seed.ts 2>&1 | tee seed.log
+            chmod +x scripts/run-seed.sh
+            ./scripts/run-seed.sh 2>&1 | tee seed.log
             
             if [ $? -ne 0 ]; then
               echo "❌ Database seeding failed. Check seed.log for details:"
@@ -664,16 +670,21 @@ jobs:
             }
             EOL
             
-            # Start application using PM2 ecosystem file
+            # Ensure NODE_ENV is set system-wide
+            echo "NODE_ENV=production" | sudo tee -a /etc/environment
+            source /etc/environment
+            
+            # Start application using PM2 ecosystem file with explicit environment
             pm2 delete all 2>/dev/null || true
-            pm2 start ecosystem.config.js --env production
+            NODE_ENV=production pm2 start ecosystem.config.js --env production --update-env
             
             # Save PM2 configuration
             pm2 save
             
             # Verify environment
             echo "Verifying NODE_ENV setting..."
-            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV: $NODE_ENV"
+            source /etc/environment
+            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV from environment: $NODE_ENV"
           ENDSSH
 
       - name: Verify Deployment
@@ -705,8 +716,8 @@ jobs:
             export NODE_ENV=production
             
             echo "Running database seed..."
-            # Run seed with transpileOnly to bypass TypeScript errors
-            npx ts-node --skipProject --transpileOnly --compiler-options '{"module":"CommonJS"}' prisma/seed.ts 2>&1 | tee seed.log
+            chmod +x scripts/run-seed.sh
+            ./scripts/run-seed.sh 2>&1 | tee seed.log
             
             if [ $? -ne 0 ]; then
               echo "❌ Database seeding failed. Check seed.log for details:"
