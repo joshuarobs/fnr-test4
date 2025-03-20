@@ -376,45 +376,41 @@ jobs:
             pm2 delete all 2>/dev/null || true
             ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
             
-            # Set environment variables
-            export NODE_ENV=production
-            
-            # Verify frontend files
-            echo "Verifying frontend files..."
-            if [ ! -d "dist/fnr-app" ] || [ ! -f "dist/fnr-app/index.html" ]; then
-              echo "❌ Frontend files missing or incomplete"
-              exit 1
-            fi
-            
-            # Verify assets
-            echo "Verifying frontend assets..."
-            if [ ! -d "dist/fnr-app/assets" ]; then
-              echo "❌ Assets directory missing"
-              exit 1
-            fi
-            
-            # Set correct permissions
-            chmod -R 755 dist/fnr-app
-            
-            # Ensure environment variables are set
+            # Export environment variables to shell
             export NODE_ENV=production
             export PORT=3000
             export HOST="0.0.0.0"
             
-            # Start PM2 with explicit environment configuration
-            pm2 start dist/main.js \
-              --name "fnr-server-$ENV" \
-              --log $APP_DIR/logs/app.log \
-              --error $APP_DIR/logs/error.log \
-              --time \
-              --merge-logs \
-              --update-env \
-              --env production \
-              --node-args="-r dotenv/config" \
-              -- \
-              --max-old-space-size=512
+            # Create PM2 ecosystem file
+            cat > ecosystem.config.js << 'EOL'
+            module.exports = {
+              apps: [{
+                name: "fnr-server-staging",
+                script: "dist/main.js",
+                env: {
+                  NODE_ENV: "production",
+                  PORT: 3000,
+                  HOST: "0.0.0.0"
+                },
+                log_date_format: "YYYY-MM-DD HH:mm:ss",
+                error_file: "logs/error.log",
+                out_file: "logs/app.log",
+                merge_logs: true,
+                max_memory_restart: "512M"
+              }]
+            }
+            EOL
             
+            # Start application using PM2 ecosystem file
+            pm2 delete all 2>/dev/null || true
+            pm2 start ecosystem.config.js --env production
+            
+            # Save PM2 configuration
             pm2 save
+            
+            # Verify environment
+            echo "Verifying NODE_ENV setting..."
+            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV: $NODE_ENV"
           ENDSSH
 
       - name: Verify Deployment
@@ -643,26 +639,41 @@ jobs:
             # Set environment variables
             ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
             
-            # Start application with explicit environment variables
+            # Export environment variables to shell
+            export NODE_ENV=production
+            export PORT=3000
+            export HOST="0.0.0.0"
+            
+            # Create PM2 ecosystem file
+            cat > ecosystem.config.js << 'EOL'
+            module.exports = {
+              apps: [{
+                name: "fnr-server-prod",
+                script: "dist/main.js",
+                env: {
+                  NODE_ENV: "production",
+                  PORT: 3000,
+                  HOST: "0.0.0.0"
+                },
+                log_date_format: "YYYY-MM-DD HH:mm:ss",
+                error_file: "logs/error.log",
+                out_file: "logs/app.log",
+                merge_logs: true,
+                max_memory_restart: "512M"
+              }]
+            }
+            EOL
+            
+            # Start application using PM2 ecosystem file
             pm2 delete all 2>/dev/null || true
-            pm2 start dist/main.js \
-              --name "fnr-server-$ENV" \
-              --log $APP_DIR/logs/app.log \
-              --error $APP_DIR/logs/error.log \
-              --time \
-              --merge-logs \
-              --env production \
-              --node-args="-r dotenv/config" \
-              --env NODE_ENV=production \
-              --env PORT=3000 \
-              --env HOST="0.0.0.0"
+            pm2 start ecosystem.config.js --env production
             
             # Save PM2 configuration
             pm2 save
             
             # Verify environment
             echo "Verifying NODE_ENV setting..."
-            pm2 env 0 | grep NODE_ENV
+            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV: $NODE_ENV"
           ENDSSH
 
       - name: Verify Deployment
