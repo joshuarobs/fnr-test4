@@ -177,8 +177,8 @@ jobs:
           EOF
           chmod 600 /var/www/fnr-app/.env
 
-          # Add NODE_ENV to bashrc for persistence across sessions
-          echo "export NODE_ENV=\"$NODE_ENV\"" >> ~/.bashrc
+          # Add NODE_ENV to bashrc for persistence across sessions (if not already present)
+          grep -q "export NODE_ENV=\"$NODE_ENV\"" ~/.bashrc || echo "export NODE_ENV=\"$NODE_ENV\"" >> ~/.bashrc
           source ~/.bashrc
 
           # Also add to /etc/environment for system-wide availability
