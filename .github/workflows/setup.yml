@@ -159,9 +159,16 @@ jobs:
           echo "${{ secrets.DATABASE_PASSWORD }}" > /var/www/fnr-app/.db_password
           chmod 600 /var/www/fnr-app/.db_password
 
-          cat > /var/www/fnr-app/.env << 'EOF'
+          # Set NODE_ENV based on environment input
+          if [ "${{ github.event.inputs.environment }}" = "prod" ]; then
+            NODE_ENV="production"
+          else
+            NODE_ENV="staging"
+          fi
+
+          cat > /var/www/fnr-app/.env << EOF
           DATABASE_URL="postgresql://fnrapp:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/fnrdb"
-          NODE_ENV="${{ github.event.inputs.environment == 'prod' && 'production' || 'staging' }}"
+          NODE_ENV="$NODE_ENV"
           PORT=3000
           HOST="0.0.0.0"
           SESSION_SECRET="$(openssl rand -base64 32)"
@@ -169,6 +176,14 @@ jobs:
           PM2_HOME="/var/www/fnr-app/.pm2"
           EOF
           chmod 600 /var/www/fnr-app/.env
+
+          # Add NODE_ENV to bashrc for persistence across sessions
+          echo "export NODE_ENV=\"$NODE_ENV\"" >> ~/.bashrc
+          source ~/.bashrc
+
+          # Also add to /etc/environment for system-wide availability
+          echo "NODE_ENV=$NODE_ENV" | sudo tee -a /etc/environment
+          source /etc/environment
           ENDSSH
 
       - name: Verify Setup
