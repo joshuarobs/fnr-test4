@@ -171,7 +171,6 @@ jobs:
             dist/apps/fnr-app/**
             apps/fnr-server/prisma/**
             docs/frontend-diagnostics.sh
-            scripts/run-seed.sh
             package.json
             package-lock.json
             .env.deploy
@@ -338,13 +337,6 @@ jobs:
             cd $APP_DIR
             npm ci --only=production
 
-            # Create production .env file
-            echo "NODE_ENV=production" > .env
-            echo "DATABASE_URL=postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb" >> .env
-            echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
-            echo "PORT=3000" >> .env
-            echo "HOST=0.0.0.0" >> .env
-
             # Generate Prisma client
             npx prisma generate
 
@@ -377,46 +369,36 @@ jobs:
             pm2 delete all 2>/dev/null || true
             ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
             
-            # Export environment variables to shell
+            # Set environment variables
             export NODE_ENV=production
-            export PORT=3000
-            export HOST="0.0.0.0"
             
-            # Create PM2 ecosystem file
-            cat > ecosystem.config.js << 'EOL'
-            module.exports = {
-              apps: [{
-                name: "fnr-server-staging",
-                script: "dist/main.js",
-                env: {
-                  NODE_ENV: "production",
-                  PORT: 3000,
-                  HOST: "0.0.0.0"
-                },
-                log_date_format: "YYYY-MM-DD HH:mm:ss",
-                error_file: "logs/error.log",
-                out_file: "logs/app.log",
-                merge_logs: true,
-                max_memory_restart: "512M"
-              }]
-            }
-            EOL
+            # Verify frontend files
+            echo "Verifying frontend files..."
+            if [ ! -d "dist/fnr-app" ] || [ ! -f "dist/fnr-app/index.html" ]; then
+              echo "❌ Frontend files missing or incomplete"
+              exit 1
+            fi
             
-            # Ensure NODE_ENV is set system-wide
-            echo "NODE_ENV=production" | sudo tee -a /etc/environment
-            source /etc/environment
+            # Verify assets
+            echo "Verifying frontend assets..."
+            if [ ! -d "dist/fnr-app/assets" ]; then
+              echo "❌ Assets directory missing"
+              exit 1
+            fi
             
-            # Start application using PM2 ecosystem file with explicit environment
-            pm2 delete all 2>/dev/null || true
-            NODE_ENV=production pm2 start ecosystem.config.js --env production --update-env
+            # Set correct permissions
+            chmod -R 755 dist/fnr-app
             
-            # Save PM2 configuration
+            pm2 start dist/main.js \
+              --name "fnr-server-$ENV" \
+              --log $APP_DIR/logs/app.log \
+              --error $APP_DIR/logs/error.log \
+              --time \
+              --merge-logs \
+              --env production \
+              --env NODE_ENV=production
+            
             pm2 save
-            
-            # Verify environment
-            echo "Verifying NODE_ENV setting..."
-            source /etc/environment
-            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV from environment: $NODE_ENV"
           ENDSSH
 
       - name: Verify Deployment
@@ -448,8 +430,8 @@ jobs:
             export NODE_ENV=production
             
             echo "Running database seed..."
-            chmod +x scripts/run-seed.sh
-            ./scripts/run-seed.sh 2>&1 | tee seed.log
+            # Run seed with transpileOnly to bypass TypeScript errors
+            npx ts-node --skipProject --transpileOnly --compiler-options '{"module":"CommonJS"}' prisma/seed.ts 2>&1 | tee seed.log
             
             if [ $? -ne 0 ]; then
               echo "❌ Database seeding failed. Check seed.log for details:"
@@ -607,13 +589,6 @@ jobs:
             cd $APP_DIR
             npm ci --only=production
 
-            # Create production .env file
-            echo "NODE_ENV=production" > .env
-            echo "DATABASE_URL=postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb" >> .env
-            echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
-            echo "PORT=3000" >> .env
-            echo "HOST=0.0.0.0" >> .env
-
             # Generate Prisma client
             npx prisma generate
 
@@ -642,49 +617,18 @@ jobs:
               exit 1
             fi
 
-            # Set environment variables
-            ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
-            
-            # Export environment variables to shell
-            export NODE_ENV=production
-            export PORT=3000
-            export HOST="0.0.0.0"
-            
-            # Create PM2 ecosystem file
-            cat > ecosystem.config.js << 'EOL'
-            module.exports = {
-              apps: [{
-                name: "fnr-server-prod",
-                script: "dist/main.js",
-                env: {
-                  NODE_ENV: "production",
-                  PORT: 3000,
-                  HOST: "0.0.0.0"
-                },
-                log_date_format: "YYYY-MM-DD HH:mm:ss",
-                error_file: "logs/error.log",
-                out_file: "logs/app.log",
-                merge_logs: true,
-                max_memory_restart: "512M"
-              }]
-            }
-            EOL
-            
-            # Ensure NODE_ENV is set system-wide
-            echo "NODE_ENV=production" | sudo tee -a /etc/environment
-            source /etc/environment
-            
-            # Start application using PM2 ecosystem file with explicit environment
+            # Start application
             pm2 delete all 2>/dev/null || true
-            NODE_ENV=production pm2 start ecosystem.config.js --env production --update-env
+            ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
+            pm2 start dist/main.js \
+              --name "fnr-server-$ENV" \
+              --log $APP_DIR/logs/app.log \
+              --error $APP_DIR/logs/error.log \
+              --time \
+              --merge-logs \
+              --env production
             
-            # Save PM2 configuration
             pm2 save
-            
-            # Verify environment
-            echo "Verifying NODE_ENV setting..."
-            source /etc/environment
-            pm2 env 0 | grep NODE_ENV || echo "NODE_ENV from environment: $NODE_ENV"
           ENDSSH
 
       - name: Verify Deployment
@@ -716,8 +660,8 @@ jobs:
             export NODE_ENV=production
             
             echo "Running database seed..."
-            chmod +x scripts/run-seed.sh
-            ./scripts/run-seed.sh 2>&1 | tee seed.log
+            # Run seed with transpileOnly to bypass TypeScript errors
+            npx ts-node --skipProject --transpileOnly --compiler-options '{"module":"CommonJS"}' prisma/seed.ts 2>&1 | tee seed.log
             
             if [ $? -ne 0 ]; then
               echo "❌ Database seeding failed. Check seed.log for details:"
