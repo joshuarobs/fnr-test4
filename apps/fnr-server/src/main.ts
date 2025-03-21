@@ -62,65 +62,93 @@ if (process.env.NODE_ENV === 'production') {
 
   // Verify frontend directory structure
   try {
-    // Check frontend directory
+    // Create directories if they don't exist
     if (!fs.existsSync(frontendPath)) {
-      throw new Error(`Frontend directory not found at: ${frontendPath}`);
+      fs.mkdirSync(frontendPath, { recursive: true });
     }
-    console.log(`✅ Frontend directory found at: ${frontendPath}`);
+    if (!fs.existsSync(assetsPath)) {
+      fs.mkdirSync(assetsPath, { recursive: true });
+    }
+    console.log(`✅ Frontend directories created/verified`);
 
     // List frontend files for debugging
     const files = fs.readdirSync(frontendPath);
     console.log(`📂 Frontend directory contents: ${files.join(', ')}`);
 
-    // Check index.html
+    // Check index.html with detailed error
     if (!fs.existsSync(indexPath)) {
-      throw new Error(`index.html not found at: ${indexPath}`);
+      throw new Error(
+        `index.html not found at: ${indexPath}. Please ensure the frontend build was successful.`
+      );
     }
     console.log(`✅ index.html found at: ${indexPath}`);
 
-    // Check assets directory
-    if (!fs.existsSync(assetsPath)) {
-      throw new Error(`Assets directory not found at: ${assetsPath}`);
-    }
+    // Check assets directory with contents
     const assetFiles = fs.readdirSync(assetsPath);
     console.log(`📂 Assets directory contents: ${assetFiles.join(', ')}`);
+    if (assetFiles.length === 0) {
+      console.warn('⚠️ Warning: Assets directory is empty');
+    }
 
-    // Log environment for debugging
+    // Log environment and paths
     console.log('Environment:', {
       NODE_ENV: process.env.NODE_ENV,
       frontendPath,
       assetsPath,
       indexPath,
+      currentDir: __dirname,
     });
 
-    // Create static middleware instances
-    const frontendMiddleware = express.static(frontendPath, {
+    // Enhanced static middleware with better caching and compression
+    const staticOptions = {
       maxAge: '1h',
       index: false,
       fallthrough: true,
-    });
+      etag: true,
+      lastModified: true,
+    };
 
-    const assetsMiddleware = express.static(assetsPath, {
+    const assetOptions = {
+      ...staticOptions,
       maxAge: '7d',
       immutable: true,
-      fallthrough: true,
-    });
+    };
 
-    // Serve static files with proper caching and error handling
+    // Serve static files with enhanced logging
     app.use('/', (req, res, next) => {
+      const startTime = Date.now();
       console.log(`📝 Static request for: ${req.path}`);
-      frontendMiddleware(req, res, next);
-    });
-    console.log(`🌐 Serving frontend from: ${frontendPath}`);
 
-    // Serve assets with longer cache time
+      express.static(frontendPath, staticOptions)(req, res, (err) => {
+        if (err) {
+          console.error(`❌ Error serving static file: ${req.path}`, err);
+          return next(err);
+        }
+
+        const duration = Date.now() - startTime;
+        console.log(`✅ Served ${req.path} in ${duration}ms`);
+        next();
+      });
+    });
+
+    // Serve assets with dedicated error handling
     app.use('/assets', (req, res, next) => {
+      const startTime = Date.now();
       console.log(`📝 Asset request for: ${req.path}`);
-      assetsMiddleware(req, res, next);
-    });
-    console.log(`🌐 Serving assets from: ${assetsPath}`);
 
-    // Global error handler for static files
+      express.static(assetsPath, assetOptions)(req, res, (err) => {
+        if (err) {
+          console.error(`❌ Error serving asset: ${req.path}`, err);
+          return next(err);
+        }
+
+        const duration = Date.now() - startTime;
+        console.log(`✅ Served asset ${req.path} in ${duration}ms`);
+        next();
+      });
+    });
+
+    // Enhanced error handling for static files
     app.use(
       (
         err: any,
@@ -128,21 +156,52 @@ if (process.env.NODE_ENV === 'production') {
         res: express.Response,
         next: express.NextFunction
       ) => {
-        if (err.code === 'ENOENT') {
-          console.error(`❌ File not found: ${req.path}`);
-          if (req.path.startsWith('/assets/')) {
-            return res
-              .status(404)
-              .json({ error: 'Asset not found', path: req.path });
+        if (err) {
+          console.error(`❌ Static file error:`, {
+            path: req.path,
+            error: err.message,
+            code: err.code,
+            stack:
+              process.env.NODE_ENV === 'development' ? err.stack : undefined,
+          });
+
+          if (err.code === 'ENOENT') {
+            if (req.path.startsWith('/assets/')) {
+              return res.status(404).json({
+                error: 'Asset not found',
+                path: req.path,
+                message: 'The requested asset could not be found on the server',
+              });
+            }
+
+            // For non-asset paths, try serving index.html for SPA routing
+            console.log(`🔄 Serving index.html for path: ${req.path}`);
+            return res.sendFile(indexPath, (sendErr) => {
+              if (sendErr) {
+                console.error(`❌ Error serving index.html:`, sendErr);
+                return res.status(500).json({
+                  error: 'Server Error',
+                  message: 'Failed to serve the application',
+                });
+              }
+            });
           }
-          // For non-asset paths, try serving index.html
-          return res.sendFile(indexPath);
+
+          return res.status(500).json({
+            error: 'Server Error',
+            message:
+              process.env.NODE_ENV === 'development'
+                ? err.message
+                : 'Internal server error',
+          });
         }
-        next(err);
+        next();
       }
     );
+
+    console.log(`🌐 Static file serving configured successfully`);
   } catch (error) {
-    console.error(`❌ Error setting up frontend serving: ${error}`);
+    console.error(`❌ Critical error setting up frontend serving:`, error);
     throw error; // Stop server if frontend serving setup fails
   }
 }
