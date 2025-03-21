@@ -318,6 +318,46 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             BACKUP_DIR="/var/backups/app"
 
+            # Function to verify frontend files
+            verify_frontend() {
+              local dir=$1
+              echo "🔍 Verifying frontend files in $dir..."
+              
+              # Check index.html
+              if [ ! -f "$dir/index.html" ]; then
+                echo "❌ index.html missing"
+                return 1
+              fi
+              
+              # Check assets directory
+              if [ ! -d "$dir/assets" ]; then
+                echo "❌ Assets directory missing"
+                return 1
+              fi
+              
+              # Check for critical asset types
+              local missing_assets=0
+              for ext in js css; do
+                if [ $(find "$dir/assets" -name "*.$ext" | wc -l) -eq 0 ]; then
+                  echo "❌ No .$ext files found in assets directory"
+                  missing_assets=1
+                fi
+              done
+              
+              # Check favicon
+              if [ ! -f "$dir/favicon.ico" ]; then
+                echo "❌ favicon.ico missing"
+                return 1
+              fi
+              
+              if [ $missing_assets -eq 1 ]; then
+                return 1
+              fi
+              
+              echo "✅ Frontend files verified successfully"
+              return 0
+            }
+
             # Backup current deployment
             if [ -d "$APP_DIR" ] && [ "$(ls -A $APP_DIR)" ]; then
               mkdir -p $BACKUP_DIR
@@ -327,6 +367,12 @@ jobs:
 
             # Stop current application
             pm2 stop all 2>/dev/null || true
+
+            # Verify new build before deploying
+            if ! verify_frontend "/tmp/deploy/dist/fnr-app"; then
+              echo "❌ Frontend verification failed. Aborting deployment."
+              exit 1
+            fi
 
             # Deploy new build
             mkdir -p $APP_DIR
@@ -368,27 +414,22 @@ jobs:
             # Start application
             pm2 delete all 2>/dev/null || true
             ENV="${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}"
-            
-            # Set environment variables
             export NODE_ENV=production
-            
-            # Verify frontend files
-            echo "Verifying frontend files..."
-            if [ ! -d "dist/fnr-app" ] || [ ! -f "dist/fnr-app/index.html" ]; then
-              echo "❌ Frontend files missing or incomplete"
+
+            # Final verification before starting
+            if ! verify_frontend "$APP_DIR/dist/fnr-app"; then
+              echo "❌ Final frontend verification failed. Rolling back..."
+              if [ -f "$BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz" ]; then
+                rm -rf $APP_DIR/*
+                tar -xzf "$BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz" -C $APP_DIR
+              fi
               exit 1
             fi
-            
-            # Verify assets
-            echo "Verifying frontend assets..."
-            if [ ! -d "dist/fnr-app/assets" ]; then
-              echo "❌ Assets directory missing"
-              exit 1
-            fi
-            
+
             # Set correct permissions
             chmod -R 755 dist/fnr-app
-            
+
+            # Start the server
             pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
@@ -397,8 +438,10 @@ jobs:
               --merge-logs \
               --env production \
               --env NODE_ENV=production
-            
+
             pm2 save
+
+            echo "✅ Deployment completed successfully"
           ENDSSH
 
       - name: Verify Deployment

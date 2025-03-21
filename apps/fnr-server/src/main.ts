@@ -55,155 +55,61 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // In production, serve the frontend build files
 if (process.env.NODE_ENV === 'production') {
-  // Define paths for frontend files
   const frontendPath = path.join(__dirname, './fnr-app');
-  const assetsPath = path.join(__dirname, './fnr-app/assets');
   const indexPath = path.join(frontendPath, 'index.html');
 
-  // Verify frontend directory structure
-  try {
-    // Create directories if they don't exist
-    if (!fs.existsSync(frontendPath)) {
-      fs.mkdirSync(frontendPath, { recursive: true });
-    }
-    if (!fs.existsSync(assetsPath)) {
-      fs.mkdirSync(assetsPath, { recursive: true });
-    }
-    console.log(`✅ Frontend directories created/verified`);
+  // Verify frontend directory exists
+  if (!fs.existsSync(frontendPath)) {
+    console.error(`❌ Frontend directory not found at: ${frontendPath}`);
+    process.exit(1);
+  }
 
-    // List frontend files for debugging
-    const files = fs.readdirSync(frontendPath);
-    console.log(`📂 Frontend directory contents: ${files.join(', ')}`);
+  // Log frontend directory structure
+  console.log('🌐 Serving frontend from:', frontendPath);
+  console.log('Environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    frontendPath,
+    indexPath,
+    currentDir: __dirname,
+  });
 
-    // Check index.html with detailed error
-    if (!fs.existsSync(indexPath)) {
-      throw new Error(
-        `index.html not found at: ${indexPath}. Please ensure the frontend build was successful.`
-      );
-    }
-    console.log(`✅ index.html found at: ${indexPath}`);
-
-    // Check assets directory with contents
-    const assetFiles = fs.readdirSync(assetsPath);
-    console.log(`📂 Assets directory contents: ${assetFiles.join(', ')}`);
-    if (assetFiles.length === 0) {
-      console.warn('⚠️ Warning: Assets directory is empty');
-    }
-
-    // Log environment and paths
-    console.log('Environment:', {
-      NODE_ENV: process.env.NODE_ENV,
-      frontendPath,
-      assetsPath,
-      indexPath,
-      currentDir: __dirname,
-    });
-
-    // Enhanced static middleware with better caching and compression
-    const staticOptions = {
-      maxAge: '1h',
-      index: false,
-      fallthrough: true,
+  // Serve static files with caching
+  app.use(
+    express.static(frontendPath, {
+      maxAge: '7d',
+      index: false, // Don't serve index.html automatically
       etag: true,
       lastModified: true,
-    };
-
-    const assetOptions = {
-      ...staticOptions,
-      maxAge: '7d',
-      immutable: true,
-    };
-
-    // Serve static files with enhanced logging
-    app.use('/', (req, res, next) => {
-      const startTime = Date.now();
-      console.log(`📝 Static request for: ${req.path}`);
-
-      express.static(frontendPath, staticOptions)(req, res, (err) => {
-        if (err) {
-          console.error(`❌ Error serving static file: ${req.path}`, err);
-          return next(err);
+      setHeaders: (res, path) => {
+        // Set cache headers based on file type
+        if (path.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'no-cache');
+        } else if (path.includes('/assets/')) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         }
+      },
+    })
+  );
 
-        const duration = Date.now() - startTime;
-        console.log(`✅ Served ${req.path} in ${duration}ms`);
-        next();
-      });
-    });
+  // Handle SPA routing - serve index.html for all non-API routes
+  app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
 
-    // Serve assets with dedicated error handling
-    app.use('/assets', (req, res, next) => {
-      const startTime = Date.now();
-      console.log(`📝 Asset request for: ${req.path}`);
+    console.log(`📝 Static request for: ${req.path}`);
 
-      express.static(assetsPath, assetOptions)(req, res, (err) => {
-        if (err) {
-          console.error(`❌ Error serving asset: ${req.path}`, err);
-          return next(err);
-        }
-
-        const duration = Date.now() - startTime;
-        console.log(`✅ Served asset ${req.path} in ${duration}ms`);
-        next();
-      });
-    });
-
-    // Enhanced error handling for static files
-    app.use(
-      (
-        err: any,
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
-        if (err) {
-          console.error(`❌ Static file error:`, {
-            path: req.path,
-            error: err.message,
-            code: err.code,
-            stack:
-              process.env.NODE_ENV === 'development' ? err.stack : undefined,
-          });
-
-          if (err.code === 'ENOENT') {
-            if (req.path.startsWith('/assets/')) {
-              return res.status(404).json({
-                error: 'Asset not found',
-                path: req.path,
-                message: 'The requested asset could not be found on the server',
-              });
-            }
-
-            // For non-asset paths, try serving index.html for SPA routing
-            console.log(`🔄 Serving index.html for path: ${req.path}`);
-            return res.sendFile(indexPath, (sendErr) => {
-              if (sendErr) {
-                console.error(`❌ Error serving index.html:`, sendErr);
-                return res.status(500).json({
-                  error: 'Server Error',
-                  message: 'Failed to serve the application',
-                });
-              }
-            });
-          }
-
-          return res.status(500).json({
-            error: 'Server Error',
-            message:
-              process.env.NODE_ENV === 'development'
-                ? err.message
-                : 'Internal server error',
-          });
-        }
-        next();
+    // Serve index.html
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error(`❌ Error serving index.html for ${req.path}:`, err);
+        res.status(500).send('Error loading application');
+      } else {
+        console.log(`📄 Served index.html for: ${req.path}`);
       }
-    );
-
-    console.log(`🌐 Static file serving configured successfully`);
-  } catch (error) {
-    console.error(`❌ Critical error setting up frontend serving:`, error);
-    throw error; // Stop server if frontend serving setup fails
-  }
+    });
+  });
 }
 
 // Session and Passport setup

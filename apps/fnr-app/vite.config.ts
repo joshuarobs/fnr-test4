@@ -7,7 +7,7 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 // Proxy target for development - matches server config
 const DEV_API_URL = 'http://localhost:3333';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/fnr-app',
   server: {
@@ -28,7 +28,7 @@ export default defineConfig({
   plugins: [
     react(),
     nxViteTsPaths(),
-    nxCopyAssetsPlugin(['*.md', 'manifest.json']),
+    nxCopyAssetsPlugin(['*.md', 'manifest.json', 'favicon.ico']),
   ],
   build: {
     outDir: '../../dist/apps/fnr-app',
@@ -37,23 +37,25 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    // Ensure assets use relative paths
     assetsDir: 'assets',
-    // Generate manifest for better asset tracking
     manifest: true,
     rollupOptions: {
       output: {
-        // Ensure proper chunking and naming
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
         },
-        // Ensure assets have consistent naming
-        assetFileNames: 'assets/[name].[hash].[ext]',
+        assetFileNames: (assetInfo: { name?: string }) => {
+          // Keep favicon.ico in root directory
+          if (assetInfo.name === 'favicon.ico') {
+            return '[name].[ext]';
+          }
+          return 'assets/[name].[hash].[ext]';
+        },
         chunkFileNames: 'assets/[name].[hash].js',
         entryFileNames: 'assets/[name].[hash].js',
       },
     },
   },
-  // Use relative base path for better asset handling
-  base: './',
+  // Use absolute base path in production for better compatibility
+  base: mode === 'production' ? '/' : './',
 });
