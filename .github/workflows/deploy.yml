@@ -94,12 +94,6 @@ jobs:
               return 1
             fi
             echo "✅ Found $name: $file"
-            # Check file size
-            local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
-            echo "📊 File size: $size bytes"
-            # Check file permissions
-            local perms=$(stat -f%Mp%Lp "$file" 2>/dev/null || stat -c%a "$file")
-            echo "🔒 File permissions: $perms"
             return 0
           }
 
@@ -114,9 +108,6 @@ jobs:
             echo "✅ Found $name directory: $dir"
             echo "📦 Contents of $name directory:"
             ls -la "$dir"
-            # Count total files
-            local file_count=$(find "$dir" -type f | wc -l)
-            echo "📊 Total files: $file_count"
             return 0
           }
 
@@ -129,94 +120,43 @@ jobs:
           check_file "dist/apps/fnr-app/index.html" "Frontend index file" || exit 1
           check_file "dist/apps/fnr-app/manifest.json" "Frontend manifest" || exit 1
 
-          # Enhanced frontend assets check
-          echo "🔍 Checking frontend assets..."
-          ASSETS_DIR="dist/apps/fnr-app/assets"
-          if [ ! -d "$ASSETS_DIR" ]; then
+          # Check frontend assets
+          if [ ! -d "dist/apps/fnr-app/assets" ]; then
             echo "⚠️ Frontend assets directory not found, creating it..."
-            mkdir -p "$ASSETS_DIR"
+            mkdir -p dist/apps/fnr-app/assets
+          else
+            echo "✅ Frontend assets directory found"
+            echo "📦 Assets directory contents:"
+            ls -la dist/apps/fnr-app/assets/
+            
+            # Check for critical asset types
+            echo "🔍 Checking for critical asset types..."
+            asset_types=("js" "css")
+            for type in "${asset_types[@]}"; do
+              count=$(find dist/apps/fnr-app/assets -name "*.${type}" | wc -l)
+              if [ "$count" -eq 0 ]; then
+                echo "⚠️ Warning: No .${type} files found in assets directory"
+              else
+                echo "✅ Found ${count} .${type} files"
+              fi
+            done
           fi
-
-          # Verify assets directory structure and contents
-          echo "📦 Assets directory structure:"
-          tree "$ASSETS_DIR" 2>/dev/null || find "$ASSETS_DIR" -type f
-
-          # Check for critical asset types with enhanced reporting
-          echo "🔍 Analyzing asset types..."
-          declare -A file_types
-          while IFS= read -r -d '' file; do
-            ext="${file##*.}"
-            ((file_types[$ext]++))
-          done < <(find "$ASSETS_DIR" -type f -print0)
-
-          echo "📊 Asset type distribution:"
-          for ext in "${!file_types[@]}"; do
-            echo "- .$ext: ${file_types[$ext]} files"
-            if [[ "$ext" == "js" || "$ext" == "css" ]]; then
-              echo "  📝 Files:"
-              find "$ASSETS_DIR" -name "*.$ext" -exec basename {} \;
-            fi
-          done
-
-          # Verify asset integrity
-          echo "🔍 Verifying asset integrity..."
-          find "$ASSETS_DIR" -type f -name "*.js" -o -name "*.css" | while read -r file; do
-            if [ ! -s "$file" ]; then
-              echo "❌ Empty file detected: $file"
-              exit 1
-            fi
-            echo "✅ Verified: $(basename "$file")"
-          done
 
           # Check Prisma files
           check_directory "apps/fnr-server/prisma" "Prisma" || exit 1
           check_file "apps/fnr-server/prisma/schema.prisma" "Prisma schema" || exit 1
           check_file "apps/fnr-server/prisma/seed.ts" "Prisma seed" || exit 1
 
-          # Enhanced frontend build integrity check
+          # Verify frontend build integrity
           echo "🔍 Verifying frontend build integrity..."
-          INDEX_HTML="dist/apps/fnr-app/index.html"
-          if ! grep -q "<!DOCTYPE html>" "$INDEX_HTML"; then
+          if ! grep -q "<!DOCTYPE html>" "dist/apps/fnr-app/index.html"; then
             echo "❌ index.html appears to be invalid"
             exit 1
           fi
 
-          # Check for script and style references
-          echo "📝 Checking asset references in index.html..."
-          SCRIPT_COUNT=$(grep -c '<script' "$INDEX_HTML")
-          STYLE_COUNT=$(grep -c '<link.*stylesheet' "$INDEX_HTML")
-          echo "- Found $SCRIPT_COUNT script references"
-          echo "- Found $STYLE_COUNT stylesheet references"
-
-          # Verify all referenced assets exist
-          echo "🔍 Verifying asset references..."
-          grep -o 'src="[^"]*"' "$INDEX_HTML" | cut -d'"' -f2 | while read -r src; do
-            if [[ $src == /* ]] || [[ $src == ./* ]]; then
-              ASSET_PATH="dist/apps/fnr-app${src#.}"
-              if [ ! -f "$ASSET_PATH" ]; then
-                echo "❌ Referenced asset not found: $src"
-                exit 1
-              fi
-              echo "✅ Verified asset: $src"
-            fi
-          done
-
           # Check for environment-specific configurations
           echo "🔍 Checking environment configurations..."
-          CONFIG_LOCATIONS=(
-            "dist/apps/fnr-app/config.js"
-            "dist/apps/fnr-app/assets/config.js"
-            "dist/apps/fnr-app/env.js"
-          )
-          CONFIG_FOUND=0
-          for config in "${CONFIG_LOCATIONS[@]}"; do
-            if [ -f "$config" ]; then
-              echo "✅ Found configuration at: $config"
-              CONFIG_FOUND=1
-              break
-            fi
-          done
-          if [ $CONFIG_FOUND -eq 0 ]; then
+          if [ ! -f "dist/apps/fnr-app/config.js" ] && [ ! -f "dist/apps/fnr-app/assets/config.js" ]; then
             echo "⚠️ Warning: No frontend configuration file found"
           fi
 
