@@ -58,4 +58,4 @@ export default defineConfig(({ mode }) => ({
   },
   // Use absolute base path in production for better compatibility
   base: mode === 'production' ? '/' : './',
-});
+}));
