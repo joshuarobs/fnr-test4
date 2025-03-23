@@ -77,7 +77,7 @@ run_module() {
   if [[ -f "$module_path" ]]; then
     print_message "info" "Running ${module} diagnostics..."
     echo "=================================================="
-    source "$module_path"
+    bash "$module_path"
     echo "=================================================="
     echo
   else
