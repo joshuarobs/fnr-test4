@@ -433,16 +433,39 @@ jobs:
             find dist/fnr-app -type d -exec chmod 755 {} \;
             find dist/fnr-app -type f -exec chmod 644 {} \;
 
-            # Start the server
-            NODE_ENV=production pm2 start dist/main.js \
+            # Set proper permissions for frontend files
+            echo "Setting proper permissions for frontend files..."
+            find $APP_DIR/dist/fnr-app -type d -exec chmod 755 {} \;
+            find $APP_DIR/dist/fnr-app -type f -exec chmod 644 {} \;
+            find $APP_DIR/dist/fnr-app/assets -type f -exec chmod 644 {} \;
+
+            # Verify frontend file permissions
+            echo "Verifying frontend file permissions..."
+            ls -lR $APP_DIR/dist/fnr-app
+
+            # Start the server with explicit environment variables
+            echo "Starting server with production environment..."
+            export NODE_ENV=production
+            pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
               --error $APP_DIR/logs/error.log \
               --time \
               --merge-logs \
-              --env production
+              --env production \
+              --update-env
 
             pm2 save
+
+            # Verify server startup
+            echo "Verifying server startup..."
+            sleep 5
+            if ! pm2 show "fnr-server-$ENV" | grep -q "online"; then
+              echo "❌ Server failed to start properly"
+              pm2 logs "fnr-server-$ENV" --lines 50
+              exit 1
+            fi
+            echo "✅ Server started successfully"
 
             echo "✅ Deployment completed successfully"
           ENDSSH
@@ -489,30 +512,49 @@ jobs:
             rm -f seed.log
           ENDSSH
 
-          # Verify HTTP endpoint
-          echo "Verifying HTTP endpoint..."
-          # Verify API endpoint
-          echo "Verifying API endpoint..."
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/api)
+          # Function to verify endpoint with retries
+          verify_endpoint() {
+            local url=$1
+            local name=$2
+            local max_retries=3
+            local retry=0
+            local wait_time=5
 
-          # Verify frontend serving
-          echo "Verifying frontend serving..."
-          FRONTEND_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/)
-          if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
-            echo "✅ API endpoint verified successfully"
-          else
-            echo "❌ API endpoint verification failed"
-            exit 1
-          fi
+            while [ $retry -lt $max_retries ]; do
+              echo "Testing $name endpoint ($url) - Attempt $(($retry + 1))..."
+              
+              # Make the request and capture both response code and body
+              local response=$(curl -s -w "\n%{http_code}" "$url")
+              local body=$(echo "$response" | head -n 1)
+              local code=$(echo "$response" | tail -n 1)
+              
+              echo "Response code: $code"
+              echo "Response body:"
+              echo "$body"
+              
+              if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+                echo "✅ $name endpoint verified successfully"
+                return 0
+              else
+                echo "⚠️ $name endpoint verification failed"
+                retry=$((retry + 1))
+                if [ $retry -lt $max_retries ]; then
+                  echo "Retrying in $wait_time seconds..."
+                  sleep $wait_time
+                fi
+              fi
+            done
+            
+            echo "❌ $name endpoint verification failed after $max_retries attempts"
+            return 1
+          }
 
-          if [ "$FRONTEND_RESPONSE" = "200" ] || [ "$FRONTEND_RESPONSE" = "301" ] || [ "$FRONTEND_RESPONSE" = "302" ]; then
-            echo "✅ Frontend serving verified successfully"
-          else
-            echo "❌ Frontend serving verification failed"
-            exit 1
-          fi
+          # Verify endpoints with retries
+          verify_endpoint "http://${{ secrets.DROPLET_IP }}:3000/api" "API" || exit 1
+          verify_endpoint "http://${{ secrets.DROPLET_IP }}:3000/" "Frontend" || exit 1
+          verify_endpoint "http://${{ secrets.DROPLET_IP }}:3000/assets/index.css" "Assets" || exit 1
 
-          echo "✅ Deployment verified successfully"
+          echo "✅ All endpoints verified successfully"
 
   deploy-production:
     needs: build

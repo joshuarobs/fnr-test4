@@ -72,7 +72,19 @@ if (process.env.NODE_ENV === 'production') {
     currentDir: __dirname,
   });
 
-  // Serve static files with standard caching
+  // Serve assets with aggressive caching first
+  app.use(
+    '/assets',
+    express.static(assetsPath, {
+      maxAge: '31536000000', // 1 year
+      immutable: true,
+      etag: true,
+      lastModified: true,
+      fallthrough: false, // Return 404 if asset not found instead of continuing to next middleware
+    })
+  );
+
+  // Then serve other static files with standard caching
   app.use(
     express.static(frontendPath, {
       maxAge: '7d',
@@ -87,37 +99,6 @@ if (process.env.NODE_ENV === 'production') {
       },
     })
   );
-
-  // Serve assets with aggressive caching
-  app.use(
-    '/assets',
-    express.static(assetsPath, {
-      maxAge: '31536000000', // 1 year
-      immutable: true,
-      etag: true,
-      lastModified: true,
-    })
-  );
-
-  // Handle SPA routing - serve index.html for all non-API routes
-  app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-
-    console.log(`📝 Static request for: ${req.path}`);
-
-    // Serve index.html
-    res.sendFile(indexPath, (err) => {
-      if (err) {
-        console.error(`❌ Error serving index.html for ${req.path}:`, err);
-        res.status(500).send('Error loading application');
-      } else {
-        console.log(`📄 Served index.html for: ${req.path}`);
-      }
-    });
-  });
 }
 
 // Session and Passport setup
@@ -174,17 +155,17 @@ app.use('/api/activities', activitiesRouter);
 
 // Add catch-all route for client-side routing in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api')) {
-      return res.status(404).json({
-        error: 'API endpoint not found',
-        path: req.path,
-        method: req.method,
-      });
-    }
+  // Handle API 404s
+  app.use('/api/*', (req, res) => {
+    res.status(404).json({
+      error: 'API endpoint not found',
+      path: req.path,
+      method: req.method,
+    });
+  });
 
-    // Serve index.html for all other routes
+  // Handle all other routes by serving index.html
+  app.use('*', (req, res, next) => {
     const indexPath = path.join(__dirname, './fnr-app/index.html');
 
     // Check if index.html exists
@@ -196,17 +177,16 @@ if (process.env.NODE_ENV === 'production') {
       });
     }
 
+    console.log(`📝 Serving index.html for: ${req.path}`);
     res.sendFile(indexPath, (err) => {
       if (err) {
         console.error(`❌ Error serving index.html: ${err}`);
         next(err);
-      } else {
-        console.log(`📄 Served index.html for: ${req.path}`);
       }
     });
   });
 
-  // Error handler for sendFile errors
+  // Error handler for static file serving
   app.use(
     (
       err: any,
