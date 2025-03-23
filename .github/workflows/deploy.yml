@@ -430,17 +430,17 @@ jobs:
             fi
 
             # Set correct permissions
-            chmod -R 755 dist/fnr-app
+            find dist/fnr-app -type d -exec chmod 755 {} \;
+            find dist/fnr-app -type f -exec chmod 644 {} \;
 
             # Start the server
-            pm2 start dist/main.js \
+            NODE_ENV=production pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
               --error $APP_DIR/logs/error.log \
               --time \
               --merge-logs \
-              --env production \
-              --env NODE_ENV=production
+              --env production
 
             pm2 save
 

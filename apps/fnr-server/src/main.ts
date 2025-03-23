@@ -50,9 +50,6 @@ app.use(
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
-// Serve static files
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-
 // In production, serve the frontend build files
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = path.join(__dirname, './fnr-app');
@@ -75,18 +72,7 @@ if (process.env.NODE_ENV === 'production') {
     currentDir: __dirname,
   });
 
-  // Serve assets with aggressive caching
-  app.use(
-    '/assets',
-    express.static(assetsPath, {
-      maxAge: '31536000000', // 1 year
-      immutable: true,
-      etag: true,
-      lastModified: true,
-    })
-  );
-
-  // Serve other static files with standard caching
+  // Serve static files with standard caching
   app.use(
     express.static(frontendPath, {
       maxAge: '7d',
@@ -99,6 +85,17 @@ if (process.env.NODE_ENV === 'production') {
           res.setHeader('Cache-Control', 'no-cache');
         }
       },
+    })
+  );
+
+  // Serve assets with aggressive caching
+  app.use(
+    '/assets',
+    express.static(assetsPath, {
+      maxAge: '31536000000', // 1 year
+      immutable: true,
+      etag: true,
+      lastModified: true,
     })
   );
 
