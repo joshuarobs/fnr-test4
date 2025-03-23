@@ -50,27 +50,57 @@ app.use(
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
-// In production, serve the test HTML file
+// In production, serve a test HTML page
 if (process.env.NODE_ENV === 'production') {
-  const testHtmlPath = path.join(__dirname, 'hello.html');
+  console.log('🌐 Setting up production routes');
 
-  // Verify test HTML file exists
-  if (!fs.existsSync(testHtmlPath)) {
-    console.error(`❌ Test HTML file not found at: ${testHtmlPath}`);
-    process.exit(1);
-  }
-
-  console.log('🌐 Test HTML file path:', testHtmlPath);
-
-  // Serve the test HTML file at root
+  // Serve a simple HTML page at root
   app.get('/', (req, res) => {
-    console.log('📝 Serving hello.html');
-    res.sendFile(testHtmlPath, (err) => {
-      if (err) {
-        console.error('Error serving hello.html:', err);
-        res.status(500).send('Error serving test page');
-      }
-    });
+    console.log('📝 Serving test HTML page');
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>FNR App Test Page</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  background-color: #f0f2f5;
+              }
+              .container {
+                  text-align: center;
+                  padding: 20px;
+                  background-color: white;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              }
+              h1 {
+                  color: #1a73e8;
+                  margin-bottom: 10px;
+              }
+              p {
+                  color: #5f6368;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <h1>FNR App Test Page</h1>
+              <p>If you can see this page, the server is successfully serving HTML content.</p>
+              <p>Try accessing the API at <a href="/api">/api</a></p>
+          </div>
+      </body>
+      </html>
+    `;
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
   });
 }
 
@@ -148,9 +178,39 @@ app.use(
   }
 );
 
+// Enhanced server startup
 const server = app.listen(SERVER_CONFIG.port, () => {
-  console.log(`Listening at ${getServerBaseUrl()}/api`);
-  console.log('Server is ready to accept requests');
+  const serverUrl = getServerBaseUrl();
+  console.log('🚀 Server startup complete');
+  console.log('Environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: SERVER_CONFIG.port,
+    BASE_URL: serverUrl,
+    CURRENT_DIR: __dirname,
+  });
+  console.log(`📡 API endpoint: ${serverUrl}/api`);
+  console.log(`🌐 Frontend endpoint: ${serverUrl}/`);
+  console.log('✅ Server is ready to accept requests');
 });
 
-server.on('error', console.error);
+// Enhanced error handling
+server.on('error', (error: Error) => {
+  console.error('❌ Server error:', error);
+  console.error('Stack trace:', error.stack);
+  process.exit(1); // Exit on critical errors
+});
+
+// Handle process signals
+process.on('SIGTERM', () => {
+  console.log('🛑 Received SIGTERM signal');
+  server.close(() => {
+    console.log('👋 Server shutdown complete');
+    process.exit(0);
+  });
+});
+
+process.on('uncaughtException', (error: Error) => {
+  console.error('❌ Uncaught exception:', error);
+  console.error('Stack trace:', error.stack);
+  process.exit(1);
+});
