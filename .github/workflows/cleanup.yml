@@ -27,6 +27,7 @@ jobs:
           echo "🛑 Stopping all services..."
           pm2 delete all || true
           systemctl stop postgresql || true
+          systemctl stop nginx || true
           ENDSSH
 
       - name: Clean PostgreSQL
@@ -75,6 +76,19 @@ jobs:
           rm -rf /etc/apt/sources.list.d/nodesource.list
           ENDSSH
 
+      - name: Clean Nginx
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🗑️ Removing Nginx configuration..."
+          rm -f /etc/nginx/sites-enabled/fnr-app
+          rm -f /etc/nginx/sites-available/fnr-app
+          rm -f /var/log/nginx/fnr-access.log
+          rm -f /var/log/nginx/fnr-error.log
+          apt-get remove --purge -y nginx nginx-*
+          apt-get autoremove -y
+          rm -rf /etc/nginx
+          ENDSSH
+
       - name: Verify Cleanup
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
@@ -120,6 +134,16 @@ jobs:
           fi
 
           echo "✅ Environment cleanup verified successfully"
+
+          echo "Checking Nginx..."
+          if dpkg -l | grep -q nginx; then
+            echo "❌ Nginx still installed"
+            exit 1
+          fi
+          if [ -f "/etc/nginx/sites-enabled/fnr-app" ] || [ -f "/etc/nginx/sites-available/fnr-app" ]; then
+            echo "❌ Nginx configuration files still exist"
+            exit 1
+          fi
           ENDSSH
 
       - name: Final Message
