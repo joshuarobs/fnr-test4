@@ -30,13 +30,50 @@ jobs:
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
           apt-get update
           apt-get upgrade -y
-          apt-get install -y curl git build-essential
+          apt-get install -y curl git build-essential nginx
           curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
           apt-get install -y nodejs
           npm install -g pm2
           apt-get install -y postgresql postgresql-contrib
-          systemctl start postgresql
-          systemctl enable postgresql
+          systemctl start postgresql nginx
+          systemctl enable postgresql nginx
+          ENDSSH
+
+      - name: Configure Nginx
+        run: |
+          # First, copy our Nginx configuration file to the server
+          scp nginx/fnr-app.conf root@${{ secrets.DROPLET_IP }}:/etc/nginx/sites-available/fnr-app
+
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🔧 Configuring Nginx..."
+
+          # Create symlink if it doesn't exist
+          if [ ! -L /etc/nginx/sites-enabled/fnr-app ]; then
+            ln -s /etc/nginx/sites-available/fnr-app /etc/nginx/sites-enabled/fnr-app
+          fi
+
+          # Remove default nginx site if it exists
+          if [ -L /etc/nginx/sites-enabled/default ]; then
+            rm /etc/nginx/sites-enabled/default
+          fi
+
+          # Test Nginx configuration
+          nginx -t
+          if [ $? -eq 0 ]; then
+            echo "✅ Nginx configuration test passed"
+          else
+            echo "❌ Nginx configuration test failed"
+            exit 1
+          fi
+
+          # Restart Nginx
+          systemctl restart nginx
+          if [ $? -eq 0 ]; then
+            echo "✅ Nginx restarted successfully"
+          else
+            echo "❌ Failed to restart Nginx"
+            exit 1
+          fi
           ENDSSH
 
       - name: Configure PostgreSQL
@@ -259,6 +296,21 @@ jobs:
             exit 1
           fi
           echo "✅ Environment variables verified"
+
+          echo "🌐 Verifying Nginx status..."
+          if ! systemctl is-active --quiet nginx; then
+            echo "❌ Nginx is not running"
+            systemctl status nginx
+            exit 1
+          fi
+          echo "✅ Nginx is running"
+
+          echo "🔍 Testing Nginx HTTP endpoint..."
+          if ! curl -I http://localhost -s | grep -q "200 OK"; then
+            echo "❌ Nginx HTTP endpoint test failed"
+            exit 1
+          fi
+          echo "✅ Nginx HTTP endpoint is accessible"
 
           echo "✨ Setup verification completed successfully"
           ENDSSH

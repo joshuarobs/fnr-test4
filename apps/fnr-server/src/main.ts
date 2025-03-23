@@ -50,57 +50,36 @@ app.use(
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
-// In production, serve a test HTML page
+// In production, serve the frontend application
 if (process.env.NODE_ENV === 'production') {
   console.log('🌐 Setting up production routes');
 
-  // Serve a simple HTML page at root
-  app.get('/', (req, res) => {
-    console.log('📝 Serving test HTML page');
-    const html = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>FNR App Test Page</title>
-          <style>
-              body {
-                  font-family: Arial, sans-serif;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  height: 100vh;
-                  margin: 0;
-                  background-color: #f0f2f5;
-              }
-              .container {
-                  text-align: center;
-                  padding: 20px;
-                  background-color: white;
-                  border-radius: 8px;
-                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-              }
-              h1 {
-                  color: #1a73e8;
-                  margin-bottom: 10px;
-              }
-              p {
-                  color: #5f6368;
-              }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <h1>FNR App Test Page</h1>
-              <p>If you can see this page, the server is successfully serving HTML content.</p>
-              <p>Try accessing the API at <a href="/api">/api</a></p>
-          </div>
-      </body>
-      </html>
-    `;
-    res.setHeader('Content-Type', 'text/html');
-    res.send(html);
+  const frontendPath = path.join(__dirname, '../fnr-app');
+  console.log(`📂 Frontend path: ${frontendPath}`);
+
+  // Serve static files with caching
+  app.use(
+    express.static(frontendPath, {
+      maxAge: '1d',
+      etag: true,
+      lastModified: true,
+    })
+  );
+
+  // Serve index.html for all non-API routes to support client-side routing
+  app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+
+    const indexPath = path.join(frontendPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      console.error(`❌ index.html not found at ${indexPath}`);
+      next(new Error('Frontend index.html not found'));
+    }
   });
 }
 

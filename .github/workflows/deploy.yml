@@ -175,6 +175,7 @@ jobs:
             package.json
             package-lock.json
             .env.deploy
+            nginx/fnr-app.conf
           if-no-files-found: error
           retention-days: 1
           compression-level: 6
@@ -380,6 +381,31 @@ jobs:
             rm -rf $APP_DIR/*
             cp -r /tmp/deploy/* $APP_DIR/
 
+            # Update Nginx configuration if it exists
+            if [ -f "/tmp/deploy/nginx/fnr-app.conf" ]; then
+              echo "🔄 Updating Nginx configuration..."
+              cp /tmp/deploy/nginx/fnr-app.conf /etc/nginx/sites-available/fnr-app
+              
+              # Create symlink if it doesn't exist
+              if [ ! -L /etc/nginx/sites-enabled/fnr-app ]; then
+                ln -s /etc/nginx/sites-available/fnr-app /etc/nginx/sites-enabled/fnr-app
+              fi
+              
+              # Remove default nginx site if it exists
+              if [ -L /etc/nginx/sites-enabled/default ]; then
+                rm /etc/nginx/sites-enabled/default
+              fi
+              
+              # Test and reload Nginx configuration
+              if nginx -t; then
+                systemctl reload nginx
+                echo "✅ Nginx configuration updated and reloaded"
+              else
+                echo "❌ Nginx configuration test failed"
+                exit 1
+              fi
+            fi
+
             # Install production dependencies only
             cd $APP_DIR
             npm ci --only=production
@@ -550,9 +576,9 @@ jobs:
           }
 
           # Verify endpoints with retries
-          verify_endpoint "http://${{ secrets.DROPLET_IP }}:3000/api" "API" || exit 1
-          verify_endpoint "http://${{ secrets.DROPLET_IP }}:3000/" "Frontend" || exit 1
-          verify_endpoint "http://${{ secrets.DROPLET_IP }}:3000/assets/index.css" "Assets" || exit 1
+          verify_endpoint "http://${{ secrets.DROPLET_IP }}/api" "API" || exit 1
+          verify_endpoint "http://${{ secrets.DROPLET_IP }}/" "Frontend" || exit 1
+          verify_endpoint "http://${{ secrets.DROPLET_IP }}/assets/index.css" "Assets" || exit 1
 
           echo "✅ All endpoints verified successfully"
 
@@ -673,6 +699,31 @@ jobs:
             rm -rf $APP_DIR/*
             cp -r /tmp/deploy/* $APP_DIR/
 
+            # Update Nginx configuration if it exists
+            if [ -f "/tmp/deploy/nginx/fnr-app.conf" ]; then
+              echo "🔄 Updating Nginx configuration..."
+              cp /tmp/deploy/nginx/fnr-app.conf /etc/nginx/sites-available/fnr-app
+              
+              # Create symlink if it doesn't exist
+              if [ ! -L /etc/nginx/sites-enabled/fnr-app ]; then
+                ln -s /etc/nginx/sites-available/fnr-app /etc/nginx/sites-enabled/fnr-app
+              fi
+              
+              # Remove default nginx site if it exists
+              if [ -L /etc/nginx/sites-enabled/default ]; then
+                rm /etc/nginx/sites-enabled/default
+              fi
+              
+              # Test and reload Nginx configuration
+              if nginx -t; then
+                systemctl reload nginx
+                echo "✅ Nginx configuration updated and reloaded"
+              else
+                echo "❌ Nginx configuration test failed"
+                exit 1
+              fi
+            fi
+
             # Install production dependencies only
             cd $APP_DIR
             npm ci --only=production
@@ -767,11 +818,11 @@ jobs:
           echo "Verifying HTTP endpoint..."
           # Verify API endpoint
           echo "Verifying API endpoint..."
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/api)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}/api)
 
           # Verify frontend serving
           echo "Verifying frontend serving..."
-          FRONTEND_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}:3000/)
+          FRONTEND_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.DROPLET_IP }}/)
           if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
             echo "✅ API endpoint verified successfully"
           else
