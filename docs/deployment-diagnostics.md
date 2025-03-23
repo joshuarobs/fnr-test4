@@ -1,5 +1,23 @@
 # Deployment Diagnostics
 
+## Quick Reference
+
+Copy and paste these commands to run diagnostics on the server:
+
+```bash
+# Run all diagnostics
+ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --all'
+
+# Run frontend diagnostics only
+ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --frontend'
+
+# Run server diagnostics only
+ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --server'
+
+# Run database diagnostics only
+ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --database'
+```
+
 This document describes the diagnostic tools available for troubleshooting deployment and runtime issues with the FNR application.
 
 ## Diagnostic Scripts Overview

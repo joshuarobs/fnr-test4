@@ -170,7 +170,8 @@ jobs:
             dist/apps/fnr-server/**
             dist/apps/fnr-app/**
             apps/fnr-server/prisma/**
-            docs/frontend-diagnostics.sh
+            scripts/all-diagnostics.sh
+            scripts/diagnostics/**
             package.json
             package-lock.json
             .env.deploy
@@ -391,9 +392,11 @@ jobs:
             chmod 755 logs scripts
             chmod -R 755 prisma
 
-            # Copy diagnostics script
-            cp /tmp/deploy/docs/frontend-diagnostics.sh scripts/
-            chmod +x scripts/frontend-diagnostics.sh
+            # Copy diagnostic scripts
+            mkdir -p $APP_DIR/scripts/diagnostics
+            cp /tmp/deploy/scripts/all-diagnostics.sh $APP_DIR/scripts/
+            cp /tmp/deploy/scripts/diagnostics/* $APP_DIR/scripts/diagnostics/
+            chmod -R +x $APP_DIR/scripts
 
             # Run database migrations
             DB_PASSWORD=$(cat .db_password)
@@ -640,9 +643,11 @@ jobs:
             chmod 755 logs scripts
             chmod -R 755 prisma
 
-            # Copy diagnostics script
-            cp /tmp/deploy/docs/frontend-diagnostics.sh scripts/
-            chmod +x scripts/frontend-diagnostics.sh
+            # Copy diagnostic scripts
+            mkdir -p $APP_DIR/scripts/diagnostics
+            cp /tmp/deploy/scripts/all-diagnostics.sh $APP_DIR/scripts/
+            cp /tmp/deploy/scripts/diagnostics/* $APP_DIR/scripts/diagnostics/
+            chmod -R +x $APP_DIR/scripts
 
             # Run database migrations
             DB_PASSWORD=$(cat .db_password)
