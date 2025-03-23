@@ -57,6 +57,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = path.join(__dirname, './fnr-app');
   const indexPath = path.join(frontendPath, 'index.html');
+  const assetsPath = path.join(frontendPath, 'assets');
 
   // Verify frontend directory exists
   if (!fs.existsSync(frontendPath)) {
@@ -70,22 +71,32 @@ if (process.env.NODE_ENV === 'production') {
     NODE_ENV: process.env.NODE_ENV,
     frontendPath,
     indexPath,
+    assetsPath,
     currentDir: __dirname,
   });
 
-  // Serve static files with caching
+  // Serve assets with aggressive caching
+  app.use(
+    '/assets',
+    express.static(assetsPath, {
+      maxAge: '31536000000', // 1 year
+      immutable: true,
+      etag: true,
+      lastModified: true,
+    })
+  );
+
+  // Serve other static files with standard caching
   app.use(
     express.static(frontendPath, {
       maxAge: '7d',
       index: false, // Don't serve index.html automatically
       etag: true,
       lastModified: true,
-      setHeaders: (res, path) => {
-        // Set cache headers based on file type
-        if (path.endsWith('.html')) {
+      setHeaders: (res, filePath) => {
+        // No caching for HTML files
+        if (filePath.endsWith('.html')) {
           res.setHeader('Cache-Control', 'no-cache');
-        } else if (path.includes('/assets/')) {
-          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         }
       },
     })
