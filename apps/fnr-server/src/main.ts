@@ -50,55 +50,28 @@ app.use(
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
-// In production, serve the frontend build files
+// In production, serve the test HTML file
 if (process.env.NODE_ENV === 'production') {
-  const frontendPath = path.join(__dirname, './fnr-app');
-  const indexPath = path.join(frontendPath, 'index.html');
-  const assetsPath = path.join(frontendPath, 'assets');
+  const testHtmlPath = path.join(__dirname, 'hello.html');
 
-  // Verify frontend directory exists
-  if (!fs.existsSync(frontendPath)) {
-    console.error(`❌ Frontend directory not found at: ${frontendPath}`);
+  // Verify test HTML file exists
+  if (!fs.existsSync(testHtmlPath)) {
+    console.error(`❌ Test HTML file not found at: ${testHtmlPath}`);
     process.exit(1);
   }
 
-  // Log frontend directory structure
-  console.log('🌐 Serving frontend from:', frontendPath);
-  console.log('Environment:', {
-    NODE_ENV: process.env.NODE_ENV,
-    frontendPath,
-    indexPath,
-    assetsPath,
-    currentDir: __dirname,
+  console.log('🌐 Test HTML file path:', testHtmlPath);
+
+  // Serve the test HTML file at root
+  app.get('/', (req, res) => {
+    console.log('📝 Serving hello.html');
+    res.sendFile(testHtmlPath, (err) => {
+      if (err) {
+        console.error('Error serving hello.html:', err);
+        res.status(500).send('Error serving test page');
+      }
+    });
   });
-
-  // Serve assets with aggressive caching first
-  app.use(
-    '/assets',
-    express.static(assetsPath, {
-      maxAge: '31536000000', // 1 year
-      immutable: true,
-      etag: true,
-      lastModified: true,
-      fallthrough: false, // Return 404 if asset not found instead of continuing to next middleware
-    })
-  );
-
-  // Then serve other static files with standard caching
-  app.use(
-    express.static(frontendPath, {
-      maxAge: '7d',
-      index: false, // Don't serve index.html automatically
-      etag: true,
-      lastModified: true,
-      setHeaders: (res, filePath) => {
-        // No caching for HTML files
-        if (filePath.endsWith('.html')) {
-          res.setHeader('Cache-Control', 'no-cache');
-        }
-      },
-    })
-  );
 }
 
 // Session and Passport setup
@@ -153,57 +126,27 @@ app.use('/api/staff', staffRouter);
 app.use('/api/suppliers', suppliersRouter);
 app.use('/api/activities', activitiesRouter);
 
-// Add catch-all route for client-side routing in production
-if (process.env.NODE_ENV === 'production') {
-  // Handle API 404s
-  app.use('/api/*', (req, res) => {
-    res.status(404).json({
-      error: 'API endpoint not found',
-      path: req.path,
-      method: req.method,
-    });
+// Handle API 404s
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    error: 'API endpoint not found',
+    path: req.path,
+    method: req.method,
   });
+});
 
-  // Handle all other routes by serving index.html
-  app.use('*', (req, res, next) => {
-    const indexPath = path.join(__dirname, './fnr-app/index.html');
-
-    // Check if index.html exists
-    if (!fs.existsSync(indexPath)) {
-      console.error(`❌ index.html not found at: ${indexPath}`);
-      return res.status(500).json({
-        error: 'Frontend not properly deployed',
-        details: 'index.html is missing',
-      });
-    }
-
-    console.log(`📝 Serving index.html for: ${req.path}`);
-    res.sendFile(indexPath, (err) => {
-      if (err) {
-        console.error(`❌ Error serving index.html: ${err}`);
-        next(err);
-      }
-    });
-  });
-
-  // Error handler for static file serving
-  app.use(
-    (
-      err: any,
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction
-    ) => {
-      console.error(`❌ Error serving file: ${err}`);
-      res.status(500).json({
-        error: 'Error serving frontend file',
-        path: req.path,
-        details:
-          process.env.NODE_ENV === 'development' ? err.message : undefined,
-      });
-    }
-  );
-}
+// Simple error handler
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error('Server error:', err);
+    res.status(500).send('Internal Server Error');
+  }
+);
 
 const server = app.listen(SERVER_CONFIG.port, () => {
   console.log(`Listening at ${getServerBaseUrl()}/api`);
