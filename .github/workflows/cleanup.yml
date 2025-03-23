@@ -48,6 +48,22 @@ jobs:
           rm -rf /var/backups/app
           rm -rf /var/backups/db
           rm -rf /root/.pm2
+          rm -rf /tmp/deploy
+          ENDSSH
+
+      - name: Clean Environment Variables
+        run: |
+          ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          echo "🧹 Cleaning environment variables..."
+          # Remove from /etc/environment
+          sed -i '/NODE_ENV=/d' /etc/environment
+
+          # Remove from ~/.bashrc
+          sed -i '/export NODE_ENV=/d' ~/.bashrc
+
+          # Source updated files
+          source /etc/environment || true
+          source ~/.bashrc || true
           ENDSSH
 
       - name: Clean Node.js
@@ -83,7 +99,7 @@ jobs:
           fi
 
           echo "Checking directories..."
-          for dir in "/var/www/fnr-app" "/var/backups/app" "/var/backups/db" "/var/lib/postgresql"; do
+          for dir in "/var/www/fnr-app" "/var/backups/app" "/var/backups/db" "/var/lib/postgresql" "/tmp/deploy"; do
             if [ -d "$dir" ]; then
               echo "❌ Directory still exists: $dir"
               exit 1
@@ -91,6 +107,19 @@ jobs:
           done
 
           echo "✅ Cleanup verified successfully"
+
+          # Verify environment variables cleanup
+          if grep -q "NODE_ENV=" /etc/environment; then
+            echo "❌ NODE_ENV still exists in /etc/environment"
+            exit 1
+          fi
+
+          if grep -q "export NODE_ENV=" ~/.bashrc; then
+            echo "❌ NODE_ENV still exists in ~/.bashrc"
+            exit 1
+          fi
+
+          echo "✅ Environment cleanup verified successfully"
           ENDSSH
 
       - name: Final Message
