@@ -172,6 +172,7 @@ jobs:
             apps/fnr-server/prisma/**
             scripts/all-diagnostics.sh
             scripts/diagnostics/**
+            scripts/run-seed.sh
             package.json
             package-lock.json
             .env.deploy
@@ -524,18 +525,8 @@ jobs:
             export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             export NODE_ENV=production
             
-            echo "Running database seed..."
-            # Run seed with transpileOnly to bypass TypeScript errors
-            npx ts-node --skipProject --transpileOnly --compiler-options '{"module":"CommonJS"}' prisma/seed.ts 2>&1 | tee seed.log
-            
-            if [ $? -ne 0 ]; then
-              echo "❌ Database seeding failed. Check seed.log for details:"
-              cat seed.log
-              exit 1
-            fi
-            
-            echo "✅ Database seeding completed successfully"
-            rm -f seed.log
+            echo "Running database seed using run-seed.sh..."
+            bash scripts/run-seed.sh
           ENDSSH
 
           # Function to verify endpoint with retries
@@ -800,18 +791,8 @@ jobs:
             export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
             export NODE_ENV=production
             
-            echo "Running database seed..."
-            # Run seed with transpileOnly to bypass TypeScript errors
-            npx ts-node --skipProject --transpileOnly --compiler-options '{"module":"CommonJS"}' prisma/seed.ts 2>&1 | tee seed.log
-            
-            if [ $? -ne 0 ]; then
-              echo "❌ Database seeding failed. Check seed.log for details:"
-              cat seed.log
-              exit 1
-            fi
-            
-            echo "✅ Database seeding completed successfully"
-            rm -f seed.log
+            echo "Running database seed using run-seed.sh..."
+            bash scripts/run-seed.sh
           ENDSSH
 
           # Verify HTTP endpoint
