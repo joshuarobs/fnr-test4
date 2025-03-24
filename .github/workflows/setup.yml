@@ -42,13 +42,82 @@ jobs:
           systemctl enable postgresql nginx
           ENDSSH
 
-      - name: Configure Nginx
+      - name: Configure SSL and Nginx
         run: |
-          # First, copy our Nginx configuration file to the server
-          scp nginx/fnr-app.conf root@${{ secrets.DROPLET_IP }}:/etc/nginx/sites-available/fnr-app
-
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
+          # Create SSL directory and generate self-signed certificate
+          echo "🔒 Setting up SSL with self-signed certificate..."
+          mkdir -p /etc/nginx/ssl
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout /etc/nginx/ssl/fnr-app.key \
+            -out /etc/nginx/ssl/fnr-app.crt \
+            -subj "/CN=${{ secrets.DROPLET_IP }}" \
+            -addext "subjectAltName=IP:${{ secrets.DROPLET_IP }}"
+
+          chmod 600 /etc/nginx/ssl/fnr-app.key
+          chmod 644 /etc/nginx/ssl/fnr-app.crt
+
+          # Create Nginx configuration with HTTPS
           echo "🔧 Configuring Nginx..."
+          cat > /etc/nginx/sites-available/fnr-app << 'EOF'
+          # HTTP server - redirects to HTTPS
+          server {
+              listen 80;
+              server_name ${{ secrets.DROPLET_IP }};
+              return 301 https://$host$request_uri;
+          }
+
+          # HTTPS server
+          server {
+              listen 443 ssl;
+              server_name ${{ secrets.DROPLET_IP }};
+              
+              # SSL configuration
+              ssl_certificate /etc/nginx/ssl/fnr-app.crt;
+              ssl_certificate_key /etc/nginx/ssl/fnr-app.key;
+              ssl_protocols TLSv1.2 TLSv1.3;
+              
+              # Logging configuration
+              access_log /var/log/nginx/fnr-access.log;
+              error_log /var/log/nginx/fnr-error.log;
+
+              # Root directory for static files
+              root /var/www/fnr-app/dist/fnr-app;
+              index index.html;
+
+              # Proxy headers for API requests
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+
+              # Proxy timeout settings
+              proxy_connect_timeout 60s;
+              proxy_send_timeout 60s;
+              proxy_read_timeout 60s;
+
+              # API requests - proxy to Express server
+              location /api {
+                  proxy_pass http://localhost:3000;
+                  proxy_set_header Connection '';
+                  proxy_http_version 1.1;
+                  proxy_read_timeout 360s;
+              }
+
+              # Static assets with caching
+              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                  expires 30d;
+                  add_header Cache-Control "public, max-age=2592000";
+                  access_log off;
+                  try_files $uri =404;
+              }
+
+              # For client-side routing, serve index.html for all non-file routes
+              location / {
+                  try_files $uri $uri/ /index.html;
+              }
+          }
+          EOF
 
           # Create symlink if it doesn't exist
           if [ ! -L /etc/nginx/sites-enabled/fnr-app ]; then
@@ -212,8 +281,10 @@ jobs:
           PORT=3000
           HOST="0.0.0.0"
           SESSION_SECRET="$(openssl rand -base64 32)"
-          CLIENT_URL="http://${{ secrets.DROPLET_IP }}:3000"
+          CLIENT_URL="https://${{ secrets.DROPLET_IP }}"
           PM2_HOME="/var/www/fnr-app/.pm2"
+          COOKIE_SECURE=true
+          COOKIE_SAME_SITE=strict
           EOF
           chmod 600 /var/www/fnr-app/.env
 
@@ -290,14 +361,39 @@ jobs:
           echo "✅ File permissions verified"
 
           echo "🌍 Verifying environment variables..."
-          if ! grep -q "DATABASE_URL" /var/www/fnr-app/.env; then
-            echo "❌ DATABASE_URL missing from .env"
+          REQUIRED_ENV_VARS=(
+            "DATABASE_URL"
+            "NODE_ENV"
+            "CLIENT_URL"
+            "SESSION_SECRET"
+            "COOKIE_SECURE"
+            "COOKIE_SAME_SITE"
+          )
+
+          for var in "${REQUIRED_ENV_VARS[@]}"; do
+            if ! grep -q "^$var=" /var/www/fnr-app/.env; then
+              echo "❌ $var missing from .env"
+              exit 1
+            fi
+          done
+
+          # Verify HTTPS configuration
+          if ! grep -q "^CLIENT_URL=\"https:" /var/www/fnr-app/.env; then
+            echo "❌ CLIENT_URL is not using HTTPS"
             exit 1
           fi
-          if ! grep -q "NODE_ENV" /var/www/fnr-app/.env; then
-            echo "❌ NODE_ENV missing from .env"
+
+          # Verify cookie security settings
+          if ! grep -q "^COOKIE_SECURE=true" /var/www/fnr-app/.env; then
+            echo "❌ COOKIE_SECURE is not set to true"
             exit 1
           fi
+
+          if ! grep -q "^COOKIE_SAME_SITE=strict" /var/www/fnr-app/.env; then
+            echo "❌ COOKIE_SAME_SITE is not set to strict"
+            exit 1
+          fi
+
           echo "✅ Environment variables verified"
 
           echo "🔍 Verifying Nginx installation..."
@@ -316,13 +412,27 @@ jobs:
           fi
           echo "✅ Nginx configuration syntax is valid"
 
-          # Check if Nginx is listening on port 80
+          # Check if Nginx is listening on required ports
           if ! ss -tulpn | grep -q ':80.*nginx'; then
             echo "❌ Nginx is not listening on port 80"
             ss -tulpn | grep nginx
             exit 1
           fi
           echo "✅ Nginx is listening on port 80"
+
+          if ! ss -tulpn | grep -q ':443.*nginx'; then
+            echo "❌ Nginx is not listening on port 443 (HTTPS)"
+            ss -tulpn | grep nginx
+            exit 1
+          fi
+          echo "✅ Nginx is listening on port 443 (HTTPS)"
+
+          # Verify SSL certificate exists
+          if [ ! -f /etc/nginx/ssl/fnr-app.crt ] || [ ! -f /etc/nginx/ssl/fnr-app.key ]; then
+            echo "❌ SSL certificate files are missing"
+            exit 1
+          fi
+          echo "✅ SSL certificate files verified"
 
           # Note: Full HTTP endpoint testing will be done in the deployment workflow
           echo "ℹ️ HTTP endpoint testing will be performed during deployment"

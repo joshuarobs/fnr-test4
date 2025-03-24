@@ -62,6 +62,12 @@ jobs:
           # Remove from ~/.bashrc
           sed -i '/export NODE_ENV=/d' ~/.bashrc
 
+          # Clean secure cookie settings from .env
+          if [ -f "/var/www/fnr-app/.env" ]; then
+            sed -i '/COOKIE_SECURE=/d' /var/www/fnr-app/.env
+            sed -i '/COOKIE_SAME_SITE=/d' /var/www/fnr-app/.env
+          fi
+
           # Source updated files
           source /etc/environment || true
           source ~/.bashrc || true
@@ -76,14 +82,22 @@ jobs:
           rm -rf /etc/apt/sources.list.d/nodesource.list
           ENDSSH
 
-      - name: Clean Nginx
+      - name: Clean Nginx and SSL
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-          echo "🗑️ Removing Nginx configuration..."
+          echo "🗑️ Removing Nginx configuration and SSL certificates..."
+          # Remove Nginx configuration files
           rm -f /etc/nginx/sites-enabled/fnr-app
           rm -f /etc/nginx/sites-available/fnr-app
           rm -f /var/log/nginx/fnr-access.log
           rm -f /var/log/nginx/fnr-error.log
+
+          # Remove SSL certificates
+          rm -f /etc/nginx/ssl/fnr-app.crt
+          rm -f /etc/nginx/ssl/fnr-app.key
+          rm -rf /etc/nginx/ssl
+
+          # Remove Nginx completely
           apt-get remove --purge -y nginx nginx-*
           apt-get autoremove -y
           rm -rf /etc/nginx
@@ -133,15 +147,31 @@ jobs:
             exit 1
           fi
 
+          # Verify secure cookie settings cleanup
+          if [ -f "/var/www/fnr-app/.env" ]; then
+            if grep -q "COOKIE_SECURE=" /var/www/fnr-app/.env; then
+              echo "❌ COOKIE_SECURE still exists in .env"
+              exit 1
+            fi
+            if grep -q "COOKIE_SAME_SITE=" /var/www/fnr-app/.env; then
+              echo "❌ COOKIE_SAME_SITE still exists in .env"
+              exit 1
+            fi
+          fi
+
           echo "✅ Environment cleanup verified successfully"
 
-          echo "Checking Nginx..."
+          echo "Checking Nginx and SSL..."
           if dpkg -l | grep -q nginx; then
             echo "❌ Nginx still installed"
             exit 1
           fi
           if [ -f "/etc/nginx/sites-enabled/fnr-app" ] || [ -f "/etc/nginx/sites-available/fnr-app" ]; then
             echo "❌ Nginx configuration files still exist"
+            exit 1
+          fi
+          if [ -d "/etc/nginx/ssl" ] || [ -f "/etc/nginx/ssl/fnr-app.crt" ] || [ -f "/etc/nginx/ssl/fnr-app.key" ]; then
+            echo "❌ SSL certificate files still exist"
             exit 1
           fi
           ENDSSH
