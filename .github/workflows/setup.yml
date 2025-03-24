@@ -300,7 +300,8 @@ jobs:
           fi
           echo "✅ Environment variables verified"
 
-          echo "🌐 Verifying Nginx status..."
+          echo "🔍 Verifying Nginx installation..."
+          # Check if Nginx is running
           if ! systemctl is-active --quiet nginx; then
             echo "❌ Nginx is not running"
             systemctl status nginx
@@ -308,17 +309,23 @@ jobs:
           fi
           echo "✅ Nginx is running"
 
-          echo "🔍 Testing Nginx HTTP endpoint..."
-          # More robust HTTP endpoint test that accepts any 2xx or 3xx status code
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost)
-          if [[ $HTTP_STATUS =~ ^[23][0-9][0-9]$ ]]; then
-            echo "✅ Nginx HTTP endpoint is accessible (Status: $HTTP_STATUS)"
-          else
-            echo "❌ Nginx HTTP endpoint test failed (Status: $HTTP_STATUS)"
-            echo "Detailed curl output:"
-            curl -v http://localhost
+          # Check Nginx configuration syntax
+          if ! nginx -t; then
+            echo "❌ Nginx configuration test failed"
             exit 1
           fi
+          echo "✅ Nginx configuration syntax is valid"
+
+          # Check if Nginx is listening on port 80
+          if ! ss -tulpn | grep -q ':80.*nginx'; then
+            echo "❌ Nginx is not listening on port 80"
+            ss -tulpn | grep nginx
+            exit 1
+          fi
+          echo "✅ Nginx is listening on port 80"
+
+          # Note: Full HTTP endpoint testing will be done in the deployment workflow
+          echo "ℹ️ HTTP endpoint testing will be performed during deployment"
 
           echo "✨ Setup verification completed successfully"
           ENDSSH
