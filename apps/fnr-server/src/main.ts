@@ -50,37 +50,11 @@ app.use(
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger); // Log all requests
-// In production, serve the frontend application
+// Production configuration
 if (process.env.NODE_ENV === 'production') {
-  console.log('🌐 Setting up production routes');
-
-  const frontendPath = path.join(__dirname, '../fnr-app');
-  console.log(`📂 Frontend path: ${frontendPath}`);
-
-  // Serve static files with caching
-  app.use(
-    express.static(frontendPath, {
-      maxAge: '1d',
-      etag: true,
-      lastModified: true,
-    })
-  );
-
-  // Serve index.html for all non-API routes to support client-side routing
-  app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-
-    const indexPath = path.join(frontendPath, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      console.error(`❌ index.html not found at ${indexPath}`);
-      next(new Error('Frontend index.html not found'));
-    }
-  });
+  console.log('🌐 Running in production mode');
+  console.log('📡 API requests will be handled by Express');
+  console.log('🌐 Frontend serving is handled by Nginx');
 }
 
 // Session and Passport setup
