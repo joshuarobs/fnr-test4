@@ -21,13 +21,18 @@
 cd /var/www/fnr-app
 
 # Set environment variables
-export NODE_ENV=production
-export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+if [ -z "$DATABASE_PASSWORD" ]; then
+  echo "❌ DATABASE_PASSWORD environment variable is not set"
+  exit 1
+fi
 
-# Print environment for debugging
+export NODE_ENV=production
+export DATABASE_URL="postgresql://fnrapp:${DATABASE_PASSWORD}@localhost:5432/fnrdb"
+
+# Print environment for debugging (with masked password)
 echo "Environment variables:"
 echo "NODE_ENV: $NODE_ENV"
-echo "DATABASE_URL: $DATABASE_URL"
+echo "DATABASE_URL: postgresql://fnrapp:***@localhost:5432/fnrdb"
 
 # Run the seed script with explicit environment and compiler options
 npx ts-node \

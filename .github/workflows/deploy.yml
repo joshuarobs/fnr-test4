@@ -298,8 +298,8 @@ jobs:
             mkdir -p $BACKUP_DIR
             
             # Get database password from server
-            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
-            export PGPASSWORD="$DB_PASSWORD"
+            export DATABASE_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export PGPASSWORD="$DATABASE_PASSWORD"
             
             pg_dump -U fnrapp -h localhost fnrdb > $BACKUP_DIR/fnrdb_$TIMESTAMP.sql
             
@@ -308,6 +308,7 @@ jobs:
             
             # Clear password from environment
             unset PGPASSWORD
+            unset DATABASE_PASSWORD
           ENDSSH
 
       - name: Deploy Application
@@ -426,15 +427,15 @@ jobs:
             chmod -R +x $APP_DIR/scripts
 
             # Run database migrations
-            DB_PASSWORD=$(cat .db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            export DATABASE_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DATABASE_PASSWORD}@localhost:5432/fnrdb"
             npx prisma migrate deploy --schema=./prisma/schema.prisma
 
             if [ $? -ne 0 ]; then
               echo "Migration failed. Rolling back to last backup..."
               LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
               if [ -n "$LATEST_BACKUP" ]; then
-                export PGPASSWORD="$DB_PASSWORD"
+                export PGPASSWORD="$DATABASE_PASSWORD"
                 psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
                 unset PGPASSWORD
               fi
@@ -521,8 +522,7 @@ jobs:
             find . -maxdepth 2 -not -path "./node_modules*" -not -path "*/node_modules*"
             
             # Setup environment
-            DB_PASSWORD=$(cat .db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            export DATABASE_PASSWORD=$(cat .db_password)
             export NODE_ENV=production
             
             echo "Running database seed using run-seed.sh..."
@@ -652,8 +652,8 @@ jobs:
             mkdir -p $BACKUP_DIR
             
             # Get database password from server
-            DB_PASSWORD=$(cat /var/www/fnr-app/.db_password)
-            export PGPASSWORD="$DB_PASSWORD"
+            export DATABASE_PASSWORD=$(cat /var/www/fnr-app/.db_password)
+            export PGPASSWORD="$DATABASE_PASSWORD"
             
             pg_dump -U fnrapp -h localhost fnrdb > $BACKUP_DIR/fnrdb_$TIMESTAMP.sql
             
@@ -662,6 +662,7 @@ jobs:
             
             # Clear password from environment
             unset PGPASSWORD
+            unset DATABASE_PASSWORD
           ENDSSH
 
       - name: Deploy Application
@@ -734,15 +735,15 @@ jobs:
             chmod -R +x $APP_DIR/scripts
 
             # Run database migrations
-            DB_PASSWORD=$(cat .db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            export DATABASE_PASSWORD=$(cat .db_password)
+            export DATABASE_URL="postgresql://fnrapp:${DATABASE_PASSWORD}@localhost:5432/fnrdb"
             npx prisma migrate deploy --schema=./prisma/schema.prisma
 
             if [ $? -ne 0 ]; then
               echo "Migration failed. Rolling back to last backup..."
               LATEST_BACKUP=$(ls -t /var/backups/db/fnrdb_*.sql | head -n1)
               if [ -n "$LATEST_BACKUP" ]; then
-                export PGPASSWORD="$DB_PASSWORD"
+                export PGPASSWORD="$DATABASE_PASSWORD"
                 psql -U fnrapp -h localhost -d fnrdb -f "$LATEST_BACKUP"
                 unset PGPASSWORD
               fi
@@ -787,8 +788,7 @@ jobs:
             find . -maxdepth 2 -not -path "./node_modules*" -not -path "*/node_modules*"
             
             # Setup environment
-            DB_PASSWORD=$(cat .db_password)
-            export DATABASE_URL="postgresql://fnrapp:${DB_PASSWORD}@localhost:5432/fnrdb"
+            export DATABASE_PASSWORD=$(cat .db_password)
             export NODE_ENV=production
             
             echo "Running database seed using run-seed.sh..."
