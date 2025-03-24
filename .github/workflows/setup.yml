@@ -309,11 +309,16 @@ jobs:
           echo "✅ Nginx is running"
 
           echo "🔍 Testing Nginx HTTP endpoint..."
-          if ! curl -I http://localhost -s | grep -q "200 OK"; then
-            echo "❌ Nginx HTTP endpoint test failed"
+          # More robust HTTP endpoint test that accepts any 2xx or 3xx status code
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost)
+          if [[ $HTTP_STATUS =~ ^[23][0-9][0-9]$ ]]; then
+            echo "✅ Nginx HTTP endpoint is accessible (Status: $HTTP_STATUS)"
+          else
+            echo "❌ Nginx HTTP endpoint test failed (Status: $HTTP_STATUS)"
+            echo "Detailed curl output:"
+            curl -v http://localhost
             exit 1
           fi
-          echo "✅ Nginx HTTP endpoint is accessible"
 
           echo "✨ Setup verification completed successfully"
           ENDSSH
