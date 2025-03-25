@@ -37,14 +37,15 @@ export const app: express.Application = express();
 // CORS configuration
 app.use(
   cors({
-    // In production, we're serving frontend from same origin
+    // In production, trust the proxy's origin header
     origin:
       process.env.NODE_ENV === 'production'
-        ? true // Allow same origin requests
+        ? (origin, callback) => callback(null, origin)
         : ['http://localhost:4200', 'http://127.0.0.1:4200'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Set-Cookie'],
   })
 );
 
@@ -64,19 +65,24 @@ if (process.env.NODE_ENV === 'production') {
   console.log('🌐 Frontend serving is handled by Nginx');
 }
 
+// Trust first proxy
+app.set('trust proxy', 1);
+
 // Session and Passport setup
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key', // TODO: Move to environment variable
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: 'lax', // Use lax for better security while maintaining functionality
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost',
     },
-    name: 'fnr.sid', // Custom session cookie name
+    name: 'fnr.sid',
   })
 );
 app.use(passport.initialize());

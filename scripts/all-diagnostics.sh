@@ -1,6 +1,9 @@
 #!/bin/bash
 # Master diagnostic script for FNR application
 # This script provides a unified interface for running various diagnostic checks
+# Usage:
+# Run all diagnostics
+# ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --all'
 
 # Text formatting
 RED='\033[0;31m'
