@@ -170,9 +170,7 @@ jobs:
             dist/apps/fnr-server/**
             dist/apps/fnr-app/**
             apps/fnr-server/prisma/**
-            scripts/all-diagnostics.sh
-            scripts/diagnostics/**
-            scripts/run-seed.sh
+            scripts/**
             package.json
             package-lock.json
             .env.deploy
@@ -322,45 +320,11 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             BACKUP_DIR="/var/backups/app"
 
-            # Function to verify frontend files
-            verify_frontend() {
-              local dir=$1
-              echo "🔍 Verifying frontend files in $dir..."
-              
-              # Check index.html
-              if [ ! -f "$dir/index.html" ]; then
-                echo "❌ index.html missing"
-                return 1
-              fi
-              
-              # Check assets directory
-              if [ ! -d "$dir/assets" ]; then
-                echo "❌ Assets directory missing"
-                return 1
-              fi
-              
-              # Check for critical asset types
-              local missing_assets=0
-              for ext in js css; do
-                if [ $(find "$dir/assets" -name "*.$ext" | wc -l) -eq 0 ]; then
-                  echo "❌ No .$ext files found in assets directory"
-                  missing_assets=1
-                fi
-              done
-              
-              # Check favicon
-              if [ ! -f "$dir/favicon.ico" ]; then
-                echo "❌ favicon.ico missing"
-                return 1
-              fi
-              
-              if [ $missing_assets -eq 1 ]; then
-                return 1
-              fi
-              
-              echo "✅ Frontend files verified successfully"
-              return 0
-            }
+            # Run the frontend verification script
+            if ! bash /tmp/deploy/scripts/cicd/verify-frontend.sh "/tmp/deploy/dist/fnr-app"; then
+              echo "❌ Frontend verification failed. Aborting deployment."
+              exit 1
+            fi
 
             # Backup current deployment
             if [ -d "$APP_DIR" ] && [ "$(ls -A $APP_DIR)" ]; then
@@ -373,7 +337,7 @@ jobs:
             pm2 stop all 2>/dev/null || true
 
             # Verify new build before deploying
-            if ! verify_frontend "/tmp/deploy/dist/fnr-app"; then
+            if ! bash /tmp/deploy/scripts/cicd/verify-frontend.sh "/tmp/deploy/dist/fnr-app"; then
               echo "❌ Frontend verification failed. Aborting deployment."
               exit 1
             fi
@@ -457,7 +421,7 @@ jobs:
             export NODE_ENV=production
 
             # Final verification before starting
-            if ! verify_frontend "$APP_DIR/dist/fnr-app"; then
+            if ! bash /tmp/deploy/scripts/cicd/verify-frontend.sh "$APP_DIR/dist/fnr-app"; then
               echo "❌ Final frontend verification failed. Rolling back..."
               if [ -f "$BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz" ]; then
                 rm -rf $APP_DIR/*
@@ -774,7 +738,7 @@ jobs:
             export NODE_ENV=production
 
             # Final verification before starting
-            if ! verify_frontend "$APP_DIR/dist/fnr-app"; then
+            if ! bash /tmp/deploy/scripts/cicd/verify-frontend.sh "$APP_DIR/dist/fnr-app"; then
               echo "❌ Final frontend verification failed. Rolling back..."
               if [ -f "$BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz" ]; then
                 rm -rf $APP_DIR/*
