@@ -6,5 +6,6 @@ export const SERVER_CONFIG = {
 
 // Helper to build the base URL
 export const getServerBaseUrl = () => {
-  return `http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`;
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  return `${protocol}://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}`;
 };
