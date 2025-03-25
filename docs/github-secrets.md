@@ -47,7 +47,19 @@ openssl rand -base64 32
 ## `CLIENT_URL`
 Your frontend application URL
 ```
-Example: http://170.64.188.76:3000
+Example: https://fnrtest.com
+```
+
+## `DOMAIN_NAME`
+Your application's domain name (required for Let's Encrypt SSL)
+```
+Example: fnrtest.com
+```
+
+## `ADMIN_EMAIL`
+Email address for Let's Encrypt notifications and certificate expiry alerts
+```
+Example: admin@fnrtest.com
 ```
 
 # Setting Up Secrets
@@ -77,3 +89,12 @@ After setting up all secrets:
 3. Once setup is complete, your repository is ready for automated deployments:
    - Push to `main` branch → Production deployment
    - Push to `staging` branch → Staging deployment
+
+# SSL Configuration
+
+The application uses Let's Encrypt for SSL certificates, which:
+- Are automatically obtained during server setup
+- Are valid for 90 days
+- Auto-renew when they reach 30 days before expiration
+- Provide trusted HTTPS encryption recognized by all modern browsers
+- Require a valid domain name pointing to your server IP

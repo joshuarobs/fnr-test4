@@ -85,20 +85,21 @@ jobs:
       - name: Clean Nginx and SSL
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-          echo "🗑️ Removing Nginx configuration and SSL certificates..."
+          echo "🗑️ Removing Nginx configuration, SSL certificates, and Let's Encrypt..."
           # Remove Nginx configuration files
           rm -f /etc/nginx/sites-enabled/fnr-app
           rm -f /etc/nginx/sites-available/fnr-app
           rm -f /var/log/nginx/fnr-access.log
           rm -f /var/log/nginx/fnr-error.log
 
-          # Remove SSL certificates
+          # Remove SSL certificates and Let's Encrypt
           rm -f /etc/nginx/ssl/fnr-app.crt
           rm -f /etc/nginx/ssl/fnr-app.key
           rm -rf /etc/nginx/ssl
+          rm -rf /etc/letsencrypt
 
-          # Remove Nginx completely
-          apt-get remove --purge -y nginx nginx-*
+          # Remove Nginx and Certbot completely
+          apt-get remove --purge -y nginx nginx-* certbot python3-certbot-nginx
           apt-get autoremove -y
           rm -rf /etc/nginx
           ENDSSH
@@ -161,7 +162,7 @@ jobs:
 
           echo "✅ Environment cleanup verified successfully"
 
-          echo "Checking Nginx and SSL..."
+          echo "Checking Nginx, SSL, and Let's Encrypt..."
           if dpkg -l | grep -q nginx; then
             echo "❌ Nginx still installed"
             exit 1
@@ -172,6 +173,14 @@ jobs:
           fi
           if [ -d "/etc/nginx/ssl" ] || [ -f "/etc/nginx/ssl/fnr-app.crt" ] || [ -f "/etc/nginx/ssl/fnr-app.key" ]; then
             echo "❌ SSL certificate files still exist"
+            exit 1
+          fi
+          if [ -d "/etc/letsencrypt" ]; then
+            echo "❌ Let's Encrypt directory still exists"
+            exit 1
+          fi
+          if command -v certbot &> /dev/null; then
+            echo "❌ Certbot is still installed"
             exit 1
           fi
           ENDSSH

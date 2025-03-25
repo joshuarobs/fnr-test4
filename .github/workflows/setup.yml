@@ -42,74 +42,29 @@ jobs:
           systemctl enable postgresql nginx
           ENDSSH
 
-      - name: Configure SSL and Nginx
+      - name: Configure SSL with Let's Encrypt and Nginx
         run: |
           ssh root@${{ secrets.DROPLET_IP }} << 'ENDSSH'
-          # Create SSL directory and generate self-signed certificate
-          echo "🔒 Setting up SSL with self-signed certificate..."
-          mkdir -p /etc/nginx/ssl
-          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -keyout /etc/nginx/ssl/fnr-app.key \
-            -out /etc/nginx/ssl/fnr-app.crt \
-            -subj "/CN=${{ secrets.DROPLET_IP }}" \
-            -addext "subjectAltName=IP:${{ secrets.DROPLET_IP }}"
+          # Install Certbot and Nginx plugin
+          echo "🔧 Installing Certbot..."
+          apt-get update
+          apt-get install -y certbot python3-certbot-nginx
 
-          chmod 600 /etc/nginx/ssl/fnr-app.key
-          chmod 644 /etc/nginx/ssl/fnr-app.crt
-
-          # Create Nginx configuration with HTTPS
+          # Create Nginx configuration with domain name
           echo "🔧 Configuring Nginx..."
           cat > /etc/nginx/sites-available/fnr-app << 'EOF'
-          # HTTP server - redirects to HTTPS
+          # HTTP server - will be modified by Certbot
           server {
               listen 80;
-              server_name ${{ secrets.DROPLET_IP }};
-              return 301 https://$host$request_uri;
-          }
-
-          # HTTPS server
-          server {
-              listen 443 ssl;
-              server_name ${{ secrets.DROPLET_IP }};
+              server_name ${{ secrets.DOMAIN_NAME }};
               
-              # SSL configuration
-              ssl_certificate /etc/nginx/ssl/fnr-app.crt;
-              ssl_certificate_key /etc/nginx/ssl/fnr-app.key;
-              ssl_protocols TLSv1.2 TLSv1.3;
-              
-              # Logging configuration
-              access_log /var/log/nginx/fnr-access.log;
-              error_log /var/log/nginx/fnr-error.log;
-
               # Root directory for static files
               root /var/www/fnr-app/dist/fnr-app;
               index index.html;
 
-              # Proxy headers for API requests
-              proxy_set_header Host $host;
-              proxy_set_header X-Real-IP $remote_addr;
-              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-
-              # Proxy timeout settings
-              proxy_connect_timeout 60s;
-              proxy_send_timeout 60s;
-              proxy_read_timeout 60s;
-
-              # API requests - proxy to Express server
-              location /api {
-                  proxy_pass http://localhost:3000;
-                  proxy_set_header Connection '';
-                  proxy_http_version 1.1;
-                  proxy_read_timeout 360s;
-              }
-
-              # Static assets with caching
-              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-                  expires 30d;
-                  add_header Cache-Control "public, max-age=2592000";
-                  access_log off;
-                  try_files $uri =404;
+              # For Let's Encrypt verification
+              location ~ /.well-known {
+                  allow all;
               }
 
               # For client-side routing, serve index.html for all non-file routes
@@ -117,6 +72,7 @@ jobs:
                   try_files $uri $uri/ /index.html;
               }
           }
+              
           EOF
 
           # Create symlink if it doesn't exist
@@ -146,6 +102,30 @@ jobs:
             echo "❌ Failed to restart Nginx"
             exit 1
           fi
+
+          # Obtain Let's Encrypt certificate
+          echo "🔒 Obtaining Let's Encrypt certificate..."
+          certbot --nginx -d ${{ secrets.DOMAIN_NAME }} --non-interactive --agree-tos --email ${{ secrets.ADMIN_EMAIL }} --redirect
+
+          # Verify certificate installation
+          if [ -d "/etc/letsencrypt/live/${{ secrets.DOMAIN_NAME }}" ]; then
+            echo "✅ Let's Encrypt certificate installed successfully"
+          else
+            echo "❌ Let's Encrypt certificate installation failed"
+            exit 1
+          fi
+
+          # Verify Nginx configuration after Certbot modifications
+          nginx -t
+          if [ $? -eq 0 ]; then
+            echo "✅ Final Nginx configuration test passed"
+          else
+            echo "❌ Final Nginx configuration test failed"
+            exit 1
+          fi
+
+          # Restart Nginx again to apply SSL configuration
+          systemctl restart nginx
           ENDSSH
 
       - name: Configure PostgreSQL
@@ -281,7 +261,7 @@ jobs:
           PORT=3000
           HOST="0.0.0.0"
           SESSION_SECRET="$(openssl rand -base64 32)"
-          CLIENT_URL="https://${{ secrets.DROPLET_IP }}"
+          CLIENT_URL="https://${{ secrets.DOMAIN_NAME }}"
           PM2_HOME="/var/www/fnr-app/.pm2"
           COOKIE_SECURE=true
           COOKIE_SAME_SITE=strict
@@ -427,12 +407,28 @@ jobs:
           fi
           echo "✅ Nginx is listening on port 443 (HTTPS)"
 
-          # Verify SSL certificate exists
-          if [ ! -f /etc/nginx/ssl/fnr-app.crt ] || [ ! -f /etc/nginx/ssl/fnr-app.key ]; then
-            echo "❌ SSL certificate files are missing"
+          # Verify Let's Encrypt certificate exists
+          if [ ! -d "/etc/letsencrypt/live/${{ secrets.DOMAIN_NAME }}" ]; then
+            echo "❌ Let's Encrypt certificate directory is missing"
             exit 1
           fi
-          echo "✅ SSL certificate files verified"
+
+          if [ ! -f "/etc/letsencrypt/live/${{ secrets.DOMAIN_NAME }}/fullchain.pem" ] || [ ! -f "/etc/letsencrypt/live/${{ secrets.DOMAIN_NAME }}/privkey.pem" ]; then
+            echo "❌ Let's Encrypt certificate files are missing"
+            exit 1
+          fi
+          echo "✅ Let's Encrypt certificate files verified"
+
+          # Verify certificate expiry
+          CERT_EXPIRY=$(openssl x509 -enddate -noout -in "/etc/letsencrypt/live/${{ secrets.DOMAIN_NAME }}/fullchain.pem" | cut -d= -f2)
+          echo "📅 Certificate expires: $CERT_EXPIRY"
+
+          # Verify auto-renewal is configured
+          if ! systemctl is-enabled certbot.timer > /dev/null 2>&1; then
+            echo "❌ Certbot auto-renewal is not enabled"
+            exit 1
+          fi
+          echo "✅ Certbot auto-renewal is enabled"
 
           # Note: Full HTTP endpoint testing will be done in the deployment workflow
           echo "ℹ️ HTTP endpoint testing will be performed during deployment"
