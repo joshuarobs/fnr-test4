@@ -65,8 +65,11 @@ if (process.env.NODE_ENV === 'production') {
   console.log('🌐 Frontend serving is handled by Nginx');
 }
 
-// Trust first proxy
-app.set('trust proxy', 1);
+// Enhanced proxy trust configuration
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+  console.log('🔒 Proxy trust enabled for production');
+}
 
 // Session and Passport setup
 app.use(
@@ -78,13 +81,26 @@ app.use(
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax', // Use lax for better security while maintaining functionality
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
       domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost',
     },
     name: 'fnr.sid',
   })
 );
+
+// Log session configuration
+console.log('📝 Session configuration:', {
+  environment: process.env.NODE_ENV,
+  cookieSettings: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    domain:
+      process.env.NODE_ENV === 'production'
+        ? 'undefined (using request domain)'
+        : 'localhost',
+  },
+});
 app.use(passport.initialize());
 app.use(passport.session());
 
