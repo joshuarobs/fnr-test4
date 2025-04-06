@@ -9,15 +9,15 @@ This demo app aims to:
 4. Speed up a burdensome 100 item FNR from 2 weeks to 20 minutes, or 1 business day
 5. Speed up the claims process for the customer
 
-The FNR process:
-1. Starts off with a contents assessing company to create an inventory list
-2. The insured will provide a like for like quote for each item
-3. The claims agent will then review each quote, add up all the amounts and cash settle it
-
 Currently these processes are:
 1. Done manually with Excel spreadsheets
 2. No single source of truth - i.e. multiple spreadsheets copies that occur when agents don't communicate and collaborate properly
 3. Can take up to 2 weeks for a 100 item FNR, as other KPIs and priorities are to be met
+
+The FNR process:
+1. Starts off with a contents assessing company to create an inventory list
+2. The insured will provide a like for like quote for each item
+3. The claims agent will then review each quote, add up all the amounts and cash settle it
 
 ## Deployment
 1. Pull the repo, install everything as required
