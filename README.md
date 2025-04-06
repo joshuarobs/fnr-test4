@@ -1,3 +1,30 @@
+# Insurance Fair and Reasonable Demo app
+
+This web app is a demo for an Insurance company's Fair and Reasonable process (FNR). This FNR process takes place when an insured makes a claim that has contents items in it.
+
+The FNR process:
+1. Starts off with a contents assessing company to create an inventory list
+2. The insured will provide a like for like quote for each item
+3. The claims agent will then review each quote, add up all the amounts and cash settle it
+
+Currently these processes are:
+1. Done manually with Excel spreadsheets
+2. No single source of truth - i.e. multiple spreadsheets copies that occur when agents don't communicate and collaborate properly
+3. Can take up to 2 weeks for a 100 item FNR, as other KPIs and priorities are to be met
+
+This demo app aims to:
+1. Have a single source of truth for this process, preventing confusion
+2. Speed up the process by allowing partner assessors to input values directly and customers to do so with their quotes, thus reducing the burden on the agent
+3. Be a foundation for AI integration, such as LLM APIs being queried at intervals (e.g. every hour, after hours), to automate quote checking
+4. Speed up a burdensome 100 item FNR from 2 weeks to 20 minutes, or 1 business day
+5. Speed up the claims process for the customer
+
+## Deployment
+1. Pull the repo, install everything as required
+2. Run the development scripts: `nx serve app`, `nx serve server`, `prisma:studio`
+3. To deploy on the server, setup the website URL, https, dns, Digital Ocean droplet or other server, env variables in this Github repo, then run `Cleanup > Setup > Deploy` workflow scripts in Github Actions to push latest changes to the server
+4. Login with the seeded admin credentials
+
 # ReactMonorepo
 
 An Nx Monorepo setup with React, Vite, Tailwind CSS and [Shadcn UI](https://github.com/shadcn-ui/ui).
