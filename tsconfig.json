@@ -5,5 +5,11 @@
       "@my-org/shared": ["shared/src/index.ts"],
       "@my-org/shared/*": ["shared/src/*"]
     }
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node10"
+    }
   }
 }
