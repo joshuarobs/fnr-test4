@@ -21,7 +21,7 @@ The FNR process:
 
 ## Deployment
 1. Pull the repo, install everything as required
-2. Run the development scripts: `nx serve app`, `nx serve server`, `prisma:studio`
+2. Run the development scripts: `nx serve app`, `nx serve server`, `prisma:studio`, `db:seed`
 3. To deploy on the server, setup the website URL, https, dns, Digital Ocean droplet or other server, env variables in this Github repo, then run `Cleanup > Setup > Deploy` workflow scripts in Github Actions to push latest changes to the server
 4. Login with the seeded admin credentials
 
