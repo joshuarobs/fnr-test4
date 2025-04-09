@@ -89,5 +89,6 @@
         "unitTestRunner": "vitest"
       }
     }
-  }
+  },
+  "useLegacyCache": true
 }
