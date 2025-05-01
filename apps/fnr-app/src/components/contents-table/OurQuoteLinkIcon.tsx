@@ -100,17 +100,19 @@ export const OurQuoteLinkIcon = ({
           </Tooltip>
         </TooltipProvider>
       </PopoverTrigger>
-      <PopoverContent className="w-96">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Our quote proof</h4>
-            <p className="text-sm text-muted-foreground">
+      <PopoverContent className="w-96 overflow-hidden">
+        <div className="grid gap-4 w-full">
+          <div className="space-y-2 w-full">
+            <h4 className="font-medium leading-none break-words">
+              Our quote proof
+            </h4>
+            <p className="text-sm text-muted-foreground whitespace-normal break-words">
               Set a website link containing a quote that is fair and reasonable
               for the item.
             </p>
           </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-[auto_1fr] items-center gap-4">
+          <div className="grid gap-2 w-full">
+            <div className="grid grid-cols-[auto_1fr] items-center gap-4 w-full">
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
                 <Label htmlFor="website-url">Website</Label>
@@ -120,14 +122,14 @@ export const OurQuoteLinkIcon = ({
                 value={websiteUrl}
                 onChange={handleUrlChange}
                 onClear={handleClear}
-                className="h-8 w-full"
+                className="h-8 w-full max-w-full"
                 placeholder="e.g. www.amazon.com"
                 autoComplete="off"
               />
             </div>
           </div>
           <Separator />
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 w-full">
             <Button
               variant="outline"
               size="sm"
