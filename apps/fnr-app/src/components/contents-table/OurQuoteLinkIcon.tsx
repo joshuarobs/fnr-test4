@@ -24,11 +24,13 @@ import { useExtractPriceMutation } from '../../store/services/api';
 interface OurQuoteLinkIconProps {
   ourQuoteProof?: string;
   onSave?: (url: string) => void;
+  onPriceExtracted?: (price: number) => void;
 }
 
 export const OurQuoteLinkIcon = ({
   ourQuoteProof,
   onSave,
+  onPriceExtracted,
 }: OurQuoteLinkIconProps) => {
   // State for managing the website URL and its previous value
   const [websiteUrl, setWebsiteUrl] = useState<string>(ourQuoteProof || '');
@@ -87,6 +89,11 @@ export const OurQuoteLinkIcon = ({
         if (response.success && response.data) {
           const { data } = response;
           const product = data.product;
+
+          // Call onPriceExtracted with the current price
+          if (onPriceExtracted && product.price.current) {
+            onPriceExtracted(product.price.current);
+          }
 
           // Format the toast description
           let description = `${product.name}\n`;
