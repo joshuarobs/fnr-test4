@@ -84,12 +84,43 @@ export const OurQuoteLinkIcon = ({
       try {
         const response = await extractPrice({ url: websiteUrl }).unwrap();
 
-        // Show toast notification with the API response
-        toast({
-          title: 'AI Price Extraction',
-          description: response.message,
-          variant: response.success ? 'default' : 'destructive',
-        });
+        if (response.success && response.data) {
+          const { data } = response;
+          const product = data.product;
+
+          // Format the toast description
+          let description = `${product.name}\n`;
+          description += `Price: ${product.price.formatted}\n`;
+
+          if (product.price.isOnSale) {
+            description += `Original Price: ${product.price.currency} ${product.price.originalPrice}\n`;
+          }
+
+          if (product.availability) {
+            description += `Availability: ${product.availability}\n`;
+          }
+
+          // Show success toast with extracted information
+          toast({
+            title: 'Price Extracted Successfully',
+            description,
+            variant: 'default',
+          });
+        } else if (response.data?.errors?.length > 0) {
+          // Show error toast with the first error message
+          toast({
+            title: 'Price Extraction Failed',
+            description: response.data.errors[0],
+            variant: 'destructive',
+          });
+        } else {
+          // Show generic error toast
+          toast({
+            title: 'Price Extraction Failed',
+            description: 'Could not extract price information from the URL',
+            variant: 'destructive',
+          });
+        }
       } catch (error) {
         console.error('Error extracting price:', error);
 

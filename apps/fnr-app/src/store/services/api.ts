@@ -695,7 +695,34 @@ export const api = createApi({
       },
     }),
     extractPrice: builder.mutation<
-      { success: boolean; message: string },
+      {
+        success: boolean;
+        data: {
+          status: string;
+          timestamp: string;
+          url: string;
+          product: {
+            name: string;
+            price: {
+              current: number;
+              currency: string;
+              formatted: string;
+              isOnSale: boolean;
+              originalPrice: number | null;
+            };
+            availability: string | null;
+            identifier: {
+              sku: string | null;
+              productId: string | null;
+            };
+          };
+          metadata: {
+            source: string;
+            confidence: number;
+          };
+          errors: string[];
+        };
+      },
       { url: string }
     >({
       query: (data) => ({
