@@ -27,6 +27,7 @@ import staffRouter from './routes/staff/index';
 import suppliersRouter from './routes/suppliers/index';
 import authRouter from './routes/auth/index';
 import activitiesRouter from './routes/activities/index';
+import aiRouter from './routes/ai/index';
 import passport from './config/passport';
 import { requestLogger } from './middleware/logger';
 import { SERVER_CONFIG, getServerBaseUrl } from './config';
@@ -137,6 +138,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/staff', staffRouter);
 app.use('/api/suppliers', suppliersRouter);
 app.use('/api/activities', activitiesRouter);
+app.use('/api/ai', aiRouter);
 
 // Handle API 404s
 app.use('/api/*', (req, res) => {

@@ -694,6 +694,16 @@ export const api = createApi({
         }
       },
     }),
+    extractPrice: builder.mutation<
+      { success: boolean; message: string },
+      { url: string }
+    >({
+      query: (data) => ({
+        url: 'ai/extract-price',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -746,4 +756,5 @@ export const {
   useUpdateClaimDescriptionMutation,
   useGetLatestActivitiesQuery,
   useGetClaimActivitiesQuery,
+  useExtractPriceMutation,
 } = api;

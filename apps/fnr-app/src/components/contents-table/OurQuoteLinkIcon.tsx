@@ -17,7 +17,9 @@ import {
   Label,
   Separator,
   InputClearable,
+  useToast,
 } from '@react-monorepo/shared';
+import { useExtractPriceMutation } from '../../store/services/api';
 
 interface OurQuoteLinkIconProps {
   ourQuoteProof?: string;
@@ -72,11 +74,32 @@ export const OurQuoteLinkIcon = ({
     }
   };
 
+  // API mutation hook and toast
+  const [extractPrice, { isLoading }] = useExtractPriceMutation();
+  const { toast } = useToast();
+
   // Handler for getting price from link
-  const handleGetPriceFromLink = () => {
+  const handleGetPriceFromLink = async () => {
     if (websiteUrl) {
-      // TODO: Implement price fetching logic
-      console.log('Getting price from:', websiteUrl);
+      try {
+        const response = await extractPrice({ url: websiteUrl }).unwrap();
+
+        // Show toast notification with the API response
+        toast({
+          title: 'AI Price Extraction',
+          description: response.message,
+          variant: response.success ? 'default' : 'destructive',
+        });
+      } catch (error) {
+        console.error('Error extracting price:', error);
+
+        // Show error toast
+        toast({
+          title: 'Error',
+          description: 'Failed to extract price from the URL',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -170,7 +193,7 @@ export const OurQuoteLinkIcon = ({
               size="sm"
               className="flex items-center gap-2"
               onClick={handleGetPriceFromLink}
-              disabled={!websiteUrl}
+              disabled={!websiteUrl || isLoading}
             >
               <ArrowDownLeftFromCircle className="w-4 h-4" />
               Get price from link
