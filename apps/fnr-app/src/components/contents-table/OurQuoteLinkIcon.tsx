@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Link, Globe } from 'lucide-react';
+import {
+  Link,
+  Globe,
+  ArrowDownLeftFromCircle,
+  ExternalLink,
+} from 'lucide-react';
 import {
   Button,
   Tooltip,
@@ -67,6 +72,14 @@ export const OurQuoteLinkIcon = ({
     }
   };
 
+  // Handler for getting price from link
+  const handleGetPriceFromLink = () => {
+    if (websiteUrl) {
+      // TODO: Implement price fetching logic
+      console.log('Getting price from:', websiteUrl);
+    }
+  };
+
   // Button appearance based on server value and changes
   const buttonContent = () => (
     <Button
@@ -117,35 +130,69 @@ export const OurQuoteLinkIcon = ({
                 <Globe className="w-4 h-4" />
                 <Label htmlFor="website-url">Website</Label>
               </div>
-              <InputClearable
-                id="website-url"
-                value={websiteUrl}
-                onChange={handleUrlChange}
-                onClear={handleClear}
-                className="h-8 w-full max-w-full"
-                placeholder="e.g. www.amazon.com"
-                autoComplete="off"
-              />
+              <div className="flex gap-2 w-full">
+                <InputClearable
+                  id="website-url"
+                  value={websiteUrl}
+                  onChange={handleUrlChange}
+                  onClear={handleClear}
+                  className="h-9 w-full"
+                  placeholder="e.g. www.amazon.com"
+                  autoComplete="off"
+                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="h-9 w-9 flex items-center justify-center"
+                        disabled={!websiteUrl}
+                        onClick={() =>
+                          websiteUrl && window.open(websiteUrl, '_blank')
+                        }
+                        aria-label="Visit URL"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Visit website</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
           </div>
           <Separator />
-          <div className="flex justify-end gap-2 w-full">
+          <div className="flex justify-between items-center w-full">
             <Button
               variant="outline"
               size="sm"
-              className="px-3"
-              onClick={handleCancel}
+              className="flex items-center gap-2"
+              onClick={handleGetPriceFromLink}
+              disabled={!websiteUrl}
             >
-              Cancel
+              <ArrowDownLeftFromCircle className="w-4 h-4" />
+              Get price from link
             </Button>
-            <Button
-              size="sm"
-              className="px-3"
-              disabled={!hasChanges}
-              onClick={handleSave}
-            >
-              Save
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="px-3"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                className="px-3"
+                disabled={!hasChanges}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+            </div>
           </div>
         </div>
       </PopoverContent>
