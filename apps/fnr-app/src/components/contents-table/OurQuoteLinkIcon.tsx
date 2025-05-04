@@ -4,6 +4,7 @@ import {
   Globe,
   ArrowDownLeftFromCircle,
   ExternalLink,
+  AlertCircle,
 } from 'lucide-react';
 import {
   Button,
@@ -225,6 +226,12 @@ export const OurQuoteLinkIcon = ({
             </div>
           </div>
           <Separator />
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span>
+              Price scraping API requests can take up to 10-15 seconds
+            </span>
+          </div>
           <div className="flex justify-between items-center w-full">
             <Button
               variant="outline"
