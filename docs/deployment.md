@@ -88,10 +88,24 @@ If deployment fails:
 
 1. Check GitHub Actions logs for errors
 2. Verify secrets are correctly set
-3. Run frontend diagnostics:
+3. Run diagnostics to identify issues:
+
    ```bash
-   ssh root@170.64.188.76 '/var/www/fnr-app/scripts/frontend-diagnostics.sh'
+   # Run all diagnostics
+   ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --all'
+
+   # Run frontend diagnostics only
+   ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --frontend'
+
+   # Run server diagnostics only
+   ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --server'
+
+   # Run database diagnostics only
+   ssh root@170.64.155.210 'cd /var/www/fnr-app/scripts && bash all-diagnostics.sh --database'
    ```
+
+   For detailed information about the diagnostic tools and interpreting results, see [Deployment Diagnostics Guide](./deployment-diagnostics.md).
+
 4. Check server logs:
    ```bash
    ssh root@170.64.155.210
@@ -99,13 +113,13 @@ If deployment fails:
    tail -f error.log
    ```
 
-4. Check database logs:
+5. Check database logs:
    ```bash
    ssh root@170.64.155.210
    sudo tail -f /var/log/postgresql/postgresql-*.log
    ```
 
-5. Database rollback if needed:
+6. Database rollback if needed:
    ```bash
    ssh root@170.64.155.210
    cd /var/backups/db
@@ -115,7 +129,7 @@ If deployment fails:
    sudo -u postgres psql fnrdb < fnrdb_TIMESTAMP.sql
    ```
 
-6. Application rollback if needed:
+7. Application rollback if needed:
    ```bash
    ssh root@170.64.155.210
    cd /var/backups/app
