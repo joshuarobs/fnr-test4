@@ -46,6 +46,7 @@ export const OurQuoteCell = ({
       <OurQuoteLinkIcon
         ourQuoteProof={item.ourQuoteProof || undefined}
         onSave={handleQuoteProofSave}
+        onPriceExtracted={(price) => handleSave(price.toString())}
       />
     </div>
   );

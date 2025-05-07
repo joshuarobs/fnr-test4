@@ -14,8 +14,6 @@ import {
   Label,
   Separator,
 } from '@react-monorepo/shared';
-import styles from './ReceiptIcon.module.css';
-
 interface ReceiptIconProps {
   receiptLink: string | null;
 }
@@ -111,27 +109,26 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
           </Tooltip>
         </TooltipProvider>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-96"
-        style={{ '--label-width': '100px' } as React.CSSProperties}
-      >
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Insured's quote proof</h4>
-            <p className="text-sm text-muted-foreground">
+      <PopoverContent className="w-96 overflow-hidden">
+        <div className="grid gap-4 w-full">
+          <div className="space-y-2 w-full">
+            <h4 className="font-medium leading-none break-words">
+              Insured's quote proof
+            </h4>
+            <p className="text-sm text-muted-foreground whitespace-normal break-words">
               Set an invoice, receipt or quote photo. Or set a website link for
               the quote.
             </p>
           </div>
-          <div className="grid gap-2">
-            <div className={styles.inputRow}>
-              <div className={styles.labelContainer}>
+          <div className="grid gap-2 w-full">
+            <div className="grid grid-cols-[auto_1fr] items-center gap-4 w-full">
+              <div className="flex items-center gap-2">
                 <Image className="w-4 h-4" />
                 <Label htmlFor="receipt-file">Photo</Label>
               </div>
               <Input
                 id="receipt-file"
-                className="h-8 cursor-pointer"
+                className="h-8 cursor-pointer w-full max-w-full"
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
@@ -149,8 +146,8 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
               </p>
               <Separator className="flex-1" />
             </div>
-            <div className={styles.inputRow}>
-              <div className={styles.labelContainer}>
+            <div className="grid grid-cols-[auto_1fr] items-center gap-4 w-full">
+              <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
                 <Label htmlFor="website-url">Website</Label>
               </div>
@@ -158,13 +155,13 @@ export const ReceiptIcon = ({ receiptLink }: ReceiptIconProps) => {
                 id="website-url"
                 value={websiteUrl}
                 onChange={handleUrlChange}
-                className="h-8"
+                className="h-8 w-full max-w-full"
                 placeholder="e.g. www.amazon.com"
               />
             </div>
           </div>
           <Separator />
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 w-full">
             <Button
               variant="outline"
               size="sm"

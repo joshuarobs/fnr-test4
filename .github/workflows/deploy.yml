@@ -447,6 +447,7 @@ jobs:
             # Start the server with explicit environment variables
             echo "Starting server with production environment..."
             export NODE_ENV=production
+            export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
             pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \
@@ -764,6 +765,7 @@ jobs:
             # Start the server with explicit environment variables
             echo "Starting server with production environment..."
             export NODE_ENV=production
+            export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
             pm2 start dist/main.js \
               --name "fnr-server-$ENV" \
               --log $APP_DIR/logs/app.log \

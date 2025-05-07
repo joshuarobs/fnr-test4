@@ -62,6 +62,12 @@ Email address for Let's Encrypt notifications and certificate expiry alerts
 Example: admin@fnrtest.com
 ```
 
+## `OPENAI_API_KEY`
+OpenAI API key for AI-powered features
+```
+Example: sk-...your-api-key...
+```
+
 # Setting Up Secrets
 
 1. For each secret above:
