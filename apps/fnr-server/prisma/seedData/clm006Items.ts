@@ -111,6 +111,8 @@ export const clm006Items = [
         url: 'https://example.com/receipts/coffeemaker.jpg',
       },
     ],
+    ourQuoteProof:
+      'https://www.amazon.com.au/DeLonghi-Nespresso-Essenza-Machine-EN85WSOLO/dp/B07G5B97VD',
   },
   {
     name: 'Office Chair',
@@ -122,6 +124,8 @@ export const clm006Items = [
     condition: 'Good',
     itemStatus: ItemStatus.VPOL,
     insuredsEvidence: [],
+    ourQuoteProof:
+      'https://www.amazon.com.au/Ergonomic-Adjustable-Computer-Armrests-BIFMA-Executive/dp/B09JWFHX3Z',
   },
   {
     name: 'Printer',
