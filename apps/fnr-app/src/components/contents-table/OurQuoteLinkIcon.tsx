@@ -5,6 +5,7 @@ import {
   ArrowDownLeftFromCircle,
   ExternalLink,
   AlertCircle,
+  LoaderCircle,
 } from 'lucide-react';
 import {
   Button,
@@ -240,7 +241,11 @@ export const OurQuoteLinkIcon = ({
               onClick={handleGetPriceFromLink}
               disabled={!websiteUrl || isLoading}
             >
-              <ArrowDownLeftFromCircle className="w-4 h-4" />
+              {isLoading ? (
+                <LoaderCircle className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowDownLeftFromCircle className="w-4 h-4" />
+              )}
               Get price from link
             </Button>
             <div className="flex gap-2">
